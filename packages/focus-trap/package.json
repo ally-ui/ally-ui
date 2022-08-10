@@ -1,0 +1,35 @@
+{
+	"name": "@ally-ui/focus-trap",
+	"version": "0.0.4",
+	"scripts": {
+		"dev": "vite",
+		"preview": "vite preview",
+		"build": "tsc && vite build"
+	},
+	"author": "Bryan Lee",
+	"description": "A tiny focus trap implementation for JavaScript",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ally-ui/ally-ui.git"
+	},
+	"publishConfig": {
+		"registry": "https://registry.npmjs.org/"
+	},
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"main": "./dist/main.umd.cjs",
+	"module": "./dist/main.js",
+	"types": "./dist/main.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/main.js",
+			"require": "./dist/main.umd.cjs"
+		}
+	},
+	"dependencies": {
+		"@ally-ui/observable": "0.0.5"
+	}
+}
