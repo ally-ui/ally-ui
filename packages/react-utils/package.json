@@ -15,6 +15,7 @@
 		"url": "https://github.com/ally-ui/ally-ui.git"
 	},
 	"publishConfig": {
+		"access": "public",
 		"registry": "https://registry.npmjs.org/"
 	},
 	"type": "module",
