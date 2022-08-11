@@ -1,5 +1,5 @@
 import {trapFocus, type FocusTrap} from '@ally-ui/focus-trap';
-import {Observable, observable} from '@ally-ui/observable';
+import {TWritable, writable} from '@ally-ui/observable';
 
 interface UILibraryOptions {
 	waitForDOM?: () => Promise<void>;
@@ -29,7 +29,7 @@ export interface DialogModelState {
 
 export class DialogModel {
 	#state: DialogModelState;
-	state: Observable<DialogModelState>;
+	state: TWritable<DialogModelState>;
 	#subcomponents: TSubcomponent[];
 
 	#id = 0;
@@ -41,7 +41,7 @@ export class DialogModel {
 		this.#state = {
 			open: defaultOpen,
 		};
-		this.state = observable(this.#state);
+		this.state = writable(this.#state);
 		this.#subcomponents = [];
 	}
 

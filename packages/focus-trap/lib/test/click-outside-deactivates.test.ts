@@ -1,4 +1,4 @@
-import {observable} from '@ally-ui/observable';
+import {writable} from '@ally-ui/observable';
 import {screen} from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import {afterEach, beforeEach, expect, it} from 'vitest';
@@ -28,7 +28,7 @@ it('ignores click outside by default', async () => {
 	trap = trapFocus(trapElement);
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.value.active).toBe(true);
+	expect(trap.state.unsafeValue.active).toBe(true);
 });
 
 it('ignores click outside', async () => {
@@ -40,7 +40,7 @@ it('ignores click outside', async () => {
 	});
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.value.active).toBe(true);
+	expect(trap.state.unsafeValue.active).toBe(true);
 });
 
 it('disables on click outside', async () => {
@@ -52,7 +52,7 @@ it('disables on click outside', async () => {
 	});
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.value.active).toBe(false);
+	expect(trap.state.unsafeValue.active).toBe(false);
 });
 
 it('disables on right click outside only with custom click handler', async () => {
@@ -64,26 +64,26 @@ it('disables on right click outside only with custom click handler', async () =>
 	});
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.value.active).toBe(true);
+	expect(trap.state.unsafeValue.active).toBe(true);
 
 	await user.pointer({
 		keys: '[MouseRight]',
 		target: screen.getByTestId('outside-1'),
 	});
-	expect(trap.value.active).toBe(false);
+	expect(trap.state.unsafeValue.active).toBe(false);
 });
 
 it('ignores click outside before options are updated then disables on click outside', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
-	const options = observable<FocusTrapOptions>({
+	const options = writable<FocusTrapOptions>({
 		clickOutsideDeactivates: false,
 	});
 	trap = trapFocus(trapElement, options);
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.value.active).toBe(true);
+	expect(trap.state.unsafeValue.active).toBe(true);
 
 	options.update(($options) => ({
 		...$options,
@@ -91,5 +91,5 @@ it('ignores click outside before options are updated then disables on click outs
 	}));
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.value.active).toBe(false);
+	expect(trap.state.unsafeValue.active).toBe(false);
 });

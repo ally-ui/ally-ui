@@ -1,4 +1,9 @@
-import {isObservable, MaybeObservable, Observable} from '@ally-ui/observable';
+import {
+	isObservable,
+	MaybeObservable,
+	TWritable,
+	writable,
+} from '@ally-ui/observable';
 
 function isEscapeEvent(ev: KeyboardEvent) {
 	return ev.key === 'Escape' || ev.key === 'Esc';
@@ -101,7 +106,8 @@ export interface FocusTrapState {
 	active: boolean;
 }
 
-export class FocusTrap extends Observable<FocusTrapState> {
+export class FocusTrap {
+	state: TWritable<FocusTrapState>;
 	#container: HTMLElement;
 	#optionsObservable: MaybeObservable<FocusTrapOptions>;
 
@@ -109,7 +115,7 @@ export class FocusTrap extends Observable<FocusTrapState> {
 		container: HTMLElement,
 		options: MaybeObservable<FocusTrapOptions> = {},
 	) {
-		super({
+		this.state = writable<FocusTrapState>({
 			active: false,
 		});
 		this.#container = container;
@@ -285,7 +291,7 @@ export class FocusTrap extends Observable<FocusTrapState> {
 		this.watchEvents();
 		this.#returnFocus = saveCurrentFocus();
 		this.#focusableChildren.at(0)?.focus();
-		this.update(($state) => ({
+		this.state.update(($state) => ({
 			...$state,
 			active: true,
 		}));
@@ -296,7 +302,7 @@ export class FocusTrap extends Observable<FocusTrapState> {
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
 		this.#returnFocus?.();
-		this.update(($state) => ({
+		this.state.update(($state) => ({
 			...$state,
 			active: false,
 		}));

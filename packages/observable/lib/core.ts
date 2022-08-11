@@ -2,17 +2,18 @@ import type {Runner, Subscriber, Unsubscriber, Updater} from './main';
 
 export interface TObservable<TValue> {
 	subscribe: (subscriber: Subscriber<TValue>) => Unsubscriber;
+	unsafeValue: TValue;
 }
 
 export class ObservableImpl<TValue> implements TObservable<TValue> {
-	value: TValue;
+	unsafeValue: TValue;
 	#subscribers: Subscriber<TValue>[] = [];
 
 	#runner?: Runner<TValue>;
 	#unsubscribeRunner?: Unsubscriber;
 	constructor(initialValue: TValue | undefined, runner: Runner<TValue>);
 	constructor(initialValue: TValue, runner?: Runner<TValue>) {
-		this.value = initialValue;
+		this.unsafeValue = initialValue;
 		this.#runner = runner;
 	}
 
@@ -24,7 +25,7 @@ export class ObservableImpl<TValue> implements TObservable<TValue> {
 		}
 		this.#subscriberCount++;
 		this.#subscribers.push(subscriber);
-		subscriber(this.value);
+		subscriber(this.unsafeValue);
 		return () => {
 			this.#subscriberCount--;
 			// Unsubscribe runner on last subscriber.
@@ -41,12 +42,12 @@ export class ObservableImpl<TValue> implements TObservable<TValue> {
 	}
 
 	protected internal_set = (newValue: TValue) => {
-		this.value = newValue;
+		this.unsafeValue = newValue;
 		this.notify();
 	};
 
 	protected notify() {
-		this.#subscribers.forEach((subscriber) => subscriber(this.value));
+		this.#subscribers.forEach((subscriber) => subscriber(this.unsafeValue));
 	}
 }
 
@@ -65,7 +66,7 @@ export class WritableImpl<TValue>
 	}
 
 	update(updater: Updater<TValue>) {
-		this.internal_set(updater(this.value));
+		this.internal_set(updater(this.unsafeValue));
 	}
 
 	set(newValue: TValue) {
@@ -90,7 +91,7 @@ export function observable<TValue>(
 	return new ObservableImpl(initialValue, runner!);
 }
 
-export function isObservable(obj: unknown): obj is ObservableImpl<unknown> {
+export function isObservable(obj: unknown): obj is TObservable<unknown> {
 	return obj != null && typeof obj === 'object' && 'subscribe' in obj;
 }
 
@@ -111,7 +112,7 @@ export function writable<TValue>(
 	return new WritableImpl(initialValue, runner!);
 }
 
-export function isWritable(obj: unknown): obj is WritableImpl<unknown> {
+export function isWritable(obj: unknown): obj is TWritable<unknown> {
 	return isObservable(obj) && 'update' in obj && 'set' in obj;
 }
 

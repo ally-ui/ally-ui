@@ -1,4 +1,4 @@
-import {observable} from '@ally-ui/observable';
+import {writable} from '@ally-ui/observable';
 import {screen} from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import {afterEach, beforeEach, expect, it} from 'vitest';
@@ -28,7 +28,7 @@ it('disables on escape by default', async () => {
 	trap = trapFocus(trapElement);
 
 	await user.keyboard('{Esc}');
-	expect(trap.value.active).toBe(false);
+	expect(trap.state.unsafeValue.active).toBe(false);
 });
 
 it('disables on escape', async () => {
@@ -40,7 +40,7 @@ it('disables on escape', async () => {
 	});
 
 	await user.keyboard('{Esc}');
-	expect(trap.value.active).toBe(false);
+	expect(trap.state.unsafeValue.active).toBe(false);
 });
 
 it('ignore escape', async () => {
@@ -52,7 +52,7 @@ it('ignore escape', async () => {
 	});
 
 	await user.keyboard('{Esc}');
-	expect(trap.value.active).toBe(true);
+	expect(trap.state.unsafeValue.active).toBe(true);
 });
 
 it('disables on escape only with shift', async () => {
@@ -64,23 +64,23 @@ it('disables on escape only with shift', async () => {
 	});
 
 	await user.keyboard('{Esc}');
-	expect(trap.value.active).toBe(true);
+	expect(trap.state.unsafeValue.active).toBe(true);
 
 	await user.keyboard('{Shift>}{Esc}{/Shift}');
-	expect(trap.value.active).toBe(false);
+	expect(trap.state.unsafeValue.active).toBe(false);
 });
 
 it('ignores escape before options are updated then disables on escape', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
-	const options = observable<FocusTrapOptions>({
+	const options = writable<FocusTrapOptions>({
 		escapeDeactivates: false,
 	});
 	trap = trapFocus(trapElement, options);
 
 	await user.keyboard('{Esc}');
-	expect(trap.value.active).toBe(true);
+	expect(trap.state.unsafeValue.active).toBe(true);
 
 	options.update(($options) => ({
 		...$options,
@@ -88,5 +88,5 @@ it('ignores escape before options are updated then disables on escape', async ()
 	}));
 
 	await user.keyboard('{Esc}');
-	expect(trap.value.active).toBe(false);
+	expect(trap.state.unsafeValue.active).toBe(false);
 });
