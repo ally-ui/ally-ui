@@ -43,10 +43,6 @@ export class DialogModel {
 		};
 		this.state = observable(this.#state);
 		this.#subcomponents = [];
-
-		this.#unsubscribeState = this.state.subscribe((newState) =>
-			this.#watchState(newState),
-		);
 	}
 
 	#uiLibraryOptions?: UILibraryOptions;
@@ -54,10 +50,23 @@ export class DialogModel {
 		this.#uiLibraryOptions = options;
 	}
 
+	startListeners() {
+		this.#unsubscribeState = this.state.subscribe((newState) =>
+			this.#watchState(newState),
+		);
+	}
+
 	#unsubscribeState?: () => void;
-	cleanup() {
+	stopListeners() {
 		this.#unsubscribeState?.();
 	}
+
+	#watchState = (newState: DialogModelState) => {
+		if (this.#state.open !== newState.open) {
+			this.#openEffect(newState.open);
+		}
+		this.#state = newState;
+	};
 
 	init(type: TSubcomponentType): string {
 		const id = this.#generateId();
@@ -93,13 +102,6 @@ export class DialogModel {
 		subcomponent.mounted = false;
 		delete subcomponent.ref;
 	}
-
-	#watchState = (newState: DialogModelState) => {
-		if (this.#state.open !== newState.open) {
-			this.#openEffect(newState.open);
-		}
-		this.#state = newState;
-	};
 
 	async #openEffect(open: boolean) {
 		if (open) {

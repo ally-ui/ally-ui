@@ -41,9 +41,10 @@ export default function useDialog({
 		[model],
 	);
 	useEffect(
-		function cleanupModel() {
+		function watchModel() {
+			model.startListeners();
 			return () => {
-				model.cleanup();
+				model.stopListeners();
 			};
 		},
 		[model],
