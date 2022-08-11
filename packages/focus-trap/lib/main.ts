@@ -94,6 +94,7 @@ function getActualTarget(ev: Event) {
 export interface FocusTrapOptions {
 	clickOutsideDeactivates?: boolean | ((ev: MouseEvent) => boolean);
 	escapeDeactivates?: boolean | ((ev: KeyboardEvent) => boolean);
+	onDeactivate?: () => void;
 }
 
 export interface FocusTrapState {
@@ -299,6 +300,7 @@ export class FocusTrap extends Observable<FocusTrapState> {
 			...$state,
 			active: false,
 		}));
+		this.#options.onDeactivate?.();
 	}
 }
 
