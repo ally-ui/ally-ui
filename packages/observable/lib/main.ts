@@ -1,44 +1,9 @@
+import {type TObservable} from './core';
+
 export type Unsubscriber = () => void;
 export type Subscriber<TValue> = (value: TValue) => void;
 export type Updater<TValue> = (oldValue: TValue) => TValue;
-export type MaybeObservable<TValue> = TValue | Observable<TValue>;
+export type MaybeObservable<TValue> = TValue | TObservable<TValue>;
+export type Runner<TValue> = (set: (newValue: TValue) => void) => Unsubscriber;
 
-export class Observable<TValue> {
-	value: TValue;
-	private subscribers: Subscriber<TValue>[] = [];
-
-	constructor(initialValue: TValue) {
-		this.value = initialValue;
-	}
-
-	subscribe(subscriber: Subscriber<TValue>): Unsubscriber {
-		this.subscribers.push(subscriber);
-		subscriber(this.value);
-		return () => {
-			const idx = this.subscribers.findIndex((s) => s === subscriber);
-			this.subscribers.splice(idx, 1);
-		};
-	}
-
-	update(updater: Updater<TValue>) {
-		this.value = updater(this.value);
-		this.#notify();
-	}
-
-	set(newValue: TValue) {
-		this.value = newValue;
-		this.#notify();
-	}
-
-	#notify() {
-		this.subscribers.forEach((subscriber) => subscriber(this.value));
-	}
-}
-
-export function observable<TValue>(initialValue: TValue) {
-	return new Observable(initialValue);
-}
-
-export function isObservable(obj: unknown): obj is Observable<unknown> {
-	return obj instanceof Observable;
-}
+export {keyed} from './keyed';
