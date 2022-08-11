@@ -1,3 +1,4 @@
+import isEqual from 'lodash.isequal';
 import type {Runner, Subscriber, Unsubscriber, Updater} from './main';
 
 export interface TObservable<TValue> {
@@ -42,11 +43,14 @@ export class ObservableImpl<TValue> implements TObservable<TValue> {
 	}
 
 	protected internal_set = (newValue: TValue) => {
+		if (isEqual(this.unsafeValue, newValue)) {
+			return;
+		}
 		this.unsafeValue = newValue;
-		this.notify();
+		this.#notify();
 	};
 
-	protected notify() {
+	#notify() {
 		this.#subscribers.forEach((subscriber) => subscriber(this.unsafeValue));
 	}
 }

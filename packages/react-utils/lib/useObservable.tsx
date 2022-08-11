@@ -14,9 +14,6 @@ export default function useObservable<TValue>(
 	useEffect(
 		function subscribe() {
 			return observable.subscribe((newValue) => {
-				if (newValue === previousValue.current) {
-					return;
-				}
 				savedOnChange(newValue, previousValue.current);
 				setValue(newValue);
 				previousValue.current = newValue;

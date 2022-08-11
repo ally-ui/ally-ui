@@ -29,5 +29,8 @@
 			"import": "./dist/main.js",
 			"require": "./dist/main.umd.cjs"
 		}
+	},
+	"dependencies": {
+		"lodash.isequal": "^4.5.0"
 	}
 }
