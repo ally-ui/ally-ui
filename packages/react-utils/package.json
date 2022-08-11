@@ -2,7 +2,8 @@
 	"name": "@ally-ui/react-utils",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "vite",
+		"example": "vite",
+		"dev": "concurrently \"tsc --watch\" \"vite build --watch\"",
 		"build": "tsc && vite build",
 		"preview": "vite preview"
 	},

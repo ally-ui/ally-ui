@@ -2,9 +2,10 @@
 	"name": "@ally-ui/core-dialog",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "vite",
-		"preview": "vite preview",
-		"build": "tsc && vite build"
+		"example": "vite",
+		"dev": "concurrently \"tsc --watch\" \"vite build --watch\"",
+		"build": "tsc && vite build",
+		"preview": "vite preview"
 	},
 	"author": "Bryan Lee",
 	"description": "A WAI-ARIA compliant Dialog for JavaScript",
