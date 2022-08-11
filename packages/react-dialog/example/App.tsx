@@ -10,7 +10,7 @@ export default function App() {
 
 	return (
 		<div className="App">
-			<h1>Ally UI Dialog</h1>
+			<h1>Ally UI React Dialog</h1>
 			<button onClick={() => setOpen((o) => !o)}>Manual trigger</button>
 			<div className="card">
 				<Dialog.Trigger model={dialog}>Edit profile</Dialog.Trigger>

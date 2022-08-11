@@ -105,14 +105,14 @@ export class DialogModel {
 
 	async #openEffect(open: boolean) {
 		if (open) {
-			await this.#openDialog();
+			await this.#openDialogEffect();
 		} else {
-			this.#closeDialog();
+			this.#closeDialogEffect();
 		}
 	}
 
 	#contentTrap?: FocusTrap;
-	async #openDialog() {
+	async #openDialogEffect() {
 		const content = this.#subcomponents.find(
 			(s) => s.type === 'content' && s.mounted,
 		);
@@ -132,10 +132,14 @@ export class DialogModel {
 				`Cannot open dialog as content subcomponent ref is missing`,
 			);
 		}
-		this.#contentTrap = trapFocus(content.ref);
+		this.#contentTrap = trapFocus(content.ref, {
+			onDeactivate: () => {
+				this.state.update((s) => ({...s, open: false}));
+			},
+		});
 	}
 
-	#closeDialog() {
+	#closeDialogEffect() {
 		if (this.#contentTrap === undefined) {
 			return;
 		}
