@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/focus-trap",
-	"version": "0.0.4",
+	"version": "0.0.1-alpha.0",
 	"scripts": {
 		"example": "vite",
 		"dev": "concurrently \"tsc --watch\" \"vite build --watch\"",
@@ -32,6 +32,6 @@
 		}
 	},
 	"dependencies": {
-		"@ally-ui/observable": "*"
+		"@ally-ui/observable": "^0.0.1-alpha.0"
 	}
 }
