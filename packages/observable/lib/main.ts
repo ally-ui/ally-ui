@@ -16,7 +16,7 @@ export class Observable<TValue> {
 		subscriber(this.value);
 		return () => {
 			const idx = this.subscribers.findIndex((s) => s === subscriber);
-			this.subscribers.splice(idx);
+			this.subscribers.splice(idx, 1);
 		};
 	}
 
