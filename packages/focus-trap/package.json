@@ -3,8 +3,8 @@
 	"version": "0.0.4",
 	"scripts": {
 		"dev": "vite",
-		"preview": "vite preview",
-		"build": "tsc && vite build"
+		"build": "tsc && vite build",
+		"preview": "vite preview"
 	},
 	"author": "Bryan Lee",
 	"description": "A tiny focus trap implementation for JavaScript",
