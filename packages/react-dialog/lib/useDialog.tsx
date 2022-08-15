@@ -1,5 +1,5 @@
 import {DialogModel, DialogModelOptions} from '@ally-ui/core-dialog';
-import {useLayoutPromise} from '@ally-ui/react-utils';
+import {useLayoutPromise, useSyncOption} from '@ally-ui/react-utils';
 import {useState} from 'react';
 
 export interface UseDialogOptions extends DialogModelOptions {
@@ -15,6 +15,14 @@ export default function useDialog({
 	const [model] = useState(() => new DialogModel({initialOpen}));
 
 	const [state, setState] = useState(() => model.initialState);
+	useSyncOption({
+		option: open,
+		onOptionChange: (open) => {
+			setState((prevState) => ({...prevState, open}));
+		},
+		internal: state.open,
+		onInternalChange: onOpenChange,
+	});
 
 	model.setOptions((prevOptions) => ({
 		...prevOptions,
