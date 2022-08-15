@@ -96,7 +96,6 @@ export interface FocusTrapOptions {
 	active?: boolean;
 	clickOutsideDeactivates?: boolean | ((ev: MouseEvent) => boolean);
 	escapeDeactivates?: boolean | ((ev: KeyboardEvent) => boolean);
-	onDeactivate?: () => void;
 }
 
 export interface FocusTrapState {
@@ -315,7 +314,6 @@ export class FocusTrapModel extends StatefulModel<
 				...oldState,
 				active: false,
 			}));
-			this.options.onDeactivate?.();
 		}
 	}
 }
