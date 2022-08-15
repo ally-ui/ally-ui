@@ -1,9 +1,10 @@
 import {screen} from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import {afterEach, beforeEach, expect, it} from 'vitest';
-import {FocusTrap, trapFocus} from '../main';
+import {FocusTrapModel} from '../main';
+import {observableFocusTrap} from './observableFocusTrap';
 
-let trap: FocusTrap | undefined;
+let trap: FocusTrapModel | undefined;
 beforeEach(() => {
 	document.body.innerHTML = `
 <button data-testid="outside-1">outside first</button>
@@ -22,21 +23,24 @@ afterEach(() => {
 
 it('focuses on the first element in the trap when trapped', () => {
 	const trapElement = screen.getByTestId('trap');
-	trap = trapFocus(trapElement);
+	trap = observableFocusTrap({container: trapElement});
+	trap.activate();
 	expect(screen.getByTestId('inside-1')).toHaveFocus();
 });
 
 it('returns focus to the previously focused element when untrapped', () => {
 	const trapElement = screen.getByTestId('trap');
 	screen.getByTestId('outside-1').focus();
-	trap = trapFocus(trapElement);
+	trap = observableFocusTrap({container: trapElement});
+	trap.activate();
 	trap.deactivate();
 	expect(screen.getByTestId('outside-1')).toHaveFocus();
 });
 
 it('does not return focus if no previously focused element when untrapped', () => {
 	const trapElement = screen.getByTestId('trap');
-	trap = trapFocus(trapElement);
+	trap = observableFocusTrap({container: trapElement});
+	trap.activate();
 	trap.deactivate();
 	expect(screen.getByTestId('inside-1')).toHaveFocus();
 });
@@ -45,7 +49,9 @@ it('untraps on Esc', async () => {
 	const user = userEvent.setup();
 	screen.getByTestId('outside-1').focus();
 	const trapElement = screen.getByTestId('trap');
-	trap = trapFocus(trapElement);
+	trap = observableFocusTrap({container: trapElement});
+	trap.activate();
+	trap.deactivate();
 	await user.keyboard('{Esc}');
 	expect(screen.getByTestId('outside-1')).toHaveFocus();
 });

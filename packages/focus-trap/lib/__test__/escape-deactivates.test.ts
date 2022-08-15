@@ -1,10 +1,10 @@
-import {writable} from '@ally-ui/observable';
 import {screen} from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import {afterEach, beforeEach, expect, it} from 'vitest';
-import {FocusTrap, FocusTrapOptions, trapFocus} from '../main';
+import {FocusTrapModel} from '../main';
+import {observableFocusTrap} from './observableFocusTrap';
 
-let trap: FocusTrap | undefined;
+let trap: FocusTrapModel | undefined;
 beforeEach(() => {
 	document.body.innerHTML = `
 <button data-testid="outside-1">outside first</button>
@@ -25,68 +25,54 @@ it('disables on escape by default', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
-	trap = trapFocus(trapElement);
+	trap = observableFocusTrap({container: trapElement});
+	trap.activate();
 
 	await user.keyboard('{Esc}');
-	expect(trap.state.unsafeValue.active).toBe(false);
+	expect(trap.options.state.active).toBe(false);
 });
 
 it('disables on escape', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
-	trap = trapFocus(trapElement, {
+	trap = observableFocusTrap({
+		container: trapElement,
 		escapeDeactivates: true,
 	});
+	trap.activate();
 
 	await user.keyboard('{Esc}');
-	expect(trap.state.unsafeValue.active).toBe(false);
+	expect(trap.options.state.active).toBe(false);
 });
 
 it('ignore escape', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
-	trap = trapFocus(trapElement, {
+	trap = observableFocusTrap({
+		container: trapElement,
 		escapeDeactivates: false,
 	});
+	trap.activate();
 
 	await user.keyboard('{Esc}');
-	expect(trap.state.unsafeValue.active).toBe(true);
+	expect(trap.options.state.active).toBe(true);
 });
 
 it('disables on escape only with shift', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
-	trap = trapFocus(trapElement, {
+	trap = observableFocusTrap({
+		container: trapElement,
 		escapeDeactivates: (ev) => ev.shiftKey,
 	});
+	trap.activate();
 
 	await user.keyboard('{Esc}');
-	expect(trap.state.unsafeValue.active).toBe(true);
+	expect(trap.options.state.active).toBe(true);
 
 	await user.keyboard('{Shift>}{Esc}{/Shift}');
-	expect(trap.state.unsafeValue.active).toBe(false);
-});
-
-it('ignores escape before options are updated then disables on escape', async () => {
-	const user = userEvent.setup();
-
-	const trapElement = screen.getByTestId('trap');
-	const options = writable<FocusTrapOptions>({
-		escapeDeactivates: false,
-	});
-	trap = trapFocus(trapElement, options);
-
-	await user.keyboard('{Esc}');
-	expect(trap.state.unsafeValue.active).toBe(true);
-
-	options.update(($options) => ({
-		...$options,
-		escapeDeactivates: true,
-	}));
-
-	await user.keyboard('{Esc}');
-	expect(trap.state.unsafeValue.active).toBe(false);
+	expect(trap.options.state.active).toBe(false);
 });

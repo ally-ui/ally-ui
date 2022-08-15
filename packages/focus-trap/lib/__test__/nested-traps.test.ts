@@ -1,9 +1,10 @@
 import {screen} from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import {afterEach, beforeEach, expect, it} from 'vitest';
-import {FocusTrap, trapFocus} from '../main';
+import {FocusTrapModel} from '../main';
+import {observableFocusTrap} from './observableFocusTrap';
 
-let trap: FocusTrap | undefined;
+let trap: FocusTrapModel | undefined;
 beforeEach(() => {
 	document.body.innerHTML = `
 <button data-testid="outside-1">outside first</button>
@@ -30,8 +31,14 @@ it('returns focus from the nested to outer focus trap', async () => {
 
 	const trapElement = screen.getByTestId('trap-1');
 	const innerTrapElement = screen.getByTestId('trap-2');
-	trap = trapFocus(trapElement);
-	const innerTrap = trapFocus(innerTrapElement);
+	trap = observableFocusTrap({
+		container: trapElement,
+	});
+	trap.activate();
+	const innerTrap = observableFocusTrap({
+		container: innerTrapElement,
+	});
+	innerTrap.activate();
 
 	expect(screen.getByTestId('inner-1')).toHaveFocus();
 	await user.tab();

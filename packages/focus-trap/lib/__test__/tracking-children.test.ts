@@ -1,9 +1,10 @@
 import {screen} from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {FocusTrap, trapFocus} from '../main';
+import {FocusTrapModel} from '../main';
+import {observableFocusTrap} from './observableFocusTrap';
 
-let trap: FocusTrap | undefined;
+let trap: FocusTrapModel | undefined;
 afterEach(() => {
 	document.body.innerHTML = '';
 	trap?.deactivate();
@@ -19,7 +20,8 @@ describe('tracks the correct DOM elements', () => {
 </div>
 `;
 		const trapElement = screen.getByTestId('trap');
-		trap = trapFocus(trapElement);
+		trap = observableFocusTrap({container: trapElement});
+		trap.activate();
 	});
 
 	const ELEMENTS = [
@@ -34,12 +36,12 @@ describe('tracks the correct DOM elements', () => {
 	describe.each(ELEMENTS)('tracks', (el) => {
 		it(`${el.tag} elements`, async () => {
 			const user = userEvent.setup();
-			const trap = screen.getByTestId('trap');
+			const trapElement = screen.getByTestId('trap');
 			const addedElement = document.createElement('input');
 			Object.entries(el.attributes).forEach(([key, value]) => {
 				addedElement.setAttribute(key, value);
 			});
-			trap.appendChild(addedElement);
+			trapElement.appendChild(addedElement);
 
 			await user.tab();
 			expect(addedElement).toHaveFocus();
@@ -62,7 +64,8 @@ describe('dynamic DOM', () => {
 </div>
 `;
 		const trapElement = screen.getByTestId('trap');
-		trap = trapFocus(trapElement);
+		trap = observableFocusTrap({container: trapElement});
+		trap.activate();
 	});
 
 	it('accounts for an updated tabindex on a child', async () => {
@@ -79,8 +82,8 @@ describe('dynamic DOM', () => {
 		const user = userEvent.setup();
 
 		const button_new = document.createElement('button');
-		const trap = screen.getByTestId('trap');
-		trap.appendChild(button_new);
+		const trapElement = screen.getByTestId('trap');
+		trapElement.appendChild(button_new);
 
 		await user.tab();
 		await user.tab();
@@ -90,8 +93,8 @@ describe('dynamic DOM', () => {
 	it('accounts for a removed focusable child node', async () => {
 		const user = userEvent.setup();
 
-		const trap = screen.getByTestId('trap');
-		trap.removeChild(screen.getByTestId('inside-2'));
+		const trapElement = screen.getByTestId('trap');
+		trapElement.removeChild(screen.getByTestId('inside-2'));
 
 		await user.tab();
 		expect(screen.getByTestId('inside-1')).toHaveFocus();

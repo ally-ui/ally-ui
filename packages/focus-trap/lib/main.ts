@@ -1,9 +1,4 @@
-import {
-	isObservable,
-	MaybeObservable,
-	TWritable,
-	writable,
-} from '@ally-ui/observable';
+import {StatefulModel, type ResolvedOptions} from '@ally-ui/core';
 
 function isEscapeEvent(ev: KeyboardEvent) {
 	return ev.key === 'Escape' || ev.key === 'Esc';
@@ -97,6 +92,8 @@ function getActualTarget(ev: Event) {
 }
 
 export interface FocusTrapOptions {
+	container: HTMLElement;
+	initialActive?: boolean;
 	clickOutsideDeactivates?: boolean | ((ev: MouseEvent) => boolean);
 	escapeDeactivates?: boolean | ((ev: KeyboardEvent) => boolean);
 	onDeactivate?: () => void;
@@ -106,46 +103,32 @@ export interface FocusTrapState {
 	active: boolean;
 }
 
-export class FocusTrap {
-	state: TWritable<FocusTrapState>;
-	#container: HTMLElement;
-	#optionsObservable: MaybeObservable<FocusTrapOptions>;
-
+export class FocusTrapModel extends StatefulModel<
+	FocusTrapOptions,
+	FocusTrapState
+> {
 	constructor(
-		container: HTMLElement,
-		options: MaybeObservable<FocusTrapOptions> = {},
+		initialOptions: ResolvedOptions<FocusTrapOptions, FocusTrapState>,
 	) {
-		this.state = writable<FocusTrapState>({
-			active: false,
-		});
-		this.#container = container;
-		this.#optionsObservable = options;
+		super(initialOptions);
+		if (this.initialState.active) {
+			this.activate();
+		}
 	}
 
-	#options: FocusTrapOptions = {};
-	#unsubscribeOptions?: () => void;
-	watchOptions() {
-		this.#unsubscribeOptions?.();
-		if (isObservable(this.#optionsObservable)) {
-			const unsubscribeOptions = this.#optionsObservable.subscribe(
-				($options) => (this.#options = $options),
-			);
-			this.#unsubscribeOptions = () => {
-				unsubscribeOptions();
-				this.#unsubscribeOptions = undefined;
-			};
-		} else {
-			this.#options = this.#optionsObservable;
-		}
+	deriveInitialState(options: FocusTrapOptions): FocusTrapState {
+		return {
+			active: options.initialActive ?? false,
+		};
 	}
 
 	#focusableChildren: HTMLElement[] = [];
 	#unsubscribeChildren?: () => void;
-	watchChildren() {
+	#watchChildren() {
 		this.#unsubscribeChildren?.();
 		const update = () => {
 			this.#focusableChildren = Array.from(
-				this.#container.querySelectorAll(FOCUSABLE_SELECTORS.join(',')),
+				this.options.container.querySelectorAll(FOCUSABLE_SELECTORS.join(',')),
 			).filter(isHTMLElement);
 		};
 		update();
@@ -156,7 +139,7 @@ export class FocusTrap {
 			}
 		});
 
-		observer.observe(this.#container, {
+		observer.observe(this.options.container, {
 			attributes: true,
 			childList: true,
 			subtree: true,
@@ -169,9 +152,9 @@ export class FocusTrap {
 	}
 
 	#unsubscribeEvents?: () => void;
-	watchEvents() {
+	#watchEvents() {
 		this.#unsubscribeEvents?.();
-		this.#container.addEventListener(
+		this.options.container.addEventListener(
 			'keydown',
 			this.#handleKey,
 			LISTENER_OPTIONS,
@@ -185,7 +168,7 @@ export class FocusTrap {
 		window.addEventListener('click', this.#handleClick, LISTENER_OPTIONS);
 
 		this.#unsubscribeEvents = () => {
-			this.#container.removeEventListener(
+			this.options.container.removeEventListener(
 				'keydown',
 				this.#handleKey,
 				LISTENER_OPTIONS,
@@ -217,7 +200,7 @@ export class FocusTrap {
 	};
 
 	#handleEsc = (ev: KeyboardEvent) => {
-		if (isValueOrHandler(this.#options.escapeDeactivates ?? true, ev)) {
+		if (isValueOrHandler(this.options.escapeDeactivates ?? true, ev)) {
 			ev.preventDefault();
 			this.deactivate();
 		}
@@ -241,11 +224,11 @@ export class FocusTrap {
 	};
 
 	#handlePointerDown = (ev: MouseEvent) => {
-		if (isTargetContainedBy(getActualTarget(ev), this.#container)) {
+		if (isTargetContainedBy(getActualTarget(ev), this.options.container)) {
 			return;
 		}
 		ev.preventDefault();
-		if (isValueOrHandler(this.#options.clickOutsideDeactivates ?? false, ev)) {
+		if (isValueOrHandler(this.options.clickOutsideDeactivates ?? false, ev)) {
 			this.deactivate();
 		}
 	};
@@ -258,7 +241,9 @@ export class FocusTrap {
 		}
 		// Allow for touch gestures that spill out of the container element.
 		const touches = Array.from(ev.touches);
-		if (touches.some((t) => isTargetContainedBy(t.target, this.#container))) {
+		if (
+			touches.some((t) => isTargetContainedBy(t.target, this.options.container))
+		) {
 			return;
 		}
 		ev.preventDefault();
@@ -266,7 +251,7 @@ export class FocusTrap {
 
 	#handleSingleTouch = (ev: TouchEvent) => {
 		const touch = ev.touches.item(0)!;
-		if (isTargetContainedBy(touch.target, this.#container)) {
+		if (isTargetContainedBy(touch.target, this.options.container)) {
 			return;
 		}
 		ev.preventDefault();
@@ -274,10 +259,10 @@ export class FocusTrap {
 	};
 
 	#handleClick = (ev: MouseEvent) => {
-		if (isTargetContainedBy(getActualTarget(ev), this.#container)) {
+		if (isTargetContainedBy(getActualTarget(ev), this.options.container)) {
 			return;
 		}
-		if (isValueOrHandler(this.#options.clickOutsideDeactivates ?? false, ev)) {
+		if (isValueOrHandler(this.options.clickOutsideDeactivates ?? false, ev)) {
 			return;
 		}
 		ev.preventDefault();
@@ -286,41 +271,24 @@ export class FocusTrap {
 
 	#returnFocus?: () => void;
 	activate() {
-		this.watchOptions();
-		this.watchChildren();
-		this.watchEvents();
+		this.#watchChildren();
+		this.#watchEvents();
 		this.#returnFocus = saveCurrentFocus();
 		this.#focusableChildren.at(0)?.focus();
-		this.state.update(($state) => ({
-			...$state,
+		this.options.onStateChange((oldState) => ({
+			...oldState,
 			active: true,
 		}));
 	}
 
 	deactivate() {
-		this.#unsubscribeOptions?.();
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
 		this.#returnFocus?.();
-		this.state.update(($state) => ({
-			...$state,
+		this.options.onStateChange((oldState) => ({
+			...oldState,
 			active: false,
 		}));
-		this.#options.onDeactivate?.();
+		this.options.onDeactivate?.();
 	}
-}
-
-/**
- * Trap focus within an element by handling key presses and pointer events.
- * @param container The container element to trap focus within
- * @param options Static or dynamic options for the focus trap
- * @returns A FocusTrap instance
- */
-export function trapFocus(
-	container: HTMLElement,
-	options: MaybeObservable<FocusTrapOptions> = {},
-): FocusTrap {
-	const trap = new FocusTrap(container, options);
-	trap.activate();
-	return trap;
 }

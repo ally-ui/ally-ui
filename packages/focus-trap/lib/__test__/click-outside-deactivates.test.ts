@@ -1,10 +1,10 @@
-import {writable} from '@ally-ui/observable';
 import {screen} from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import {afterEach, beforeEach, expect, it} from 'vitest';
-import {FocusTrap, FocusTrapOptions, trapFocus} from '../main';
+import {FocusTrapModel} from '../main';
+import {observableFocusTrap} from './observableFocusTrap';
 
-let trap: FocusTrap | undefined;
+let trap: FocusTrapModel | undefined;
 beforeEach(() => {
 	document.body.innerHTML = `
 <button data-testid="outside-1">outside first</button>
@@ -21,75 +21,72 @@ afterEach(() => {
 	trap?.deactivate();
 });
 
+it('ignores click inside', async () => {
+	const user = userEvent.setup();
+
+	const trapElement = screen.getByTestId('trap');
+	trap = observableFocusTrap({container: trapElement});
+	trap.activate();
+
+	await user.click(screen.getByTestId('inside-1'));
+	expect(trap.options.state.active).toBe(true);
+});
+
 it('ignores click outside by default', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
-	trap = trapFocus(trapElement);
+	trap = observableFocusTrap({container: trapElement});
+	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.state.unsafeValue.active).toBe(true);
+	expect(trap.options.state.active).toBe(true);
 });
 
 it('ignores click outside', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
-	trap = trapFocus(trapElement, {
+	trap = observableFocusTrap({
+		container: trapElement,
 		clickOutsideDeactivates: false,
 	});
+	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.state.unsafeValue.active).toBe(true);
+	expect(trap.options.state.active).toBe(true);
 });
 
 it('disables on click outside', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
-	trap = trapFocus(trapElement, {
+	trap = observableFocusTrap({
+		container: trapElement,
 		clickOutsideDeactivates: true,
 	});
+	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.state.unsafeValue.active).toBe(false);
+	expect(trap.options.state.active).toBe(false);
 });
 
 it('disables on right click outside only with custom click handler', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
-	trap = trapFocus(trapElement, {
+	trap = observableFocusTrap({
+		container: trapElement,
 		clickOutsideDeactivates: (ev) => ev.button === 2,
 	});
+	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.state.unsafeValue.active).toBe(true);
+	expect(trap.options.state.active).toBe(true);
 
 	await user.pointer({
 		keys: '[MouseRight]',
 		target: screen.getByTestId('outside-1'),
 	});
-	expect(trap.state.unsafeValue.active).toBe(false);
-});
-
-it('ignores click outside before options are updated then disables on click outside', async () => {
-	const user = userEvent.setup();
-
-	const trapElement = screen.getByTestId('trap');
-	const options = writable<FocusTrapOptions>({
-		clickOutsideDeactivates: false,
-	});
-	trap = trapFocus(trapElement, options);
-
-	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.state.unsafeValue.active).toBe(true);
-
-	options.update(($options) => ({
-		...$options,
-		clickOutsideDeactivates: true,
-	}));
-
-	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.state.unsafeValue.active).toBe(false);
+	expect(trap.options.state.active).toBe(false);
 });

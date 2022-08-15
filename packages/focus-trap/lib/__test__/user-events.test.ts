@@ -1,9 +1,10 @@
 import {screen} from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
-import {FocusTrap, trapFocus} from '../main';
+import {FocusTrapModel} from '../main';
+import {observableFocusTrap} from './observableFocusTrap';
 
-let trap: FocusTrap | undefined;
+let trap: FocusTrapModel | undefined;
 beforeEach(() => {
 	document.body.innerHTML = `
 <button data-testid="outside-1">outside first</button>
@@ -15,7 +16,8 @@ beforeEach(() => {
 </div>
 `;
 	const trapElement = screen.getByTestId('trap');
-	trap = trapFocus(trapElement);
+	trap = observableFocusTrap({container: trapElement});
+	trap.activate();
 });
 afterEach(() => {
 	document.body.innerHTML = '';
@@ -58,7 +60,8 @@ describe('tab behavior', () => {
 			</div>
 		`;
 		const trapElement = screen.getByTestId('trap');
-		trap = trapFocus(trapElement);
+		trap = observableFocusTrap({container: trapElement});
+		trap.activate();
 
 		await user.tab();
 		expect(screen.getByTestId('inside-1')).toHaveFocus();

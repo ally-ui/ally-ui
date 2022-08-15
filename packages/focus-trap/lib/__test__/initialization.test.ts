@@ -1,9 +1,9 @@
 import {screen} from '@testing-library/dom';
-import userEvent from '@testing-library/user-event';
-import {afterEach, beforeEach, expect, it, vi} from 'vitest';
-import {FocusTrap, trapFocus} from '../main';
+import {afterEach, beforeEach, expect, it} from 'vitest';
+import {FocusTrapModel} from '../main';
+import {observableFocusTrap} from './observableFocusTrap';
 
-let trap: FocusTrap | undefined;
+let trap: FocusTrapModel | undefined;
 beforeEach(() => {
 	document.body.innerHTML = `
 <button data-testid="outside-1">outside first</button>
@@ -20,15 +20,8 @@ afterEach(() => {
 	trap?.deactivate();
 });
 
-it('calls onDeactivate when deactivating', async () => {
-	const user = userEvent.setup();
-	const onDeactivate = vi.fn();
-
+it('activates on initialization if initialActive is true', () => {
 	const trapElement = screen.getByTestId('trap');
-	trap = trapFocus(trapElement, {
-		onDeactivate,
-	});
-
-	await user.keyboard('{Esc}');
-	expect(onDeactivate).toHaveBeenCalledOnce();
+	trap = observableFocusTrap({container: trapElement, initialActive: true});
+	expect(screen.getByTestId('inside-1')).toHaveFocus();
 });

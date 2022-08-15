@@ -32,6 +32,6 @@
 		}
 	},
 	"dependencies": {
-		"@ally-ui/observable": "^0.0.2-alpha.0"
+		"@ally-ui/core": "*"
 	}
 }
