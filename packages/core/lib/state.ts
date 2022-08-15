@@ -14,7 +14,7 @@ export type ResolvedOptions<TOptions, TState> = TOptions & {
 	 * the state implementation to respond to the state update request and
 	 * trigger any side-effects e.g. updating the DOM.
 	 */
-	onStateChange: (updater: Updater<TState>) => void;
+	onStateChange?: (updater: Updater<TState>) => void;
 };
 
 /**
@@ -32,9 +32,12 @@ export abstract class StatefulModel<TOptions, TState> {
 	initialState: TState;
 	#previousState: TState;
 
-	constructor(initialOptions: ResolvedOptions<TOptions, TState>) {
-		this.options = initialOptions;
+	constructor(initialOptions: TOptions) {
 		this.initialState = this.deriveInitialState(initialOptions);
+		this.options = {
+			state: this.initialState,
+			...initialOptions,
+		};
 		this.#previousState = this.initialState;
 	}
 

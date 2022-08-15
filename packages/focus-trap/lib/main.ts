@@ -1,4 +1,4 @@
-import {StatefulModel, type ResolvedOptions} from '@ally-ui/core';
+import {StatefulModel} from '@ally-ui/core';
 
 function isEscapeEvent(ev: KeyboardEvent) {
 	return ev.key === 'Escape' || ev.key === 'Esc';
@@ -93,7 +93,7 @@ function getActualTarget(ev: Event) {
 
 export interface FocusTrapOptions {
 	container: HTMLElement;
-	initialActive?: boolean;
+	active?: boolean;
 	clickOutsideDeactivates?: boolean | ((ev: MouseEvent) => boolean);
 	escapeDeactivates?: boolean | ((ev: KeyboardEvent) => boolean);
 	onDeactivate?: () => void;
@@ -107,25 +107,39 @@ export class FocusTrapModel extends StatefulModel<
 	FocusTrapOptions,
 	FocusTrapState
 > {
-	constructor(
-		initialOptions: ResolvedOptions<FocusTrapOptions, FocusTrapState>,
-	) {
+	constructor(initialOptions: FocusTrapOptions) {
 		super(initialOptions);
-		if (this.initialState.active) {
+		if (this.options.state.active) {
 			this.activate();
 		}
 	}
 
 	deriveInitialState(options: FocusTrapOptions): FocusTrapState {
 		return {
-			active: options.initialActive ?? false,
+			active: options.active ?? false,
 		};
+	}
+
+	watchStateChange(newState: FocusTrapState, oldState: FocusTrapState) {
+		if (newState.active !== oldState.active) {
+			this.#onActiveChangeEffect(newState.active);
+		}
+	}
+
+	#onActiveChangeEffect(active: boolean) {
+		if (active) {
+			this.activate();
+		} else {
+			this.deactivate();
+		}
 	}
 
 	#focusableChildren: HTMLElement[] = [];
 	#unsubscribeChildren?: () => void;
 	#watchChildren() {
-		this.#unsubscribeChildren?.();
+		if (this.#unsubscribeChildren !== undefined) {
+			return;
+		}
 		const update = () => {
 			this.#focusableChildren = Array.from(
 				this.options.container.querySelectorAll(FOCUSABLE_SELECTORS.join(',')),
@@ -153,7 +167,9 @@ export class FocusTrapModel extends StatefulModel<
 
 	#unsubscribeEvents?: () => void;
 	#watchEvents() {
-		this.#unsubscribeEvents?.();
+		if (this.#unsubscribeEvents !== undefined) {
+			return;
+		}
 		this.options.container.addEventListener(
 			'keydown',
 			this.#handleKey,
@@ -186,6 +202,15 @@ export class FocusTrapModel extends StatefulModel<
 			window.removeEventListener('click', this.#handleClick, LISTENER_OPTIONS);
 			this.#unsubscribeEvents = undefined;
 		};
+	}
+
+	#returnPreviousFocus?: () => void;
+	#moveCurrentFocus() {
+		if (this.#returnPreviousFocus !== undefined) {
+			return;
+		}
+		this.#returnPreviousFocus = saveCurrentFocus();
+		this.#focusableChildren.at(0)?.focus();
 	}
 
 	#handleKey = (ev: KeyboardEvent) => {
@@ -269,26 +294,28 @@ export class FocusTrapModel extends StatefulModel<
 		ev.stopImmediatePropagation();
 	};
 
-	#returnFocus?: () => void;
 	activate() {
 		this.#watchChildren();
 		this.#watchEvents();
-		this.#returnFocus = saveCurrentFocus();
-		this.#focusableChildren.at(0)?.focus();
-		this.options.onStateChange((oldState) => ({
-			...oldState,
-			active: true,
-		}));
+		this.#moveCurrentFocus();
+		if (!this.options.state.active) {
+			this.options.onStateChange?.((oldState) => ({
+				...oldState,
+				active: true,
+			}));
+		}
 	}
 
 	deactivate() {
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
-		this.#returnFocus?.();
-		this.options.onStateChange((oldState) => ({
-			...oldState,
-			active: false,
-		}));
-		this.options.onDeactivate?.();
+		this.#returnPreviousFocus?.();
+		if (this.options.state.active) {
+			this.options.onStateChange?.((oldState) => ({
+				...oldState,
+				active: false,
+			}));
+			this.options.onDeactivate?.();
+		}
 	}
 }
