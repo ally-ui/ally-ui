@@ -108,7 +108,7 @@ export class FocusTrapModel extends StatefulModel<
 > {
 	constructor(initialOptions: FocusTrapOptions) {
 		super(initialOptions);
-		if (this.options.state.active) {
+		if (this.getState().active) {
 			this.activate();
 		}
 	}
@@ -297,7 +297,7 @@ export class FocusTrapModel extends StatefulModel<
 		this.#watchChildren();
 		this.#watchEvents();
 		this.#moveCurrentFocus();
-		if (!this.options.state.active) {
+		if (!this.getState().active) {
 			this.options.onStateChange?.((oldState) => ({
 				...oldState,
 				active: true,
@@ -309,7 +309,7 @@ export class FocusTrapModel extends StatefulModel<
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
 		this.#returnPreviousFocus?.();
-		if (this.options.state.active) {
+		if (this.getState().active) {
 			this.options.onStateChange?.((oldState) => ({
 				...oldState,
 				active: false,

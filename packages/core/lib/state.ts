@@ -49,10 +49,18 @@ export abstract class StatefulModel<TOptions, TState> {
 		} else {
 			this.options = updater;
 		}
-		if (!isEqual(this.options.state, this.#previousState)) {
-			this.watchStateChange?.(this.options.state, this.#previousState);
+		if (!isEqual(this.getState(), this.#previousState)) {
+			this.watchStateChange?.(this.getState(), this.#previousState);
 		}
-		this.#previousState = this.options.state;
+		this.#previousState = this.getState();
+	}
+
+	getState(): TState {
+		return this.options.state;
+	}
+
+	setState(updater: Updater<TState>) {
+		this.options.onStateChange?.(updater);
 	}
 
 	/**
