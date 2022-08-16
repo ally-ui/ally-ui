@@ -83,11 +83,19 @@ export class DialogModel extends StatefulModel<
 		switch (submodel.type) {
 			case 'content':
 				return {
-					id: this.#DOMId() + submodel.type,
+					id: this.#submodelDOMId(submodel.type),
 					role: 'dialog',
 					'aria-modal': true,
 					'aria-labelledby': this.#submodelDOMId('title'),
 					'aria-describedby': this.#submodelDOMId('description'),
+					'data-state': this.getState().open ? 'open' : 'closed',
+				};
+			case 'trigger':
+				return {
+					id: this.#submodelDOMId(submodel.type),
+					'aria-haspopup': 'dialog',
+					'aria-controls': this.#submodelDOMId('content'),
+					'data-state': this.getState().open ? 'open' : 'closed',
 				};
 			case 'title':
 			case 'description':
