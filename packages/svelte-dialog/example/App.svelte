@@ -9,9 +9,7 @@
 <main>
 	<h1>Ally UI Svelte Dialog</h1>
 	<div>
-		<button on:click={() => ($open = !$open)}>
-			{$open ? 'Close' : 'Open'} manually
-		</button>
+		<button on:click={() => ($open = !$open)}> Manual toggle </button>
 		<Dialog.Trigger model={dialog}>Edit profile</Dialog.Trigger>
 	</div>
 	<Dialog.Content model={dialog}>

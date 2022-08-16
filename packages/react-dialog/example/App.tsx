@@ -12,9 +12,7 @@ export default function App() {
 		<main>
 			<h1>Ally UI React Dialog</h1>
 			<div>
-				<button onClick={() => setOpen((o) => !o)}>
-					{open ? 'Close' : 'Open'} manually
-				</button>
+				<button onClick={() => setOpen((o) => !o)}>Manual toggle</button>
 				<Dialog.Trigger model={dialog}>Edit profile</Dialog.Trigger>
 			</div>
 			<Dialog.Content model={dialog}>
