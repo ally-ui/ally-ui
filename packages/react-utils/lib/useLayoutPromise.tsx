@@ -12,9 +12,17 @@ export default function useLayoutPromise(
 	useEffect(function resolveWaitForDOMOnStateUpdate() {
 		savedWaitForDOMResolves.current.forEach((resolve) => resolve());
 	}, deps);
+	const effectsReady = useRef(false);
+	useEffect(function onEffectsReady() {
+		effectsReady.current = true;
+	}, []);
 	return useCallback(() => {
-		return new Promise((resolve) => {
-			savedWaitForDOMResolves.current.push(resolve);
-		});
+		if (effectsReady.current) {
+			return new Promise((resolve) => {
+				savedWaitForDOMResolves.current.push(resolve);
+			});
+		} else {
+			return Promise.resolve();
+		}
 	}, []);
 }

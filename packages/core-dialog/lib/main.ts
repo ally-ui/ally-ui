@@ -1,4 +1,4 @@
-import {StatefulModel, findInMap} from '@ally-ui/core';
+import {StatefulModel, findLastInMap} from '@ally-ui/core';
 import {FocusTrapModel} from '@ally-ui/focus-trap';
 
 type DialogSubmodelType =
@@ -38,9 +38,9 @@ export class DialogModel extends StatefulModel<
 
 	#submodels = new Map<string, DialogSubmodel>();
 
-	init(id: string, type: DialogSubmodelType): string {
-		this.#submodels.set(id, {id, type});
-		return id;
+	init(type: DialogSubmodelType): string {
+		this.#submodels.set(type, {id: type, type});
+		return type;
 	}
 
 	deinit(submodelId: string, type: DialogSubmodelType) {
@@ -59,15 +59,20 @@ export class DialogModel extends StatefulModel<
 		submodel.node = node;
 	}
 
-	#rootDOMId() {
+	unbindNode(submodelId: string) {
+		const submodel = this.#submodels.get(submodelId);
+		if (submodel === undefined) {
+			throw new Error(`unbindNode(${submodelId}), not initialized`);
+		}
+		delete submodel.node;
+	}
+
+	#DOMId() {
 		return `dialog${this.id}`;
 	}
 
-	#submodelDOMId(submodel?: DialogSubmodel) {
-		if (submodel === undefined) {
-			return undefined;
-		}
-		return `${this.#rootDOMId()}-${submodel.type}${submodel.id}`;
+	#submodelDOMId(type: DialogSubmodelType) {
+		return `${this.#DOMId()}${type}`;
 	}
 
 	submodelDOMAttributes(submodelId: string) {
@@ -77,25 +82,20 @@ export class DialogModel extends StatefulModel<
 		}
 		switch (submodel.type) {
 			case 'content':
-				const titleSubmodel = findInMap(
-					this.#submodels,
-					(s) => s.type === 'title',
-				);
-				const descriptionSubmodel = findInMap(
-					this.#submodels,
-					(s) => s.type === 'description',
-				);
 				return {
-					id: this.#submodelDOMId(submodel),
+					id: this.#DOMId() + submodel.type,
 					role: 'dialog',
 					'aria-modal': true,
-					'aria-labelledby': this.#submodelDOMId(titleSubmodel),
-					'aria-describedby': this.#submodelDOMId(descriptionSubmodel),
+					'aria-labelledby': this.#submodelDOMId('title'),
+					'aria-describedby': this.#submodelDOMId('description'),
+				};
+			case 'title':
+			case 'description':
+				return {
+					id: this.#submodelDOMId(submodel.type),
 				};
 			default:
-				return {
-					id: this.#submodelDOMId(submodel),
-				};
+				return {};
 		}
 	}
 
@@ -117,15 +117,14 @@ export class DialogModel extends StatefulModel<
 	async #onOpenChangeEffect_true() {
 		// Flush changes to the DOM before looking for the content node in DOM.
 		await this.uiOptions?.waitForDOM?.();
-		const content = findInMap(
+		const content = findLastInMap(
 			this.#submodels,
 			(s) => s.type === 'content' && s.node !== undefined,
 		);
-		if (content === undefined) {
-			throw new Error(`#onOpenChangeEffect(true), no content submodel`);
-		}
-		if (content.node === undefined) {
-			throw new Error(`#onOpenChangeEffect(true), no content node`);
+		if (content?.node === undefined) {
+			throw new Error(
+				`#onOpenChangeEffect(true), no content submodel with node`,
+			);
 		}
 		this.#contentTrap = this.#createFocusTrap(content.node);
 	}

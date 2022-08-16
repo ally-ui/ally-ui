@@ -1,6 +1,6 @@
 import {type DialogModel} from '@ally-ui/core-dialog';
 import {useRunOnce} from '@ally-ui/react-utils';
-import {PropsWithChildren, useCallback, useId} from 'react';
+import {PropsWithChildren, useCallback} from 'react';
 
 export interface DialogDescriptionProps extends PropsWithChildren {
 	model: DialogModel;
@@ -10,15 +10,15 @@ export default function DialogDescription({
 	model,
 	children,
 }: DialogDescriptionProps) {
-	const id = useId();
-	useRunOnce(() => model.init(id, 'description'));
+	const id = useRunOnce(() => model.init('description'));
 
 	const ref = useCallback(
 		(node: HTMLElement | null) => {
 			if (node === null) {
-				return;
+				model.unbindNode(id);
+			} else {
+				model.bindNode(id, node);
 			}
-			model.bindNode(id, node);
 		},
 		[model],
 	);

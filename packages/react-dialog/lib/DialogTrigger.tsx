@@ -1,21 +1,21 @@
 import {type DialogModel} from '@ally-ui/core-dialog';
 import {useRunOnce} from '@ally-ui/react-utils';
-import {PropsWithChildren, useCallback, useId} from 'react';
+import {PropsWithChildren, useCallback} from 'react';
 
 export interface DialogTriggerProps extends PropsWithChildren {
 	model: DialogModel;
 }
 
 export default function DialogTrigger({model, children}: DialogTriggerProps) {
-	const id = useId();
-	useRunOnce(() => model.init(id, 'trigger'));
+	const id = useRunOnce(() => model.init('trigger'));
 
 	const ref = useCallback(
 		(node: HTMLButtonElement | null) => {
 			if (node === null) {
-				return;
+				model.unbindNode(id);
+			} else {
+				model.bindNode(id, node);
 			}
-			model.bindNode(id, node);
 		},
 		[model],
 	);

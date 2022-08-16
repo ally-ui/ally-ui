@@ -1,21 +1,21 @@
 import {type DialogModel} from '@ally-ui/core-dialog';
 import {useRunOnce} from '@ally-ui/react-utils';
-import {PropsWithChildren, useCallback, useId} from 'react';
+import {PropsWithChildren, useCallback} from 'react';
 
 export interface DialogCloseProps extends PropsWithChildren {
 	model: DialogModel;
 }
 
 export default function DialogClose({model, children}: DialogCloseProps) {
-	const id = useId();
-	useRunOnce(() => model.init(id, 'close'));
+	const id = useRunOnce(() => model.init('close'));
 
 	const ref = useCallback(
 		(node: HTMLButtonElement | null) => {
 			if (node === null) {
-				return;
+				model.unbindNode(id);
+			} else {
+				model.bindNode(id, node);
 			}
-			model.bindNode(id, node);
 		},
 		[model],
 	);

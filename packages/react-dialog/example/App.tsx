@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {useDialog, Dialog} from '../lib/main';
 
 export default function App() {
-	const [open, setOpen] = useState(false);
+	const [open, setOpen] = useState(true);
 	const [dialog] = useDialog({
 		open,
 		onOpenChange: setOpen,
@@ -11,8 +11,8 @@ export default function App() {
 	return (
 		<div className="App">
 			<h1>Ally UI React Dialog</h1>
-			<button onClick={() => setOpen((o) => !o)}>Manual trigger</button>
 			<div className="card">
+				<button onClick={() => setOpen((o) => !o)}>Manual trigger</button>
 				<Dialog.Trigger model={dialog}>Edit profile</Dialog.Trigger>
 			</div>
 			<Dialog.Content model={dialog}>
