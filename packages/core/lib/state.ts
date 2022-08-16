@@ -28,11 +28,13 @@ export type ResolvedOptions<TOptions, TState> = TOptions & {
  * State will always be updated when options are updated via `deriveState`.
  */
 export abstract class StatefulModel<TOptions, TState> {
+	id: string;
 	initialState: TState;
 	#previousState: TState;
 	options: ResolvedOptions<TOptions, TState>;
 
-	constructor(initialOptions: TOptions) {
+	constructor(id: string, initialOptions: TOptions) {
+		this.id = id;
 		this.initialState = this.deriveInitialState(initialOptions);
 		this.#previousState = this.initialState;
 		this.options = {

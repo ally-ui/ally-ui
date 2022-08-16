@@ -106,8 +106,8 @@ export class FocusTrapModel extends StatefulModel<
 	FocusTrapOptions,
 	FocusTrapState
 > {
-	constructor(initialOptions: FocusTrapOptions) {
-		super(initialOptions);
+	constructor(id: string, initialOptions: FocusTrapOptions) {
+		super(id, initialOptions);
 		if (this.getState().active) {
 			this.activate();
 		}

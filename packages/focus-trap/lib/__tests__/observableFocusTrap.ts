@@ -1,4 +1,3 @@
-import {ResolvedOptions} from '@ally-ui/core';
 import {derived, get, writable, type Writable} from 'svelte/store';
 import {FocusTrapModel, FocusTrapOptions, FocusTrapState} from '../main';
 
@@ -12,7 +11,7 @@ export function observableFocusTrap(
 	manualState?: Writable<FocusTrapState>,
 ): FocusTrapModel {
 	const optionsStore = 'subscribe' in options ? options : writable(options);
-	const trap = new FocusTrapModel(get(optionsStore));
+	const trap = new FocusTrapModel('0', get(optionsStore));
 
 	const stateStore = manualState ?? writable(trap.initialState);
 	const stateOptionsStore = derived([stateStore, optionsStore], (s) => s);

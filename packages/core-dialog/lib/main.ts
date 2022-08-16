@@ -27,49 +27,87 @@ export class DialogModel extends StatefulModel<
 	DialogModelOptions,
 	DialogModelState
 > {
+	constructor(id: string, initialOptions: DialogModelOptions) {
+		super(id, initialOptions);
+	}
+
 	deriveInitialState(options: DialogModelOptions): DialogModelState {
 		return {
 			open: options.initialOpen ?? false,
 		};
 	}
 
-	#submodelId = 0;
-	#getSubmodelId() {
-		return String(this.#submodelId++);
-	}
-
 	#submodels = new Map<string, DialogSubmodel>();
 
-	init(type: DialogSubmodelType): string {
-		const id = this.#getSubmodelId();
+	init(id: string, type: DialogSubmodelType): string {
 		this.#submodels.set(id, {id, type, mounted: false});
 		return id;
 	}
 
-	deinit(type: DialogSubmodelType, id: string) {
-		const submodel = this.#submodels.get(id);
+	deinit(submodelId: string, type: DialogSubmodelType) {
+		const submodel = this.#submodels.get(submodelId);
 		if (submodel === undefined || submodel.type !== type) {
-			throw new Error(`deinit(${type}, ${id}), not found`);
+			throw new Error(`deinit(${submodelId}, ${type}), not found`);
 		}
-		this.#submodels.delete(id);
+		this.#submodels.delete(submodelId);
 	}
 
-	mount(id: string, ref?: HTMLElement) {
-		const submodel = this.#submodels.get(id);
+	mount(submodelId: string, ref?: HTMLElement) {
+		const submodel = this.#submodels.get(submodelId);
 		if (submodel === undefined) {
-			throw new Error(`mount(${id}, ${ref}), not initialized`);
+			throw new Error(`mount(${submodelId}, ${ref}), not initialized`);
 		}
 		submodel.mounted = true;
 		submodel.ref = ref;
 	}
 
-	unmount(id: string) {
-		const submodel = this.#submodels.get(id);
+	unmount(submodelId: string) {
+		const submodel = this.#submodels.get(submodelId);
 		if (submodel === undefined) {
-			throw new Error(`unmount(${id}), not initialized`);
+			throw new Error(`unmount(${submodelId}), not initialized`);
 		}
 		submodel.mounted = false;
 		delete submodel.ref;
+	}
+
+	#rootDOMId() {
+		return `DialogModel${this.id}`;
+	}
+
+	#submodelDOMId(submodel?: DialogSubmodel) {
+		if (submodel === undefined) {
+			return undefined;
+		}
+		return `${this.#rootDOMId()}-${submodel.type}${submodel.id}`;
+	}
+
+	submodelDOMAttributes(submodelId: string) {
+		const submodel = this.#submodels.get(submodelId);
+		if (submodel === undefined) {
+			throw new Error(`getAttributes(${submodelId}), not initialized`);
+		}
+		switch (submodel.type) {
+			case 'content':
+				const titleSubmodel = findInMap(
+					this.#submodels,
+					(s) => s.type === 'title',
+				);
+				const descriptionSubmodel = findInMap(
+					this.#submodels,
+					(s) => s.type === 'description',
+				);
+				return {
+					id: this.#submodelDOMId(submodel),
+					role: 'dialog',
+					'aria-modal': true,
+					'aria-labelledby': this.#submodelDOMId(titleSubmodel),
+					'aria-describedby': this.#submodelDOMId(descriptionSubmodel),
+				};
+			default:
+				return {
+					id: this.#submodelDOMId(submodel),
+				};
+		}
 	}
 
 	watchStateChange(newState: DialogModelState, oldState: DialogModelState) {
@@ -104,7 +142,7 @@ export class DialogModel extends StatefulModel<
 	}
 
 	#createFocusTrap(contentElement: HTMLElement) {
-		const contentTrap = new FocusTrapModel({
+		const contentTrap = new FocusTrapModel(this.id, {
 			container: contentElement,
 			active: true,
 		});
