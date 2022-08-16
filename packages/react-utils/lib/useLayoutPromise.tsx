@@ -1,4 +1,4 @@
-import {DependencyList, useCallback, useLayoutEffect, useRef} from 'react';
+import {DependencyList, useCallback, useEffect, useRef} from 'react';
 
 /**
  * Get a Promise that resolves when the layout effects of some state is committed.
@@ -9,7 +9,7 @@ export default function useLayoutPromise(
 	deps: DependencyList,
 ): () => Promise<void> {
 	const savedWaitForDOMResolves = useRef<Function[]>([]);
-	useLayoutEffect(function resolveWaitForDOMOnStateUpdate() {
+	useEffect(function resolveWaitForDOMOnStateUpdate() {
 		savedWaitForDOMResolves.current.forEach((resolve) => resolve());
 	}, deps);
 	return useCallback(() => {
