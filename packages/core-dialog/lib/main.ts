@@ -89,19 +89,19 @@ export class DialogModel extends StatefulModel<
 					'aria-labelledby': this.#submodelDOMId('title'),
 					'aria-describedby': this.#submodelDOMId('description'),
 					'data-state': this.getState().open ? 'open' : 'closed',
-				};
+				} as const;
 			case 'trigger':
 				return {
 					id: this.#submodelDOMId(submodel.type),
 					'aria-haspopup': 'dialog',
 					'aria-controls': this.#submodelDOMId('content'),
 					'data-state': this.getState().open ? 'open' : 'closed',
-				};
+				} as const;
 			case 'title':
 			case 'description':
 				return {
 					id: this.#submodelDOMId(submodel.type),
-				};
+				} as const;
 			default:
 				return {};
 		}
