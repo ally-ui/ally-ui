@@ -71,7 +71,7 @@ export abstract class StatefulModel<TOptions, TState> {
 	watchStateChange?(newState: TState, oldState: TState): void;
 
 	uiOptions?: UIOptions;
-	setUIOptions(uiOptions: UIOptions) {
+	setUIOptions(uiOptions?: UIOptions) {
 		this.uiOptions = uiOptions;
 	}
 }

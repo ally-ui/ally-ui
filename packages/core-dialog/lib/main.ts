@@ -100,11 +100,16 @@ export class DialogModel extends StatefulModel<
 		if (content.ref === undefined) {
 			throw new Error('#openEffect(${open}), no content ref');
 		}
-		this.#contentTrap = new FocusTrapModel({
-			container: content.ref,
+		this.#contentTrap = this.#createFocusTrap(content.ref);
+	}
+
+	#createFocusTrap(contentElement: HTMLElement) {
+		const contentTrap = new FocusTrapModel({
+			container: contentElement,
 			active: true,
 		});
-		this.#contentTrap.setOptions((prevOptions) => ({
+		contentTrap.setUIOptions(this.uiOptions);
+		contentTrap.setOptions((prevOptions) => ({
 			...prevOptions,
 			onStateChange: (updater) => {
 				this.options.onStateChange?.((oldState) => {
@@ -119,6 +124,7 @@ export class DialogModel extends StatefulModel<
 				});
 			},
 		}));
+		return contentTrap;
 	}
 
 	#onOpenChangeEffect_false() {
