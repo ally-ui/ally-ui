@@ -1,5 +1,5 @@
 import {type DialogModel} from '@ally-ui/core-dialog';
-import {useRunOnce} from '@ally-ui/react-utils';
+import {useRunOnce} from '@ally-ui/react';
 import {PropsWithChildren, useCallback} from 'react';
 
 export interface DialogCloseProps extends PropsWithChildren {

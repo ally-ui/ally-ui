@@ -1,5 +1,5 @@
 {
-	"name": "@ally-ui/react-dialog",
+	"name": "@ally-ui/svelte",
 	"version": "0.0.2-alpha.0",
 	"scripts": {
 		"example": "vite",
@@ -8,7 +8,7 @@
 		"preview": "vite preview"
 	},
 	"author": "Bryan Lee",
-	"description": "A WAI-ARIA compliant Dialog for React",
+	"description": "Svelte utilities for Ally UI",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -31,12 +31,7 @@
 			"require": "./dist/main.umd.cjs"
 		}
 	},
-	"dependencies": {
-		"@ally-ui/core-dialog": "*",
-		"@ally-ui/react-utils": "*"
-	},
 	"peerDependencies": {
-		"react": ">=16",
-		"react-dom": ">=16"
+		"svelte": ">=3.49"
 	}
 }

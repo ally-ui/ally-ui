@@ -1,5 +1,5 @@
 {
-	"name": "@ally-ui/react-utils",
+	"name": "@ally-ui/react",
 	"version": "0.0.2-alpha.0",
 	"scripts": {
 		"example": "vite",

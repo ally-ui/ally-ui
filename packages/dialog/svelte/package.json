@@ -33,7 +33,7 @@
 	},
 	"dependencies": {
 		"@ally-ui/core-dialog": "*",
-		"@ally-ui/svelte-utils": "*"
+		"@ally-ui/svelte": "*"
 	},
 	"peerDependencies": {
 		"svelte": ">=3.49"

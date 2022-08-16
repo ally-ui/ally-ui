@@ -1,17 +1,7 @@
 import {DialogModel, type DialogModelOptions} from '@ally-ui/core-dialog';
-import {
-	isWritable,
-	syncOption,
-	type ReadOrWritable,
-} from '@ally-ui/svelte-utils';
+import {syncOption, type ReadOrWritable} from '@ally-ui/svelte';
 import {tick} from 'svelte';
-import {
-	get,
-	readable,
-	writable,
-	type Readable,
-	type Unsubscriber,
-} from 'svelte/store';
+import {readable, writable, type Readable} from 'svelte/store';
 
 export interface CreateDialogOptions extends DialogModelOptions {
 	open?: ReadOrWritable<boolean>;

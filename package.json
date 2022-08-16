@@ -18,7 +18,7 @@
 	},
 	"namespace": "@ally-ui",
 	"workspaces": [
-		"./packages/*"
+		"./packages/**/*"
 	],
 	"devDependencies": {
 		"@rollup/plugin-typescript": "^8.3.4",

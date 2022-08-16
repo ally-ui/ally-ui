@@ -1,9 +1,5 @@
 import {DialogModel, DialogModelOptions} from '@ally-ui/core-dialog';
-import {
-	useLayoutPromise,
-	useRunOnce,
-	useSyncOption,
-} from '@ally-ui/react-utils';
+import {useLayoutPromise, useRunOnce, useSyncOption} from '@ally-ui/react';
 import {useId, useState} from 'react';
 
 export interface UseDialogOptions extends DialogModelOptions {

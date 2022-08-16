@@ -1,13 +1,16 @@
 import {type DialogModel} from '@ally-ui/core-dialog';
-import {useRunOnce} from '@ally-ui/react-utils';
+import {useRunOnce} from '@ally-ui/react';
 import {PropsWithChildren, useCallback} from 'react';
 
-export interface DialogTitleProps extends PropsWithChildren {
+export interface DialogDescriptionProps extends PropsWithChildren {
 	model: DialogModel;
 }
 
-export default function DialogTitle({model, children}: DialogTitleProps) {
-	const id = useRunOnce(() => model.init('title'));
+export default function DialogDescription({
+	model,
+	children,
+}: DialogDescriptionProps) {
+	const id = useRunOnce(() => model.init('description'));
 
 	const ref = useCallback(
 		(node: HTMLElement | null) => {
@@ -21,8 +24,8 @@ export default function DialogTitle({model, children}: DialogTitleProps) {
 	);
 
 	return (
-		<h1 ref={ref} {...model.submodelDOMAttributes(id)}>
+		<p ref={ref} {...model.submodelDOMAttributes(id)}>
 			{children}
-		</h1>
+		</p>
 	);
 }
