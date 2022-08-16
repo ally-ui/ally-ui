@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import ReactDOMServer from 'react-dom/server';
 import App from './App';
-import './index.css';
+import './app.css';
 
 const markup = ReactDOMServer.renderToString(
 	<React.StrictMode>
@@ -11,7 +11,7 @@ const markup = ReactDOMServer.renderToString(
 );
 console.log(markup);
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById('app')!).render(
 	<React.StrictMode>
 		<App />
 	</React.StrictMode>,

@@ -10,7 +10,7 @@ export default function DialogClose({model, children}: DialogCloseProps) {
 	const id = useRunOnce(() => model.init('close'));
 
 	const ref = useCallback(
-		(node: HTMLButtonElement | null) => {
+		(node: HTMLElement | null) => {
 			if (node === null) {
 				model.unbindNode(id);
 			} else {

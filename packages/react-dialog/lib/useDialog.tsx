@@ -15,7 +15,7 @@ export default function useDialog({
 	initialOpen,
 	onOpenChange,
 	open,
-}: UseDialogOptions = {}) {
+}: UseDialogOptions = {}): DialogModel {
 	const id = useId();
 	const model = useRunOnce(() => new DialogModel(id, {initialOpen}));
 
@@ -39,5 +39,5 @@ export default function useDialog({
 	const waitForDOM = useLayoutPromise([state]);
 	model.setUIOptions({waitForDOM});
 
-	return [model, state] as const;
+	return model;
 }

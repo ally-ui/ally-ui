@@ -21,9 +21,10 @@ export default function useSyncOption<TOption>({
 		if (option === undefined) {
 			return;
 		}
-		if (option !== internal) {
-			onOptionChange(option);
+		if (option === internal) {
+			return;
 		}
+		onOptionChange(option);
 	});
 	const previousOption = useRef(option);
 	useEffect(

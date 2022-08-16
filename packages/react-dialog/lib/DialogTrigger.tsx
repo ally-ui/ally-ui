@@ -10,7 +10,7 @@ export default function DialogTrigger({model, children}: DialogTriggerProps) {
 	const id = useRunOnce(() => model.init('trigger'));
 
 	const ref = useCallback(
-		(node: HTMLButtonElement | null) => {
+		(node: HTMLElement | null) => {
 			if (node === null) {
 				model.unbindNode(id);
 			} else {

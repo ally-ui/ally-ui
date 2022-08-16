@@ -3,16 +3,18 @@ import {useDialog, Dialog} from '../lib/main';
 
 export default function App() {
 	const [open, setOpen] = useState(true);
-	const [dialog] = useDialog({
+	const dialog = useDialog({
 		open,
 		onOpenChange: setOpen,
 	});
 
 	return (
-		<div className="App">
+		<main>
 			<h1>Ally UI React Dialog</h1>
-			<div className="card">
-				<button onClick={() => setOpen((o) => !o)}>Manual trigger</button>
+			<div>
+				<button onClick={() => setOpen((o) => !o)}>
+					{open ? 'Close' : 'Open'} manually
+				</button>
 				<Dialog.Trigger model={dialog}>Edit profile</Dialog.Trigger>
 			</div>
 			<Dialog.Content model={dialog}>
@@ -22,15 +24,15 @@ export default function App() {
 				</Dialog.Description>
 				<fieldset>
 					<label htmlFor="name">Name</label>
-					<input id="name" defaultValue="Bryan Lee" />
+					<input id="name" placeholder="Bryan Lee" />
 				</fieldset>
 				<fieldset>
 					<label htmlFor="username">Username</label>
-					<input id="username" defaultValue="@bryanmylee" />
+					<input id="username" placeholder="@bryanmylee" />
 				</fieldset>
 				<Dialog.Close model={dialog}>Save changes</Dialog.Close>
 				<Dialog.Close model={dialog}>x</Dialog.Close>
 			</Dialog.Content>
-		</div>
+		</main>
 	);
 }
