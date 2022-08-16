@@ -19,5 +19,5 @@
 		"outDir": "dist"
 	},
 	"include": ["lib", "vite-env.d.ts"],
-	"exclude": ["**/__test__/*"]
+	"exclude": ["**/__tests__/*"]
 }
