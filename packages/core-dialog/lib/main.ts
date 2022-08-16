@@ -1,4 +1,4 @@
-import {StatefulModel} from '@ally-ui/core';
+import {StatefulModel, findInMap} from '@ally-ui/core';
 import {FocusTrapModel} from '@ally-ui/focus-trap';
 
 type DialogSubmodelType =
@@ -128,16 +128,4 @@ export class DialogModel extends StatefulModel<
 		this.#contentTrap.deactivate();
 		this.#contentTrap = undefined;
 	}
-}
-
-function findInMap<TKey, TValue>(
-	map: Map<TKey, TValue>,
-	predicate: (value: TValue) => boolean,
-): TValue | undefined {
-	for (const value of map.values()) {
-		if (predicate(value)) {
-			return value;
-		}
-	}
-	return undefined;
 }
