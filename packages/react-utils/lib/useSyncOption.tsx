@@ -1,4 +1,5 @@
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
+import useRunOnce from './useRunOnce';
 
 export interface UseSyncOptionParams<TOption> {
 	option?: TOption;
@@ -16,6 +17,14 @@ export default function useSyncOption<TOption>({
 	onOptionChange,
 	onInternalChange,
 }: UseSyncOptionParams<TOption>) {
+	useRunOnce(() => {
+		if (option === undefined) {
+			return;
+		}
+		if (option !== internal) {
+			onOptionChange(option);
+		}
+	});
 	const previousOption = useRef(option);
 	useEffect(
 		function updateInternal() {
