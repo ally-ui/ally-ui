@@ -11,8 +11,7 @@ type DialogSubmodelType =
 interface DialogSubmodel {
 	id: string;
 	type: DialogSubmodelType;
-	mounted: boolean;
-	ref?: HTMLElement;
+	node?: HTMLElement;
 }
 
 export interface DialogModelOptions {
@@ -40,7 +39,7 @@ export class DialogModel extends StatefulModel<
 	#submodels = new Map<string, DialogSubmodel>();
 
 	init(id: string, type: DialogSubmodelType): string {
-		this.#submodels.set(id, {id, type, mounted: false});
+		this.#submodels.set(id, {id, type});
 		return id;
 	}
 
@@ -52,26 +51,16 @@ export class DialogModel extends StatefulModel<
 		this.#submodels.delete(submodelId);
 	}
 
-	mount(submodelId: string, ref?: HTMLElement) {
+	bindNode(submodelId: string, node: HTMLElement) {
 		const submodel = this.#submodels.get(submodelId);
 		if (submodel === undefined) {
-			throw new Error(`mount(${submodelId}, ${ref}), not initialized`);
+			throw new Error(`bindNode(${submodelId}, ${node}), not initialized`);
 		}
-		submodel.mounted = true;
-		submodel.ref = ref;
-	}
-
-	unmount(submodelId: string) {
-		const submodel = this.#submodels.get(submodelId);
-		if (submodel === undefined) {
-			throw new Error(`unmount(${submodelId}), not initialized`);
-		}
-		submodel.mounted = false;
-		delete submodel.ref;
+		submodel.node = node;
 	}
 
 	#rootDOMId() {
-		return `DialogModel${this.id}`;
+		return `dialog${this.id}`;
 	}
 
 	#submodelDOMId(submodel?: DialogSubmodel) {
@@ -126,19 +115,19 @@ export class DialogModel extends StatefulModel<
 	}
 
 	async #onOpenChangeEffect_true() {
+		// Flush changes to the DOM before looking for the content node in DOM.
+		await this.uiOptions?.waitForDOM?.();
 		const content = findInMap(
 			this.#submodels,
-			(s) => s.type === 'content' && s.mounted,
+			(s) => s.type === 'content' && s.node !== undefined,
 		);
 		if (content === undefined) {
-			throw new Error(`#openEffect(${open}), no mounted content subcomponent`);
+			throw new Error(`#onOpenChangeEffect(true), no content submodel`);
 		}
-		// Flush changes to the DOM before looking for the content ref in DOM.
-		await this.uiOptions?.waitForDOM?.();
-		if (content.ref === undefined) {
-			throw new Error('#openEffect(${open}), no content ref');
+		if (content.node === undefined) {
+			throw new Error(`#onOpenChangeEffect(true), no content node`);
 		}
-		this.#contentTrap = this.#createFocusTrap(content.ref);
+		this.#contentTrap = this.#createFocusTrap(content.node);
 	}
 
 	#createFocusTrap(contentElement: HTMLElement) {
