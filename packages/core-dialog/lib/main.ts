@@ -1,16 +1,16 @@
 import {StatefulModel} from '@ally-ui/core';
 import {FocusTrapModel} from '@ally-ui/focus-trap';
 
-type DialogSubModelType =
+type DialogSubmodelType =
 	| 'trigger'
 	| 'content'
 	| 'title'
 	| 'description'
 	| 'close';
 
-interface DialogSubModel {
+interface DialogSubmodel {
 	id: string;
-	type: DialogSubModelType;
+	type: DialogSubmodelType;
 	mounted: boolean;
 	ref?: HTMLElement;
 }
@@ -33,45 +33,43 @@ export class DialogModel extends StatefulModel<
 		};
 	}
 
-	#subModelId = 0;
-	#getSubModelId() {
-		return String(this.#subModelId++);
+	#submodelId = 0;
+	#getSubmodelId() {
+		return String(this.#submodelId++);
 	}
 
-	#subModels: DialogSubModel[] = [];
+	#submodels = new Map<string, DialogSubmodel>();
 
-	init(type: DialogSubModelType): string {
-		const id = this.#getSubModelId();
-		this.#subModels.push({id, type, mounted: false});
+	init(type: DialogSubmodelType): string {
+		const id = this.#getSubmodelId();
+		this.#submodels.set(id, {id, type, mounted: false});
 		return id;
 	}
 
-	deinit(type: DialogSubModelType, id: string) {
-		const idx = this.#subModels.findIndex(
-			(s) => s.type === type && s.id === id,
-		);
-		if (idx === -1) {
+	deinit(type: DialogSubmodelType, id: string) {
+		const submodel = this.#submodels.get(id);
+		if (submodel === undefined || submodel.type !== type) {
 			throw new Error(`deinit(${type}, ${id}), not found`);
 		}
-		this.#subModels.splice(idx, 1);
+		this.#submodels.delete(id);
 	}
 
 	mount(id: string, ref?: HTMLElement) {
-		const subModel = this.#subModels.find((s) => s.id === id);
-		if (subModel === undefined) {
+		const submodel = this.#submodels.get(id);
+		if (submodel === undefined) {
 			throw new Error(`mount(${id}, ${ref}), not initialized`);
 		}
-		subModel.mounted = true;
-		subModel.ref = ref;
+		submodel.mounted = true;
+		submodel.ref = ref;
 	}
 
 	unmount(id: string) {
-		const subModel = this.#subModels.find((s) => s.id === id);
-		if (subModel === undefined) {
+		const submodel = this.#submodels.get(id);
+		if (submodel === undefined) {
 			throw new Error(`unmount(${id}), not initialized`);
 		}
-		subModel.mounted = false;
-		delete subModel.ref;
+		submodel.mounted = false;
+		delete submodel.ref;
 	}
 
 	watchStateChange(newState: DialogModelState, oldState: DialogModelState) {
@@ -90,7 +88,8 @@ export class DialogModel extends StatefulModel<
 	}
 
 	async #onOpenChangeEffect_true() {
-		const content = this.#subModels.find(
+		const content = findInMap(
+			this.#submodels,
 			(s) => s.type === 'content' && s.mounted,
 		);
 		if (content === undefined) {
@@ -129,4 +128,16 @@ export class DialogModel extends StatefulModel<
 		this.#contentTrap.deactivate();
 		this.#contentTrap = undefined;
 	}
+}
+
+function findInMap<TKey, TValue>(
+	map: Map<TKey, TValue>,
+	predicate: (value: TValue) => boolean,
+): TValue | undefined {
+	for (const value of map.values()) {
+		if (predicate(value)) {
+			return value;
+		}
+	}
+	return undefined;
 }
