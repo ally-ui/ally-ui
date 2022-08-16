@@ -1,23 +1,28 @@
 import {type DialogModel} from '@ally-ui/core-dialog';
-import {PropsWithChildren, useEffect, useRef, useState} from 'react';
+import {useRunOnce} from '@ally-ui/react-utils';
+import {PropsWithChildren, useCallback, useId} from 'react';
 
 export interface DialogTitleProps extends PropsWithChildren {
 	model: DialogModel;
 }
 
 export default function DialogTitle({model, children}: DialogTitleProps) {
-	const [id] = useState(() => model.init('title'));
-	const ref = useRef<HTMLHeadingElement | null>(null);
+	const id = useId();
+	useRunOnce(() => model.init(id, 'title'));
 
-	useEffect(
-		function mountModel() {
-			model.mount(id, ref.current ?? undefined);
-			return () => {
-				model.unmount(id);
-			};
+	const ref = useCallback(
+		(node: HTMLElement | null) => {
+			if (node === null) {
+				return;
+			}
+			model.bindNode(id, node);
 		},
 		[model],
 	);
 
-	return <h1 ref={ref}>{children}</h1>;
+	return (
+		<h1 ref={ref} {...model.submodelDOMAttributes(id)}>
+			{children}
+		</h1>
+	);
 }
