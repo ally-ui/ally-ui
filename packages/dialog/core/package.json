@@ -4,8 +4,7 @@
 	"scripts": {
 		"example": "vite",
 		"dev": "concurrently \"tsc --watch\" \"vite build --watch\"",
-		"build": "tsc && vite build",
-		"preview": "vite preview"
+		"build": "tsc && vite build"
 	},
 	"author": "Bryan Lee",
 	"description": "A WAI-ARIA compliant Dialog for JavaScript",
