@@ -4,8 +4,8 @@
 	"scripts": {
 		"dev": "lerna run dev",
 		"build": "lerna run build",
-		"test": "vitest",
-		"coverage": "vitest run --coverage",
+		"test": "lerna run test",
+		"coverage": "lerna run coverage",
 		"format": "prettier --write .",
 		"link": "lerna bootstrap",
 		"publish": "lerna publish"

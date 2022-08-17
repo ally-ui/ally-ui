@@ -4,7 +4,10 @@
 	"scripts": {
 		"example": "vite",
 		"dev": "concurrently \"tsc --watch\" \"vite build --watch\"",
-		"build": "tsc && vite build"
+		"build": "tsc && vite build",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"coverage": "vitest run --coverage"
 	},
 	"author": "Bryan Lee",
 	"description": "A tiny focus trap implementation for JavaScript",
