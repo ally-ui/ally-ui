@@ -50,7 +50,7 @@ describe('tab behavior', () => {
 	it('does not move focus with only one focusable child element', async () => {
 		const user = userEvent.setup();
 
-		// Custom setup
+		// Custom setup.
 		trap?.deactivate();
 		document.body.innerHTML = `
 			<button data-testid="outside-1">outside first</button>
