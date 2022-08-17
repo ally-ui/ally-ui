@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
+import typescript from '@rollup/plugin-typescript';
 import {resolve} from 'path';
 import {defineConfig} from 'vite';
-import typescript from '@rollup/plugin-typescript';
 
 export default defineConfig({
 	build: {

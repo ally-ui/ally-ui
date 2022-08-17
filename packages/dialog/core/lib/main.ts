@@ -1,4 +1,4 @@
-import {StatefulModel, findLastInMap} from '@ally-ui/core';
+import {findLastInMap, StatefulModel} from '@ally-ui/core';
 import {FocusTrapModel} from '@ally-ui/focus-trap';
 
 type DialogSubmodelType =

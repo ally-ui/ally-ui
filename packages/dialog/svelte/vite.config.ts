@@ -1,7 +1,7 @@
-import {resolve} from 'path';
-import {defineConfig} from 'vite';
 import typescript from '@rollup/plugin-typescript';
 import {svelte} from '@sveltejs/vite-plugin-svelte';
+import {resolve} from 'path';
+import {defineConfig} from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
