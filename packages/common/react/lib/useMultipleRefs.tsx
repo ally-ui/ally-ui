@@ -18,12 +18,7 @@ function combinedRef<TInstance>(refs: Ref<TInstance>[]) {
 		refs.forEach((ref) => setRef(ref, instance));
 }
 
-/**
- * Get a Promise that resolves when the layout effects of some state is committed.
- * @param deps The state to wait on update for
- * @returns A getter of a Promise that resolves when the layout effects of `deps` is committed
- */
-
+// CREDIT https://github.com/radix-ui/primitives
 /**
  * Create a ref that passes its instance to multiple refs.
  * @param refs The refs that should receive the instance

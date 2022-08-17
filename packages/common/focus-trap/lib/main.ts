@@ -55,9 +55,8 @@ const FOCUSABLE_SELECTORS = [
 	'[tabindex]:not([tabindex="-1"])',
 ];
 
+// CREDIT https://github.com/focus-trap/focus-trap
 /**
- * Adapted from https://github.com/focus-trap/focus-trap
-
  * If the trap is inside a shadow DOM, `event.target` will always be the shadow
  * host. However, `event.target.composedPath()` will be an array of nodes
  * "clicked" from inner-most (the actual element inside the shadow) to
