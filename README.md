@@ -29,19 +29,19 @@ The core of Ally UI is built with plain-old JavaScript and simple bindings are u
 
 ```tsx
 export default function App() {
-	const dialog = useDialog();
-	return (
-		<main>
-			<Dialog.Trigger model={dialog}>Edit profile</Dialog.Trigger>
-			<Dialog.Content model={dialog}>
-				<Dialog.Title model={dialog}>Edit profile</Dialog.Title>
-				<Dialog.Description model={dialog}>
-					Make changes to your profile here. Click save when you're done
-				</Dialog.Description>
-				<Dialog.Close model={dialog}>Save changes</Dialog.Close>
-			</Dialog.Content>
-		</main>
-	);
+  const dialog = useDialog();
+  return (
+    <main>
+      <Dialog.Trigger model={dialog}>Edit profile</Dialog.Trigger>
+      <Dialog.Content model={dialog}>
+        <Dialog.Title model={dialog}>Edit profile</Dialog.Title>
+        <Dialog.Description model={dialog}>
+          Make changes to your profile here. Click save when you're done
+        </Dialog.Description>
+        <Dialog.Close model={dialog}>Save changes</Dialog.Close>
+      </Dialog.Content>
+    </main>
+  );
 }
 ```
 

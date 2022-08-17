@@ -4,5 +4,13 @@
 	"tabWidth": 2,
 	"trailingComma": "all",
 	"useTabs": true,
-	"organizeImportsSkipDestructiveCodeActions": true
+	"organizeImportsSkipDestructiveCodeActions": true,
+	"overrides": [
+		{
+			"files": "*.md",
+			"options": {
+				"useTabs": false
+			}
+		}
+	]
 }
