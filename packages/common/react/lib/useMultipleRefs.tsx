@@ -18,7 +18,7 @@ function combinedRef<TInstance>(refs: Ref<TInstance>[]) {
 		refs.forEach((ref) => setRef(ref, instance));
 }
 
-// CREDIT https://github.com/radix-ui/primitives
+// CREDIT https://github.com/radix-ui/primitives/blob/main/packages/react/compose-refs/src/composeRefs.tsx
 /**
  * Create a ref that passes its instance to multiple refs.
  * @param refs The refs that should receive the instance
