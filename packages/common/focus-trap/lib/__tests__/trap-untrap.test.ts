@@ -45,13 +45,31 @@ it('does not return focus if no previously focused element when untrapped', () =
 	expect(screen.getByTestId('inside-1')).toHaveFocus();
 });
 
-it('untraps on Esc', async () => {
-	const user = userEvent.setup();
-	screen.getByTestId('outside-1').focus();
+it('returns focus to a returnFocus element', () => {
 	const trapElement = screen.getByTestId('trap');
-	trap = observableFocusTrap({container: trapElement});
+	const returnElement = screen.getByTestId('outside-2');
+	trap = observableFocusTrap({
+		container: trapElement,
+		returnFocusTo: returnElement,
+	});
 	trap.activate();
 	trap.deactivate();
-	await user.keyboard('{Esc}');
-	expect(screen.getByTestId('outside-1')).toHaveFocus();
+	expect(returnElement).toHaveFocus();
+});
+
+it('returns focus to a returnFocus element that updates after activation', () => {
+	const trapElement = screen.getByTestId('trap');
+	const returnElement = screen.getByTestId('outside-1');
+	const nextReturnElement = screen.getByTestId('outside-2');
+	trap = observableFocusTrap({
+		container: trapElement,
+		returnFocusTo: returnElement,
+	});
+	trap.activate();
+	trap.setOptions((prevOptions) => ({
+		...prevOptions,
+		returnFocusTo: nextReturnElement,
+	}));
+	trap.deactivate();
+	expect(nextReturnElement).toHaveFocus();
 });

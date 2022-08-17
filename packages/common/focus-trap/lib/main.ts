@@ -56,20 +56,6 @@ const FOCUSABLE_SELECTORS = [
 ];
 
 /**
- * Save the currently focused element and provide a function to return focus to that element.
- * @returns A function to return focus to the previously saved focused element.
- */
-function saveCurrentFocus() {
-	const savedFocus = document.activeElement;
-	return () => {
-		if (!(savedFocus instanceof HTMLElement)) {
-			return;
-		}
-		savedFocus.focus();
-	};
-}
-
-/**
  * Adapted from https://github.com/focus-trap/focus-trap
 
  * If the trap is inside a shadow DOM, `event.target` will always be the shadow
@@ -96,6 +82,7 @@ export interface FocusTrapOptions {
 	active?: boolean;
 	clickOutsideDeactivates?: boolean | ((ev: MouseEvent) => boolean);
 	escapeDeactivates?: boolean | ((ev: KeyboardEvent) => boolean);
+	returnFocusTo?: HTMLElement;
 }
 
 export interface FocusTrapState {
@@ -203,13 +190,21 @@ export class FocusTrapModel extends StatefulModel<
 		};
 	}
 
-	#returnPreviousFocus?: () => void;
-	#moveCurrentFocus() {
-		if (this.#returnPreviousFocus !== undefined) {
+	#returnFocus?: () => void;
+	#previouslyFocused?: Element;
+	#trapFocus() {
+		if (this.#returnFocus !== undefined) {
 			return;
 		}
-		this.#returnPreviousFocus = saveCurrentFocus();
+		this.#previouslyFocused = document.activeElement ?? undefined;
 		this.#focusableChildren.at(0)?.focus();
+		this.#returnFocus = () => {
+			const toElement = this.options.returnFocusTo ?? this.#previouslyFocused;
+			if (toElement instanceof HTMLElement) {
+				toElement.focus();
+			}
+			this.#returnFocus = undefined;
+		};
 	}
 
 	#handleKey = (ev: KeyboardEvent) => {
@@ -296,7 +291,7 @@ export class FocusTrapModel extends StatefulModel<
 	activate() {
 		this.#watchChildren();
 		this.#watchEvents();
-		this.#moveCurrentFocus();
+		this.#trapFocus();
 		if (!this.getState().active) {
 			this.options.onStateChange?.((oldState) => ({
 				...oldState,
@@ -308,7 +303,7 @@ export class FocusTrapModel extends StatefulModel<
 	deactivate() {
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
-		this.#returnPreviousFocus?.();
+		this.#returnFocus?.();
 		if (this.getState().active) {
 			this.options.onStateChange?.((oldState) => ({
 				...oldState,
