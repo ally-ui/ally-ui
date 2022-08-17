@@ -13,6 +13,5 @@
 		"declaration": true,
 		"outDir": "dist"
 	},
-	"include": ["example", "lib"],
-	"references": [{"path": "./tsconfig.node.json"}]
+	"include": ["example", "lib"]
 }
