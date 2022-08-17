@@ -138,9 +138,14 @@ export class DialogModel extends StatefulModel<
 	}
 
 	#createFocusTrap(contentElement: HTMLElement) {
+		const triggerSubmodel = findLastInMap(
+			this.#submodels,
+			(s) => s.type === 'trigger',
+		);
 		const contentTrap = new FocusTrapModel(this.id, {
 			container: contentElement,
 			active: true,
+			returnFocusTo: triggerSubmodel?.node,
 		});
 		contentTrap.setUIOptions(this.uiOptions);
 		contentTrap.setOptions((prevOptions) => ({
