@@ -31,6 +31,11 @@ export abstract class StateModel<TOptions, TState> {
 	#previousState: TState;
 	options: ResolvedOptions<TOptions, TState>;
 
+	/**
+	 * Determines whether warnings and errors will be logged to console.
+	 */
+	debug = false;
+
 	constructor(id: string, initialOptions: TOptions) {
 		this.id = id;
 		this.initialState = this.deriveInitialState(initialOptions);

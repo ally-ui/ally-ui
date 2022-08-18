@@ -46,7 +46,10 @@ export class DialogModel extends StateModel<
 	deinit(submodelId: string, type: DialogSubmodelType) {
 		const submodel = this.#submodels.get(submodelId);
 		if (submodel === undefined || submodel.type !== type) {
-			throw new Error(`deinit(${submodelId}, ${type}), not found`);
+			if (this.debug) {
+				console.error(`deinit(${submodelId}, ${type}), not found`);
+			}
+			return;
 		}
 		this.#submodels.delete(submodelId);
 	}
@@ -54,7 +57,10 @@ export class DialogModel extends StateModel<
 	bindNode(submodelId: string, node: HTMLElement) {
 		const submodel = this.#submodels.get(submodelId);
 		if (submodel === undefined) {
-			throw new Error(`bindNode(${submodelId}, ${node}), not initialized`);
+			if (this.debug) {
+				console.error(`bindNode(${submodelId}, ${node}), not initialized`);
+			}
+			return;
 		}
 		submodel.node = node;
 	}
@@ -62,7 +68,10 @@ export class DialogModel extends StateModel<
 	unbindNode(submodelId: string) {
 		const submodel = this.#submodels.get(submodelId);
 		if (submodel === undefined) {
-			throw new Error(`unbindNode(${submodelId}), not initialized`);
+			if (this.debug) {
+				console.error(`unbindNode(${submodelId}), not initialized`);
+			}
+			return;
 		}
 		delete submodel.node;
 	}
@@ -78,7 +87,10 @@ export class DialogModel extends StateModel<
 	submodelDOMAttributes(submodelId: string) {
 		const submodel = this.#submodels.get(submodelId);
 		if (submodel === undefined) {
-			throw new Error(`getAttributes(${submodelId}), not initialized`);
+			if (this.debug) {
+				console.error(`getAttributes(${submodelId}), not initialized`);
+			}
+			return;
 		}
 		switch (submodel.type) {
 			case 'content':
@@ -130,9 +142,10 @@ export class DialogModel extends StateModel<
 			(s) => s.type === 'content' && s.node !== undefined,
 		);
 		if (content?.node === undefined) {
-			throw new Error(
-				`#onOpenChangeEffect(true), no content submodel with node`,
-			);
+			if (this.debug) {
+				console.error(`#onOpenChangeEffect(), no content submodel with node`);
+			}
+			return;
 		}
 		this.#contentTrap = this.#createFocusTrap(content.node);
 	}
