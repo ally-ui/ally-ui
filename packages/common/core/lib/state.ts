@@ -24,10 +24,8 @@ export type ResolvedOptions<TOptions, TState> = TOptions & {
  *
  * The model is initialized with a set of initial options. These options can be
  * reactively updated by the state implementation with `setOptions`.
- *
- * State will always be updated when options are updated via `deriveState`.
  */
-export abstract class StatefulModel<TOptions, TState> {
+export abstract class StateModel<TOptions, TState> {
 	id: string;
 	initialState: TState;
 	#previousState: TState;
