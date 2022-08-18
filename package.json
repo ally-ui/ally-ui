@@ -2,9 +2,10 @@
 	"name": "ally-ui",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "lerna run dev",
+		"dev": "lerna run dev --parallel",
 		"build": "lerna run build",
 		"test": "lerna run test",
+		"test:watch": "lerna run test:watch --parallel",
 		"coverage": "lerna run coverage",
 		"format": "prettier --write .",
 		"link": "lerna bootstrap",
