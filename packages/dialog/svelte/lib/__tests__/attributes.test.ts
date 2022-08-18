@@ -1,4 +1,4 @@
-import {cleanup, render, screen} from '@testing-library/svelte';
+import {cleanup, render, screen, waitFor} from '@testing-library/svelte';
 import {writable} from 'svelte/store';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 import Template from './attributes.svelte';
@@ -48,12 +48,18 @@ describe('trigger', () => {
 		expect(trigger).toHaveAttribute('data-state', 'open');
 	});
 
-	it('updates the data state attribute when the dialog opens and closes', () => {
+	it('updates the data state attribute when the dialog opens and closes', async () => {
 		render(Template, {open});
 		const trigger = screen.getByTestId('trigger');
 		open.set(false);
+		await waitFor(() => {
+			expect(screen.queryByTestId('title')).not.toBeNull();
+		});
 		expect(trigger).toHaveAttribute('data-state', 'closed');
 		open.set(true);
+		await waitFor(() => {
+			expect(screen.queryByTestId('title')).toBeNull();
+		});
 		expect(trigger).toHaveAttribute('data-state', 'open');
 	});
 
