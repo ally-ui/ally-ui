@@ -1,5 +1,5 @@
 import {screen} from '@testing-library/dom';
-import {afterEach, beforeAll, beforeEach, describe, expect, it} from 'vitest';
+import {afterEach, beforeAll, describe, expect, it} from 'vitest';
 import {renderServerTemplate} from '../renderServerTemplate';
 
 let rendered_open: string;
@@ -13,25 +13,25 @@ afterEach(() => {
 });
 
 describe('trigger', () => {
-	it('renders the data state attribute with a closed dialog', async () => {
+	it('renders the data state attribute with a closed dialog', () => {
 		document.body.innerHTML = rendered_closed;
 		const trigger = screen.getByTestId('trigger');
 		expect(trigger).toHaveAttribute('data-state', 'closed');
 	});
 
-	it('renders the data state attribute with an open dialog', async () => {
+	it('renders the data state attribute with an open dialog', () => {
 		document.body.innerHTML = rendered_open;
 		const trigger = screen.getByTestId('trigger');
 		expect(trigger).toHaveAttribute('data-state', 'open');
 	});
 
-	it('renders basic aria attributes', async () => {
+	it('renders basic aria attributes', () => {
 		document.body.innerHTML = rendered_closed;
 		const trigger = screen.getByTestId('trigger');
 		expect(trigger).toHaveAttribute('aria-haspopup', 'dialog');
 	});
 
-	it('has aria-controls that points to content', async () => {
+	it('has aria-controls that points to content', () => {
 		document.body.innerHTML = rendered_open;
 		const trigger = screen.getByTestId('trigger');
 		const content = screen.getByTestId('content');
