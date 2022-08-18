@@ -3,9 +3,9 @@ import {writable} from 'svelte/store';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 import Template from './attributes.svelte';
 
-const open = writable(false);
+const open = writable(true);
 beforeEach(() => {
-	open.set(false);
+	open.set(true);
 });
 afterEach(() => {
 	cleanup();
@@ -13,14 +13,12 @@ afterEach(() => {
 
 describe('content', () => {
 	it('renders the data state attribute on an open dialog', () => {
-		open.set(true);
 		render(Template, {open});
 		const content = screen.getByTestId('content');
 		expect(content).toHaveAttribute('data-state', 'open');
 	});
 
 	it('renders basic aria attributes', () => {
-		open.set(true);
 		render(Template, {open});
 		const content = screen.getByTestId('content');
 		expect(content).toHaveAttribute('role', 'dialog');
@@ -28,7 +26,6 @@ describe('content', () => {
 	});
 
 	it('renders aria attributes that point to title and description', () => {
-		open.set(true);
 		render(Template, {open});
 		const content = screen.getByTestId('content');
 		const title = screen.getByTestId('title');
@@ -46,7 +43,6 @@ describe('trigger', () => {
 	});
 
 	it('renders the data state attribute with an open dialog', () => {
-		open.set(true);
 		render(Template, {open});
 		const trigger = screen.getByTestId('trigger');
 		expect(trigger).toHaveAttribute('data-state', 'open');
@@ -55,10 +51,10 @@ describe('trigger', () => {
 	it('updates the data state attribute when the dialog opens and closes', () => {
 		render(Template, {open});
 		const trigger = screen.getByTestId('trigger');
-		open.set(true);
-		expect(trigger).toHaveAttribute('data-state', 'open');
 		open.set(false);
 		expect(trigger).toHaveAttribute('data-state', 'closed');
+		open.set(true);
+		expect(trigger).toHaveAttribute('data-state', 'open');
 	});
 
 	it('renders basic aria attributes', () => {
@@ -68,7 +64,6 @@ describe('trigger', () => {
 	});
 
 	it('renders aria-controls that points to content', () => {
-		open.set(true);
 		render(Template, {open});
 		const trigger = screen.getByTestId('trigger');
 		const content = screen.getByTestId('content');
