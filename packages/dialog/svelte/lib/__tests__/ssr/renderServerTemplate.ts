@@ -1,21 +1,19 @@
 import express from 'express';
+import type {Server} from 'http';
 import request from 'supertest';
 import {createServer} from 'vite';
-
-const PORT = 0;
-const BASE_URL = '/';
 
 async function createTemplateServer() {
 	const app = express();
 	const vite = await createServer({
 		server: {middlewareMode: true},
 		appType: 'custom',
-		base: BASE_URL,
+		base: '/',
 	});
 	app.use(vite.middlewares);
 	app.use('*', async (request, response) => {
 		try {
-			const templateName = request.originalUrl.replace(BASE_URL, '');
+			const templateName = request.originalUrl.replace('/', '');
 			const {render} = await vite.ssrLoadModule(
 				'/lib/__tests__/ssr/renderer.ts',
 			);
@@ -30,11 +28,10 @@ async function createTemplateServer() {
 			response.status(500).end(err.stack);
 		}
 	});
-	app.listen(PORT);
 	return app;
 }
 
-let cachedServer: Express.Application | undefined;
+let cachedServer: Server;
 export async function renderServerTemplate(templateName: string) {
 	const server = cachedServer ?? (await createTemplateServer());
 	cachedServer = server;
