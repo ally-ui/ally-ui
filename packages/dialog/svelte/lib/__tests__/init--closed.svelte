@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {createDialog, Dialog} from '../../../main';
+	import {createDialog, Dialog} from '../main';
 
 	const dialog = createDialog();
 </script>
