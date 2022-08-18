@@ -97,7 +97,7 @@ export class DialogModel extends StateModel<
 				return {
 					id: this.#submodelDOMId(submodel.type),
 					role: 'dialog',
-					'aria-modal': true,
+					'aria-modal': 'true',
 					'aria-labelledby': this.#submodelDOMId('title'),
 					'aria-describedby': this.#submodelDOMId('description'),
 					'data-state': this.getState().open ? 'open' : 'closed',
