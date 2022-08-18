@@ -1,28 +1,35 @@
 import {cleanup, render, screen} from '@testing-library/svelte';
-import {afterEach, describe, expect, it} from 'vitest';
-import InitClosed from './init--closed.svelte';
-import InitOpen from './init--open.svelte';
+import {writable} from 'svelte/store';
+import {afterEach, beforeEach, describe, expect, it} from 'vitest';
+import Template from './attributes.svelte';
 
+const open = writable(false);
+beforeEach(() => {
+	open.set(false);
+});
 afterEach(() => {
 	cleanup();
 });
 
 describe('content', () => {
 	it('renders the data state attribute on an open dialog', () => {
-		render(InitOpen);
+		open.set(true);
+		render(Template, {open});
 		const content = screen.getByTestId('content');
 		expect(content).toHaveAttribute('data-state', 'open');
 	});
 
 	it('renders basic aria attributes', () => {
-		render(InitOpen);
+		open.set(true);
+		render(Template, {open});
 		const content = screen.getByTestId('content');
 		expect(content).toHaveAttribute('role', 'dialog');
 		expect(content).toHaveAttribute('aria-modal', 'true');
 	});
 
 	it('renders aria attributes that point to title and description', () => {
-		render(InitOpen);
+		open.set(true);
+		render(Template, {open});
 		const content = screen.getByTestId('content');
 		const title = screen.getByTestId('title');
 		const description = screen.getByTestId('description');
@@ -33,25 +40,36 @@ describe('content', () => {
 
 describe('trigger', () => {
 	it('renders the data state attribute with a closed dialog', () => {
-		render(InitClosed);
+		render(Template);
 		const trigger = screen.getByTestId('trigger');
 		expect(trigger).toHaveAttribute('data-state', 'closed');
 	});
 
 	it('renders the data state attribute with an open dialog', () => {
-		render(InitOpen);
+		open.set(true);
+		render(Template, {open});
 		const trigger = screen.getByTestId('trigger');
 		expect(trigger).toHaveAttribute('data-state', 'open');
 	});
 
+	it('updates the data state attribute when the dialog opens and closes', () => {
+		render(Template, {open});
+		const trigger = screen.getByTestId('trigger');
+		open.set(true);
+		expect(trigger).toHaveAttribute('data-state', 'open');
+		open.set(false);
+		expect(trigger).toHaveAttribute('data-state', 'closed');
+	});
+
 	it('renders basic aria attributes', () => {
-		render(InitClosed);
+		render(Template);
 		const trigger = screen.getByTestId('trigger');
 		expect(trigger).toHaveAttribute('aria-haspopup', 'dialog');
 	});
 
 	it('renders aria-controls that points to content', () => {
-		render(InitOpen);
+		open.set(true);
+		render(Template, {open});
 		const trigger = screen.getByTestId('trigger');
 		const content = screen.getByTestId('content');
 		expect(trigger).toHaveAttribute('aria-controls', content.id);
