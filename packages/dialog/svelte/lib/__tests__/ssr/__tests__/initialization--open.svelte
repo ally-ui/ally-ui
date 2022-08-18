@@ -1,8 +1,9 @@
 <script lang="ts">
+	import {readable} from 'svelte/store';
 	import {createDialog, Dialog} from '../../../main';
-	const dialog = createDialog({
-		initialOpen: true,
-	});
+
+	const open = readable(true);
+	const dialog = createDialog({open});
 </script>
 
 <Dialog.Trigger model={dialog}>open dialog</Dialog.Trigger>

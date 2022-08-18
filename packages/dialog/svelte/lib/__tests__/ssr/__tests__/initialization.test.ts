@@ -6,7 +6,7 @@ it('renders an initially closed dialog', async () => {
 	expect(rendered).not.toContain('title');
 });
 
-it('renders an initially closed dialog', async () => {
+it('renders an initially opened dialog', async () => {
 	const rendered = await renderServerTemplate('initialization--open');
 	expect(rendered).toContain('title');
 	expect(rendered).toContain('description');
