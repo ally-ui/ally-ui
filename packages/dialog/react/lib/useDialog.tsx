@@ -32,8 +32,8 @@ export default function useDialog({
 		onStateChange: setState,
 	}));
 
-	const waitForDOM = useLayoutPromise([state]);
-	model.setUIOptions({waitForDOM});
+	const flushDOM = useLayoutPromise([state]);
+	model.setUIOptions({flushDOM});
 
 	return model;
 }

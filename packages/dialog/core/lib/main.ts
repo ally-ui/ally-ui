@@ -136,7 +136,7 @@ export class DialogModel extends StateModel<
 
 	async #onOpenChangeEffect_true() {
 		// Flush changes to the DOM before looking for the content node in DOM.
-		await this.uiOptions?.waitForDOM?.();
+		await this.uiOptions?.flushDOM?.();
 		const content = findLastInMap(
 			this.#submodels,
 			(s) => s.type === 'content' && s.node !== undefined,

@@ -47,7 +47,7 @@ export default function createDialog({
 	});
 
 	model.setUIOptions({
-		waitForDOM: tick,
+		flushDOM: tick,
 	});
 
 	return modelStore;
