@@ -5,7 +5,9 @@
 		"example": "vite",
 		"dev": "concurrently \"tsc --watch\" \"vite build --watch\"",
 		"build": "tsc && vite build",
-		"test:ssr": "node lib/__tests__/ssr/server"
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"coverage": "vitest run --coverage"
 	},
 	"author": "Bryan Lee",
 	"description": "A WAI-ARIA compliant Dialog for Svelte",
