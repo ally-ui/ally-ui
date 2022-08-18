@@ -1,0 +1,8 @@
+{
+	"compilerOptions": {
+		"composite": true,
+		"module": "ESNext",
+		"moduleResolution": "Node"
+	},
+	"include": ["src/entry-server.ts", "src/vite-env.d.ts"]
+}
