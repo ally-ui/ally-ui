@@ -30,9 +30,7 @@ async function createTemplateServer() {
 			response.status(500).end(err.stack);
 		}
 	});
-	app.listen(PORT, () => {
-		console.log(`SSR test server started at http://localhost:${PORT}`);
-	});
+	app.listen(PORT);
 	return app;
 }
 
