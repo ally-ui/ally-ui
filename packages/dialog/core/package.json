@@ -3,8 +3,8 @@
 	"version": "0.0.5",
 	"scripts": {
 		"example": "vite",
-		"dev": "concurrently \"tsc --watch\" \"vite build --watch\"",
-		"build": "tsc && vite build"
+		"build": "tsc && vite build",
+		"build:watch": "concurrently \"tsc --watch\" \"vite build --watch\""
 	},
 	"author": "Bryan Lee",
 	"description": "A WAI-ARIA compliant Dialog for JavaScript",
