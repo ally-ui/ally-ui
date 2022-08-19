@@ -4,7 +4,10 @@
 	"scripts": {
 		"example": "vite",
 		"build": "tsc && vite build",
-		"build:watch": "concurrently \"tsc --watch\" \"vite build --watch\""
+		"build:watch": "concurrently \"tsc --watch\" \"vite build --watch\"",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"coverage": "vitest run --coverage"
 	},
 	"author": "Bryan Lee",
 	"description": "A WAI-ARIA compliant Dialog for React",
