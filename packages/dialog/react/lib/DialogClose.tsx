@@ -21,6 +21,16 @@ const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 		}
 		const id = useRunOnce(() => resolvedModel.init('close'));
 
+		React.useEffect(
+			function mount() {
+				resolvedModel.mount(id);
+				return () => {
+					resolvedModel.unmount(id);
+				};
+			},
+			[resolvedModel],
+		);
+
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node === null) {

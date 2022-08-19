@@ -2,6 +2,7 @@ import {DevOptions, findLastInMap, StateModel} from '@ally-ui/core';
 import {FocusTrapModel} from '@ally-ui/focus-trap';
 
 type DialogComponentType =
+	| 'root'
 	| 'trigger'
 	| 'content'
 	| 'title'
@@ -11,6 +12,7 @@ type DialogComponentType =
 interface DialogComponent {
 	id: string;
 	type: DialogComponentType;
+	mounted: boolean;
 	node?: HTMLElement;
 }
 
@@ -45,22 +47,60 @@ export class DialogModel extends StateModel<
 
 	#components = new Map<string, DialogComponent>();
 
+	/**
+	 * Initialize a component of the model. This should run before the component
+	 * is mounted and before a reference to the DOM is obtained.
+	 * @param type The type of component being initialized
+	 * @returns The assigned ID for the component
+	 */
 	init(type: DialogComponentType): string {
-		this.#components.set(type, {id: type, type});
+		this.#components.set(type, {id: type, type, mounted: false});
 		return type;
 	}
 
-	deinit(componentId: string, type: DialogComponentType) {
+	deinit(componentId: string) {
 		const component = this.#components.get(componentId);
-		if (component === undefined || component.type !== type) {
+		if (component === undefined) {
 			if (this.debug) {
-				console.error(`deinit(${componentId}, ${type}), not found`);
+				console.error(`deinit(${componentId}), not found`);
 			}
 			return;
 		}
 		this.#components.delete(componentId);
 	}
 
+	/**
+	 * Mark a component as mounted. This signals when a component has completed
+	 * its initialization phase and is ready to receive events.
+	 * @param componentId The ID of the component to mount
+	 */
+	mount(componentId: string) {
+		const component = this.#components.get(componentId);
+		if (component === undefined) {
+			if (this.debug) {
+				console.error(`mount(${componentId}), not initialized`);
+			}
+			return;
+		}
+		component.mounted = true;
+	}
+
+	unmount(componentId: string) {
+		const component = this.#components.get(componentId);
+		if (component === undefined) {
+			if (this.debug) {
+				console.error(`unmount(${componentId}), not found`);
+			}
+			return;
+		}
+		component.mounted = false;
+	}
+
+	/**
+	 * Save a reference to the DOM node that the component abstracts over.
+	 * @param componentId The ID of the component that holds the node reference
+	 * @param node The DOM node reference
+	 */
 	bindNode(componentId: string, node: HTMLElement) {
 		const component = this.#components.get(componentId);
 		if (component === undefined) {
@@ -84,11 +124,11 @@ export class DialogModel extends StateModel<
 	}
 
 	#rootId() {
-		return `dialog${this.id}`;
+		return `ally-${this.id}`;
 	}
 
 	#componentId(type: DialogComponentType) {
-		return `${this.#rootId()}${type}`;
+		return `${this.#rootId()}-${type}`;
 	}
 
 	componentAttributes(componentId: string) {

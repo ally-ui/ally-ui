@@ -21,6 +21,16 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 		}
 		const id = useRunOnce(() => resolvedModel.init('content'));
 
+		React.useEffect(
+			function mount() {
+				resolvedModel.mount(id);
+				return () => {
+					resolvedModel.unmount(id);
+				};
+			},
+			[resolvedModel],
+		);
+
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node === null) {

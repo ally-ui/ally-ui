@@ -21,6 +21,16 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 		}
 		const id = useRunOnce(() => resolvedModel.init('trigger'));
 
+		React.useEffect(
+			function mount() {
+				resolvedModel.mount(id);
+				return () => {
+					resolvedModel.unmount(id);
+				};
+			},
+			[resolvedModel],
+		);
+
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node === null) {

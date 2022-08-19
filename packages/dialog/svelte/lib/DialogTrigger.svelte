@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type {DialogModel} from '@ally-ui/core-dialog';
 	import {createEventForwarder} from '@ally-ui/svelte';
-	import {get_current_component} from 'svelte/internal';
+	import {get_current_component, onMount} from 'svelte/internal';
 	import type {Readable} from 'svelte/store';
 	import {getDialogContext} from './context';
 
@@ -17,6 +17,13 @@
 		);
 	}
 	const id = $resolvedModel.init('trigger');
+
+	onMount(() => {
+		$resolvedModel.mount(id);
+		return () => {
+			$resolvedModel.unmount(id);
+		};
+	});
 
 	let node: HTMLElement | null = null;
 	$: bindNode(node);
