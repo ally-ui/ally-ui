@@ -57,14 +57,16 @@ export default function App() {
 </script>
 
 <main>
-  <Dialog.Trigger model={dialog}>Edit profile</Dialog.Trigger>
-  <Dialog.Content model={dialog}>
-    <Dialog.Title model={dialog}>Edit profile</Dialog.Title>
-    <Dialog.Description model={dialog}>
-      Make changes to your profile here. Click save when you're done
-    </Dialog.Description>
-    <Dialog.Close model={dialog}>Save changes</Dialog.Close>
-  </Dialog.Content>
+  <Dialog.Root model={dialog}>
+    <Dialog.Trigger>Edit profile</Dialog.Trigger>
+    <Dialog.Content>
+      <Dialog.Title>Edit profile</Dialog.Title>
+      <Dialog.Description>
+        Make changes to your profile here. Click save when you're done
+      </Dialog.Description>
+      <Dialog.Close>Save changes</Dialog.Close>
+    </Dialog.Content>
+  </Dialog.Root>
 </main>
 ```
 
