@@ -1,4 +1,4 @@
-# Why are the test cases in seperate files?
+# Why are some test cases in seperate files?
 
 For whatever reason, when we have multiple test cases in the same file that use `@testing-library/svelte` to mount and unmount components to JSDOM, event listeners get detached or corrupted (I'm not sure).
 

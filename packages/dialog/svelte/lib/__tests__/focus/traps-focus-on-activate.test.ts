@@ -1,6 +1,5 @@
-import {act, cleanup, render, screen} from '@testing-library/svelte';
+import {cleanup, render, screen} from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
-import {writable} from 'svelte/store';
 import Focus from './focus.test.svelte';
 
 afterEach(async () => {
