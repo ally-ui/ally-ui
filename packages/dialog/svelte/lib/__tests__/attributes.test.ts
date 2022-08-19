@@ -6,7 +6,7 @@ import {
 } from '@testing-library/svelte';
 import {writable} from 'svelte/store';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
-import Template from './attributes.svelte';
+import Template from './template.svelte';
 
 const open = writable(true);
 beforeEach(() => {
