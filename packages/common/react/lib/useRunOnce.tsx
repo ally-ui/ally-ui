@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import React from 'react';
 
 /**
  * Run a function once **during render**.
@@ -6,6 +6,6 @@ import {useState} from 'react';
  * @returns The value returned by `runner`
  */
 export default function useRunOnce<TReturn>(runner: () => TReturn) {
-	const [value] = useState(runner);
+	const [value] = React.useState(runner);
 	return value;
 }

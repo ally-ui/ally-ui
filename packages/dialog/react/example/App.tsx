@@ -1,8 +1,8 @@
-import {useState} from 'react';
+import React from 'react';
 import {Dialog, useDialog} from '../lib/main';
 
 export default function App() {
-	const [open, setOpen] = useState(true);
+	const [open, setOpen] = React.useState(true);
 	const dialog = useDialog({
 		open,
 		onOpenChange: setOpen,

@@ -1,16 +1,16 @@
 import {type DialogModel} from '@ally-ui/core-dialog';
 import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
-import {forwardRef, PropsWithChildren, useCallback} from 'react';
+import React from 'react';
 
-export interface DialogCloseProps extends PropsWithChildren {
+export interface DialogCloseProps extends React.PropsWithChildren {
 	model: DialogModel;
 }
 
-const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
+const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 	({model, children}, forwardedRef) => {
 		const id = useRunOnce(() => model.init('close'));
 
-		const bindRef = useCallback(
+		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node === null) {
 					model.unbindNode(id);
@@ -22,7 +22,7 @@ const DialogClose = forwardRef<HTMLButtonElement, DialogCloseProps>(
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
-		const handleClick = useCallback(() => {
+		const handleClick = React.useCallback(() => {
 			model.setState((prevState) => ({...prevState, open: false}));
 		}, [model]);
 

@@ -1,19 +1,19 @@
-import {MutableRefObject, Ref, useCallback} from 'react';
+import React from 'react';
 
 /**
  * Handles setting callback refs and MutableRefObjects.
  * @param ref The ref to use for the instance
  * @param instance The instance being set
  */
-function setRef<TInstance>(ref: Ref<TInstance>, instance: TInstance) {
+function setRef<TInstance>(ref: React.Ref<TInstance>, instance: TInstance) {
 	if (ref instanceof Function) {
 		ref(instance);
 	} else if (ref !== null) {
-		(ref as MutableRefObject<TInstance>).current = instance;
+		(ref as React.MutableRefObject<TInstance>).current = instance;
 	}
 }
 
-function combinedRef<TInstance>(refs: Ref<TInstance>[]) {
+function combinedRef<TInstance>(refs: React.Ref<TInstance>[]) {
 	return (instance: TInstance | null) =>
 		refs.forEach((ref) => setRef(ref, instance));
 }
@@ -24,6 +24,8 @@ function combinedRef<TInstance>(refs: Ref<TInstance>[]) {
  * @param refs The refs that should receive the instance
  * @returns The combined ref
  */
-export default function useMultipleRefs<TInstance>(...refs: Ref<TInstance>[]) {
-	return useCallback(combinedRef(refs), refs);
+export default function useMultipleRefs<TInstance>(
+	...refs: React.Ref<TInstance>[]
+) {
+	return React.useCallback(combinedRef(refs), refs);
 }
