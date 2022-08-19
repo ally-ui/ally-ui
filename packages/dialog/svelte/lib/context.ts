@@ -1,6 +1,8 @@
 import type {DialogModel} from '@ally-ui/core-dialog';
-import {createContext} from '@ally-ui/svelte';
+import {getContext, setContext} from 'svelte';
 import type {Readable} from 'svelte/store';
 
-export const {get: getDialogContext, set: setDialogContext} =
-	createContext<Readable<DialogModel>>();
+const key = Symbol('DIALOG_MODEL');
+export const getDialogContext = () => getContext(key) as Readable<DialogModel>;
+export const setDialogContext = (value: Readable<DialogModel>) =>
+	setContext(key, value);
