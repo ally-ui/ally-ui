@@ -1,10 +1,4 @@
-import {
-	cleanup,
-	render,
-	screen,
-	waitForElementToBeRemoved,
-} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import {cleanup, render, screen} from '@testing-library/react';
 import React from 'react';
 import {Dialog, useDialog} from '../main';
 import {UseDialogOptions} from '../useDialog';

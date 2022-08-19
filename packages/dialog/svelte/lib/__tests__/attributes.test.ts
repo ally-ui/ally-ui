@@ -1,16 +1,6 @@
-import {
-	cleanup,
-	render,
-	screen,
-	waitForElementToBeRemoved,
-} from '@testing-library/svelte';
-import {writable, type Writable} from 'svelte/store';
+import {cleanup, render, screen} from '@testing-library/svelte';
 import Attributes from './attributes.test.svelte';
 
-let open: Writable<boolean>;
-beforeEach(() => {
-	open = writable(true);
-});
 afterEach(() => {
 	cleanup();
 });
@@ -49,17 +39,6 @@ describe('trigger', () => {
 	it('renders the data state attribute with an open dialog', () => {
 		render(Attributes, {initialOpen: true});
 		const trigger = screen.getByTestId('trigger');
-		expect(trigger).toHaveAttribute('data-state', 'open');
-	});
-
-	it('updates the data state attribute when the dialog opens and closes', async () => {
-		render(Attributes, {initialOpen: true, open});
-		const trigger = screen.getByTestId('trigger');
-		open.set(false);
-		await waitForElementToBeRemoved(() => screen.queryByTestId('title'));
-		expect(trigger).toHaveAttribute('data-state', 'closed');
-		open.set(true);
-		await screen.findByTestId('title');
 		expect(trigger).toHaveAttribute('data-state', 'open');
 	});
 
