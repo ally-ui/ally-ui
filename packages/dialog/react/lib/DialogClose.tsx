@@ -46,7 +46,7 @@ const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 		return (
 			<button
 				ref={ref}
-				{...resolvedModel.submodelDOMAttributes(id)}
+				{...resolvedModel.componentAttributes(id)}
 				{...restProps}
 				onClick={handleClick}
 			>

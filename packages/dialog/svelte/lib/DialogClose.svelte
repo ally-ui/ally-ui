@@ -33,7 +33,7 @@
 
 <button
 	bind:this={node}
-	{...$resolvedModel.submodelDOMAttributes(id)}
+	{...$resolvedModel.componentAttributes(id)}
 	{...$$restProps}
 	use:eventForwarder
 	on:click={() =>

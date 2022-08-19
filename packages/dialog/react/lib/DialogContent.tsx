@@ -38,7 +38,7 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 				{resolvedModel.getState().open && (
 					<div
 						ref={ref}
-						{...resolvedModel.submodelDOMAttributes(id)}
+						{...resolvedModel.componentAttributes(id)}
 						{...restProps}
 					>
 						{children}

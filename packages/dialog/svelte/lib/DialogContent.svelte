@@ -34,7 +34,7 @@
 {#if $resolvedModel.getState().open}
 	<div
 		bind:this={node}
-		{...$resolvedModel.submodelDOMAttributes(id)}
+		{...$resolvedModel.componentAttributes(id)}
 		{...$$restProps}
 		use:eventForwarder
 	>

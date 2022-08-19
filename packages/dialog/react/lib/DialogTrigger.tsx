@@ -46,7 +46,7 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 		return (
 			<button
 				ref={ref}
-				{...resolvedModel.submodelDOMAttributes(id)}
+				{...resolvedModel.componentAttributes(id)}
 				{...restProps}
 				onClick={handleClick}
 			>

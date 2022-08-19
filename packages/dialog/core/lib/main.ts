@@ -1,16 +1,16 @@
 import {DevOptions, findLastInMap, StateModel} from '@ally-ui/core';
 import {FocusTrapModel} from '@ally-ui/focus-trap';
 
-type DialogSubmodelType =
+type DialogComponentType =
 	| 'trigger'
 	| 'content'
 	| 'title'
 	| 'description'
 	| 'close';
 
-interface DialogSubmodel {
+interface DialogComponent {
 	id: string;
-	type: DialogSubmodelType;
+	type: DialogComponentType;
 	node?: HTMLElement;
 }
 
@@ -43,83 +43,83 @@ export class DialogModel extends StateModel<
 		};
 	}
 
-	#submodels = new Map<string, DialogSubmodel>();
+	#components = new Map<string, DialogComponent>();
 
-	init(type: DialogSubmodelType): string {
-		this.#submodels.set(type, {id: type, type});
+	init(type: DialogComponentType): string {
+		this.#components.set(type, {id: type, type});
 		return type;
 	}
 
-	deinit(submodelId: string, type: DialogSubmodelType) {
-		const submodel = this.#submodels.get(submodelId);
-		if (submodel === undefined || submodel.type !== type) {
+	deinit(componentId: string, type: DialogComponentType) {
+		const component = this.#components.get(componentId);
+		if (component === undefined || component.type !== type) {
 			if (this.debug) {
-				console.error(`deinit(${submodelId}, ${type}), not found`);
+				console.error(`deinit(${componentId}, ${type}), not found`);
 			}
 			return;
 		}
-		this.#submodels.delete(submodelId);
+		this.#components.delete(componentId);
 	}
 
-	bindNode(submodelId: string, node: HTMLElement) {
-		const submodel = this.#submodels.get(submodelId);
-		if (submodel === undefined) {
+	bindNode(componentId: string, node: HTMLElement) {
+		const component = this.#components.get(componentId);
+		if (component === undefined) {
 			if (this.debug) {
-				console.error(`bindNode(${submodelId}, ${node}), not initialized`);
+				console.error(`bindNode(${componentId}, ${node}), not initialized`);
 			}
 			return;
 		}
-		submodel.node = node;
+		component.node = node;
 	}
 
-	unbindNode(submodelId: string) {
-		const submodel = this.#submodels.get(submodelId);
-		if (submodel === undefined) {
+	unbindNode(componentId: string) {
+		const component = this.#components.get(componentId);
+		if (component === undefined) {
 			if (this.debug) {
-				console.error(`unbindNode(${submodelId}), not initialized`);
+				console.error(`unbindNode(${componentId}), not initialized`);
 			}
 			return;
 		}
-		delete submodel.node;
+		delete component.node;
 	}
 
-	#DOMId() {
+	#rootId() {
 		return `dialog${this.id}`;
 	}
 
-	#submodelDOMId(type: DialogSubmodelType) {
-		return `${this.#DOMId()}${type}`;
+	#componentId(type: DialogComponentType) {
+		return `${this.#rootId()}${type}`;
 	}
 
-	submodelDOMAttributes(submodelId: string) {
-		const submodel = this.#submodels.get(submodelId);
-		if (submodel === undefined) {
+	componentAttributes(componentId: string) {
+		const component = this.#components.get(componentId);
+		if (component === undefined) {
 			if (this.debug) {
-				console.error(`getAttributes(${submodelId}), not initialized`);
+				console.error(`getAttributes(${componentId}), not initialized`);
 			}
 			return;
 		}
-		switch (submodel.type) {
+		switch (component.type) {
 			case 'content':
 				return {
-					id: this.#submodelDOMId(submodel.type),
+					id: this.#componentId(component.type),
 					role: 'dialog',
 					'aria-modal': 'true',
-					'aria-labelledby': this.#submodelDOMId('title'),
-					'aria-describedby': this.#submodelDOMId('description'),
+					'aria-labelledby': this.#componentId('title'),
+					'aria-describedby': this.#componentId('description'),
 					'data-state': this.getState().open ? 'open' : 'closed',
 				} as const;
 			case 'trigger':
 				return {
-					id: this.#submodelDOMId(submodel.type),
+					id: this.#componentId(component.type),
 					'aria-haspopup': 'dialog',
-					'aria-controls': this.#submodelDOMId('content'),
+					'aria-controls': this.#componentId('content'),
 					'data-state': this.getState().open ? 'open' : 'closed',
 				} as const;
 			case 'title':
 			case 'description':
 				return {
-					id: this.#submodelDOMId(submodel.type),
+					id: this.#componentId(component.type),
 				} as const;
 			default:
 				return {};
@@ -145,13 +145,13 @@ export class DialogModel extends StateModel<
 		// Flush changes to the DOM before looking for the content node in DOM.
 		await this.uiOptions?.flushDOM?.();
 		const content = findLastInMap(
-			this.#submodels,
+			this.#components,
 			(s) => s.type === 'content' && s.node !== undefined,
 		);
 		if (content?.node === undefined) {
 			if (this.debug) {
 				console.error(
-					`#onOpenChangeEffect(true), no content submodel with node`,
+					`#onOpenChangeEffect(true), no content component with node`,
 				);
 			}
 			return;
@@ -160,14 +160,14 @@ export class DialogModel extends StateModel<
 	}
 
 	#createFocusTrap(contentElement: HTMLElement) {
-		const triggerSubmodel = findLastInMap(
-			this.#submodels,
+		const triggerComponent = findLastInMap(
+			this.#components,
 			(s) => s.type === 'trigger',
 		);
 		const contentTrap = new FocusTrapModel(this.id, {
 			container: contentElement,
 			active: true,
-			returnFocusTo: triggerSubmodel?.node,
+			returnFocusTo: triggerComponent?.node,
 		});
 		contentTrap.setUIOptions(this.uiOptions);
 		contentTrap.setOptions((prevOptions) => ({

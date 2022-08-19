@@ -34,7 +34,7 @@ const DialogTitle = React.forwardRef<HTMLElement, DialogTitleProps>(
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
 		return (
-			<h1 ref={ref} {...resolvedModel.submodelDOMAttributes(id)} {...restProps}>
+			<h1 ref={ref} {...resolvedModel.componentAttributes(id)} {...restProps}>
 				{children}
 			</h1>
 		);

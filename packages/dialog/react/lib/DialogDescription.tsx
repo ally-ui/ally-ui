@@ -34,7 +34,7 @@ const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
 		return (
-			<p ref={ref} {...resolvedModel.submodelDOMAttributes(id)} {...restProps}>
+			<p ref={ref} {...resolvedModel.componentAttributes(id)} {...restProps}>
 				{children}
 			</p>
 		);
