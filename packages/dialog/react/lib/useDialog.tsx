@@ -35,7 +35,9 @@ export default function useDialog(
 	}));
 
 	const flushDOM = useLayoutPromise([state]);
-	model.setUIOptions({flushDOM});
+	model.setUIOptions({
+		flushDOM,
+	});
 
 	return model;
 }

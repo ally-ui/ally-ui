@@ -1,35 +1,46 @@
 import {type DialogModel} from '@ally-ui/core-dialog';
 import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
 import React from 'react';
+import {useDialogContext} from './DialogRoot';
 
 export interface DialogContentProps
 	extends React.DetailedHTMLProps<
 		React.HTMLAttributes<HTMLDivElement>,
 		HTMLDivElement
 	> {
-	model: DialogModel;
+	model?: DialogModel;
 }
 
 const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 	({model, children, ...restProps}, forwardedRef) => {
-		const id = useRunOnce(() => model.init('content'));
+		const resolvedModel = useDialogContext() ?? model;
+		if (resolvedModel === undefined) {
+			throw new Error(
+				'<Dialog.Content /> must have a `model` prop or be a child of `<Dialog.Root/>`',
+			);
+		}
+		const id = useRunOnce(() => resolvedModel.init('content'));
 
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node === null) {
-					model.unbindNode(id);
+					resolvedModel.unbindNode(id);
 				} else {
-					model.bindNode(id, node);
+					resolvedModel.bindNode(id, node);
 				}
 			},
-			[model],
+			[resolvedModel],
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
 		return (
 			<>
-				{model.getState().open && (
-					<div ref={ref} {...model.submodelDOMAttributes(id)} {...restProps}>
+				{resolvedModel.getState().open && (
+					<div
+						ref={ref}
+						{...resolvedModel.submodelDOMAttributes(id)}
+						{...restProps}
+					>
 						{children}
 					</div>
 				)}

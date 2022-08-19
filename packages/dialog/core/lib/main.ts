@@ -150,7 +150,9 @@ export class DialogModel extends StateModel<
 		);
 		if (content?.node === undefined) {
 			if (this.debug) {
-				console.error(`#onOpenChangeEffect(), no content submodel with node`);
+				console.error(
+					`#onOpenChangeEffect(true), no content submodel with node`,
+				);
 			}
 			return;
 		}
