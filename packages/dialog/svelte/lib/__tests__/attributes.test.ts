@@ -1,4 +1,9 @@
-import {cleanup, render, screen, waitFor} from '@testing-library/svelte';
+import {
+	cleanup,
+	render,
+	screen,
+	waitForElementToBeRemoved,
+} from '@testing-library/svelte';
 import {writable} from 'svelte/store';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 import Template from './attributes.svelte';
@@ -52,14 +57,10 @@ describe('trigger', () => {
 		render(Template, {open});
 		const trigger = screen.getByTestId('trigger');
 		open.set(false);
-		await waitFor(() => {
-			expect(screen.queryByTestId('title')).toBeInTheDocument();
-		});
+		await waitForElementToBeRemoved(() => screen.queryByTestId('title'));
 		expect(trigger).toHaveAttribute('data-state', 'closed');
 		open.set(true);
-		await waitFor(() => {
-			expect(screen.queryByTestId('title')).not.toBeInTheDocument();
-		});
+		await screen.findByTestId('title');
 		expect(trigger).toHaveAttribute('data-state', 'open');
 	});
 
