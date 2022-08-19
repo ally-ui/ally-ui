@@ -2,8 +2,9 @@
 	import type {Readable} from 'svelte/store';
 	import {createDialog, Dialog} from '../main';
 
+	export let initialOpen: boolean | undefined = undefined;
 	export let open: Readable<boolean> | undefined = undefined;
-	const dialog = createDialog({open});
+	const dialog = createDialog({initialOpen, open});
 </script>
 
 <Dialog.Trigger model={dialog} data-testid="trigger">

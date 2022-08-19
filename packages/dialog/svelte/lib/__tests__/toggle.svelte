@@ -1,7 +1,10 @@
 <script lang="ts">
-	import {createDialog, Dialog} from '../../../main';
+	import type {Writable} from 'svelte/store';
+	import {createDialog, Dialog} from '../main';
 
-	const dialog = createDialog({initialOpen: true});
+	export let initialOpen: boolean | undefined = undefined;
+	export let open: Writable<boolean> | undefined = undefined;
+	const dialog = createDialog({initialOpen, open});
 </script>
 
 <Dialog.Trigger model={dialog} data-testid="trigger">
