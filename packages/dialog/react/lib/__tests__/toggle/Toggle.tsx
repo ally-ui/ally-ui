@@ -2,7 +2,7 @@ import React from 'react';
 import {Dialog, useDialog} from '../../main';
 import {UseDialogOptions} from '../../useDialog';
 
-export default function Focus(options: UseDialogOptions) {
+export default function Toggle(options: UseDialogOptions) {
 	const dialog = useDialog(options);
 	return (
 		<React.StrictMode>
