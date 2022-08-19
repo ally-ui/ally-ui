@@ -1,28 +1,35 @@
 import {type DialogModel} from '@ally-ui/core-dialog';
 import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
 import React from 'react';
+import {useDialogContext} from './DialogRoot';
 
 export interface DialogTriggerProps
 	extends React.DetailedHTMLProps<
 		React.ButtonHTMLAttributes<HTMLButtonElement>,
 		HTMLButtonElement
 	> {
-	model: DialogModel;
+	model?: DialogModel;
 }
 
 const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 	({model, children, onClick, ...restProps}, forwardedRef) => {
-		const id = useRunOnce(() => model.init('trigger'));
+		const resolvedModel = useDialogContext() ?? model;
+		if (resolvedModel === undefined) {
+			throw new Error(
+				'<Dialog.Trigger /> must have a `model` prop or be a child of `<Dialog.Root/>`',
+			);
+		}
+		const id = useRunOnce(() => resolvedModel.init('trigger'));
 
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node === null) {
-					model.unbindNode(id);
+					resolvedModel.unbindNode(id);
 				} else {
-					model.bindNode(id, node);
+					resolvedModel.bindNode(id, node);
 				}
 			},
-			[model],
+			[resolvedModel],
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
@@ -31,15 +38,15 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 		>(
 			(ev) => {
 				onClick?.(ev);
-				model.setState((prevState) => ({...prevState, open: true}));
+				resolvedModel.setState((prevState) => ({...prevState, open: true}));
 			},
-			[model],
+			[resolvedModel],
 		);
 
 		return (
 			<button
 				ref={ref}
-				{...model.submodelDOMAttributes(id)}
+				{...resolvedModel.submodelDOMAttributes(id)}
 				{...restProps}
 				onClick={handleClick}
 			>
