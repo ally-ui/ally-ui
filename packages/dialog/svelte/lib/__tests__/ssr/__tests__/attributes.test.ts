@@ -1,5 +1,4 @@
 import {screen} from '@testing-library/dom';
-import {afterEach, beforeAll, beforeEach, describe, expect, it} from 'vitest';
 import {renderServerTemplate} from '../renderServerTemplate';
 
 let rendered_open: string;

@@ -1,7 +1,6 @@
 import {screen} from '@testing-library/dom';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import {afterEach, expect, it} from 'vitest';
 import {InitClosedTemplate, InitOpenTemplate} from './templates';
 
 afterEach(() => {

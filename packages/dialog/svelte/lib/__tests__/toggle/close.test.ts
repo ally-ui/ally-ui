@@ -1,6 +1,5 @@
 import {cleanup, render, screen} from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
-import {afterEach, expect, it} from 'vitest';
 import Template from '../template.svelte';
 
 afterEach(async () => {

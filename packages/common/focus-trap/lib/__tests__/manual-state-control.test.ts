@@ -1,6 +1,5 @@
 import {screen} from '@testing-library/dom';
 import {writable} from 'svelte/store';
-import {afterEach, beforeEach, expect, it} from 'vitest';
 import {FocusTrapModel, FocusTrapState} from '../main';
 import {observableFocusTrap} from './observableFocusTrap';
 

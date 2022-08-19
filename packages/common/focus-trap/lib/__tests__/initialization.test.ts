@@ -1,5 +1,4 @@
 import {screen} from '@testing-library/dom';
-import {afterEach, beforeEach, expect, it} from 'vitest';
 import {FocusTrapModel} from '../main';
 import {observableFocusTrap} from './observableFocusTrap';
 
