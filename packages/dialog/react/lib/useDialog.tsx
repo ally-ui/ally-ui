@@ -1,3 +1,4 @@
+import {DevOptions} from '@ally-ui/core';
 import {DialogModel, DialogModelOptions} from '@ally-ui/core-dialog';
 import {useLayoutPromise, useRunOnce, useSyncOption} from '@ally-ui/react';
 import React from 'react';
@@ -7,13 +8,14 @@ export interface UseDialogOptions extends DialogModelOptions {
 	onOpenChange?: (open: boolean) => void;
 }
 
-export default function useDialog({
-	initialOpen,
-	onOpenChange,
-	open,
-}: UseDialogOptions = {}): DialogModel {
+export default function useDialog(
+	{initialOpen, onOpenChange, open}: UseDialogOptions = {},
+	devOptions: DevOptions = {},
+): DialogModel {
 	const id = React.useId();
-	const model = useRunOnce(() => new DialogModel(id, {initialOpen}));
+	const model = useRunOnce(
+		() => new DialogModel(id, {initialOpen}, devOptions),
+	);
 
 	const [state, setState] = React.useState(() => model.initialState);
 
