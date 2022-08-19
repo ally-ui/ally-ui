@@ -11,10 +11,10 @@
 	export let model: Readable<DialogModel>;
 	const id = $model.init('close');
 
-	let node: HTMLElement | undefined;
+	let node: HTMLElement | null = null;
 	$: bindNode(node);
-	function bindNode(node?: HTMLElement) {
-		if (node === undefined) {
+	function bindNode(node: HTMLElement | null) {
+		if (node === null) {
 			$model.unbindNode(id);
 		} else {
 			$model.bindNode(id, node);
