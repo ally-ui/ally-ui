@@ -4,12 +4,12 @@ import {
 	screen,
 	waitForElementToBeRemoved,
 } from '@testing-library/svelte';
-import {writable} from 'svelte/store';
-import Template from './template.svelte';
+import {writable, type Writable} from 'svelte/store';
+import Attributes from './attributes.test.svelte';
 
-const open = writable(true);
+let open: Writable<boolean>;
 beforeEach(() => {
-	open.set(true);
+	open = writable(true);
 });
 afterEach(() => {
 	cleanup();
@@ -17,20 +17,20 @@ afterEach(() => {
 
 describe('content', () => {
 	it('renders the data state attribute on an open dialog', () => {
-		render(Template, {initialOpen: true});
+		render(Attributes, {initialOpen: true});
 		const content = screen.getByTestId('content');
 		expect(content).toHaveAttribute('data-state', 'open');
 	});
 
 	it('renders basic aria attributes', () => {
-		render(Template, {initialOpen: true});
+		render(Attributes, {initialOpen: true});
 		const content = screen.getByTestId('content');
 		expect(content).toHaveAttribute('role', 'dialog');
 		expect(content).toHaveAttribute('aria-modal', 'true');
 	});
 
 	it('renders aria attributes that point to title and description', () => {
-		render(Template, {initialOpen: true});
+		render(Attributes, {initialOpen: true});
 		const content = screen.getByTestId('content');
 		const title = screen.getByTestId('title');
 		const description = screen.getByTestId('description');
@@ -41,19 +41,19 @@ describe('content', () => {
 
 describe('trigger', () => {
 	it('renders the data state attribute with a closed dialog', () => {
-		render(Template);
+		render(Attributes);
 		const trigger = screen.getByTestId('trigger');
 		expect(trigger).toHaveAttribute('data-state', 'closed');
 	});
 
 	it('renders the data state attribute with an open dialog', () => {
-		render(Template, {initialOpen: true});
+		render(Attributes, {initialOpen: true});
 		const trigger = screen.getByTestId('trigger');
 		expect(trigger).toHaveAttribute('data-state', 'open');
 	});
 
 	it('updates the data state attribute when the dialog opens and closes', async () => {
-		render(Template, {initialOpen: true, open});
+		render(Attributes, {initialOpen: true, open});
 		const trigger = screen.getByTestId('trigger');
 		open.set(false);
 		await waitForElementToBeRemoved(() => screen.queryByTestId('title'));
@@ -64,13 +64,13 @@ describe('trigger', () => {
 	});
 
 	it('renders basic aria attributes', () => {
-		render(Template);
+		render(Attributes);
 		const trigger = screen.getByTestId('trigger');
 		expect(trigger).toHaveAttribute('aria-haspopup', 'dialog');
 	});
 
 	it('renders aria-controls that points to content', () => {
-		render(Template, {initialOpen: true});
+		render(Attributes, {initialOpen: true});
 		const trigger = screen.getByTestId('trigger');
 		const content = screen.getByTestId('content');
 		expect(trigger).toHaveAttribute('aria-controls', content.id);

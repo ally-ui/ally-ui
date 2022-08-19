@@ -1,12 +1,12 @@
 import {act, cleanup, render, screen} from '@testing-library/svelte';
-import Template from '../template.svelte';
+import Focus from './focus.test.svelte';
 
 afterEach(async () => {
 	cleanup();
 });
 
 it('traps focus in the dialog if initially open', async () => {
-	render(Template, {initialOpen: true});
+	render(Focus, {initialOpen: true});
 	const content = screen.getByTestId('content');
 	await act();
 	expect(content).toHaveFocusWithin();

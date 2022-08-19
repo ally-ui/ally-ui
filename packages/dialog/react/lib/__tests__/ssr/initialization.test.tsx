@@ -1,23 +1,57 @@
 import {screen} from '@testing-library/dom';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import {InitClosedTemplate, InitOpenTemplate} from './templates';
+import {Dialog, useDialog} from '../../main';
 
 afterEach(() => {
 	document.body.innerHTML = '';
 });
 
-const rendered_open = ReactDOMServer.renderToString(
-	<React.StrictMode>
-		<InitOpenTemplate />
-	</React.StrictMode>,
-);
+function RenderedOpen() {
+	const dialog = useDialog({initialOpen: true});
+	return (
+		<React.StrictMode>
+			<Dialog.Trigger model={dialog} data-testid="trigger">
+				open dialog
+			</Dialog.Trigger>
+			<Dialog.Content model={dialog} data-testid="content">
+				<Dialog.Title model={dialog} data-testid="title">
+					title
+				</Dialog.Title>
+				<Dialog.Description model={dialog} data-testid="description">
+					description
+				</Dialog.Description>
+				<Dialog.Close model={dialog} data-testid="close">
+					close dialog
+				</Dialog.Close>
+			</Dialog.Content>
+		</React.StrictMode>
+	);
+}
+const rendered_open = ReactDOMServer.renderToString(<RenderedOpen />);
 
-const rendered_closed = ReactDOMServer.renderToString(
-	<React.StrictMode>
-		<InitClosedTemplate />
-	</React.StrictMode>,
-);
+export function RenderedClosed() {
+	const dialog = useDialog();
+	return (
+		<React.StrictMode>
+			<Dialog.Trigger model={dialog} data-testid="trigger">
+				open dialog
+			</Dialog.Trigger>
+			<Dialog.Content model={dialog} data-testid="content">
+				<Dialog.Title model={dialog} data-testid="title">
+					title
+				</Dialog.Title>
+				<Dialog.Description model={dialog} data-testid="description">
+					description
+				</Dialog.Description>
+				<Dialog.Close model={dialog} data-testid="close">
+					close dialog
+				</Dialog.Close>
+			</Dialog.Content>
+		</React.StrictMode>
+	);
+}
+const rendered_closed = ReactDOMServer.renderToString(<RenderedClosed />);
 
 it('renders an initially closed dialog', () => {
 	document.body.innerHTML = rendered_closed;

@@ -1,43 +1,74 @@
 import {screen} from '@testing-library/dom';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import {InitClosedTemplate, InitOpenTemplate} from './templates';
+import {Dialog, useDialog} from '../../main';
 
 afterEach(() => {
 	document.body.innerHTML = '';
 });
 
-const rendered_open = ReactDOMServer.renderToString(
-	<React.StrictMode>
-		<InitOpenTemplate />
-	</React.StrictMode>,
-);
+function RenderedOpen() {
+	const dialog = useDialog({initialOpen: true});
+	return (
+		<React.StrictMode>
+			<Dialog.Trigger model={dialog} data-testid="trigger">
+				open dialog
+			</Dialog.Trigger>
+			<Dialog.Content model={dialog} data-testid="content">
+				<Dialog.Title model={dialog} data-testid="title">
+					title
+				</Dialog.Title>
+				<Dialog.Description model={dialog} data-testid="description">
+					description
+				</Dialog.Description>
+				<Dialog.Close model={dialog} data-testid="close">
+					close dialog
+				</Dialog.Close>
+			</Dialog.Content>
+		</React.StrictMode>
+	);
+}
+const rendered_open = ReactDOMServer.renderToString(<RenderedOpen />);
 
-const rendered_closed = ReactDOMServer.renderToString(
-	<React.StrictMode>
-		<InitClosedTemplate />
-	</React.StrictMode>,
-);
+export function RenderedClosed() {
+	const dialog = useDialog();
+	return (
+		<React.StrictMode>
+			<Dialog.Trigger model={dialog} data-testid="trigger">
+				open dialog
+			</Dialog.Trigger>
+			<Dialog.Content model={dialog} data-testid="content">
+				<Dialog.Title model={dialog} data-testid="title">
+					title
+				</Dialog.Title>
+				<Dialog.Description model={dialog} data-testid="description">
+					description
+				</Dialog.Description>
+				<Dialog.Close model={dialog} data-testid="close">
+					close dialog
+				</Dialog.Close>
+			</Dialog.Content>
+		</React.StrictMode>
+	);
+}
+const rendered_closed = ReactDOMServer.renderToString(<RenderedClosed />);
 
 describe('content', () => {
 	beforeEach(() => {
 		document.body.innerHTML = rendered_open;
 	});
 	it('renders the data state attribute on an open dialog', () => {
-		document.body.innerHTML = rendered_open;
 		const content = screen.getByTestId('content');
 		expect(content).toHaveAttribute('data-state', 'open');
 	});
 
 	it('renders basic aria attributes', () => {
-		document.body.innerHTML = rendered_open;
 		const content = screen.getByTestId('content');
 		expect(content).toHaveAttribute('role', 'dialog');
 		expect(content).toHaveAttribute('aria-modal', 'true');
 	});
 
 	it('renders aria attributes that point to title and description', () => {
-		document.body.innerHTML = rendered_open;
 		const content = screen.getByTestId('content');
 		const title = screen.getByTestId('title');
 		const description = screen.getByTestId('description');
