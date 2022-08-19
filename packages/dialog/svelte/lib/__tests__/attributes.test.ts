@@ -53,12 +53,12 @@ describe('trigger', () => {
 		const trigger = screen.getByTestId('trigger');
 		open.set(false);
 		await waitFor(() => {
-			expect(screen.queryByTestId('title')).not.toBeNull();
+			expect(screen.queryByTestId('title')).toBeInTheDocument();
 		});
 		expect(trigger).toHaveAttribute('data-state', 'closed');
 		open.set(true);
 		await waitFor(() => {
-			expect(screen.queryByTestId('title')).toBeNull();
+			expect(screen.queryByTestId('title')).not.toBeInTheDocument();
 		});
 		expect(trigger).toHaveAttribute('data-state', 'open');
 	});
