@@ -32,6 +32,9 @@ export class DialogModel extends StateModel<
 		devOptions?: DevOptions,
 	) {
 		super(id, initialOptions, devOptions);
+		if (this.initialState.open) {
+			this.#onOpenChangeEffect_true();
+		}
 	}
 
 	deriveInitialState(options: DialogModelOptions): DialogModelState {
