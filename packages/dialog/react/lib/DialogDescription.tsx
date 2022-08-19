@@ -2,12 +2,16 @@ import {type DialogModel} from '@ally-ui/core-dialog';
 import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
 import React from 'react';
 
-export interface DialogDescriptionProps extends React.PropsWithChildren {
+export interface DialogDescriptionProps
+	extends React.DetailedHTMLProps<
+		React.HTMLAttributes<HTMLParagraphElement>,
+		HTMLParagraphElement
+	> {
 	model: DialogModel;
 }
 
 const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
-	({model, children}, forwardedRef) => {
+	({model, children, ...restProps}, forwardedRef) => {
 		const id = useRunOnce(() => model.init('description'));
 
 		const bindRef = React.useCallback(
@@ -23,7 +27,7 @@ const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
 		return (
-			<p ref={ref} {...model.submodelDOMAttributes(id)}>
+			<p ref={ref} {...model.submodelDOMAttributes(id)} {...restProps}>
 				{children}
 			</p>
 		);
