@@ -1,4 +1,4 @@
-import {findLastInMap, StateModel} from '@ally-ui/core';
+import {DevOptions, findLastInMap, StateModel} from '@ally-ui/core';
 import {FocusTrapModel} from '@ally-ui/focus-trap';
 
 type DialogSubmodelType =
@@ -26,8 +26,12 @@ export class DialogModel extends StateModel<
 	DialogModelOptions,
 	DialogModelState
 > {
-	constructor(id: string, initialOptions: DialogModelOptions) {
-		super(id, initialOptions);
+	constructor(
+		id: string,
+		initialOptions: DialogModelOptions,
+		devOptions?: DevOptions,
+	) {
+		super(id, initialOptions, devOptions);
 	}
 
 	deriveInitialState(options: DialogModelOptions): DialogModelState {

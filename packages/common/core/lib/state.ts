@@ -17,6 +17,10 @@ export type ResolvedOptions<TOptions, TState> = TOptions & {
 	onStateChange?: (updater: Updater<TState>) => void;
 };
 
+export interface DevOptions {
+	debug?: boolean;
+}
+
 /**
  * A base construct for a stateful model that is decoupled from its state
  * implementation. This allows for bindings to a variety of state
@@ -34,9 +38,13 @@ export abstract class StateModel<TOptions, TState> {
 	/**
 	 * Determines whether warnings and errors will be logged to console.
 	 */
-	debug = false;
+	debug: boolean;
 
-	constructor(id: string, initialOptions: TOptions) {
+	constructor(
+		id: string,
+		initialOptions: TOptions,
+		{debug = false}: DevOptions = {},
+	) {
 		this.id = id;
 		this.initialState = this.deriveInitialState(initialOptions);
 		this.#previousState = this.initialState;
@@ -44,6 +52,7 @@ export abstract class StateModel<TOptions, TState> {
 			state: this.initialState,
 			...initialOptions,
 		};
+		this.debug = debug;
 	}
 
 	abstract deriveInitialState(options: TOptions): TState;

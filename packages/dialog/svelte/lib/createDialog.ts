@@ -1,3 +1,4 @@
+import type {DevOptions} from '@ally-ui/core';
 import {DialogModel, type DialogModelOptions} from '@ally-ui/core-dialog';
 import {syncOption, type ReadOrWritable} from '@ally-ui/svelte';
 import {tick} from 'svelte';
@@ -7,13 +8,13 @@ export interface CreateDialogOptions extends DialogModelOptions {
 	open?: ReadOrWritable<boolean>;
 }
 
-export default function createDialog({
-	initialOpen,
-	open,
-}: CreateDialogOptions = {}): Readable<DialogModel> {
+export default function createDialog(
+	{initialOpen, open}: CreateDialogOptions = {},
+	devOptions: DevOptions = {},
+): Readable<DialogModel> {
 	// TODO Generate SSR-safe IDs.
 	const id = '0';
-	const model = new DialogModel(id, {initialOpen});
+	const model = new DialogModel(id, {initialOpen}, devOptions);
 
 	const state = writable(model.initialState);
 
