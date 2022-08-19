@@ -2,7 +2,6 @@ import {DevOptions, findLastInMap, StateModel} from '@ally-ui/core';
 import {FocusTrapModel} from '@ally-ui/focus-trap';
 
 type DialogComponentType =
-	| 'root'
 	| 'trigger'
 	| 'content'
 	| 'title'
@@ -110,6 +109,14 @@ export class DialogModel extends StateModel<
 			return;
 		}
 		component.node = node;
+		if (component.type === 'content') {
+			const title = findLastInMap(this.#components, (c) => c.type === 'title');
+			if (title === undefined) {
+				console.warn(
+					'Dialogs should contain a title component for accessibility reasons',
+				);
+			}
+		}
 	}
 
 	unbindNode(componentId: string) {
@@ -186,7 +193,7 @@ export class DialogModel extends StateModel<
 		await this.uiOptions?.flushDOM?.();
 		const content = findLastInMap(
 			this.#components,
-			(s) => s.type === 'content' && s.node !== undefined,
+			(c) => c.type === 'content' && c.node !== undefined,
 		);
 		if (content?.node === undefined) {
 			if (this.debug) {
@@ -202,7 +209,7 @@ export class DialogModel extends StateModel<
 	#createFocusTrap(contentElement: HTMLElement) {
 		const triggerComponent = findLastInMap(
 			this.#components,
-			(s) => s.type === 'trigger',
+			(c) => c.type === 'trigger',
 		);
 		const contentTrap = new FocusTrapModel(this.id, {
 			container: contentElement,
