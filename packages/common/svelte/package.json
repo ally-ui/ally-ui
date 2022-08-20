@@ -31,6 +31,6 @@
 		}
 	},
 	"peerDependencies": {
-		"svelte": ">=3.49"
+		"svelte": ">=3"
 	}
 }
