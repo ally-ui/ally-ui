@@ -22,6 +22,7 @@ export function useDialogStateContext() {
 
 export default function DialogRoot({children, ...options}: DialogRootProps) {
 	const [model, state] = useDialog(options, {debug: true});
+	// TODO Avoid nesting context providers.
 	return (
 		<DialogModelContext.Provider value={model}>
 			<DialogStateContext.Provider value={state}>
