@@ -51,12 +51,8 @@ export default function App() {
 <summary>Svelte</summary>
 
 ```svelte
-<script>
-  const dialog = createDialog();
-</script>
-
 <main>
-  <Dialog.Root model={dialog}>
+  <Dialog.Root>
     <Dialog.Trigger>Edit profile</Dialog.Trigger>
     <Dialog.Content>
       <Dialog.Title>Edit profile</Dialog.Title>
