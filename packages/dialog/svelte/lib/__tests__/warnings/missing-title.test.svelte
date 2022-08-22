@@ -1,10 +1,8 @@
 <script lang="ts">
 	import {createDialog, Dialog} from '../../main';
-
-	const dialog = createDialog({initialOpen: true});
 </script>
 
-<Dialog.Root model={dialog}>
+<Dialog.Root initialOpen>
 	<Dialog.Trigger data-testid="trigger">open dialog</Dialog.Trigger>
 	<Dialog.Content data-testid="content">
 		<Dialog.Description data-testid="description">
