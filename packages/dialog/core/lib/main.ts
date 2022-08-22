@@ -138,7 +138,14 @@ export class DialogModel extends StateModel<
 		return `${this.#rootId()}-${type}`;
 	}
 
-	componentAttributes(componentId: string) {
+	/**
+	 * Get the required DOM attributes for a component with a given state.
+	 * @param componentId The component to get attributes for
+	 * @param state If the component attributes are static, this can be omitted.
+	 * @returns An object describing the DOM attributes to apply to the component node
+	 */
+	componentAttributes(componentId: string, state?: DialogModelState) {
+		const resolvedState = state ?? this.getState();
 		const component = this.#components.get(componentId);
 		if (component === undefined) {
 			if (this.debug) {
@@ -154,14 +161,14 @@ export class DialogModel extends StateModel<
 					'aria-modal': 'true',
 					'aria-labelledby': this.#componentId('title'),
 					'aria-describedby': this.#componentId('description'),
-					'data-state': this.getState().open ? 'open' : 'closed',
+					'data-state': resolvedState.open ? 'open' : 'closed',
 				} as const;
 			case 'trigger':
 				return {
 					id: this.#componentId(component.type),
 					'aria-haspopup': 'dialog',
 					'aria-controls': this.#componentId('content'),
-					'data-state': this.getState().open ? 'open' : 'closed',
+					'data-state': resolvedState.open ? 'open' : 'closed',
 				} as const;
 			case 'title':
 			case 'description':
