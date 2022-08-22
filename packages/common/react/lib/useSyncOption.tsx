@@ -1,7 +1,7 @@
 import React from 'react';
 import useRunOnce from './useRunOnce';
 
-export interface UseSyncOptionParams<TOption> {
+export interface UseSyncOptionOptions<TOption> {
 	option?: TOption;
 	internal: TOption;
 	onOptionChange: React.Dispatch<TOption>;
@@ -16,7 +16,7 @@ export default function useSyncOption<TOption>({
 	internal,
 	onOptionChange,
 	onInternalChange,
-}: UseSyncOptionParams<TOption>) {
+}: UseSyncOptionOptions<TOption>) {
 	useRunOnce(() => {
 		if (option === undefined) {
 			return;
