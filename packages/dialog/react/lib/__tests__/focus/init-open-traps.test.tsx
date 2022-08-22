@@ -1,4 +1,4 @@
-import {act, cleanup, render, screen} from '@testing-library/react';
+import {cleanup, render, screen} from '@testing-library/react';
 import Focus from './Focus';
 
 afterEach(async () => {

@@ -4,12 +4,17 @@
 	"tabWidth": 2,
 	"trailingComma": "all",
 	"useTabs": true,
-	"organizeImportsSkipDestructiveCodeActions": true,
 	"overrides": [
 		{
 			"files": "*.md",
 			"options": {
 				"useTabs": false
+			}
+		},
+		{
+			"files": "*.svelte",
+			"options": {
+				"organizeImportsSkipDestructiveCodeActions": true
 			}
 		}
 	]

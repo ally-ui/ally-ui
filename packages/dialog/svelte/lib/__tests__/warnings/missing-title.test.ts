@@ -1,4 +1,4 @@
-import {cleanup, render, screen} from '@testing-library/svelte';
+import {cleanup, render} from '@testing-library/svelte';
 import {vi} from 'vitest';
 import MissingTitle from './missing-title.test.svelte';
 
