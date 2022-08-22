@@ -1,0 +1,36 @@
+{
+	"name": "@ally-ui/vue",
+	"version": "0.0.5",
+	"scripts": {
+		"example": "vite",
+		"build": "vue-tsc --noEmit && vite build",
+		"build:watch": "concurrently \"vue-tsc --noEmit --watch\" && \"vite build --watch \""
+	},
+	"author": "Bryan Lee",
+	"description": "Vue utilities for Ally UI",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ally-ui/ally-ui.git"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"main": "./dist/main.umd.cjs",
+	"module": "./dist/main.js",
+	"types": "./dist/main.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/main.js",
+			"require": "./dist/main.umd.cjs"
+		}
+	},
+	"peerDependencies": {
+		"vue": ">=3"
+	}
+}

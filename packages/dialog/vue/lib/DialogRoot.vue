@@ -1,0 +1,40 @@
+<script setup lang="ts">
+import {provide, ref, watchEffect} from 'vue';
+import {MODEL_KEY, STATE_KEY} from './context';
+import {useDialog} from './main';
+
+const props = withDefaults(
+	defineProps<{
+		open?: boolean;
+		initialOpen?: boolean;
+	}>(),
+	{
+		initialOpen: false,
+	},
+);
+const emit = defineEmits<{
+	(ev: 'open', open: boolean): void;
+}>();
+
+const openRef = ref(props.open);
+watchEffect(function emitOpen() {
+	if (openRef.value !== undefined) {
+		emit('open', openRef.value);
+	}
+});
+watchEffect(function updateOpen() {
+	openRef.value = props.open;
+});
+
+const [model, state] = useDialog({
+	openRef,
+	initialOpen: props.initialOpen,
+});
+
+provide(MODEL_KEY, model);
+provide(STATE_KEY, state);
+</script>
+
+<template>
+	<slot />
+</template>
