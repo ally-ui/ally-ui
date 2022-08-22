@@ -2,12 +2,12 @@ import React from 'react';
 import {Dialog} from '../lib/main';
 
 export default function App() {
-	const [open, setOpen] = React.useState(false);
+	const [open, setOpen] = React.useState(true);
 
 	return (
 		<main>
 			<h1>Ally UI React Dialog</h1>
-			<Dialog.Root open={open} onOpenChange={setOpen}>
+			<Dialog.Root open={open} onOpenChange={setOpen} initialOpen>
 				<div>
 					<button onClick={() => setOpen((o) => !o)}>Manual toggle</button>
 					<Dialog.Trigger>Edit profile</Dialog.Trigger>

@@ -181,16 +181,16 @@ export class DialogModel extends StateModel<
 
 	#contentTrap?: FocusTrapModel;
 	async #onOpenChangeEffect(open: boolean) {
-		// Flush changes to the DOM before looking for nodes in DOM.
-		await this.uiOptions?.flushDOM?.();
 		if (open) {
-			this.#onOpenChangeEffect_true();
+			await this.#onOpenChangeEffect_true();
 		} else {
-			this.#onOpenChangeEffect_false();
+			await this.#onOpenChangeEffect_false();
 		}
 	}
 
-	#onOpenChangeEffect_true() {
+	async #onOpenChangeEffect_true() {
+		// Flush changes to the DOM before looking for nodes in DOM.
+		await this.uiOptions?.flushDOM?.();
 		const content = findLastInMap(
 			this.#components,
 			(c) => c.type === 'content' && c.node !== undefined,
@@ -238,10 +238,12 @@ export class DialogModel extends StateModel<
 		return contentTrap;
 	}
 
-	#onOpenChangeEffect_false() {
+	async #onOpenChangeEffect_false() {
 		if (this.#contentTrap === undefined) {
 			return;
 		}
+		// Flush changes to the DOM before looking for nodes in DOM.
+		await this.uiOptions?.flushDOM?.();
 		this.#contentTrap.deactivate();
 		this.#contentTrap = undefined;
 	}
