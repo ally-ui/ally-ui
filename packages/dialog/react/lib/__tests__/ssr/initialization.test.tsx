@@ -1,17 +1,16 @@
 import {screen} from '@testing-library/dom';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import {Dialog, useDialog} from '../../main';
+import {Dialog} from '../../main';
 
 afterEach(() => {
 	document.body.innerHTML = '';
 });
 
 function RenderedOpen() {
-	const dialog = useDialog({initialOpen: true});
 	return (
 		<React.StrictMode>
-			<Dialog.Root model={dialog}>
+			<Dialog.Root initialOpen>
 				<Dialog.Trigger data-testid="trigger">open dialog</Dialog.Trigger>
 				<Dialog.Content data-testid="content">
 					<Dialog.Title data-testid="title">title</Dialog.Title>
@@ -27,10 +26,9 @@ function RenderedOpen() {
 const rendered_open = ReactDOMServer.renderToString(<RenderedOpen />);
 
 export function RenderedClosed() {
-	const dialog = useDialog();
 	return (
 		<React.StrictMode>
-			<Dialog.Root model={dialog}>
+			<Dialog.Root>
 				<Dialog.Trigger data-testid="trigger">open dialog</Dialog.Trigger>
 				<Dialog.Content data-testid="content">
 					<Dialog.Title data-testid="title">title</Dialog.Title>

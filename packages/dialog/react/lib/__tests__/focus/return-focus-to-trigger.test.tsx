@@ -6,9 +6,9 @@ afterEach(async () => {
 	cleanup();
 });
 
-it('traps focus on tab', async () => {
+it('returns focus to the trigger on deactivation', async () => {
 	const user = userEvent.setup();
 	render(<Focus initialOpen />);
 	await user.click(await screen.findByTestId('close'));
-	expect(screen.getByTestId('trigger')).toHaveFocusWithin();
+	expect(screen.getByTestId('trigger')).toHaveFocus();
 });
