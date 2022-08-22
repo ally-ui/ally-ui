@@ -77,10 +77,42 @@ function getActualTarget(ev: Event) {
 }
 
 export interface FocusTrapOptions {
+	/**
+	 * The container to trap focus within.
+	 */
 	container: HTMLElement;
-	active?: boolean;
+	/**
+	 * Whether the focus trap should initially be active.
+	 *
+	 * Defaults to `false`.
+	 */
+	initialActive?: boolean;
+	/**
+	 * Whether clicking outside the focus trap container deactivates the trap.
+	 *
+	 * Pass a handler function to configure when the trap should deactivate based
+	 * on each individual mouse click.
+	 *
+	 * Defaults to `false`.
+	 */
 	clickOutsideDeactivates?: boolean | ((ev: MouseEvent) => boolean);
+	/**
+	 * Whether pressing escape deactives the trap.
+	 *
+	 * Pass a handler function to configure when the trap should deactivate based
+	 * on each individual keystroke.
+	 *
+	 * Defaults to `false`.
+	 */
 	escapeDeactivates?: boolean | ((ev: KeyboardEvent) => boolean);
+	/**
+	 * A custom element to return focus to on deactivation.
+	 *
+	 * Pass a getter function to dynamically get the element to return focus to
+	 * on deactivation.
+	 *
+	 * Defaults to the previously focused element before the trap activated.
+	 */
 	returnFocusTo?: HTMLElement | (() => HTMLElement | undefined);
 }
 
@@ -101,7 +133,7 @@ export class FocusTrapModel extends StateModel<
 
 	deriveInitialState(options: FocusTrapOptions): FocusTrapState {
 		return {
-			active: options.active ?? false,
+			active: options.initialActive ?? false,
 		};
 	}
 
