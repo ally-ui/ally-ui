@@ -8,7 +8,7 @@ import {
 	ref,
 	watchEffect,
 } from 'vue';
-import {modelKey, stateKey} from './context';
+import {MODEL_KEY, STATE_KEY} from './context';
 
 const props = withDefaults(
 	defineProps<{
@@ -17,7 +17,7 @@ const props = withDefaults(
 	{},
 );
 
-const resolvedModel = props.model ?? inject(modelKey);
+const resolvedModel = props.model ?? inject(MODEL_KEY);
 if (resolvedModel === undefined) {
 	throw new Error(
 		'<Dialog.Trigger /> must have a `model` prop or be a child of `<Dialog.Root/>`',
@@ -25,7 +25,7 @@ if (resolvedModel === undefined) {
 }
 const id = resolvedModel.init('trigger');
 
-const state = inject(stateKey) ?? ref(resolvedModel.getState());
+const state = inject(STATE_KEY) ?? ref(resolvedModel.getState());
 
 onMounted(() => resolvedModel.mount(id));
 onUnmounted(() => resolvedModel.unmount(id));

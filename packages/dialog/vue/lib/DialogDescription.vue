@@ -8,7 +8,7 @@ import {
 	ref,
 	watchEffect,
 } from 'vue';
-import {modelKey} from './context';
+import {MODEL_KEY} from './context';
 
 const props = withDefaults(
 	defineProps<{
@@ -17,7 +17,7 @@ const props = withDefaults(
 	{},
 );
 
-const resolvedModel = props.model ?? inject(modelKey);
+const resolvedModel = props.model ?? inject(MODEL_KEY);
 if (resolvedModel === undefined) {
 	throw new Error(
 		'<Dialog.Description /> must have a `model` prop or be a child of `<Dialog.Root/>`',
