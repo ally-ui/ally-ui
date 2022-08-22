@@ -1,19 +1,33 @@
-import {type DialogModel} from '@ally-ui/core-dialog';
+import {DialogModel, DialogModelState} from '@ally-ui/core-dialog';
 import React from 'react';
+import useDialog, {UseDialogOptions} from './useDialog';
 
-export interface DialogRootProps extends React.PropsWithChildren {
-	model: DialogModel;
+export interface DialogRootProps
+	extends React.PropsWithChildren,
+		UseDialogOptions {}
+
+const DialogModelContext = React.createContext<DialogModel | undefined>(
+	undefined,
+);
+export function useDialogModelContext() {
+	return React.useContext(DialogModelContext);
 }
 
-const DialogContext = React.createContext<DialogModel | undefined>(undefined);
-export function useDialogContext() {
-	return React.useContext(DialogContext);
+const DialogStateContext = React.createContext<DialogModelState | undefined>(
+	undefined,
+);
+export function useDialogStateContext() {
+	return React.useContext(DialogStateContext);
 }
 
-function DialogRoot({model, children}: DialogRootProps) {
+export default function DialogRoot({children, ...options}: DialogRootProps) {
+	const [model, state] = useDialog(options);
+	// TODO Avoid nesting context providers.
 	return (
-		<DialogContext.Provider value={model}>{children}</DialogContext.Provider>
+		<DialogModelContext.Provider value={model}>
+			<DialogStateContext.Provider value={state}>
+				{children}
+			</DialogStateContext.Provider>
+		</DialogModelContext.Provider>
 	);
 }
-
-export default DialogRoot;

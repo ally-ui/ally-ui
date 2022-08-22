@@ -1,7 +1,7 @@
 import {type DialogModel} from '@ally-ui/core-dialog';
 import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
 import React from 'react';
-import {useDialogContext} from './DialogRoot';
+import {useDialogModelContext} from './DialogRoot';
 
 export interface DialogTitleProps
 	extends React.DetailedHTMLProps<
@@ -13,7 +13,7 @@ export interface DialogTitleProps
 
 const DialogTitle = React.forwardRef<HTMLElement, DialogTitleProps>(
 	({model, children, ...restProps}, forwardedRef) => {
-		const resolvedModel = useDialogContext() ?? model;
+		const resolvedModel = useDialogModelContext() ?? model;
 		if (resolvedModel === undefined) {
 			throw new Error(
 				'<Dialog.Title /> must have a `model` prop or be a child of `<Dialog.Root/>`',

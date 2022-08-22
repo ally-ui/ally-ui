@@ -1,13 +1,12 @@
 import {cleanup, render} from '@testing-library/react';
 import React from 'react';
 import {vi} from 'vitest';
-import {Dialog, useDialog} from '../../main';
+import {Dialog} from '../../main';
 
 function MissingTitle() {
-	const dialog = useDialog({initialOpen: true});
 	return (
 		<React.StrictMode>
-			<Dialog.Root model={dialog}>
+			<Dialog.Root initialOpen>
 				<Dialog.Trigger data-testid="trigger">open dialog</Dialog.Trigger>
 				<Dialog.Content data-testid="content">
 					<Dialog.Description data-testid="description">

@@ -138,7 +138,14 @@ export class DialogModel extends StateModel<
 		return `${this.#rootId()}-${type}`;
 	}
 
-	componentAttributes(componentId: string) {
+	/**
+	 * Get the required DOM attributes for a component with a given state.
+	 * @param componentId The component to get attributes for
+	 * @param state If the component attributes are static, this can be omitted.
+	 * @returns An object describing the DOM attributes to apply to the component node
+	 */
+	componentAttributes(componentId: string, state?: DialogModelState) {
+		const resolvedState = state ?? this.getState();
 		const component = this.#components.get(componentId);
 		if (component === undefined) {
 			if (this.debug) {
@@ -154,14 +161,14 @@ export class DialogModel extends StateModel<
 					'aria-modal': 'true',
 					'aria-labelledby': this.#componentId('title'),
 					'aria-describedby': this.#componentId('description'),
-					'data-state': this.getState().open ? 'open' : 'closed',
+					'data-state': resolvedState.open ? 'open' : 'closed',
 				} as const;
 			case 'trigger':
 				return {
 					id: this.#componentId(component.type),
 					'aria-haspopup': 'dialog',
 					'aria-controls': this.#componentId('content'),
-					'data-state': this.getState().open ? 'open' : 'closed',
+					'data-state': resolvedState.open ? 'open' : 'closed',
 				} as const;
 			case 'title':
 			case 'description':
@@ -184,12 +191,12 @@ export class DialogModel extends StateModel<
 		if (open) {
 			await this.#onOpenChangeEffect_true();
 		} else {
-			this.#onOpenChangeEffect_false();
+			await this.#onOpenChangeEffect_false();
 		}
 	}
 
 	async #onOpenChangeEffect_true() {
-		// Flush changes to the DOM before looking for the content node in DOM.
+		// Flush changes to the DOM before looking for nodes in DOM.
 		await this.uiOptions?.flushDOM?.();
 		const content = findLastInMap(
 			this.#components,
@@ -207,14 +214,17 @@ export class DialogModel extends StateModel<
 	}
 
 	#createFocusTrap(contentElement: HTMLElement) {
-		const triggerComponent = findLastInMap(
-			this.#components,
-			(c) => c.type === 'trigger',
-		);
+		const getTriggerNode = () => {
+			const triggerComponent = findLastInMap(
+				this.#components,
+				(c) => c.type === 'trigger',
+			);
+			return triggerComponent?.node;
+		};
 		const contentTrap = new FocusTrapModel(this.id, {
 			container: contentElement,
-			active: true,
-			returnFocusTo: triggerComponent?.node,
+			initialActive: true,
+			returnFocusTo: getTriggerNode,
 		});
 		contentTrap.setUIOptions(this.uiOptions);
 		contentTrap.setOptions((prevOptions) => ({
@@ -235,10 +245,12 @@ export class DialogModel extends StateModel<
 		return contentTrap;
 	}
 
-	#onOpenChangeEffect_false() {
+	async #onOpenChangeEffect_false() {
 		if (this.#contentTrap === undefined) {
 			return;
 		}
+		// Flush changes to the DOM before looking for nodes in DOM.
+		await this.uiOptions?.flushDOM?.();
 		this.#contentTrap.deactivate();
 		this.#contentTrap = undefined;
 	}

@@ -1,13 +1,12 @@
 import {cleanup, render, screen} from '@testing-library/react';
 import React from 'react';
-import {Dialog, useDialog} from '../main';
+import {Dialog} from '../main';
 import {UseDialogOptions} from '../useDialog';
 
 function Attributes(options: UseDialogOptions) {
-	const dialog = useDialog(options);
 	return (
 		<React.StrictMode>
-			<Dialog.Root model={dialog}>
+			<Dialog.Root {...options}>
 				<Dialog.Trigger data-testid="trigger">open dialog</Dialog.Trigger>
 				<Dialog.Content data-testid="content">
 					<Dialog.Title data-testid="title">title</Dialog.Title>

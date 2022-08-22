@@ -77,11 +77,43 @@ function getActualTarget(ev: Event) {
 }
 
 export interface FocusTrapOptions {
+	/**
+	 * The container to trap focus within.
+	 */
 	container: HTMLElement;
-	active?: boolean;
+	/**
+	 * Whether the focus trap should initially be active.
+	 *
+	 * Defaults to `false`.
+	 */
+	initialActive?: boolean;
+	/**
+	 * Whether clicking outside the focus trap container deactivates the trap.
+	 *
+	 * Pass a handler function to configure when the trap should deactivate based
+	 * on each individual mouse click.
+	 *
+	 * Defaults to `false`.
+	 */
 	clickOutsideDeactivates?: boolean | ((ev: MouseEvent) => boolean);
+	/**
+	 * Whether pressing escape deactives the trap.
+	 *
+	 * Pass a handler function to configure when the trap should deactivate based
+	 * on each individual keystroke.
+	 *
+	 * Defaults to `false`.
+	 */
 	escapeDeactivates?: boolean | ((ev: KeyboardEvent) => boolean);
-	returnFocusTo?: HTMLElement;
+	/**
+	 * A custom element to return focus to on deactivation.
+	 *
+	 * Pass a getter function to dynamically get the element to return focus to
+	 * on deactivation.
+	 *
+	 * Defaults to the previously focused element before the trap activated.
+	 */
+	returnFocusTo?: HTMLElement | (() => HTMLElement | undefined);
 }
 
 export interface FocusTrapState {
@@ -101,7 +133,7 @@ export class FocusTrapModel extends StateModel<
 
 	deriveInitialState(options: FocusTrapOptions): FocusTrapState {
 		return {
-			active: options.active ?? false,
+			active: options.initialActive ?? false,
 		};
 	}
 
@@ -198,7 +230,10 @@ export class FocusTrapModel extends StateModel<
 		this.#previouslyFocused = document.activeElement ?? undefined;
 		this.#focusableChildren.at(0)?.focus();
 		this.#returnFocus = () => {
-			const toElement = this.options.returnFocusTo ?? this.#previouslyFocused;
+			const {returnFocusTo} = this.options;
+			const elementToReturnFocusTo =
+				returnFocusTo instanceof Function ? returnFocusTo() : returnFocusTo;
+			const toElement = elementToReturnFocusTo ?? this.#previouslyFocused;
 			if (toElement instanceof HTMLElement) {
 				toElement.focus();
 			}
@@ -299,15 +334,16 @@ export class FocusTrapModel extends StateModel<
 		}
 	}
 
-	deactivate() {
+	async deactivate() {
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
-		this.#returnFocus?.();
 		if (this.getState().active) {
 			this.options.onStateChange?.((oldState) => ({
 				...oldState,
 				active: false,
 			}));
 		}
+		await this.uiOptions?.flushDOM?.();
+		this.#returnFocus?.();
 	}
 }
