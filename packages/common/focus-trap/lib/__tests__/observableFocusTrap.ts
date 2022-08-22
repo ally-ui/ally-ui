@@ -1,4 +1,4 @@
-import {derived, get, writable, type Writable} from 'svelte/store';
+import {writable, type Writable} from 'svelte/store';
 import {FocusTrapModel, FocusTrapOptions, FocusTrapState} from '../main';
 
 /**
@@ -7,19 +7,16 @@ import {FocusTrapModel, FocusTrapOptions, FocusTrapState} from '../main';
  * @returns A Readable store containing the trap instance
  */
 export function observableFocusTrap(
-	options: Writable<FocusTrapOptions> | FocusTrapOptions,
+	options: FocusTrapOptions,
 	manualState?: Writable<FocusTrapState>,
 ): FocusTrapModel {
-	const optionsStore = 'subscribe' in options ? options : writable(options);
-	const trap = new FocusTrapModel('0', get(optionsStore));
+	const trap = new FocusTrapModel('0', options);
 
 	const stateStore = manualState ?? writable(trap.initialState);
-	const stateOptionsStore = derived([stateStore, optionsStore], (s) => s);
 
-	stateOptionsStore.subscribe(([$state, $options]) => {
+	stateStore.subscribe(($state) => {
 		trap.setOptions((prevOptions) => ({
 			...prevOptions,
-			...$options,
 			state: $state,
 			onStateChange: (updater) => {
 				if (updater instanceof Function) {

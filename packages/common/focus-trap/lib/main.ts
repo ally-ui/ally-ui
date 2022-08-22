@@ -233,9 +233,9 @@ export class FocusTrapModel extends StateModel<
 			const {returnFocusTo} = this.options;
 			const elementToReturnFocusTo =
 				returnFocusTo instanceof Function ? returnFocusTo() : returnFocusTo;
-			const toElement = elementToReturnFocusTo ?? this.#previouslyFocused;
-			if (toElement instanceof HTMLElement) {
-				toElement.focus();
+			const resolvedElement = elementToReturnFocusTo ?? this.#previouslyFocused;
+			if (resolvedElement instanceof HTMLElement) {
+				resolvedElement.focus();
 			}
 			this.#returnFocus = undefined;
 		};
