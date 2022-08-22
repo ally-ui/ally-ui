@@ -334,7 +334,7 @@ export class FocusTrapModel extends StateModel<
 		}
 	}
 
-	async deactivate() {
+	deactivate() {
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
 		if (this.getState().active) {
@@ -343,7 +343,6 @@ export class FocusTrapModel extends StateModel<
 				active: false,
 			}));
 		}
-		await this.uiOptions?.flushDOM?.();
 		this.#returnFocus?.();
 	}
 }

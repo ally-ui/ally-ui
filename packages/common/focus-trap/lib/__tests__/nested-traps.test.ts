@@ -25,7 +25,7 @@ afterEach(() => {
 	trap?.deactivate();
 });
 
-it('returns focus from the nested to outer focus trap', async () => {
+it.only('returns focus from the nested to outer focus trap', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap-1');
