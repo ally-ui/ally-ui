@@ -2,7 +2,7 @@ import {render, screen} from '@testing-library/svelte';
 import userEvent from '@testing-library/user-event';
 import Toggle from './toggle.test.svelte';
 
-it('updates the data state attribute when the dialog opens and closes', async () => {
+it('updates the data state attribute on the trigger when the dialog opens and closes', async () => {
 	const user = userEvent.setup();
 	render(Toggle, {initialOpen: true});
 	const trigger = await screen.findByTestId('trigger');
