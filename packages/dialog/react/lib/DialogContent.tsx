@@ -1,7 +1,7 @@
 import {type DialogModel} from '@ally-ui/core-dialog';
 import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
 import React from 'react';
-import {useDialogContext} from './DialogRoot';
+import {useDialogModelContext, useDialogStateContext} from './DialogRoot';
 
 export interface DialogContentProps
 	extends React.DetailedHTMLProps<
@@ -13,13 +13,15 @@ export interface DialogContentProps
 
 const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 	({model, children, ...restProps}, forwardedRef) => {
-		const resolvedModel = useDialogContext() ?? model;
+		const resolvedModel = useDialogModelContext() ?? model;
 		if (resolvedModel === undefined) {
 			throw new Error(
 				'<Dialog.Content /> must have a `model` prop or be a child of `<Dialog.Root/>`',
 			);
 		}
 		const id = useRunOnce(() => resolvedModel.init('content'));
+
+		const resolvedState = useDialogStateContext() ?? resolvedModel.getState();
 
 		React.useEffect(
 			function mount() {
@@ -45,7 +47,7 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 
 		return (
 			<>
-				{resolvedModel.getState().open && (
+				{resolvedState.open && (
 					<div
 						ref={ref}
 						{...resolvedModel.componentAttributes(id)}
