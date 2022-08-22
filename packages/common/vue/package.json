@@ -1,16 +1,13 @@
 {
-	"name": "@ally-ui/vue-dialog",
+	"name": "@ally-ui/vue",
 	"version": "0.0.5",
 	"scripts": {
 		"example": "vite",
 		"build": "vue-tsc --noEmit && vite build",
-		"build:watch": "concurrently \"vue-tsc --noEmit --watch\" && \"vite build --watch \"",
-		"test": "vitest run",
-		"test:watch": "vitest",
-		"coverage": "vitest run --coverage"
+		"build:watch": "concurrently \"vue-tsc --noEmit --watch\" && \"vite build --watch \""
 	},
 	"author": "Bryan Lee",
-	"description": "A WAI-ARIA compliant Dialog for Vue",
+	"description": "Vue utilities for Ally UI",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -32,10 +29,6 @@
 			"import": "./dist/main.js",
 			"require": "./dist/main.umd.cjs"
 		}
-	},
-	"dependencies": {
-		"@ally-ui/vue": "*",
-		"@ally-ui/core-dialog": "*"
 	},
 	"peerDependencies": {
 		"vue": ">=3"
