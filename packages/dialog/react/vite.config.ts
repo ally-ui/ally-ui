@@ -18,7 +18,11 @@ export default defineConfig({
 					react: 'React',
 				},
 			},
-			plugins: [typescript()],
+			plugins: [
+				typescript({
+					tsconfig: './tsconfig.build.json',
+				}),
+			],
 		},
 	},
 	plugins: [react()],

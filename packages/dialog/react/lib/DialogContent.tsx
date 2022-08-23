@@ -1,4 +1,4 @@
-import {type DialogModel} from '@ally-ui/core-dialog';
+import type {DialogModel} from '@ally-ui/core-dialog';
 import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
 import React from 'react';
 import {useDialogModelContext, useDialogStateContext} from './context';

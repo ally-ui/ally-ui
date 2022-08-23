@@ -1,4 +1,4 @@
-import {DevOptions} from '@ally-ui/core';
+import type {DevOptions} from '@ally-ui/core';
 import {
 	DialogModel,
 	DialogModelOptions,

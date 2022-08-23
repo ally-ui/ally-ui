@@ -1,4 +1,3 @@
-import React from 'react';
 import {DialogModelContext, DialogStateContext} from './context';
 import useDialog, {UseDialogOptions} from './useDialog';
 

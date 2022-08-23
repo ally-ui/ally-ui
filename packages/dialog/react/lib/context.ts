@@ -1,4 +1,4 @@
-import {DialogModel, DialogModelState} from '@ally-ui/core-dialog';
+import type {DialogModel, DialogModelState} from '@ally-ui/core-dialog';
 import React from 'react';
 
 export const DialogModelContext = React.createContext<DialogModel | undefined>(
