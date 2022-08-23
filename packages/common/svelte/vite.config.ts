@@ -13,11 +13,6 @@ export default defineConfig({
 		},
 		rollupOptions: {
 			external: ['svelte'],
-			output: {
-				globals: {
-					react: 'Svelte',
-				},
-			},
 			plugins: [typescript()],
 		},
 	},
