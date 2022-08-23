@@ -17,8 +17,8 @@ const open = ref(false);
 			<div>
 				<button @click="() => (open = !open)">Manual toggle</button>
 				<DialogTrigger data-testid="trigger"> Edit profile </DialogTrigger>
+				<span v-if="open">Editing profile...</span>
 			</div>
-			<span v-if="open">Editing profile...</span>
 			<DialogContent>
 				<DialogTitle>Edit profile</DialogTitle>
 				<DialogDescription>

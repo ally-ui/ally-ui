@@ -10,6 +10,9 @@
 		<div>
 			<button on:click={() => (open = !open)}> Manual toggle </button>
 			<Dialog.Trigger>Edit profile</Dialog.Trigger>
+			{#if open}
+				<span>Editing profile...</span>
+			{/if}
 		</div>
 		<Dialog.Content>
 			<Dialog.Title>Edit profile</Dialog.Title>

@@ -11,6 +11,7 @@ export default function App() {
 				<div>
 					<button onClick={() => setOpen((o) => !o)}>Manual toggle</button>
 					<Dialog.Trigger>Edit profile</Dialog.Trigger>
+					{open && <span>Editing profile...</span>}
 				</div>
 				<Dialog.Content>
 					<Dialog.Title>Edit profile</Dialog.Title>
