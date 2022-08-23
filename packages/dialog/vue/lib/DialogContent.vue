@@ -44,7 +44,10 @@ watchEffect(() => {
 	<div
 		v-if="state.open"
 		ref="node"
-		v-bind="resolvedModel.componentAttributes(id, state)"
+		v-bind="{
+			...resolvedModel.componentAttributes(id, state),
+			...$attrs,
+		}"
 	>
 		<slot />
 	</div>

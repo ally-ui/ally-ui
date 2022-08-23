@@ -43,7 +43,10 @@ watchEffect(() => {
 <template>
 	<button
 		ref="node"
-		v-bind="resolvedModel.componentAttributes(id, state)"
+		v-bind="{
+			...resolvedModel.componentAttributes(id, state),
+			...$attrs,
+		}"
 		@click="
 			() => resolvedModel.setState((prevState) => ({...prevState, open: true}))
 		"

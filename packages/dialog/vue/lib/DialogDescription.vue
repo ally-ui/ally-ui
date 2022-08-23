@@ -39,7 +39,13 @@ watchEffect(() => {
 </script>
 
 <template>
-	<p ref="node" v-bind="resolvedModel.componentAttributes(id)">
+	<p
+		ref="node"
+		v-bind="{
+			...resolvedModel.componentAttributes(id),
+			...$attrs,
+		}"
+	>
 		<slot />
 	</p>
 </template>

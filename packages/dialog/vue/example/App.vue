@@ -16,7 +16,7 @@ const open = ref(false);
 		<DialogRoot v-model:open="open">
 			<div>
 				<button @click="() => (open = !open)">Manual toggle</button>
-				<DialogTrigger data-testid="trigger"> Edit profile </DialogTrigger>
+				<DialogTrigger> Edit profile </DialogTrigger>
 				<span v-if="open">Editing profile...</span>
 			</div>
 			<DialogContent>
