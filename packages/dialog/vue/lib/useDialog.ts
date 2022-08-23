@@ -1,8 +1,8 @@
 import type {DevOptions} from '@ally-ui/core';
 import {
 	DialogModel,
-	DialogModelState,
 	type DialogModelOptions,
+	type DialogModelState,
 } from '@ally-ui/core-dialog';
 import {useSyncOption} from '@ally-ui/vue';
 import {nextTick, ref, watchEffect, type Ref} from 'vue';

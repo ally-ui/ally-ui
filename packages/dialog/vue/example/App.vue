@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import {ref} from 'vue';
-import DialogClose from '../lib/DialogClose.vue';
-import DialogContent from '../lib/DialogContent.vue';
-import DialogDescription from '../lib/DialogDescription.vue';
-import DialogTitle from '../lib/DialogTitle.vue';
-import DialogTrigger from '../lib/DialogTrigger.vue';
+import {
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogRoot,
+	DialogTitle,
+	DialogTrigger,
+} from '../lib/main';
 
 const open = ref(false);
 </script>
@@ -15,7 +18,7 @@ const open = ref(false);
 		<DialogRoot v-model:open="open">
 			<div>
 				<button @click="() => (open = !open)">Manual toggle</button>
-				<DialogTrigger> Edit profile </DialogTrigger>
+				<DialogTrigger>Edit profile</DialogTrigger>
 				<span v-if="open">Editing profile...</span>
 			</div>
 			<DialogContent>

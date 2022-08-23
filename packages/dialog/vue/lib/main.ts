@@ -1,17 +1,7 @@
-import {default as Close} from './DialogClose.vue';
-import {default as Content} from './DialogContent.vue';
-import {default as Description} from './DialogDescription.vue';
-import {default as Root} from './DialogRoot.vue';
-import {default as Title} from './DialogTitle.vue';
-import {default as Trigger} from './DialogTrigger.vue';
-
-export const Dialog = {
-	Close,
-	Content,
-	Description,
-	Root,
-	Title,
-	Trigger,
-};
-
+export {default as DialogClose} from './DialogClose.vue';
+export {default as DialogContent} from './DialogContent.vue';
+export {default as DialogDescription} from './DialogDescription.vue';
+export {default as DialogRoot} from './DialogRoot.vue';
+export {default as DialogTitle} from './DialogTitle.vue';
+export {default as DialogTrigger} from './DialogTrigger.vue';
 export {default as useDialog} from './useDialog';

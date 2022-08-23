@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {DialogModel} from '@ally-ui/core-dialog';
+import type {DialogModel} from '@ally-ui/core-dialog';
 import {
 	defineProps,
 	inject,
