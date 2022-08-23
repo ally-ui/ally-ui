@@ -29,9 +29,11 @@ The core of Ally UI is built with plain-old JavaScript and simple bindings are u
 
 ```tsx
 export default function App() {
+  const [open, setOpen] = useState(true); // opt-in manual state management
+
   return (
     <main>
-      <Dialog.Root>
+      <Dialog.Root open={open} onOpenChange={setOpen}>
         <Dialog.Trigger>Edit profile</Dialog.Trigger>
         <Dialog.Content>
           <Dialog.Title>Edit profile</Dialog.Title>
@@ -51,8 +53,12 @@ export default function App() {
 <summary>Svelte</summary>
 
 ```svelte
+<script lang="ts">
+  let open = true; // opt-in manual state management
+</script>
+
 <main>
-  <Dialog.Root>
+  <Dialog.Root bind:open>
     <Dialog.Trigger>Edit profile</Dialog.Trigger>
     <Dialog.Content>
       <Dialog.Title>Edit profile</Dialog.Title>
@@ -63,6 +69,31 @@ export default function App() {
     </Dialog.Content>
   </Dialog.Root>
 </main>
+```
+
+</details>
+<details>
+<summary>Vue</summary>
+
+```vue
+<script setup lang="ts">
+const open = ref(true); // opt-in manual state management
+</script>
+
+<template>
+<main>
+  <DialogRoot v-model:open="open">
+    <DialogTrigger>Edit profile</DialogTrigger>
+    <DialogContent>
+      <DialogTitle>Edit profile</DialogTitle>
+      <DialogDescription>
+        Make changes to your profile here. Click save when you're done
+      </DialogDescription>
+      <DialogClose>Save changes</DialogClose>
+    </DialogContent>
+  </DialogRoot>
+</main>
+</template>
 ```
 
 </details>
@@ -78,6 +109,8 @@ We also benefit from a consolidated developer community; we have more developers
 # Contributing
 
 Different UI libraries bring different challenges. If you are an enthusiast or expert of any UI library, we would love your help to guide the design of Ally UI.
+
+Reach out to [bryanmylee@gmail.com](mailto:bryanmylee@gmail.com) or open a new discussion topic on this repository!
 
 <table>
   <thead>
@@ -118,7 +151,9 @@ Different UI libraries bring different challenges. If you are an enthusiast or e
         </a>
       </td>
       <td>
-        We need contributors!
+        <a href="https://github.com/bryanmylee">
+          <img alt="bryanmylee" src="https://avatars.githubusercontent.com/u/42545742?v=latest" width="48px"/>
+        </a>
       </td>
     </tr>
     <tr>
