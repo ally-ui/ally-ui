@@ -6,6 +6,7 @@
 	import {getDialogContext} from './context';
 
 	type $$Props = svelteHTML.IntrinsicElements['h1'] & {
+		node?: HTMLHeadingElement | undefined | null;
 		model?: Readable<DialogModel>;
 	};
 
@@ -25,10 +26,10 @@
 		};
 	});
 
-	let node: HTMLElement | null = null;
+	export let node: HTMLElement | null | undefined = null;
 	$: bindNode(node);
-	function bindNode(node: HTMLElement | null) {
-		if (node === null) {
+	function bindNode(node?: HTMLElement | null) {
+		if (node == null) {
 			$resolvedModel.unbindNode(id);
 		} else {
 			$resolvedModel.bindNode(id, node);

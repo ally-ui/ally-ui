@@ -2,6 +2,10 @@
 	import {Dialog} from '../lib/main';
 
 	let open = false;
+	let titleNode: HTMLHeadingElement | undefined | null;
+	$: if (titleNode != null) {
+		titleNode.style.color = 'gray';
+	}
 </script>
 
 <main>
@@ -15,7 +19,7 @@
 			{/if}
 		</div>
 		<Dialog.Content>
-			<Dialog.Title>Edit profile</Dialog.Title>
+			<Dialog.Title bind:node={titleNode}>Edit profile</Dialog.Title>
 			<Dialog.Description>
 				Make changes to your profile here. Click save when you're done
 			</Dialog.Description>

@@ -1,8 +1,13 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {Dialog} from '../lib/main';
 
 export default function App() {
 	const [open, setOpen] = React.useState(true);
+	const titleRef = useCallback((node: HTMLElement | null) => {
+		if (node !== null) {
+			node.style.color = 'gray';
+		}
+	}, []);
 
 	return (
 		<main>
@@ -14,7 +19,7 @@ export default function App() {
 					{open && <span>Editing profile...</span>}
 				</div>
 				<Dialog.Content>
-					<Dialog.Title>Edit profile</Dialog.Title>
+					<Dialog.Title ref={titleRef}>Edit profile</Dialog.Title>
 					<Dialog.Description>
 						Make changes to your profile here. Click save when you're done
 					</Dialog.Description>
