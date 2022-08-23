@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/vue",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"scripts": {
 		"example": "vite",
 		"build": "vue-tsc && vite build",
