@@ -5,11 +5,11 @@ import {tick} from 'svelte';
 import {readable, writable, type Readable} from 'svelte/store';
 
 export interface CreateDialogOptions extends DialogModelOptions {
-	open?: ReadOrWritable<boolean>;
+	openStore?: ReadOrWritable<boolean>;
 }
 
 export default function createDialog(
-	{initialOpen, open}: CreateDialogOptions = {},
+	{initialOpen, openStore}: CreateDialogOptions = {},
 	devOptions: DevOptions = {},
 ): Readable<DialogModel> {
 	// TODO Generate SSR-safe IDs.
@@ -18,8 +18,8 @@ export default function createDialog(
 
 	const state = writable(model.initialState);
 
-	const [updateOpen, watchOpen] = useSyncOption(open, (open) => {
-		state.update((prevState) => ({...prevState, open}));
+	const [updateOpen, watchOpen] = useSyncOption(openStore, ($open) => {
+		state.update((prevState) => ({...prevState, open: $open}));
 	});
 
 	const modelStore = readable(model, (set) => {

@@ -1,15 +1,14 @@
 <script lang="ts">
-	import {writable} from 'svelte/store';
 	import {Dialog} from '../lib/main';
 
-	const open = writable(false);
+	let open = false;
 </script>
 
 <main>
 	<h1>Ally UI Svelte Dialog</h1>
-	<Dialog.Root {open}>
+	<Dialog.Root bind:open>
 		<div>
-			<button on:click={() => ($open = !$open)}> Manual toggle </button>
+			<button on:click={() => (open = !open)}> Manual toggle </button>
 			<Dialog.Trigger>Edit profile</Dialog.Trigger>
 		</div>
 		<Dialog.Content>
