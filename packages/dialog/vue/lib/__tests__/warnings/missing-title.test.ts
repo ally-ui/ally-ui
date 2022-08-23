@@ -1,5 +1,4 @@
 import {cleanup, render, screen} from '@testing-library/vue';
-import {vi} from 'vitest';
 import MissingTitle from './missing-title.test.vue';
 
 afterEach(() => {

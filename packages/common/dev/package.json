@@ -5,7 +5,7 @@
 	"scripts": {
 		"example": "vite",
 		"build": "tsc && vite build",
-		"build:watch": "concurrently \"tsc --watch\" \"vite build --watch\""
+		"build:watch": "vite build --watch"
 	},
 	"author": "Bryan Lee",
 	"description": "Dev utilities for Ally UI",

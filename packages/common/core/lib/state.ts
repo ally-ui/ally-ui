@@ -1,5 +1,5 @@
 import isEqual from 'lodash.isequal';
-import {UIOptions} from './ui';
+import type {UIOptions} from './ui';
 
 export type Updater<TState> = ((oldState: TState) => TState) | TState;
 

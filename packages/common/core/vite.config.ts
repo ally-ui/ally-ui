@@ -10,7 +10,11 @@ export default defineConfig({
 			fileName: 'main',
 		},
 		rollupOptions: {
-			plugins: [typescript()],
+			plugins: [
+				typescript({
+					tsconfig: './tsconfig.build.json',
+				}),
+			],
 		},
 	},
 });
