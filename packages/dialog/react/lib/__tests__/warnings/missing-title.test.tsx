@@ -1,4 +1,4 @@
-import {cleanup, render} from '@testing-library/react';
+import {cleanup, render, screen} from '@testing-library/react';
 import React from 'react';
 import {vi} from 'vitest';
 import {Dialog} from '../../main';
@@ -26,6 +26,7 @@ afterEach(() => {
 it('warns the user if the title component is missing', async () => {
 	const warnSpy = vi.spyOn(console, 'warn');
 	render(<MissingTitle />);
+	await screen.findByTestId('content');
 	expect(warnSpy).toHaveBeenCalledWith(
 		'Dialogs should contain a title component for accessibility reasons',
 	);

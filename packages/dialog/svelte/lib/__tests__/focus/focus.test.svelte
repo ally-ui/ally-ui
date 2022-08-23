@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {Dialog} from '../../main';
 
-	export let initialOpen: boolean;
+	export let initialOpen: boolean | undefined = undefined;
 </script>
 
 <Dialog.Root {initialOpen}>
