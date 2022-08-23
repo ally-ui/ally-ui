@@ -1,6 +1,6 @@
 import type {DevOptions} from '@ally-ui/core';
 import {DialogModel, type DialogModelOptions} from '@ally-ui/core-dialog';
-import {syncOption, type ReadOrWritable} from '@ally-ui/svelte';
+import {useSyncOption, type ReadOrWritable} from '@ally-ui/svelte';
 import {tick} from 'svelte';
 import {readable, writable, type Readable} from 'svelte/store';
 
@@ -18,7 +18,7 @@ export default function createDialog(
 
 	const state = writable(model.initialState);
 
-	const [updateOpen, watchOpen] = syncOption(open, (open) => {
+	const [updateOpen, watchOpen] = useSyncOption(open, (open) => {
 		state.update((prevState) => ({...prevState, open}));
 	});
 

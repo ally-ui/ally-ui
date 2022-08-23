@@ -4,7 +4,7 @@ import {isWritable, type ReadOrWritable} from './store';
 /**
  * Synchronize state between an externally managed option and internal state.
  */
-export default function syncOption<TOption>(
+export default function useSyncOption<TOption>(
 	option: ReadOrWritable<TOption> | undefined,
 	onOptionChange: (option: TOption) => void,
 ) {
