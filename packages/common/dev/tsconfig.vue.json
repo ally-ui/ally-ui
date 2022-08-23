@@ -1,16 +1,10 @@
 {
-	"extends": "@vue/tsconfig/tsconfig.json",
+	"extends": "./tsconfig.base.json",
 	"compilerOptions": {
-		"strict": true,
-		"jsx": "preserve",
-    "importsNotUsedAsValues": "error",
-		"isolatedModules": true,
-		"esModuleInterop": true,
-		"lib": ["ESNext", "DOM"],
-		"skipLibCheck": true,
-		"noEmit": true,
-		"declaration": true,
-		"outDir": "dist",
-    "types": ["vite/client", "vitest/globals"]
+		// For `<script setup>`
+		// See <https://devblogs.microsoft.com/typescript/announcing-typescript-4-5-beta/#preserve-value-imports>
+		"preserveValueImports": true,
+		// Required in Vue projects
+		"jsx": "preserve"
 	}
 }

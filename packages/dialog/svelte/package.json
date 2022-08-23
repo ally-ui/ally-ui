@@ -4,7 +4,7 @@
 	"scripts": {
 		"example": "vite",
 		"build": "tsc && vite build",
-		"build:watch": "concurrently \"tsc --watch\" \"vite build --watch\"",
+		"build:watch": "vite build --watch",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"coverage": "vitest run --coverage"

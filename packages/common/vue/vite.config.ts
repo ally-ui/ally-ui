@@ -13,7 +13,11 @@ export default defineConfig({
 		},
 		rollupOptions: {
 			external: ['vue'],
-			plugins: [typescript()],
+			plugins: [
+				typescript({
+					tsconfig: './tsconfig.build.json',
+				}),
+			],
 		},
 	},
 	plugins: [vue()],

@@ -1,17 +1,7 @@
 {
-	"extends": "@tsconfig/svelte/tsconfig.json",
+	"extends": "@ally-ui/dev/tsconfig.svelte.json",
+	"include": ["lib"],
 	"compilerOptions": {
-		"target": "ESNext",
-		"useDefineForClassFields": true,
-		"strict": true,
-		"module": "ESNext",
-		"resolveJsonModule": true,
-		"baseUrl": ".",
-		"allowJs": false,
-		"isolatedModules": true,
-		"noEmit": true,
-		"declaration": true,
 		"outDir": "dist"
-	},
-	"include": ["example", "lib"]
+	}
 }
