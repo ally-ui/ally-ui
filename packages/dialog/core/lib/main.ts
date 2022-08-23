@@ -110,12 +110,19 @@ export class DialogModel extends StateModel<
 		}
 		component.node = node;
 		if (component.type === 'content') {
-			const title = findLastInMap(this.#components, (c) => c.type === 'title');
-			if (title === undefined) {
-				console.warn(
-					'Dialogs should contain a title component for accessibility reasons',
-				);
+			this.#checkTitle();
+			if (this.#waitingToOpen) {
+				this.#onOpenChangeEffect(true);
 			}
+		}
+	}
+
+	#checkTitle() {
+		const title = findLastInMap(this.#components, (c) => c.type === 'title');
+		if (title === undefined) {
+			console.warn(
+				'Dialogs should contain a title component for accessibility reasons',
+			);
 		}
 	}
 
@@ -186,6 +193,7 @@ export class DialogModel extends StateModel<
 		}
 	}
 
+	#waitingToOpen = false;
 	#contentTrap?: FocusTrapModel;
 	async #onOpenChangeEffect(open: boolean) {
 		const handleOpen = () => {
@@ -199,8 +207,10 @@ export class DialogModel extends StateModel<
 						`#onOpenChangeEffect(true), no content component with node`,
 					);
 				}
+				this.#waitingToOpen = true;
 				return;
 			}
+			this.#waitingToOpen = false;
 			this.#contentTrap = createFocusTrap(content.node);
 		};
 
@@ -237,6 +247,7 @@ export class DialogModel extends StateModel<
 		};
 
 		const handleClose = () => {
+			this.#waitingToOpen = false;
 			if (this.#contentTrap === undefined) {
 				return;
 			}
