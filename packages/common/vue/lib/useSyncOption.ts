@@ -1,4 +1,4 @@
-import {Ref, watchEffect} from 'vue';
+import {watchEffect, type Ref} from 'vue';
 
 export default function useSyncOption<TOption>(
 	option: Ref<TOption | undefined> | undefined,

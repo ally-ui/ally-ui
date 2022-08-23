@@ -24,11 +24,5 @@
 	],
 	"main": "./dist/main.umd.cjs",
 	"module": "./dist/main.js",
-	"types": "./dist/main.d.ts",
-	"exports": {
-		".": {
-			"import": "./dist/main.js",
-			"require": "./dist/main.umd.cjs"
-		}
-	}
+	"types": "./dist/main.d.ts"
 }

@@ -3,8 +3,8 @@
 	"version": "0.0.5",
 	"scripts": {
 		"example": "vite",
-		"build": "vue-tsc --noEmit && vite build",
-		"build:watch": "concurrently \"vue-tsc --noEmit --watch\" && \"vite build --watch \""
+		"build": "vue-tsc && vite build",
+		"build:watch": "vite build --watch"
 	},
 	"author": "Bryan Lee",
 	"description": "Vue utilities for Ally UI",

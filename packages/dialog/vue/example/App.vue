@@ -27,11 +27,11 @@ const open = ref(true);
 					Make changes to your profile here. Click save when you're done
 				</DialogDescription>
 				<fieldset>
-					<label htmlFor="name">Name</label>
+					<label for="name">Name</label>
 					<input id="name" placeholder="Bryan Lee" />
 				</fieldset>
 				<fieldset>
-					<label htmlFor="username">Username</label>
+					<label for="username">Username</label>
 					<input id="username" placeholder="@bryanmylee" />
 				</fieldset>
 				<DialogClose>Save changes</DialogClose>

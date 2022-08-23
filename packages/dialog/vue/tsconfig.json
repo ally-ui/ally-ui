@@ -1,27 +1,7 @@
 {
-	"extends": "@vue/tsconfig/tsconfig.json",
+	"extends": "@ally-ui/dev/tsconfig.vue.json",
+	"include": ["lib", "example", "vitest.setup.ts"],
 	"compilerOptions": {
-		"target": "ESNext",
-		"useDefineForClassFields": true,
-		"module": "ESNext",
-		"moduleResolution": "Node",
-		"strict": true,
-		"jsx": "preserve",
-		"sourceMap": true,
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"esModuleInterop": true,
-		"lib": ["ESNext", "DOM"],
-		"skipLibCheck": true,
-		"noEmit": true,
-		"declaration": true,
 		"outDir": "dist"
-	},
-	"include": [
-		"example/**/*.ts",
-		"example/**/*.d.ts",
-		"example/**/*.tsx",
-		"example/**/*.vue",
-		"lib"
-	]
+	}
 }
