@@ -13,13 +13,13 @@ const props = withDefaults(
 	},
 );
 const emit = defineEmits<{
-	(ev: 'open', open: boolean): void;
+	(ev: 'update:open', open: boolean): void;
 }>();
 
 const openRef = ref(props.open);
 watchEffect(function emitOpen() {
 	if (openRef.value !== undefined) {
-		emit('open', openRef.value);
+		emit('update:open', openRef.value);
 	}
 });
 watchEffect(function updateOpen() {

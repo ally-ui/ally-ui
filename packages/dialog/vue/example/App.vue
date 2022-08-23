@@ -13,10 +13,10 @@ const open = ref(false);
 <template>
 	<main>
 		<h1>Ally UI Vue Dialog</h1>
-		<DialogRoot :open="open" @open="(newOpen: boolean) => (open = newOpen)">
+		<DialogRoot v-model:open="open">
 			<div>
 				<button @click="() => (open = !open)">Manual toggle</button>
-				<DialogTrigger>Edit profile</DialogTrigger>
+				<DialogTrigger data-testid="trigger"> Edit profile </DialogTrigger>
 			</div>
 			<span v-if="open">Editing profile...</span>
 			<DialogContent>
