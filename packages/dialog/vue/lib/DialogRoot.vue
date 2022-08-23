@@ -9,14 +9,15 @@ const props = withDefaults(
 		initialOpen?: boolean;
 	}>(),
 	{
-		initialOpen: false,
+		open: undefined,
+		initialOpen: undefined,
 	},
 );
 const emit = defineEmits<{
 	(ev: 'update:open', open: boolean): void;
 }>();
 
-const openRef = ref(props.open);
+const openRef = ref<boolean | undefined>(props.open);
 watchEffect(function emitOpen() {
 	if (openRef.value !== undefined) {
 		emit('update:open', openRef.value);
