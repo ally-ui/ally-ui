@@ -3,7 +3,6 @@ import {ref} from 'vue';
 import DialogClose from '../lib/DialogClose.vue';
 import DialogContent from '../lib/DialogContent.vue';
 import DialogDescription from '../lib/DialogDescription.vue';
-import DialogRoot from '../lib/DialogRoot.vue';
 import DialogTitle from '../lib/DialogTitle.vue';
 import DialogTrigger from '../lib/DialogTrigger.vue';
 
