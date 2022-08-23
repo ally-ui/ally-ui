@@ -9,7 +9,7 @@ import {
 	DialogTrigger,
 } from '../lib/main';
 
-const open = ref(false);
+const open = ref(true);
 </script>
 
 <template>
