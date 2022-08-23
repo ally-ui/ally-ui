@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {Dialog} from '../lib/main';
 
-	let open = false;
+	let open = true;
 	let titleNode: HTMLHeadingElement | undefined | null;
 	$: if (titleNode != null) {
 		titleNode.style.color = 'gray';
