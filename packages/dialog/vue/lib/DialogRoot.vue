@@ -22,7 +22,7 @@ watchEffect(function emitOpen() {
 		emit('update:open', openRef.value);
 	}
 });
-watchEffect(function updateOpen() {
+watchEffect(function updateOpenRef() {
 	openRef.value = props.open;
 });
 
