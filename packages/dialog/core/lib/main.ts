@@ -34,7 +34,7 @@ export class DialogModel extends StateModel<
 	) {
 		super(id, initialOptions, devOptions);
 		if (this.initialState.open) {
-			this.#onOpenChangeEffect_true();
+			this.#onOpenChangeEffect(true);
 		}
 	}
 
@@ -188,70 +188,68 @@ export class DialogModel extends StateModel<
 
 	#contentTrap?: FocusTrapModel;
 	async #onOpenChangeEffect(open: boolean) {
-		if (open) {
-			await this.#onOpenChangeEffect_true();
-		} else {
-			await this.#onOpenChangeEffect_false();
-		}
-	}
-
-	async #onOpenChangeEffect_true() {
-		// Flush changes to the DOM before looking for nodes in DOM.
-		await this.uiOptions?.flushDOM?.();
-		const content = findLastInMap(
-			this.#components,
-			(c) => c.type === 'content' && c.node !== undefined,
-		);
-		if (content?.node === undefined) {
-			if (this.debug) {
-				console.error(
-					`#onOpenChangeEffect(true), no content component with node`,
-				);
-			}
-			return;
-		}
-		this.#contentTrap = this.#createFocusTrap(content.node);
-	}
-
-	#createFocusTrap(contentElement: HTMLElement) {
-		const getTriggerNode = () => {
-			const triggerComponent = findLastInMap(
+		const handleOpen = () => {
+			const content = findLastInMap(
 				this.#components,
-				(c) => c.type === 'trigger',
+				(c) => c.type === 'content' && c.node !== undefined,
 			);
-			return triggerComponent?.node;
+			if (content?.node === undefined) {
+				if (this.debug) {
+					console.error(
+						`#onOpenChangeEffect(true), no content component with node`,
+					);
+				}
+				return;
+			}
+			this.#contentTrap = createFocusTrap(content.node);
 		};
-		const contentTrap = new FocusTrapModel(this.id, {
-			container: contentElement,
-			initialActive: true,
-			returnFocusTo: getTriggerNode,
-		});
-		contentTrap.setUIOptions(this.uiOptions);
-		contentTrap.setOptions((prevOptions) => ({
-			...prevOptions,
-			onStateChange: (updater) => {
-				this.options.onStateChange?.((oldState) => {
-					const newFocusTrapState =
-						updater instanceof Function
-							? updater({active: oldState.open})
-							: updater;
-					return {
-						...oldState,
-						open: newFocusTrapState.active,
-					};
-				});
-			},
-		}));
-		return contentTrap;
-	}
 
-	async #onOpenChangeEffect_false() {
-		if (this.#contentTrap === undefined) {
-			return;
-		}
+		const createFocusTrap = (contentElement: HTMLElement) => {
+			const getTriggerNode = () => {
+				const triggerComponent = findLastInMap(
+					this.#components,
+					(c) => c.type === 'trigger',
+				);
+				return triggerComponent?.node;
+			};
+			const contentTrap = new FocusTrapModel(this.id, {
+				container: contentElement,
+				initialActive: true,
+				returnFocusTo: getTriggerNode,
+			});
+			contentTrap.setUIOptions(this.uiOptions);
+			contentTrap.setOptions((prevOptions) => ({
+				...prevOptions,
+				onStateChange: (updater) => {
+					this.options.onStateChange?.((oldState) => {
+						const newFocusTrapState =
+							updater instanceof Function
+								? updater({active: oldState.open})
+								: updater;
+						return {
+							...oldState,
+							open: newFocusTrapState.active,
+						};
+					});
+				},
+			}));
+			return contentTrap;
+		};
+
+		const handleClose = () => {
+			if (this.#contentTrap === undefined) {
+				return;
+			}
+			this.#contentTrap.deactivate();
+			this.#contentTrap = undefined;
+		};
+
 		// Flush changes to the DOM before looking for nodes in DOM.
 		await this.uiOptions?.flushDOM?.();
-		this.#contentTrap.deactivate();
-		this.#contentTrap = undefined;
+		if (open) {
+			handleOpen();
+		} else {
+			handleClose();
+		}
 	}
 }
