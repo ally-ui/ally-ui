@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/vue-dialog",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"scripts": {
 		"example": "vite",
 		"build": "vue-tsc && vite build",
@@ -34,8 +34,8 @@
 		}
 	},
 	"dependencies": {
-		"@ally-ui/vue": "*",
-		"@ally-ui/core-dialog": "*"
+		"@ally-ui/core-dialog": "^0.0.6",
+		"@ally-ui/vue": "^0.0.6"
 	},
 	"peerDependencies": {
 		"vue": ">=3"

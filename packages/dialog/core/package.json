@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/core-dialog",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"scripts": {
 		"example": "vite",
 		"build": "tsc && vite build",
@@ -31,6 +31,6 @@
 		}
 	},
 	"dependencies": {
-		"@ally-ui/focus-trap": "*"
+		"@ally-ui/focus-trap": "^0.0.6"
 	}
 }
