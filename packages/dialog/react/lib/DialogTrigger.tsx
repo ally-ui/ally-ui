@@ -50,7 +50,7 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 		>(
 			(ev) => {
 				onClick?.(ev);
-				resolvedModel.setState((prevState) => ({...prevState, open: true}));
+				resolvedModel.open();
 			},
 			[resolvedModel],
 		);
