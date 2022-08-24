@@ -2,24 +2,28 @@ import isEqual from 'lodash.isequal';
 import type {UIOptions} from './ui';
 
 export type Updater<TState> = ((oldState: TState) => TState) | TState;
+export type MergeObjects = <TObject>(
+	original: TObject,
+	update: Partial<TObject>,
+) => TObject;
 
 export type ResolvedOptions<TOptions, TState> = TOptions & {
-	/**
-	 * The current state of the model. This should be controlled by the state
-	 * implementation.
-	 */
-	state: TState;
 	/**
 	 * Called by the core model when it **wants** to update state. It is up to
 	 * the state implementation to respond to the state update request and
 	 * trigger any side-effects e.g. updating the DOM.
 	 */
-	onStateChange?: (updater: Updater<TState>) => void;
-};
-
-export interface DevOptions {
+	requestStateUpdate?: (updater: Updater<TState>) => void;
+	/**
+	 * Some UI libraries use proxies for reactivity. We need to handle object
+	 * merging specially in those cases.
+	 */
+	mergeObjects?: MergeObjects;
+	/**
+	 * Determines whether warnings and errors will be logged to console.
+	 */
 	debug?: boolean;
-}
+};
 
 /**
  * A base construct for a stateful model that is decoupled from its state
@@ -31,28 +35,30 @@ export interface DevOptions {
  */
 export abstract class StateModel<TOptions, TState> {
 	id: string;
+
 	initialState: TState;
 	#previousState: TState;
-	options: ResolvedOptions<TOptions, TState>;
-
 	/**
-	 * Determines whether warnings and errors will be logged to console.
+	 * The current state of the model. This should be controlled by the state
+	 * implementation.
 	 */
-	debug: boolean;
+	#state: TState;
+
+	options: ResolvedOptions<TOptions, TState>;
 
 	constructor(
 		id: string,
-		initialOptions: TOptions,
-		{debug = false}: DevOptions = {},
+		/**
+		 * We receive the fully-resolved options during initialization to support
+		 * custom object merge behavior and pass additional configuration options.
+		 */
+		initialOptions: ResolvedOptions<TOptions, TState>,
 	) {
 		this.id = id;
 		this.initialState = this.deriveInitialState(initialOptions);
 		this.#previousState = this.initialState;
-		this.options = {
-			state: this.initialState,
-			...initialOptions,
-		};
-		this.debug = debug;
+		this.#state = this.initialState;
+		this.options = initialOptions;
 	}
 
 	abstract deriveInitialState(options: TOptions): TState;
@@ -63,26 +69,32 @@ export abstract class StateModel<TOptions, TState> {
 		} else {
 			this.options = updater;
 		}
-		if (!isEqual(this.getState(), this.#previousState)) {
-			this.watchStateChange?.(this.getState(), this.#previousState);
-		}
-		this.#previousState = this.getState();
 	}
 
 	getState(): TState {
-		return this.options.state;
+		return this.#state;
 	}
 
-	setState(updater: Updater<TState>) {
-		this.options.onStateChange?.(updater);
+	/**
+	 * Update the model's internal state. This should only be called by the
+	 * external state implementation. Internal state updates should be dispatched
+	 * via `options.requestStateUpdate`.
+	 * @param newState The new state value
+	 */
+	setState(newState: TState) {
+		this.#previousState = this.#state;
+		this.#state = newState;
+		if (!isEqual(newState, this.#previousState)) {
+			this.watchStateChange?.(newState, this.#previousState);
+		}
 	}
 
 	/**
 	 * Watch for changes to state and trigger any effects in the core model.
 	 * @param newState The new state
-	 * @param oldState The previous state
+	 * @param previousState The previous state
 	 */
-	watchStateChange?(newState: TState, oldState: TState): void;
+	watchStateChange?(newState: TState, previousState: TState): void;
 
 	uiOptions?: UIOptions;
 	setUIOptions(uiOptions?: UIOptions) {
