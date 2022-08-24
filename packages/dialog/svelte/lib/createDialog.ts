@@ -1,4 +1,3 @@
-import type {DevOptions} from '@ally-ui/core';
 import {DialogModel, type DialogModelOptions} from '@ally-ui/core-dialog';
 import {useSyncOption, type ReadOrWritable} from '@ally-ui/svelte';
 import {tick} from 'svelte';
@@ -8,15 +7,26 @@ export interface CreateDialogOptions extends DialogModelOptions {
 	openStore?: ReadOrWritable<boolean>;
 }
 
-export default function createDialog(
-	{initialOpen, openStore}: CreateDialogOptions = {},
-	devOptions: DevOptions = {},
-): Readable<DialogModel> {
+export default function createDialog({
+	initialOpen,
+	openStore,
+}: CreateDialogOptions = {}): Readable<DialogModel> {
 	// TODO Generate SSR-safe IDs.
 	const id = '0';
-	const model = new DialogModel(id, {initialOpen}, devOptions);
+	const model = new DialogModel(id, {initialOpen});
 
 	const state = writable(model.initialState);
+
+	model.setOptions((prevOptions) => ({
+		...prevOptions,
+		requestStateUpdate: (updater) => {
+			if (updater instanceof Function) {
+				state.update(updater);
+			} else {
+				state.set(updater);
+			}
+		},
+	}));
 
 	const [updateOpen, watchOpen] = useSyncOption(openStore, ($open) => {
 		state.update((prevState) => ({...prevState, open: $open}));
@@ -24,17 +34,7 @@ export default function createDialog(
 
 	const modelStore = readable(model, (set) => {
 		const unsubscribeState = state.subscribe(($state) => {
-			model.setOptions((prevOptions) => ({
-				...prevOptions,
-				state: $state,
-				onStateChange: (updater) => {
-					if (updater instanceof Function) {
-						state.update(updater);
-					} else {
-						state.set(updater);
-					}
-				},
-			}));
+			model.setState($state);
 			updateOpen($state.open);
 			set(model);
 		});
