@@ -48,7 +48,7 @@ const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 		>(
 			(ev) => {
 				onClick?.(ev);
-				resolvedModel.setState((prevState) => ({...prevState, open: false}));
+				resolvedModel.close();
 			},
 			[resolvedModel],
 		);

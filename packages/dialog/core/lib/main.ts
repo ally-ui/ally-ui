@@ -1,4 +1,4 @@
-import {DevOptions, findLastInMap, StateModel} from '@ally-ui/core';
+import {findLastInMap, ResolvedOptions, StateModel} from '@ally-ui/core';
 import {FocusTrapModel} from '@ally-ui/focus-trap';
 
 type DialogComponentType =
@@ -29,10 +29,9 @@ export class DialogModel extends StateModel<
 > {
 	constructor(
 		id: string,
-		initialOptions: DialogModelOptions,
-		devOptions?: DevOptions,
+		initialOptions: ResolvedOptions<DialogModelOptions, DialogModelState>,
 	) {
-		super(id, initialOptions, devOptions);
+		super(id, initialOptions);
 		if (this.initialState.open) {
 			this.#onOpenChangeEffect(true);
 		}
@@ -49,8 +48,8 @@ export class DialogModel extends StateModel<
 	/**
 	 * Initialize a component of the model. This should run before the component
 	 * is mounted and before a reference to the DOM is obtained.
-	 * @param type The type of component being initialized
-	 * @returns The assigned ID for the component
+	 * @param type The type of component being initialized.
+	 * @returns The assigned ID for the component.
 	 */
 	init(type: DialogComponentType): string {
 		this.#components.set(type, {id: type, type, mounted: false});
@@ -60,7 +59,7 @@ export class DialogModel extends StateModel<
 	deinit(componentId: string) {
 		const component = this.#components.get(componentId);
 		if (component === undefined) {
-			if (this.debug) {
+			if (this.options.debug) {
 				console.error(`deinit(${componentId}), not found`);
 			}
 			return;
@@ -71,12 +70,12 @@ export class DialogModel extends StateModel<
 	/**
 	 * Mark a component as mounted. This signals when a component has completed
 	 * its initialization phase and is ready to receive events.
-	 * @param componentId The ID of the component to mount
+	 * @param componentId The ID of the component to mount.
 	 */
 	mount(componentId: string) {
 		const component = this.#components.get(componentId);
 		if (component === undefined) {
-			if (this.debug) {
+			if (this.options.debug) {
 				console.error(`mount(${componentId}), not initialized`);
 			}
 			return;
@@ -87,7 +86,7 @@ export class DialogModel extends StateModel<
 	unmount(componentId: string) {
 		const component = this.#components.get(componentId);
 		if (component === undefined) {
-			if (this.debug) {
+			if (this.options.debug) {
 				console.error(`unmount(${componentId}), not found`);
 			}
 			return;
@@ -97,13 +96,13 @@ export class DialogModel extends StateModel<
 
 	/**
 	 * Save a reference to the DOM node that the component abstracts over.
-	 * @param componentId The ID of the component that holds the node reference
-	 * @param node The DOM node reference
+	 * @param componentId The ID of the component that holds the node reference.
+	 * @param node The DOM node reference.
 	 */
 	bindNode(componentId: string, node: HTMLElement) {
 		const component = this.#components.get(componentId);
 		if (component === undefined) {
-			if (this.debug) {
+			if (this.options.debug) {
 				console.error(`bindNode(${componentId}, ${node}), not initialized`);
 			}
 			return;
@@ -129,7 +128,7 @@ export class DialogModel extends StateModel<
 	unbindNode(componentId: string) {
 		const component = this.#components.get(componentId);
 		if (component === undefined) {
-			if (this.debug) {
+			if (this.options.debug) {
 				console.error(`unbindNode(${componentId}), not initialized`);
 			}
 			return;
@@ -147,15 +146,15 @@ export class DialogModel extends StateModel<
 
 	/**
 	 * Get the required DOM attributes for a component with a given state.
-	 * @param componentId The component to get attributes for
+	 * @param componentId The component to get attributes for.
 	 * @param state If the component attributes are static, this can be omitted.
-	 * @returns An object describing the DOM attributes to apply to the component node
+	 * @returns An object describing the DOM attributes to apply to the component node.
 	 */
 	componentAttributes(componentId: string, state?: DialogModelState) {
 		const resolvedState = state ?? this.getState();
 		const component = this.#components.get(componentId);
 		if (component === undefined) {
-			if (this.debug) {
+			if (this.options.debug) {
 				console.error(`getAttributes(${componentId}), not initialized`);
 			}
 			return;
@@ -202,7 +201,7 @@ export class DialogModel extends StateModel<
 				(c) => c.type === 'content' && c.node !== undefined,
 			);
 			if (content?.node === undefined) {
-				if (this.debug) {
+				if (this.options.debug) {
 					console.error(
 						`#onOpenChangeEffect(true), no content component with node`,
 					);
@@ -230,8 +229,8 @@ export class DialogModel extends StateModel<
 			contentTrap.setUIOptions(this.uiOptions);
 			contentTrap.setOptions((prevOptions) => ({
 				...prevOptions,
-				onStateChange: (updater) => {
-					this.options.onStateChange?.((oldState) => {
+				requestStateUpdate: (updater) => {
+					this.options.requestStateUpdate?.((oldState) => {
 						const newFocusTrapState =
 							updater instanceof Function
 								? updater({active: oldState.open})
@@ -262,5 +261,20 @@ export class DialogModel extends StateModel<
 		} else {
 			handleClose();
 		}
+	}
+
+	// TODO How should we indicate that these methods should be attached to event listeners?
+	open() {
+		this.options.requestStateUpdate?.((prevState) => ({
+			...prevState,
+			open: true,
+		}));
+	}
+
+	close() {
+		this.options.requestStateUpdate?.((prevState) => ({
+			...prevState,
+			open: false,
+		}));
 	}
 }

@@ -44,8 +44,7 @@
 	{...$resolvedModel.componentAttributes(id)}
 	{...$$restProps}
 	use:eventForwarder
-	on:click={() =>
-		$resolvedModel.setState((prevState) => ({...prevState, open: true}))}
+	on:click={() => $resolvedModel.open()}
 >
 	<slot />
 </button>

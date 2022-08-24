@@ -1,45 +1,48 @@
-import type {DevOptions} from '@ally-ui/core';
 import {DialogModel, type DialogModelOptions} from '@ally-ui/core-dialog';
-import {useSyncOption, type ReadOrWritable} from '@ally-ui/svelte';
+import {useSyncOption} from '@ally-ui/svelte';
 import {tick} from 'svelte';
-import {readable, writable, type Readable} from 'svelte/store';
+import {readable, writable, type Readable, type Writable} from 'svelte/store';
 
 export interface CreateDialogOptions extends DialogModelOptions {
-	openStore?: ReadOrWritable<boolean>;
+	openStore?: Writable<boolean>;
 }
 
-export default function createDialog(
-	{initialOpen, openStore}: CreateDialogOptions = {},
-	devOptions: DevOptions = {},
-): Readable<DialogModel> {
+export default function createDialog({
+	initialOpen,
+	openStore,
+}: CreateDialogOptions = {}): Readable<DialogModel> {
 	// TODO Generate SSR-safe IDs.
 	const id = '0';
-	const model = new DialogModel(id, {initialOpen}, devOptions);
+	const model = new DialogModel(id, {initialOpen});
 
 	const state = writable(model.initialState);
 
-	const [updateOpen, watchOpen] = useSyncOption(openStore, ($open) => {
-		state.update((prevState) => ({...prevState, open: $open}));
-	});
+	model.setOptions((prevOptions) => ({
+		...prevOptions,
+		requestStateUpdate: (updater) => {
+			if (updater instanceof Function) {
+				state.update(updater);
+			} else {
+				state.set(updater);
+			}
+		},
+	}));
+
+	const [updateOpenOption, watchOpenOption] = useSyncOption(
+		openStore,
+		($open) => {
+			state.update((prevState) => ({...prevState, open: $open}));
+		},
+	);
 
 	const modelStore = readable(model, (set) => {
 		const unsubscribeState = state.subscribe(($state) => {
-			model.setOptions((prevOptions) => ({
-				...prevOptions,
-				state: $state,
-				onStateChange: (updater) => {
-					if (updater instanceof Function) {
-						state.update(updater);
-					} else {
-						state.set(updater);
-					}
-				},
-			}));
-			updateOpen($state.open);
+			model.setState($state);
+			updateOpenOption($state.open);
 			set(model);
 		});
 
-		const unsubscribeOpen = watchOpen();
+		const unsubscribeOpen = watchOpenOption();
 
 		return () => {
 			unsubscribeState();

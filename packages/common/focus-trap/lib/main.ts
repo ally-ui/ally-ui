@@ -1,4 +1,4 @@
-import {StateModel} from '@ally-ui/core';
+import {ResolvedOptions, StateModel} from '@ally-ui/core';
 
 function isEscapeEvent(ev: KeyboardEvent) {
 	return ev.key === 'Escape' || ev.key === 'Esc';
@@ -28,8 +28,8 @@ function isValueOrHandler<TValue>(
 
 /**
  * Check if a mutation may result in the list of focusable children in the DOM to update
- * @param mutation A DOM mutation observer record
- * @returns If the mutation may update the list of focusable children in the DOM
+ * @param mutation A DOM mutation observer record.
+ * @returns If the mutation may update the list of focusable children in the DOM.
  */
 function mutationUpdatesFocusableChildren(mutation: MutationRecord) {
 	if (mutation.type === 'childList') {
@@ -65,8 +65,8 @@ const FOCUSABLE_SELECTORS = [
  * only works for an _open_ shadow DOM; otherwise, `composedPath()[0] ===
  * event.target` always).
 
- * @param ev The event to find the target of
- * @returns The target of the event
+ * @param ev The event to find the target of.
+ * @returns The target of the event.
  */
 function getActualTarget(ev: Event) {
 	return ev.target instanceof Element &&
@@ -124,7 +124,10 @@ export class FocusTrapModel extends StateModel<
 	FocusTrapOptions,
 	FocusTrapState
 > {
-	constructor(id: string, initialOptions: FocusTrapOptions) {
+	constructor(
+		id: string,
+		initialOptions: ResolvedOptions<FocusTrapOptions, FocusTrapState>,
+	) {
 		super(id, initialOptions);
 		if (this.getState().active) {
 			this.activate();
@@ -327,7 +330,7 @@ export class FocusTrapModel extends StateModel<
 		this.#watchEvents();
 		this.#trapFocus();
 		if (!this.getState().active) {
-			this.options.onStateChange?.((oldState) => ({
+			this.options.requestStateUpdate?.((oldState) => ({
 				...oldState,
 				active: true,
 			}));
@@ -338,7 +341,7 @@ export class FocusTrapModel extends StateModel<
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
 		if (this.getState().active) {
-			this.options.onStateChange?.((oldState) => ({
+			this.options.requestStateUpdate?.((oldState) => ({
 				...oldState,
 				active: false,
 			}));

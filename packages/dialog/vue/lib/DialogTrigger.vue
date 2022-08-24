@@ -47,9 +47,7 @@ watchEffect(() => {
 			...resolvedModel.componentAttributes(id, state),
 			...$attrs,
 		}"
-		@click="
-			() => resolvedModel.setState((prevState) => ({...prevState, open: true}))
-		"
+		@click="() => resolvedModel.open()"
 	>
 		<slot />
 	</button>

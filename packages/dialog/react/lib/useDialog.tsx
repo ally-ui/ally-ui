@@ -1,4 +1,3 @@
-import type {DevOptions} from '@ally-ui/core';
 import {
 	DialogModel,
 	DialogModelOptions,
@@ -14,16 +13,22 @@ export interface UseDialogOptions extends DialogModelOptions {
 
 export type UseDialogValue = [DialogModel, DialogModelState];
 
-export default function useDialog(
-	{initialOpen, onOpenChange, open}: UseDialogOptions = {},
-	devOptions: DevOptions = {},
-): UseDialogValue {
+export default function useDialog({
+	initialOpen,
+	onOpenChange,
+	open,
+}: UseDialogOptions = {}): UseDialogValue {
 	const id = React.useId();
-	const model = useRunOnce(
-		() => new DialogModel(id, {initialOpen}, devOptions),
-	);
+	const model = useRunOnce(() => new DialogModel(id, {initialOpen}));
 
 	const [state, setState] = React.useState(() => model.initialState);
+
+	useRunOnce(() =>
+		model.setOptions((prevOptions) => ({
+			...prevOptions,
+			requestStateUpdate: setState,
+		})),
+	);
 
 	useSyncOption({
 		option: open,
@@ -34,11 +39,12 @@ export default function useDialog(
 		onInternalChange: onOpenChange,
 	});
 
-	model.setOptions((prevOptions) => ({
-		...prevOptions,
-		state,
-		onStateChange: setState,
-	}));
+	React.useEffect(
+		function onStateUpdate() {
+			model.setState(state);
+		},
+		[state],
+	);
 
 	const flushDOM = useLayoutPromise([state]);
 	model.setUIOptions({
