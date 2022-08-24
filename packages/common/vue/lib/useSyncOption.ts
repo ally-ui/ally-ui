@@ -9,9 +9,14 @@ export default function useSyncOption<TOption>(
 		onOptionChange(previousOption);
 	}
 	function updateOption(internal: TOption) {
-		if (option !== undefined) {
-			option.value = internal;
+		if (option === undefined) {
+			return;
 		}
+		if (internal === previousOption) {
+			return;
+		}
+		option.value = internal;
+		previousOption = internal;
 	}
 	watchEffect(function updateInternal() {
 		if (option?.value === undefined) {
@@ -21,6 +26,7 @@ export default function useSyncOption<TOption>(
 			return;
 		}
 		onOptionChange(option.value);
+		previousOption = option.value;
 	});
 	return updateOption;
 }

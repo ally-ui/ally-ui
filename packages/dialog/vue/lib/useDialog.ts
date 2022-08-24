@@ -1,4 +1,3 @@
-import type {DevOptions} from '@ally-ui/core';
 import {
 	DialogModel,
 	type DialogModelOptions,
@@ -13,34 +12,33 @@ export interface UseDialogOptions extends DialogModelOptions {
 
 export type UseDialogValue = [DialogModel, Ref<DialogModelState>];
 
-export default function useDialog(
-	{openRef, initialOpen}: UseDialogOptions = {},
-	devOptions: DevOptions = {},
-): UseDialogValue {
+export default function useDialog({
+	openRef,
+	initialOpen,
+}: UseDialogOptions = {}): UseDialogValue {
 	// TODO Generate SSR-safe IDs.
 	const id = '0';
-	const model = new DialogModel(id, {initialOpen}, devOptions);
+	const model = new DialogModel(id, {initialOpen});
 
 	const state = ref(model.initialState);
+
+	model.setOptions((prevOptions) => ({
+		...prevOptions,
+		requestStateUpdate: (updater) => {
+			if (updater instanceof Function) {
+				state.value = updater(state.value);
+			} else {
+				state.value = updater;
+			}
+		},
+	}));
 
 	const updateOpen = useSyncOption<boolean>(openRef, (open) => {
 		state.value = {...state.value, open};
 	});
 
 	watchEffect(function onInternalChange() {
-		model.setOptions((prevOptions) => {
-			return {
-				...prevOptions,
-				state: state.value,
-				onStateChange: (updater) => {
-					if (updater instanceof Function) {
-						state.value = updater(state.value);
-					} else {
-						state.value = updater;
-					}
-				},
-			};
-		});
+		model.setState(state.value);
 		updateOpen(state.value.open);
 	});
 
