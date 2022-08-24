@@ -14,7 +14,7 @@
 	const resolvedModel = model ?? getDialogContext();
 	if (resolvedModel === undefined) {
 		throw new Error(
-			'<Dialog.Description /> must have a `model` prop or be a child of `<Dialog.Root/>`',
+			'<Dialog.Description/> must have a `model` prop or be a child of `<Dialog.Root/>`',
 		);
 	}
 	const id = $resolvedModel.init('description');

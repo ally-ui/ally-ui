@@ -16,7 +16,7 @@ const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 		const resolvedModel = useDialogModelContext() ?? model;
 		if (resolvedModel === undefined) {
 			throw new Error(
-				'<Dialog.Close /> must have a `model` prop or be a child of `<Dialog.Root/>`',
+				'<Dialog.Close/> must have a `model` prop or be a child of `<Dialog.Root/>`',
 			);
 		}
 		const id = useRunOnce(() => resolvedModel.init('close'));

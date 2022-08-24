@@ -16,7 +16,7 @@ const DialogTitle = React.forwardRef<HTMLElement, DialogTitleProps>(
 		const resolvedModel = useDialogModelContext() ?? model;
 		if (resolvedModel === undefined) {
 			throw new Error(
-				'<Dialog.Title /> must have a `model` prop or be a child of `<Dialog.Root/>`',
+				'<Dialog.Title/> must have a `model` prop or be a child of `<Dialog.Root/>`',
 			);
 		}
 		const id = useRunOnce(() => resolvedModel.init('title'));

@@ -14,7 +14,7 @@
 	const resolvedModel = model ?? getDialogContext();
 	if (resolvedModel === undefined) {
 		throw new Error(
-			'<Dialog.Close /> must have a `model` prop or be a child of `<Dialog.Root/>`',
+			'<Dialog.Close/> must have a `model` prop or be a child of `<Dialog.Root/>`',
 		);
 	}
 	const id = $resolvedModel.init('close');

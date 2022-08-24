@@ -16,7 +16,7 @@ const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 		const resolvedModel = useDialogModelContext() ?? model;
 		if (resolvedModel === undefined) {
 			throw new Error(
-				'<Dialog.Description /> must have a `model` prop or be a child of `<Dialog.Root/>`',
+				'<Dialog.Description/> must have a `model` prop or be a child of `<Dialog.Root/>`',
 			);
 		}
 		const id = useRunOnce(() => resolvedModel.init('description'));
