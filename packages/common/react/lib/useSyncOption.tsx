@@ -2,14 +2,30 @@ import React from 'react';
 import useRunOnce from './useRunOnce';
 
 export interface UseSyncOptionOptions<TOption> {
+	/**
+	 * The external option value.
+	 */
 	option?: TOption;
+	/**
+	 * The internal option value. This should be derived from internal state.
+	 */
 	internal: TOption;
+	/**
+	 * Called with the new external option's value when it changes.
+	 *
+	 * Pass a function to update internal state.
+	 */
 	onOptionChange: React.Dispatch<TOption>;
+	/**
+	 * Called with the new internal option's value when it changes.
+	 *
+	 * Pass a function to update the external option.
+	 */
 	onInternalChange?: React.Dispatch<TOption>;
 }
 
 /**
- * Synchronize state between an externally managed option and internal state.
+ * Synchronize state between an external option and internal state.
  */
 export default function useSyncOption<TOption>({
 	option,

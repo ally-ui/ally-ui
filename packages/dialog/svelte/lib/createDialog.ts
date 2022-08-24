@@ -1,10 +1,10 @@
 import {DialogModel, type DialogModelOptions} from '@ally-ui/core-dialog';
-import {useSyncOption, type ReadOrWritable} from '@ally-ui/svelte';
+import {useSyncOption} from '@ally-ui/svelte';
 import {tick} from 'svelte';
-import {readable, writable, type Readable} from 'svelte/store';
+import {readable, writable, type Readable, type Writable} from 'svelte/store';
 
 export interface CreateDialogOptions extends DialogModelOptions {
-	openStore?: ReadOrWritable<boolean>;
+	openStore?: Writable<boolean>;
 }
 
 export default function createDialog({
@@ -28,18 +28,21 @@ export default function createDialog({
 		},
 	}));
 
-	const [updateOpen, watchOpen] = useSyncOption(openStore, ($open) => {
-		state.update((prevState) => ({...prevState, open: $open}));
-	});
+	const [updateOpenOption, watchOpenOption] = useSyncOption(
+		openStore,
+		($open) => {
+			state.update((prevState) => ({...prevState, open: $open}));
+		},
+	);
 
 	const modelStore = readable(model, (set) => {
 		const unsubscribeState = state.subscribe(($state) => {
 			model.setState($state);
-			updateOpen($state.open);
+			updateOpenOption($state.open);
 			set(model);
 		});
 
-		const unsubscribeOpen = watchOpen();
+		const unsubscribeOpen = watchOpenOption();
 
 		return () => {
 			unsubscribeState();
