@@ -40,7 +40,7 @@ export default function useDialog({
 	});
 
 	React.useEffect(
-		function updateState() {
+		function onStateUpdate() {
 			model.setState(state);
 		},
 		[state],

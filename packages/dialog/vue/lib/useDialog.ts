@@ -33,13 +33,13 @@ export default function useDialog({
 		},
 	}));
 
-	const updateOpen = useSyncOption<boolean>(openRef, (open) => {
+	const updateOpenOption = useSyncOption<boolean>(openRef, (open) => {
 		state.value = {...state.value, open};
 	});
 
-	watchEffect(function onInternalChange() {
+	watchEffect(function onStateUpdate() {
 		model.setState(state.value);
-		updateOpen(state.value.open);
+		updateOpenOption(state.value.open);
 	});
 
 	model.setUIOptions({
