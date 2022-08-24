@@ -1,9 +1,9 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import {Dialog} from '../lib/main';
 
 export default function App() {
 	const [open, setOpen] = React.useState(true);
-	const titleRef = useCallback((node: HTMLElement | null) => {
+	const titleRef = React.useCallback((node: HTMLElement | null) => {
 		if (node !== null) {
 			node.style.color = 'gray';
 		}

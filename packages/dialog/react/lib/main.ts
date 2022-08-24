@@ -6,10 +6,10 @@ import Title from './DialogTitle';
 import Trigger from './DialogTrigger';
 
 export const Dialog = {
-	Root,
 	Close,
 	Content,
 	Description,
+	Root,
 	Title,
 	Trigger,
 };
