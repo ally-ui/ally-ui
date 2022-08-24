@@ -45,6 +45,7 @@ export abstract class StateModel<TOptions, TState> {
 	#state: TState;
 
 	options: ResolvedOptions<TOptions, TState>;
+	mergeObjects: MergeObjects = (original, update) => ({...original, ...update});
 
 	constructor(
 		id: string,
@@ -59,15 +60,18 @@ export abstract class StateModel<TOptions, TState> {
 		this.#previousState = this.initialState;
 		this.#state = this.initialState;
 		this.options = initialOptions;
+		if (this.options.mergeObjects !== undefined) {
+			this.mergeObjects = this.options.mergeObjects;
+		}
 	}
 
 	abstract deriveInitialState(options: TOptions): TState;
 
 	setOptions(updater: Updater<ResolvedOptions<TOptions, TState>>) {
 		if (updater instanceof Function) {
-			this.options = updater(this.options);
+			this.options = this.mergeObjects(this.options, updater(this.options));
 		} else {
-			this.options = updater;
+			this.options = this.mergeObjects(this.options, updater);
 		}
 	}
 
@@ -76,9 +80,12 @@ export abstract class StateModel<TOptions, TState> {
 	}
 
 	/**
-	 * Update the model's internal state. This should only be called by the
-	 * external state implementation. Internal state updates should be dispatched
-	 * via `options.requestStateUpdate`.
+	 * Update the model's internal state.
+	 *
+	 * **This should only be called by an external state implementation**.
+	 *
+	 * Internal state updates should be dispatched via `options.requestStateUpdate`.
+	 *
 	 * @param newState The new state value
 	 */
 	setState(newState: TState) {

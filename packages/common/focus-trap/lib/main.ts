@@ -1,4 +1,4 @@
-import {StateModel} from '@ally-ui/core';
+import {ResolvedOptions, StateModel} from '@ally-ui/core';
 
 function isEscapeEvent(ev: KeyboardEvent) {
 	return ev.key === 'Escape' || ev.key === 'Esc';
@@ -124,7 +124,10 @@ export class FocusTrapModel extends StateModel<
 	FocusTrapOptions,
 	FocusTrapState
 > {
-	constructor(id: string, initialOptions: FocusTrapOptions) {
+	constructor(
+		id: string,
+		initialOptions: ResolvedOptions<FocusTrapOptions, FocusTrapState>,
+	) {
 		super(id, initialOptions);
 		if (this.getState().active) {
 			this.activate();
@@ -327,7 +330,7 @@ export class FocusTrapModel extends StateModel<
 		this.#watchEvents();
 		this.#trapFocus();
 		if (!this.getState().active) {
-			this.options.onStateChange?.((oldState) => ({
+			this.options.requestStateUpdate?.((oldState) => ({
 				...oldState,
 				active: true,
 			}));
@@ -338,7 +341,7 @@ export class FocusTrapModel extends StateModel<
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
 		if (this.getState().active) {
-			this.options.onStateChange?.((oldState) => ({
+			this.options.requestStateUpdate?.((oldState) => ({
 				...oldState,
 				active: false,
 			}));

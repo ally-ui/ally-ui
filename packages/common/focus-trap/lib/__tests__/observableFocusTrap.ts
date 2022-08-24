@@ -14,18 +14,19 @@ export function observableFocusTrap(
 
 	const stateStore = manualState ?? writable(trap.initialState);
 
+	trap.setOptions((prevOptions) => ({
+		...prevOptions,
+		requestStateUpdate: (updater) => {
+			if (updater instanceof Function) {
+				stateStore.update(updater);
+			} else {
+				stateStore.set(updater);
+			}
+		},
+	}));
+
 	stateStore.subscribe(($state) => {
-		trap.setOptions((prevOptions) => ({
-			...prevOptions,
-			state: $state,
-			onStateChange: (updater) => {
-				if (updater instanceof Function) {
-					stateStore.update(updater);
-				} else {
-					stateStore.set(updater);
-				}
-			},
-		}));
+		trap.setState($state);
 	});
 
 	return trap;
