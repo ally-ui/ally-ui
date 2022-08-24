@@ -10,7 +10,7 @@ import {isWritable, type ReadOrWritable} from './store';
  *
  * @returns A pair of functions.
  *
- * The first function updates the external option and mitigate infinite update
+ * The first function updates the external option and mitigates infinite update
  * cycles. Call it when internal state updates with the updated value of the
  * option.
  *

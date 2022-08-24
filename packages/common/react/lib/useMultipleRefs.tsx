@@ -2,8 +2,8 @@ import React from 'react';
 
 /**
  * Handles setting callback refs and MutableRefObjects.
- * @param ref The ref to use for the instance
- * @param instance The instance being set
+ * @param ref The ref to use for the instance.
+ * @param instance The instance being set.
  */
 function setRef<TInstance>(ref: React.Ref<TInstance>, instance: TInstance) {
 	if (ref instanceof Function) {
@@ -21,8 +21,8 @@ function combinedRef<TInstance>(refs: React.Ref<TInstance>[]) {
 // CREDIT https://github.com/radix-ui/primitives/blob/main/packages/react/compose-refs/src/composeRefs.tsx
 /**
  * Create a ref that passes its instance to multiple refs.
- * @param refs The refs that should receive the instance
- * @returns The combined ref
+ * @param refs The refs that should receive the instance.
+ * @returns The combined ref.
  */
 export default function useMultipleRefs<TInstance>(
 	...refs: React.Ref<TInstance>[]

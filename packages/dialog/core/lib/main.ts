@@ -48,8 +48,8 @@ export class DialogModel extends StateModel<
 	/**
 	 * Initialize a component of the model. This should run before the component
 	 * is mounted and before a reference to the DOM is obtained.
-	 * @param type The type of component being initialized
-	 * @returns The assigned ID for the component
+	 * @param type The type of component being initialized.
+	 * @returns The assigned ID for the component.
 	 */
 	init(type: DialogComponentType): string {
 		this.#components.set(type, {id: type, type, mounted: false});
@@ -70,7 +70,7 @@ export class DialogModel extends StateModel<
 	/**
 	 * Mark a component as mounted. This signals when a component has completed
 	 * its initialization phase and is ready to receive events.
-	 * @param componentId The ID of the component to mount
+	 * @param componentId The ID of the component to mount.
 	 */
 	mount(componentId: string) {
 		const component = this.#components.get(componentId);
@@ -96,8 +96,8 @@ export class DialogModel extends StateModel<
 
 	/**
 	 * Save a reference to the DOM node that the component abstracts over.
-	 * @param componentId The ID of the component that holds the node reference
-	 * @param node The DOM node reference
+	 * @param componentId The ID of the component that holds the node reference.
+	 * @param node The DOM node reference.
 	 */
 	bindNode(componentId: string, node: HTMLElement) {
 		const component = this.#components.get(componentId);
@@ -146,9 +146,9 @@ export class DialogModel extends StateModel<
 
 	/**
 	 * Get the required DOM attributes for a component with a given state.
-	 * @param componentId The component to get attributes for
+	 * @param componentId The component to get attributes for.
 	 * @param state If the component attributes are static, this can be omitted.
-	 * @returns An object describing the DOM attributes to apply to the component node
+	 * @returns An object describing the DOM attributes to apply to the component node.
 	 */
 	componentAttributes(componentId: string, state?: DialogModelState) {
 		const resolvedState = state ?? this.getState();

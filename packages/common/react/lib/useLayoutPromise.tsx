@@ -2,8 +2,8 @@ import React from 'react';
 
 /**
  * Get a Promise that resolves when the layout effects of some state is committed.
- * @param deps The state to wait on update for
- * @returns A getter of a Promise that resolves when the layout effects of `deps` is committed
+ * @param deps The state to wait on update for.
+ * @returns A getter of a Promise that resolves when the layout effects of `deps` is committed.
  */
 export default function useLayoutPromise(
 	deps: React.DependencyList,

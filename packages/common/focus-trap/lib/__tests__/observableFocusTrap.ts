@@ -3,8 +3,9 @@ import {FocusTrapModel, FocusTrapOptions, FocusTrapState} from '../main';
 
 /**
  * Use Svelte Stores as the state implementation when testing the focus trap.
- * @param options The options for the focus trap
- * @returns A Readable store containing the trap instance
+ * @param options The options for the focus trap.
+ * @param manualState An optional opt-in to manually control the focus trap.
+ * @returns A Readable store containing the trap instance.
  */
 export function observableFocusTrap(
 	options: FocusTrapOptions,

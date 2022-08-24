@@ -86,7 +86,7 @@ export abstract class StateModel<TOptions, TState> {
 	 *
 	 * Internal state updates should be dispatched via `options.requestStateUpdate`.
 	 *
-	 * @param newState The new state value
+	 * @param newState The new state value.
 	 */
 	setState(newState: TState) {
 		this.#previousState = this.#state;
@@ -98,8 +98,8 @@ export abstract class StateModel<TOptions, TState> {
 
 	/**
 	 * Watch for changes to state and trigger any effects in the core model.
-	 * @param newState The new state
-	 * @param previousState The previous state
+	 * @param newState The new state.
+	 * @param previousState The previous state.
 	 */
 	watchStateChange?(newState: TState, previousState: TState): void;
 
