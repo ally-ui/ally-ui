@@ -1,6 +1,6 @@
 import type {JSX} from 'solid-js';
 
-export default function forwardEvent<TTarget, TEvent extends Event>(
+export function forwardEvent<TTarget, TEvent extends Event>(
 	ev: TEvent & {
 		currentTarget: TTarget;
 		target: Element;

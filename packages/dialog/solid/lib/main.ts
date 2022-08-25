@@ -14,4 +14,4 @@ export const Dialog = {
 	Trigger,
 };
 
-export {default as createDialog} from './createDialog';
+export {createDialog} from './createDialog';

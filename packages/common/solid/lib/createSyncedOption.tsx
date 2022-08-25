@@ -26,7 +26,7 @@ export interface CreateSyncedOptionOptions<TOption> {
 /**
  * Synchronize state between an external option and internal state.
  */
-export default function createSyncedOption<TOption>({
+export function createSyncedOption<TOption>({
 	option,
 	internal,
 	onOptionChange,

@@ -1,6 +1,6 @@
 import {ParentProps, splitProps} from 'solid-js';
 import {DialogModelContext, DialogStateContext} from './context';
-import createDialog, {type CreateDialogOptions} from './createDialog';
+import {createDialog, type CreateDialogOptions} from './createDialog';
 
 export interface DialogRootProps extends ParentProps, CreateDialogOptions {}
 

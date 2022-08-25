@@ -8,13 +8,11 @@ type CallbackRef<TInstance> = (instance: TInstance) => void;
  * @param condition An optional boolean accessor to null the ref if false.
  * @returns A ref that passes null on cleanup and if the condition is false.
  */
-export default function createBindRef(
+export function createBindRef(
 	ref: CallbackRef<HTMLElement | null>,
 	condition?: Accessor<boolean>,
 ) {
-	let savedNode: HTMLElement | null = null;
 	onCleanup(() => {
-		savedNode = null;
 		ref(null);
 	});
 	if (condition !== undefined) {
@@ -25,7 +23,6 @@ export default function createBindRef(
 		});
 	}
 	return (node: HTMLElement) => {
-		savedNode = node;
 		ref(node);
 	};
 }

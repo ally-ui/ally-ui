@@ -14,7 +14,7 @@ export interface CreateDialogOptions extends DialogModelOptions {
 
 export type CreateDialogValue = [DialogModel, DialogModelState];
 
-export default function createDialog(
+export function createDialog(
 	props: CreateDialogOptions = {},
 ): CreateDialogValue {
 	// TODO Generate SSR-safe IDs.

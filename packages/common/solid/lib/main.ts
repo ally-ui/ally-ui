@@ -1,4 +1,4 @@
-export {default as combinedRef} from './combinedRef';
-export {default as createBindRef} from './createBindRef';
-export {default as createSyncedOption} from './createSyncedOption';
-export {default as forwardEvent} from './forwardEvent';
+export {combinedRef} from './combinedRef';
+export {createBindRef} from './createBindRef';
+export {createSyncedOption} from './createSyncedOption';
+export {forwardEvent} from './forwardEvent';
