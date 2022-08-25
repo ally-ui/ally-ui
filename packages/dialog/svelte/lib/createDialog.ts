@@ -1,5 +1,5 @@
 import {DialogModel, type DialogModelOptions} from '@ally-ui/core-dialog';
-import {useSyncOption} from '@ally-ui/svelte';
+import {createSyncedOption} from '@ally-ui/svelte';
 import {readable, writable, type Readable, type Writable} from 'svelte/store';
 
 export interface CreateDialogOptions extends DialogModelOptions {
@@ -27,7 +27,7 @@ export default function createDialog({
 		},
 	}));
 
-	const [updateOpenOption, watchOpenOption] = useSyncOption(
+	const [updateOpenOption, watchOpenOption] = createSyncedOption(
 		openStore,
 		($open) => {
 			state.update((prevState) => ({...prevState, open: $open}));

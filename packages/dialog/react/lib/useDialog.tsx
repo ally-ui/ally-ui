@@ -3,7 +3,7 @@ import {
 	DialogModelOptions,
 	DialogModelState,
 } from '@ally-ui/core-dialog';
-import {useRunOnce, useSyncOption} from '@ally-ui/react';
+import {useRunOnce, useSyncedOption} from '@ally-ui/react';
 import React from 'react';
 
 export interface UseDialogOptions extends DialogModelOptions {
@@ -30,7 +30,7 @@ export default function useDialog({
 		})),
 	);
 
-	useSyncOption({
+	useSyncedOption({
 		option: open,
 		onOptionChange: (open) => {
 			setState((prevState) => ({...prevState, open}));

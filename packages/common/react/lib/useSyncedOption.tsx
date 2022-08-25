@@ -1,7 +1,7 @@
 import React from 'react';
 import useRunOnce from './useRunOnce';
 
-export interface UseSyncOptionOptions<TOption> {
+export interface UseSyncedOptionOptions<TOption> {
 	/**
 	 * The external option value.
 	 */
@@ -27,12 +27,12 @@ export interface UseSyncOptionOptions<TOption> {
 /**
  * Synchronize state between an external option and internal state.
  */
-export default function useSyncOption<TOption>({
+export default function useSyncedOption<TOption>({
 	option,
 	internal,
 	onOptionChange,
 	onInternalChange,
-}: UseSyncOptionOptions<TOption>) {
+}: UseSyncedOptionOptions<TOption>) {
 	useRunOnce(() => {
 		if (option === undefined) {
 			return;

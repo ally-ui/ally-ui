@@ -10,7 +10,7 @@ import {watchEffect, type Ref} from 'vue';
  * @returns A function to update the external option and mitigate infinite update cycles.
  * Call it when internal state updates with the updated value of the option.
  */
-export default function useSyncOption<TOption>(
+export default function useSyncedOption<TOption>(
 	option: Ref<TOption | undefined> | undefined,
 	onOptionChange: (option: TOption) => void,
 ) {

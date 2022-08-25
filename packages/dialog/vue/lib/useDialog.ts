@@ -3,7 +3,7 @@ import {
 	type DialogModelOptions,
 	type DialogModelState,
 } from '@ally-ui/core-dialog';
-import {useSyncOption} from '@ally-ui/vue';
+import {useSyncedOption} from '@ally-ui/vue';
 import {ref, watchEffect, type Ref} from 'vue';
 
 export interface UseDialogOptions extends DialogModelOptions {
@@ -33,7 +33,7 @@ export default function useDialog({
 		},
 	}));
 
-	const updateOpenOption = useSyncOption<boolean>(openRef, (open) => {
+	const updateOpenOption = useSyncedOption<boolean>(openRef, (open) => {
 		state.value = {...state.value, open};
 	});
 
