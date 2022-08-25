@@ -1,20 +1,21 @@
-import type {ParentProps} from 'solid-js';
+import {ParentProps, splitProps} from 'solid-js';
 import {DialogModelContext, DialogStateContext} from './context';
 import createDialog, {type CreateDialogOptions} from './createDialog';
 
 export interface DialogRootProps extends ParentProps, CreateDialogOptions {}
 
 export default function DialogRoot(props: DialogRootProps) {
-	const [model, state] = createDialog({
-		initialOpen: props.initialOpen,
-		onOpenChange: props.onOpenChange,
-		open: props.open,
-	});
+	const [local, restProps] = splitProps(props, [
+		'initialOpen',
+		'onOpenChange',
+		'open',
+	]);
+	const [model, state] = createDialog(local);
 	// TODO Avoid nesting context providers.
 	return (
 		<DialogModelContext.Provider value={model}>
 			<DialogStateContext.Provider value={state}>
-				{props.children}
+				{restProps.children}
 			</DialogStateContext.Provider>
 		</DialogModelContext.Provider>
 	);

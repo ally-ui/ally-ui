@@ -3,6 +3,7 @@ import {
 	DialogModelOptions,
 	DialogModelState,
 } from '@ally-ui/core-dialog';
+import {createSyncedOption} from '@ally-ui/solid';
 import {createEffect} from 'solid-js';
 import {createStore} from 'solid-js/store';
 
@@ -13,14 +14,12 @@ export interface CreateDialogOptions extends DialogModelOptions {
 
 export type CreateDialogValue = [DialogModel, DialogModelState];
 
-export default function createDialog({
-	initialOpen,
-	onOpenChange,
-	open,
-}: CreateDialogOptions = {}): CreateDialogValue {
+export default function createDialog(
+	props: CreateDialogOptions = {},
+): CreateDialogValue {
 	// TODO Generate SSR-safe IDs.
 	const id = '0';
-	const model = new DialogModel(id, {initialOpen, debug: true});
+	const model = new DialogModel(id, {initialOpen: props.initialOpen});
 
 	const [state, setState] = createStore(model.initialState);
 
@@ -29,14 +28,18 @@ export default function createDialog({
 		requestStateUpdate: setState,
 	}));
 
+	createSyncedOption({
+		option: () => props.open,
+		onOptionChange: (open) => {
+			setState((prevState) => ({...prevState, open}));
+		},
+		internal: () => state.open,
+		onInternalChange: props.onOpenChange,
+	});
+
 	createEffect(function onStateUpdate() {
 		model.setState({...state});
 	});
-
-	// const flushDOM = useLayoutPromise([state]);
-	// model.setUIOptions({
-	// 	flushDOM,
-	// });
 
 	return [model, state];
 }
