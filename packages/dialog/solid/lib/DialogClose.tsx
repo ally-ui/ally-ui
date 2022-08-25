@@ -1,15 +1,15 @@
 import type {DialogModel} from '@ally-ui/core-dialog';
 import {combinedRef, forwardEvent} from '@ally-ui/solid';
 import {createEffect, JSX, splitProps} from 'solid-js';
-import {useDialogModelContext, useDialogStateContext} from './context';
+import {useDialogModelContext} from './context';
 
-export interface DialogTriggerProps
+export interface DialogCloseProps
 	extends JSX.HTMLAttributes<HTMLButtonElement> {
 	model?: DialogModel;
 	ref?: (node: HTMLButtonElement) => void;
 }
 
-export default function DialogTrigger(props: DialogTriggerProps) {
+export default function DialogClose(props: DialogCloseProps) {
 	const [local, restProps] = splitProps(props, [
 		'model',
 		'ref',
@@ -19,19 +19,20 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 	const resolvedModel = useDialogModelContext() ?? local.model;
 	if (resolvedModel === undefined) {
 		throw new Error(
-			'<Dialog.Trigger/> must have a `model` prop or be a child of `<Dialog.Root/>`',
+			'<Dialog.Close/> must have a `model` prop or be a child of `<Dialog.Root/>`',
 		);
 	}
-	const id = resolvedModel.init('trigger');
+	const id = resolvedModel.init('close');
 
-	const resolvedState = useDialogStateContext() ?? resolvedModel.getState();
-
-	createEffect(function mount() {
-		resolvedModel.mount(id);
-		return () => {
-			resolvedModel.unmount(id);
-		};
-	});
+	createEffect(
+		function mount() {
+			resolvedModel.mount(id);
+			return () => {
+				resolvedModel.unmount(id);
+			};
+		},
+		[resolvedModel],
+	);
 
 	const bindRef = (node: HTMLElement | null) => {
 		if (node === null) {
@@ -45,11 +46,11 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 	return (
 		<button
 			ref={ref}
-			{...resolvedModel.componentAttributes(id, resolvedState)}
+			{...resolvedModel.componentAttributes(id)}
 			{...restProps}
 			onClick={(ev) => {
 				forwardEvent(ev, local.onClick);
-				resolvedModel.open();
+				resolvedModel.close();
 			}}
 		>
 			{local.children}

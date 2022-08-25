@@ -20,7 +20,7 @@ export default function createDialog({
 }: CreateDialogOptions = {}): CreateDialogValue {
 	// TODO Generate SSR-safe IDs.
 	const id = '0';
-	const model = new DialogModel(id, {initialOpen});
+	const model = new DialogModel(id, {initialOpen, debug: true});
 
 	const [state, setState] = createStore(model.initialState);
 
@@ -29,12 +29,9 @@ export default function createDialog({
 		requestStateUpdate: setState,
 	}));
 
-	createEffect(
-		function onStateUpdate() {
-			model.setState(state);
-		},
-		[state],
-	);
+	createEffect(function onStateUpdate() {
+		model.setState({...state});
+	});
 
 	// const flushDOM = useLayoutPromise([state]);
 	// model.setUIOptions({

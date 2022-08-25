@@ -15,6 +15,18 @@ export default function App() {
 						<span>Editing profile...</span>
 					</Show>
 				</div>
+				<Dialog.Content>
+					<fieldset>
+						<label for="name">Name</label>
+						<input id="name" placeholder="Bryan Lee" />
+					</fieldset>
+					<fieldset>
+						<label for="username">Username</label>
+						<input id="username" placeholder="@bryanmylee" />
+					</fieldset>
+					<Dialog.Close>Save changes</Dialog.Close>
+					<Dialog.Close>x</Dialog.Close>
+				</Dialog.Content>
 			</Dialog.Root>
 		</main>
 	);
