@@ -2,10 +2,6 @@ import isEqual from 'lodash.isequal';
 import type {UIOptions} from './ui';
 
 export type Updater<TState> = ((oldState: TState) => TState) | TState;
-export type MergeObjects = <TObject>(
-	original: TObject,
-	update: Partial<TObject>,
-) => TObject;
 
 export type ResolvedOptions<TOptions, TState> = TOptions & {
 	/**
@@ -45,7 +41,7 @@ export abstract class StateModel<TOptions, TState> {
 		id: string,
 		/**
 		 * We receive the fully-resolved options during initialization to support
-		 * custom object merge behavior and pass additional configuration options.
+		 * additional configuration options.
 		 */
 		initialOptions: ResolvedOptions<TOptions, TState>,
 	) {
