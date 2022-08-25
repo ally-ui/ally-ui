@@ -1,16 +1,16 @@
 import Close from './DialogClose';
 import Content from './DialogContent';
-// import Description from './DialogDescription';
+import Description from './DialogDescription';
 import Root from './DialogRoot';
-// import Title from './DialogTitle';
+import Title from './DialogTitle';
 import Trigger from './DialogTrigger';
 
 export const Dialog = {
 	Close,
 	Content,
-	// Description,
+	Description,
 	Root,
-	// Title,
+	Title,
 	Trigger,
 };
 

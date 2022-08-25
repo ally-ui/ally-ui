@@ -1,6 +1,6 @@
 import type {DialogModel} from '@ally-ui/core-dialog';
 import {combinedRef, forwardEvent} from '@ally-ui/solid';
-import {createEffect, JSX, splitProps} from 'solid-js';
+import {JSX, onCleanup, onMount, splitProps} from 'solid-js';
 import {useDialogModelContext} from './context';
 
 export interface DialogCloseProps
@@ -24,15 +24,12 @@ export default function DialogClose(props: DialogCloseProps) {
 	}
 	const id = resolvedModel.init('close');
 
-	createEffect(
-		function mount() {
-			resolvedModel.mount(id);
-			return () => {
-				resolvedModel.unmount(id);
-			};
-		},
-		[resolvedModel],
-	);
+	onMount(() => {
+		resolvedModel.mount(id);
+	});
+	onCleanup(() => {
+		resolvedModel.unmount(id);
+	});
 
 	const bindRef = (node: HTMLElement | null) => {
 		if (node === null) {

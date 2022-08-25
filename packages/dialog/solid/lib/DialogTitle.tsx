@@ -1,24 +1,23 @@
 import type {DialogModel} from '@ally-ui/core-dialog';
 import {combinedRef} from '@ally-ui/solid';
-import {JSX, onCleanup, onMount, Show, splitProps} from 'solid-js';
-import {useDialogModelContext, useDialogStateContext} from './context';
+import {JSX, onCleanup, onMount, splitProps} from 'solid-js';
+import {useDialogModelContext} from './context';
 
-export interface DialogContentProps extends JSX.HTMLAttributes<HTMLDivElement> {
+export interface DialogTitleProps
+	extends JSX.HTMLAttributes<HTMLParagraphElement> {
 	model?: DialogModel;
 	ref?: (node: HTMLDivElement) => void;
 }
 
-export default function DialogContent(props: DialogContentProps) {
+export default function DialogTitle(props: DialogTitleProps) {
 	const [local, restProps] = splitProps(props, ['model', 'ref', 'children']);
 	const resolvedModel = useDialogModelContext() ?? local.model;
 	if (resolvedModel === undefined) {
 		throw new Error(
-			'<Dialog.Content/> must have a `model` prop or be a child of `<Dialog.Root/>`',
+			'<Dialog.Title/> must have a `model` prop or be a child of `<Dialog.Root/>`',
 		);
 	}
-	const id = resolvedModel.init('content');
-
-	const resolvedState = useDialogStateContext() ?? resolvedModel.getState();
+	const id = resolvedModel.init('title');
 
 	onMount(() => {
 		resolvedModel.mount(id);
@@ -37,14 +36,8 @@ export default function DialogContent(props: DialogContentProps) {
 	const ref = combinedRef(bindRef, local.ref);
 
 	return (
-		<Show when={resolvedState.open}>
-			<div
-				ref={ref}
-				{...resolvedModel.componentAttributes(id, resolvedState)}
-				{...restProps}
-			>
-				{local.children}
-			</div>
-		</Show>
+		<h1 ref={ref} {...resolvedModel.componentAttributes(id)} {...restProps}>
+			{local.children}
+		</h1>
 	);
 }
