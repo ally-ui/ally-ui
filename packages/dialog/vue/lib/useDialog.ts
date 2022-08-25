@@ -4,7 +4,7 @@ import {
 	type DialogModelState,
 } from '@ally-ui/core-dialog';
 import {useSyncOption} from '@ally-ui/vue';
-import {nextTick, ref, watchEffect, type Ref} from 'vue';
+import {ref, watchEffect, type Ref} from 'vue';
 
 export interface UseDialogOptions extends DialogModelOptions {
 	openRef?: Ref<boolean | undefined>;
@@ -40,10 +40,6 @@ export default function useDialog({
 	watchEffect(function onStateUpdate() {
 		model.setState(state.value);
 		updateOpenOption(state.value.open);
-	});
-
-	model.setUIOptions({
-		flushDOM: nextTick,
 	});
 
 	return [model, state];

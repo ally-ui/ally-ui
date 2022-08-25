@@ -3,7 +3,7 @@ import {
 	DialogModelOptions,
 	DialogModelState,
 } from '@ally-ui/core-dialog';
-import {useLayoutPromise, useRunOnce, useSyncOption} from '@ally-ui/react';
+import {useRunOnce, useSyncOption} from '@ally-ui/react';
 import React from 'react';
 
 export interface UseDialogOptions extends DialogModelOptions {
@@ -45,11 +45,6 @@ export default function useDialog({
 		},
 		[state],
 	);
-
-	const flushDOM = useLayoutPromise([state]);
-	model.setUIOptions({
-		flushDOM,
-	});
 
 	return [model, state];
 }
