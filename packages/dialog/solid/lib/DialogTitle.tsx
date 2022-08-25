@@ -1,5 +1,5 @@
 import type {DialogModel} from '@ally-ui/core-dialog';
-import {combinedRef} from '@ally-ui/solid';
+import {combinedRef, createBindRef} from '@ally-ui/solid';
 import {JSX, onCleanup, onMount, splitProps} from 'solid-js';
 import {useDialogModelContext} from './context';
 
@@ -26,11 +26,12 @@ export default function DialogTitle(props: DialogTitleProps) {
 		resolvedModel.unmount(id);
 	});
 
-	const bindRef = (node: HTMLElement) => {
-		resolvedModel.bindNode(id, node);
-	};
-	onCleanup(() => {
-		resolvedModel.unbindNode(id);
+	const bindRef = createBindRef((node) => {
+		if (node === null) {
+			resolvedModel.unbindNode(id);
+		} else {
+			resolvedModel.bindNode(id, node);
+		}
 	});
 	const ref = combinedRef(bindRef, local.ref);
 

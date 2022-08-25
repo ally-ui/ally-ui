@@ -1,5 +1,5 @@
 import type {DialogModel} from '@ally-ui/core-dialog';
-import {combinedRef, forwardEvent} from '@ally-ui/solid';
+import {combinedRef, createBindRef, forwardEvent} from '@ally-ui/solid';
 import {JSX, onCleanup, onMount, splitProps} from 'solid-js';
 import {useDialogModelContext, useDialogStateContext} from './context';
 
@@ -33,11 +33,12 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 		resolvedModel.unmount(id);
 	});
 
-	const bindRef = (node: HTMLElement) => {
-		resolvedModel.bindNode(id, node);
-	};
-	onCleanup(() => {
-		resolvedModel.unbindNode(id);
+	const bindRef = createBindRef((node) => {
+		if (node === null) {
+			resolvedModel.unbindNode(id);
+		} else {
+			resolvedModel.bindNode(id, node);
+		}
 	});
 	const ref = combinedRef(bindRef, local.ref);
 

@@ -1,13 +1,6 @@
 import type {DialogModel} from '@ally-ui/core-dialog';
-import {combinedRef} from '@ally-ui/solid';
-import {
-	createEffect,
-	JSX,
-	onCleanup,
-	onMount,
-	Show,
-	splitProps,
-} from 'solid-js';
+import {combinedRef, createBindRef} from '@ally-ui/solid';
+import {JSX, onCleanup, onMount, Show, splitProps} from 'solid-js';
 import {useDialogModelContext, useDialogStateContext} from './context';
 
 export interface DialogContentProps extends JSX.HTMLAttributes<HTMLDivElement> {
@@ -34,20 +27,16 @@ export default function DialogContent(props: DialogContentProps) {
 		resolvedModel.unmount(id);
 	});
 
-	let savedNode: HTMLElement | undefined;
-	const bindRef = (node: HTMLElement) => {
-		savedNode = node;
-		resolvedModel.bindNode(id, node);
-	};
-	onCleanup(() => {
-		savedNode = undefined;
-		resolvedModel.unbindNode(id);
-	});
-	createEffect(() => {
-		if (!resolvedState.open && savedNode !== undefined) {
-			resolvedModel.unbindNode(id);
-		}
-	});
+	const bindRef = createBindRef(
+		(node) => {
+			if (node === null) {
+				resolvedModel.unbindNode(id);
+			} else {
+				resolvedModel.bindNode(id, node);
+			}
+		},
+		() => resolvedState.open,
+	);
 	const ref = combinedRef(bindRef, local.ref);
 
 	return (
