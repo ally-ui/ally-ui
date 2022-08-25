@@ -33,13 +33,12 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 		resolvedModel.unmount(id);
 	});
 
-	const bindRef = (node: HTMLElement | null) => {
-		if (node === null) {
-			resolvedModel.unbindNode(id);
-		} else {
-			resolvedModel.bindNode(id, node);
-		}
+	const bindRef = (node: HTMLElement) => {
+		resolvedModel.bindNode(id, node);
 	};
+	onCleanup(() => {
+		resolvedModel.unbindNode(id);
+	});
 	const ref = combinedRef(bindRef, local.ref);
 
 	return (
