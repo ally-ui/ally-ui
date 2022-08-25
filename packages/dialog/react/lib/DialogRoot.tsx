@@ -1,5 +1,5 @@
 import {DialogModelContext, DialogStateContext} from './context';
-import useDialog, {UseDialogOptions} from './useDialog';
+import {useDialog, type UseDialogOptions} from './useDialog';
 
 export interface DialogRootProps
 	extends React.PropsWithChildren,

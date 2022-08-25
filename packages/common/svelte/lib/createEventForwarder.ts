@@ -23,7 +23,7 @@ interface CreateEventForwarderOptions {
 }
 
 // CREDIT https://github.com/rgossiaux/svelte-headlessui/blob/master/src/lib/internal/forwardEventsBuilder.ts
-export default function createEventForwarder(
+export function createEventForwarder(
 	component: SvelteComponent,
 	{except = []}: CreateEventForwarderOptions = {},
 ) {
