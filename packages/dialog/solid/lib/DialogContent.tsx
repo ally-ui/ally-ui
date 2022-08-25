@@ -1,5 +1,5 @@
 import type {DialogModel} from '@ally-ui/core-dialog';
-import {combinedRef, createBindRef} from '@ally-ui/solid';
+import {combinedRef, createDelayedBindRef} from '@ally-ui/solid';
 import {JSX, onCleanup, onMount, Show, splitProps} from 'solid-js';
 import {useDialogModelContext, useDialogStateContext} from './context';
 
@@ -27,7 +27,7 @@ export default function DialogContent(props: DialogContentProps) {
 		resolvedModel.unmount(id);
 	});
 
-	const bindRef = createBindRef(
+	const bindRef = createDelayedBindRef(
 		(node) => {
 			if (node === null) {
 				resolvedModel.unbindNode(id);
