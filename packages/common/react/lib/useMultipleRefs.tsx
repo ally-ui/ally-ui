@@ -24,8 +24,6 @@ function combinedRef<TInstance>(refs: React.Ref<TInstance>[]) {
  * @param refs The refs that should receive the instance.
  * @returns The combined ref.
  */
-export default function useMultipleRefs<TInstance>(
-	...refs: React.Ref<TInstance>[]
-) {
+export function useMultipleRefs<TInstance>(...refs: React.Ref<TInstance>[]) {
 	return React.useCallback(combinedRef(refs), refs);
 }

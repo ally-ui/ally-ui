@@ -6,7 +6,7 @@ export interface CreateDialogOptions extends DialogModelOptions {
 	openStore?: Writable<boolean>;
 }
 
-export default function createDialog({
+export function createDialog({
 	initialOpen,
 	openStore,
 }: CreateDialogOptions = {}): Readable<DialogModel> {

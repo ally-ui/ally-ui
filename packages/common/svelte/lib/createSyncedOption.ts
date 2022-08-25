@@ -17,7 +17,7 @@ import {isWritable, type ReadOrWritable} from './store';
  * The second function starts a subscriber on the option store to update
  * internal state when it updates. It returns an unsubscriber for cleanup.
  */
-export default function createSyncedOption<TOption>(
+export function createSyncedOption<TOption>(
 	option: ReadOrWritable<TOption> | undefined,
 	onOptionChange: (option: TOption) => void,
 ) {

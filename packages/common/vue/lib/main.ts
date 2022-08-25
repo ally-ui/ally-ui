@@ -1,1 +1,1 @@
-export {default as useSyncedOption} from './useSyncedOption';
+export {useSyncedOption} from './useSyncedOption';

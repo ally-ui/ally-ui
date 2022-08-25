@@ -5,7 +5,7 @@ import React from 'react';
  * @param runner The function to run.
  * @returns The value returned by `runner`.
  */
-export default function useRunOnce<TReturn>(runner: () => TReturn) {
+export function useRunOnce<TReturn>(runner: () => TReturn) {
 	const [value] = React.useState(runner);
 	return value;
 }

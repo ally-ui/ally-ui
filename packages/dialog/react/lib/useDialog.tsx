@@ -13,7 +13,7 @@ export interface UseDialogOptions extends DialogModelOptions {
 
 export type UseDialogValue = [DialogModel, DialogModelState];
 
-export default function useDialog({
+export function useDialog({
 	initialOpen,
 	onOpenChange,
 	open,

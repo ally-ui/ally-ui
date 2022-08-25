@@ -5,7 +5,7 @@ import React from 'react';
  * @param deps The state to wait on update for.
  * @returns A getter of a Promise that resolves when the layout effects of `deps` is committed.
  */
-export default function useLayoutPromise(
+export function useLayoutPromise(
 	deps: React.DependencyList,
 ): () => Promise<void> {
 	const savedWaitForDOMResolves = React.useRef<Function[]>([]);
