@@ -1,6 +1,6 @@
 import {Accessor, createEffect, onCleanup} from 'solid-js';
 
-type CallbackRef<TInstance> = (instance: TInstance) => void;
+type NodeCallbackRef = (node: HTMLElement | null) => void;
 
 /**
  * Create a ref to more easily bind and unbind DOM nodes.
@@ -9,7 +9,7 @@ type CallbackRef<TInstance> = (instance: TInstance) => void;
  * @returns A ref that passes null on cleanup and if the condition is false.
  */
 export function createBindRef(
-	ref: CallbackRef<HTMLElement | null>,
+	ref: NodeCallbackRef,
 	condition?: Accessor<boolean>,
 ) {
 	onCleanup(() => {
@@ -25,4 +25,13 @@ export function createBindRef(
 	return (node: HTMLElement) => {
 		ref(node);
 	};
+}
+
+export function createDelayedBindRef(
+	ref: NodeCallbackRef,
+	condition?: Accessor<boolean>,
+) {
+	return createBindRef((node) => {
+		setTimeout(() => ref(node));
+	}, condition);
 }
