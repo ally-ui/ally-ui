@@ -15,11 +15,6 @@ export type ResolvedOptions<TOptions, TState> = TOptions & {
 	 */
 	requestStateUpdate?: (updater: Updater<TState>) => void;
 	/**
-	 * Some UI libraries use proxies for reactivity. We need to handle object
-	 * merging specially in those cases.
-	 */
-	mergeObjects?: MergeObjects;
-	/**
 	 * Determines whether warnings and errors will be logged to console.
 	 */
 	debug?: boolean;
@@ -45,7 +40,6 @@ export abstract class StateModel<TOptions, TState> {
 	#state: TState;
 
 	options: ResolvedOptions<TOptions, TState>;
-	mergeObjects: MergeObjects = (original, update) => ({...original, ...update});
 
 	constructor(
 		id: string,
@@ -60,18 +54,15 @@ export abstract class StateModel<TOptions, TState> {
 		this.#previousState = this.initialState;
 		this.#state = this.initialState;
 		this.options = initialOptions;
-		if (this.options.mergeObjects !== undefined) {
-			this.mergeObjects = this.options.mergeObjects;
-		}
 	}
 
 	abstract deriveInitialState(options: TOptions): TState;
 
 	setOptions(updater: Updater<ResolvedOptions<TOptions, TState>>) {
 		if (updater instanceof Function) {
-			this.options = this.mergeObjects(this.options, updater(this.options));
+			this.options = updater(this.options);
 		} else {
-			this.options = this.mergeObjects(this.options, updater);
+			this.options = updater;
 		}
 	}
 
