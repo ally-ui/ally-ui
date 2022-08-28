@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import {
-	DialogClose,
-	DialogContent,
-	DialogDescription,
-	DialogRoot,
-	DialogTitle,
-	DialogTrigger,
-} from '../main';
+import {Dialog} from '../main';
 
 const props = withDefaults(
 	defineProps<{
@@ -19,14 +12,14 @@ const props = withDefaults(
 </script>
 
 <template>
-	<DialogRoot :initialOpen="props.initialOpen">
-		<DialogTrigger data-testid="trigger">open dialog</DialogTrigger>
-		<DialogContent data-testid="content">
-			<DialogTitle data-testid="title">title</DialogTitle>
-			<DialogDescription data-testid="description">
+	<Dialog.Root :initialOpen="props.initialOpen">
+		<Dialog.Trigger data-testid="trigger">open dialog</Dialog.Trigger>
+		<Dialog.Content data-testid="content">
+			<Dialog.Title data-testid="title">title</Dialog.Title>
+			<Dialog.Description data-testid="description">
 				description
-			</DialogDescription>
-			<DialogClose data-testid="close">close dialog</DialogClose>
-		</DialogContent>
-	</DialogRoot>
+			</Dialog.Description>
+			<Dialog.Close data-testid="close">close dialog</Dialog.Close>
+		</Dialog.Content>
+	</Dialog.Root>
 </template>
