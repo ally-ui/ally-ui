@@ -1,0 +1,7 @@
+{
+	"extends": "@ally-ui/dev/tsconfig.solid.json",
+	"include": ["lib", "example", "vitest.setup.ts"],
+	"compilerOptions": {
+		"outDir": "dist"
+	}
+}

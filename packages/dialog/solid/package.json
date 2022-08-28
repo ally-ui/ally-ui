@@ -1,0 +1,40 @@
+{
+	"name": "@ally-ui/solid-dialog",
+	"version": "0.0.7",
+	"scripts": {
+		"example": "vite",
+		"build": "tsc && vite build",
+		"build:watch": "vite build --watch"
+	},
+	"author": "Bryan Lee",
+	"description": "A WAI-ARIA compliant Dialog for Solid",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ally-ui/ally-ui.git"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"main": "./dist/main.umd.cjs",
+	"module": "./dist/main.js",
+	"types": "./dist/main.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/main.js",
+			"require": "./dist/main.umd.cjs"
+		}
+	},
+	"dependencies": {
+		"@ally-ui/core-dialog": "^0.0.7",
+		"@ally-ui/solid": "^0.0.7"
+	},
+	"peerDependencies": {
+		"solid-js": ">=1"
+	}
+}
