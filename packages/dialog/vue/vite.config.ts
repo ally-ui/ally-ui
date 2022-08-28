@@ -1,5 +1,6 @@
 import typescript from '@rollup/plugin-typescript';
 import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
 import {resolve} from 'path';
 import {defineConfig} from 'vite';
 
@@ -20,5 +21,5 @@ export default defineConfig({
 			],
 		},
 	},
-	plugins: [vue()],
+	plugins: [vue(), vueJsx()],
 });
