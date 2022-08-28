@@ -1,7 +1,7 @@
 <script lang="ts">
 	import {writable} from 'svelte/store';
 	import {setDialogContext} from './context';
-	import {createDialog} from './main';
+	import {createDialog} from './createDialog';
 
 	interface $$Props {
 		open?: boolean;

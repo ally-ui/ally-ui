@@ -1,6 +1,5 @@
 import React from 'react';
-import Dialog from '../../main';
-import type {UseDialogOptions} from '../../useDialog';
+import Dialog, {type UseDialogOptions} from '../../main';
 
 export default function Focus(options: UseDialogOptions) {
 	return (
