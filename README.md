@@ -184,16 +184,6 @@ Reach out to [bryanmylee@gmail.com](mailto:bryanmylee@gmail.com) or open a new d
     </tr>
     <tr>
       <td>
-        <a href="https://angular.io/">
-          <img alt="angular" src="https://raw.githubusercontent.com/vscode-icons/vscode-icons/master/icons/file_type_angular.svg" width="48px" />
-        </a>
-      </td>
-      <td>
-        We need contributors!
-      </td>
-    </tr>
-    <tr>
-      <td>
         <a href="https://www.solidjs.com/">
           <img alt="solid" src="https://www.solidjs.com/assets/logo.123b04bc.svg" width="48px" />
         </a>
@@ -202,6 +192,16 @@ Reach out to [bryanmylee@gmail.com](mailto:bryanmylee@gmail.com) or open a new d
         <a href="https://github.com/bryanmylee">
           <img alt="bryanmylee" src="https://avatars.githubusercontent.com/u/42545742?v=latest" width="48px"/>
         </a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a href="https://angular.io/">
+          <img alt="angular" src="https://raw.githubusercontent.com/vscode-icons/vscode-icons/master/icons/file_type_angular.svg" width="48px" />
+        </a>
+      </td>
+      <td>
+        We need contributors!
       </td>
     </tr>
   </tbody>
