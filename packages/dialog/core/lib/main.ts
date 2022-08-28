@@ -109,19 +109,20 @@ export class DialogModel extends StateModel<
 		}
 		component.node = node;
 		if (component.type === 'content') {
-			this.#checkTitle();
+			this.#checkTitleInContent();
 			if (this.#waitingToOpen) {
 				this.#onOpenChangeEffect(true);
 			}
 		}
 	}
 
-	#checkTitle() {
+	static MISSING_TITLE_WARNING = `<Dialog.Content/> should contain a visible <Dialog.Title/> component.
+This provides the user with a recognizable name for the dialog by enforcing an element with \`aria-labelledby\` exists in the dialog.`;
+
+	#checkTitleInContent() {
 		const title = findLastInMap(this.#components, (c) => c.type === 'title');
 		if (title === undefined) {
-			console.warn(
-				'Dialogs should contain a title component for accessibility reasons',
-			);
+			console.warn(DialogModel.MISSING_TITLE_WARNING);
 		}
 	}
 
