@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {provide, ref, watchEffect} from 'vue';
 import {MODEL_KEY, STATE_KEY} from './context';
-import {useDialog} from './main';
+import {useDialog} from './useDialog';
 
 const props = withDefaults(
 	defineProps<{

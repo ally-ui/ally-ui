@@ -4,8 +4,7 @@ import Description from './DialogDescription';
 import Root from './DialogRoot';
 import Title from './DialogTitle';
 import Trigger from './DialogTrigger';
-
-export const Dialog = {
+export default {
 	Close,
 	Content,
 	Description,
@@ -14,4 +13,14 @@ export const Dialog = {
 	Trigger,
 };
 
-export {createDialog} from './createDialog';
+export {
+	createDialog,
+	type CreateDialogOptions,
+	type CreateDialogValue,
+} from './createDialog';
+export {default as DialogClose} from './DialogClose';
+export {default as DialogContent} from './DialogContent';
+export {default as DialogDescription} from './DialogDescription';
+export {default as DialogRoot} from './DialogRoot';
+export {default as DialogTitle} from './DialogTitle';
+export {default as DialogTrigger} from './DialogTrigger';

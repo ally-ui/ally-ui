@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Dialog} from '../lib/main';
+	import Dialog from '../lib/main';
 
 	let open = true;
 	let titleNode: HTMLHeadingElement | undefined | null;

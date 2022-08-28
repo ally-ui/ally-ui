@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {Dialog} from '../../main';
+	import Dialog from '../../main';
 </script>
 
 <Dialog.Root initialOpen>
