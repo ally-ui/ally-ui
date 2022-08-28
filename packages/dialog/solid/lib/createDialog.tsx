@@ -21,7 +21,7 @@ export function createDialog(
 	const id = '0';
 	const model = new DialogModel(id, {initialOpen: props.initialOpen});
 
-	const [state, setState] = createStore(model.initialState);
+	const [state, setState] = createStore({...model.initialState});
 
 	model.setOptions((prevOptions) => ({
 		...prevOptions,

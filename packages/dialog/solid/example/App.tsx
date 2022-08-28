@@ -2,7 +2,7 @@ import {createSignal, Show} from 'solid-js';
 import {Dialog} from '../lib/main';
 
 export default function App() {
-	const [open, setOpen] = createSignal(false);
+	const [open, setOpen] = createSignal(true);
 	const titleRef = (node: HTMLElement) => {
 		node.style.color = 'gray';
 	};
