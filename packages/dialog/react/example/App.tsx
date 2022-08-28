@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dialog} from '../lib/main';
+import Dialog from '../lib/main';
 
 export default function App() {
 	const [open, setOpen] = React.useState(true);

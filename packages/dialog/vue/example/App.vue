@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ref} from 'vue';
-import {Dialog} from '../lib/main';
+import Dialog from '../lib/main';
 
 const open = ref(true);
 </script>

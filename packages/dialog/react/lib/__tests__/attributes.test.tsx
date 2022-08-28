@@ -1,6 +1,6 @@
 import {cleanup, render, screen} from '@testing-library/react';
 import React from 'react';
-import {Dialog} from '../main';
+import Dialog from '../main';
 import type {UseDialogOptions} from '../useDialog';
 
 function Attributes(options: UseDialogOptions) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Dialog} from '../../main';
+import Dialog from '../../main';
 import type {UseDialogOptions} from '../../useDialog';
 
 export default function Toggle(options: UseDialogOptions) {
