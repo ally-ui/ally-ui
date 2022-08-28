@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/solid",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"scripts": {
 		"example": "vite",
 		"build": "tsc && vite build",

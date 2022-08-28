@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/react-dialog",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"scripts": {
 		"example": "vite",
 		"build": "tsc && vite build",
@@ -34,8 +34,8 @@
 		}
 	},
 	"dependencies": {
-		"@ally-ui/core-dialog": "^0.0.8",
-		"@ally-ui/react": "^0.0.8"
+		"@ally-ui/core-dialog": "^0.0.9",
+		"@ally-ui/react": "^0.0.9"
 	},
 	"peerDependencies": {
 		"react": ">=16",
