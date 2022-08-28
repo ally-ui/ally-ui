@@ -12,6 +12,12 @@
 			}
 		},
 		{
+			"files": "*.vue",
+			"options": {
+				"organizeImportsSkipDestructiveCodeActions": true
+			}
+		},
+		{
 			"files": "*.svelte",
 			"options": {
 				"organizeImportsSkipDestructiveCodeActions": true
