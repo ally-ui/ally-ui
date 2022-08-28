@@ -1,11 +1,10 @@
-import {default as Close} from './DialogClose.svelte';
-import {default as Content} from './DialogContent.svelte';
-import {default as Description} from './DialogDescription.svelte';
-import {default as Root} from './DialogRoot.svelte';
-import {default as Title} from './DialogTitle.svelte';
-import {default as Trigger} from './DialogTrigger.svelte';
-
-export const Dialog = {
+import Close from './DialogClose.svelte';
+import Content from './DialogContent.svelte';
+import Description from './DialogDescription.svelte';
+import Root from './DialogRoot.svelte';
+import Title from './DialogTitle.svelte';
+import Trigger from './DialogTrigger.svelte';
+export default {
 	Close,
 	Content,
 	Description,
@@ -14,4 +13,10 @@ export const Dialog = {
 	Trigger,
 };
 
-export {createDialog} from './createDialog';
+export {createDialog, type CreateDialogOptions} from './createDialog';
+export {default as DialogClose} from './DialogClose.svelte';
+export {default as DialogContent} from './DialogContent.svelte';
+export {default as DialogDescription} from './DialogDescription.svelte';
+export {default as DialogRoot} from './DialogRoot.svelte';
+export {default as DialogTitle} from './DialogTitle.svelte';
+export {default as DialogTrigger} from './DialogTrigger.svelte';

@@ -4,8 +4,7 @@ import Description from './DialogDescription.vue';
 import Root from './DialogRoot.vue';
 import Title from './DialogTitle.vue';
 import Trigger from './DialogTrigger.vue';
-
-export const Dialog = {
+export default {
 	Close,
 	Content,
 	Description,
@@ -14,4 +13,14 @@ export const Dialog = {
 	Trigger,
 };
 
-export {useDialog} from './useDialog';
+export {default as DialogClose} from './DialogClose.vue';
+export {default as DialogContent} from './DialogContent.vue';
+export {default as DialogDescription} from './DialogDescription.vue';
+export {default as DialogRoot} from './DialogRoot.vue';
+export {default as DialogTitle} from './DialogTitle.vue';
+export {default as DialogTrigger} from './DialogTrigger.vue';
+export {
+	useDialog,
+	type UseDialogOptions,
+	type UseDialogValue,
+} from './useDialog';
