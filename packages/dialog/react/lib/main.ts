@@ -19,8 +19,3 @@ export {default as DialogDescription} from './DialogDescription';
 export {default as DialogRoot} from './DialogRoot';
 export {default as DialogTitle} from './DialogTitle';
 export {default as DialogTrigger} from './DialogTrigger';
-export {
-	useDialog,
-	type UseDialogOptions,
-	type UseDialogValue,
-} from './useDialog';
