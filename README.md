@@ -97,6 +97,32 @@ const open = ref(true); // opt-in manual state management
 ```
 
 </details>
+</details>
+<details>
+<summary>Solid</summary>
+
+```tsx
+export default function App() {
+  const [open, setOpen] = createSignal(true); // opt-in manual state management
+
+  return (
+    <main>
+      <Dialog.Root open={open()} onOpenChange={setOpen}>
+        <Dialog.Trigger>Edit profile</Dialog.Trigger>
+        <Dialog.Content>
+          <Dialog.Title>Edit profile</Dialog.Title>
+          <Dialog.Description>
+            Make changes to your profile here. Click save when you're done
+          </Dialog.Description>
+          <Dialog.Close>Save changes</Dialog.Close>
+        </Dialog.Content>
+      </Dialog.Root>
+    </main>
+  );
+}
+```
+
+</details>
 
 ### Extensively tested
 
@@ -173,7 +199,9 @@ Reach out to [bryanmylee@gmail.com](mailto:bryanmylee@gmail.com) or open a new d
         </a>
       </td>
       <td>
-        We need contributors!
+        <a href="https://github.com/bryanmylee">
+          <img alt="bryanmylee" src="https://avatars.githubusercontent.com/u/42545742?v=latest" width="48px"/>
+        </a>
       </td>
     </tr>
   </tbody>
