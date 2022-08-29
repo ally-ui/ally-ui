@@ -1,4 +1,4 @@
-import {ResolvedOptions, StateModel} from '@ally-ui/core';
+import {RootModel, type RootOptions} from '@ally-ui/core';
 
 function isEscapeEvent(ev: KeyboardEvent) {
 	return ev.key === 'Escape' || ev.key === 'Esc';
@@ -76,7 +76,7 @@ function getActualTarget(ev: Event) {
 		: ev.target;
 }
 
-export interface FocusTrapOptions {
+export interface FocusTrapOptions extends RootOptions {
 	/**
 	 * The container to trap focus within.
 	 */
@@ -120,23 +120,21 @@ export interface FocusTrapState {
 	active: boolean;
 }
 
-export class FocusTrapModel extends StateModel<
+export class FocusTrapModel extends RootModel<
+	string,
 	FocusTrapOptions,
 	FocusTrapState
 > {
-	constructor(
-		id: string,
-		initialOptions: ResolvedOptions<FocusTrapOptions, FocusTrapState>,
-	) {
+	constructor(id: string, initialOptions: FocusTrapOptions) {
 		super(id, initialOptions);
 		if (this.getState().active) {
 			this.activate();
 		}
 	}
 
-	deriveInitialState(options: FocusTrapOptions): FocusTrapState {
+	deriveInitialState(initialOptions: FocusTrapOptions): FocusTrapState {
 		return {
-			active: options.initialActive ?? false,
+			active: initialOptions.initialActive ?? false,
 		};
 	}
 
@@ -330,7 +328,7 @@ export class FocusTrapModel extends StateModel<
 		this.#watchEvents();
 		this.#trapFocus();
 		if (!this.getState().active) {
-			this.options.requestStateUpdate?.((oldState) => ({
+			this.getStateOptions().requestStateUpdate?.((oldState) => ({
 				...oldState,
 				active: true,
 			}));
@@ -341,7 +339,7 @@ export class FocusTrapModel extends StateModel<
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
 		if (this.getState().active) {
-			this.options.requestStateUpdate?.((oldState) => ({
+			this.getStateOptions().requestStateUpdate?.((oldState) => ({
 				...oldState,
 				active: false,
 			}));

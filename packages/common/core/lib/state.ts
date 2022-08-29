@@ -1,20 +1,16 @@
 import isEqual from 'lodash.isequal';
-import type {UIOptions} from './ui';
 
 export type Updater<TState> = ((oldState: TState) => TState) | TState;
 
-export type ResolvedOptions<TOptions, TState> = TOptions & {
+export interface StateOptions<TState> {
 	/**
 	 * Called by the core model when it **wants** to update state. It is up to
 	 * the state implementation to respond to the state update request and
 	 * trigger any side-effects e.g. updating the DOM.
 	 */
 	requestStateUpdate?: (updater: Updater<TState>) => void;
-	/**
-	 * Determines whether warnings and errors will be logged to console.
-	 */
 	debug?: boolean;
-};
+}
 
 /**
  * A base construct for a stateful model that is decoupled from its state
@@ -25,8 +21,7 @@ export type ResolvedOptions<TOptions, TState> = TOptions & {
  * reactively updated by the state implementation with `setOptions`.
  */
 export abstract class StateModel<TOptions, TState> {
-	id: string;
-
+	#options: TOptions;
 	initialState: TState;
 	#previousState: TState;
 	/**
@@ -34,31 +29,27 @@ export abstract class StateModel<TOptions, TState> {
 	 * implementation.
 	 */
 	#state: TState;
+	#stateOptions: StateOptions<TState>;
 
-	options: ResolvedOptions<TOptions, TState>;
-
-	constructor(
-		id: string,
-		/**
-		 * We receive the fully-resolved options during initialization to support
-		 * additional configuration options.
-		 */
-		initialOptions: ResolvedOptions<TOptions, TState>,
-	) {
-		this.id = id;
+	constructor(initialOptions: TOptions) {
+		this.#options = initialOptions;
 		this.initialState = this.deriveInitialState(initialOptions);
 		this.#previousState = this.initialState;
 		this.#state = this.initialState;
-		this.options = initialOptions;
+		this.#stateOptions = {};
 	}
 
-	abstract deriveInitialState(options: TOptions): TState;
+	abstract deriveInitialState(initialOptions: TOptions): TState;
 
-	setOptions(updater: Updater<ResolvedOptions<TOptions, TState>>) {
+	getStateOptions() {
+		return this.#stateOptions;
+	}
+
+	setStateOptions(updater: Updater<StateOptions<TState>>) {
 		if (updater instanceof Function) {
-			this.options = updater(this.options);
+			this.#stateOptions = updater(this.#stateOptions);
 		} else {
-			this.options = updater;
+			this.#stateOptions = updater;
 		}
 	}
 
@@ -90,8 +81,15 @@ export abstract class StateModel<TOptions, TState> {
 	 */
 	watchStateChange?(newState: TState, previousState: TState): void;
 
-	uiOptions?: UIOptions;
-	setUIOptions(uiOptions?: UIOptions) {
-		this.uiOptions = uiOptions;
+	getOptions(): TOptions {
+		return this.#options;
+	}
+
+	setOptions(updater: Updater<TOptions>) {
+		if (updater instanceof Function) {
+			this.#options = updater(this.#options);
+		} else {
+			this.#options = updater;
+		}
 	}
 }

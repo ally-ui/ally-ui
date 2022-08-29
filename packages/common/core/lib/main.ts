@@ -1,3 +1,4 @@
+export * from './component';
+export * from './root';
 export * from './state';
-export * from './ui';
 export * from './utils/map';

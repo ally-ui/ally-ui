@@ -1,4 +1,4 @@
-import {findLastInMap, ResolvedOptions, StateModel} from '@ally-ui/core';
+import {findLastInMap} from '@ally-ui/core';
 import {FocusTrapModel} from '@ally-ui/focus-trap';
 
 type DialogComponentType =
@@ -8,7 +8,7 @@ type DialogComponentType =
 	| 'description'
 	| 'close';
 
-interface DialogComponent {
+export interface Component {
 	id: string;
 	type: DialogComponentType;
 	mounted: boolean;
@@ -43,7 +43,7 @@ export class DialogModel extends StateModel<
 		};
 	}
 
-	#components = new Map<string, DialogComponent>();
+	#components = new Map<string, Component>();
 
 	/**
 	 * Initialize a component of the model. This should run before the component

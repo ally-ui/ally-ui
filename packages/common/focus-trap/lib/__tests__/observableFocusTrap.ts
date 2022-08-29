@@ -15,7 +15,7 @@ export function observableFocusTrap(
 
 	const stateStore = manualState ?? writable(trap.initialState);
 
-	trap.setOptions((prevOptions) => ({
+	trap.setStateOptions((prevOptions) => ({
 		...prevOptions,
 		requestStateUpdate: (updater) => {
 			if (updater instanceof Function) {
