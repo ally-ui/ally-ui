@@ -13,7 +13,6 @@ export default {
 	Trigger,
 };
 
-export {createDialog, type CreateDialogOptions} from './createDialog';
 export {default as DialogClose} from './DialogClose.svelte';
 export {default as DialogContent} from './DialogContent.svelte';
 export {default as DialogDescription} from './DialogDescription.svelte';
