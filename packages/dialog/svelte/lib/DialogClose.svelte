@@ -1,28 +1,22 @@
 <script lang="ts">
-	import type {DialogModel} from '@ally-ui/core-dialog';
 	import {createEventForwarder} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
-	import type {Readable} from 'svelte/store';
 	import {getDialogContext} from './context';
 
 	type $$Props = svelteHTML.IntrinsicElements['button'] & {
 		node?: HTMLButtonElement | undefined | null;
-		model?: Readable<DialogModel>;
 	};
 
-	export let model: Readable<DialogModel> | undefined = undefined;
-	const resolvedModel = model ?? getDialogContext();
-	if (resolvedModel === undefined) {
-		throw new Error(
-			'<Dialog.Close/> must have a `model` prop or be a child of `<Dialog.Root/>`',
-		);
+	const model = getDialogContext();
+	if (model === undefined) {
+		throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
 	}
-	const id = $resolvedModel.init('close');
+	const id = $model.init('close');
 
 	onMount(() => {
-		$resolvedModel.mount(id);
+		$model.mount(id);
 		return () => {
-			$resolvedModel.unmount(id);
+			$model.unmount(id);
 		};
 	});
 
@@ -30,9 +24,9 @@
 	$: bindNode(node);
 	function bindNode(node?: HTMLElement | null) {
 		if (node == null) {
-			$resolvedModel.unbindNode(id);
+			$model.unbindNode(id);
 		} else {
-			$resolvedModel.bindNode(id, node);
+			$model.bindNode(id, node);
 		}
 	}
 
@@ -41,10 +35,10 @@
 
 <button
 	bind:this={node}
-	{...$resolvedModel.componentAttributes(id)}
+	{...$model.componentAttributes(id)}
 	{...$$restProps}
 	use:eventForwarder
-	on:click={() => $resolvedModel.close()}
+	on:click={() => $model.close()}
 >
 	<slot />
 </button>
