@@ -17,7 +17,7 @@ const props = withDefaults(
 const emit = defineEmits<{
 	(ev: 'update:open', open: boolean): void;
 }>();
-// TODO Extract this synchronization behavior.
+// TODO #20 Extract this synchronization behavior.
 const openRef = ref<boolean | undefined>(props.open);
 watchEffect(function emitOpen() {
 	if (openRef.value !== undefined) {
@@ -28,7 +28,7 @@ watchEffect(function updateOpenRef() {
 	openRef.value = props.open;
 });
 
-// TODO Generate SSR-safe IDs.
+// TODO #19 Generate SSR-safe IDs.
 const id = '0';
 const model = new DialogModel(id, {initialOpen: props.initialOpen});
 const state = ref(model.initialState);
@@ -43,7 +43,7 @@ model.setOptions((prevOptions) => ({
 	},
 }));
 
-// TODO Improve the interface for option synchronization.
+// TODO #20 Improve the interface for option synchronization.
 const updateOpenOption = useSyncedOption<boolean>(openRef, (open) => {
 	state.value = {...state.value, open};
 });

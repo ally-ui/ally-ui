@@ -26,7 +26,6 @@ export default function DialogRoot(props: DialogRootProps) {
 	createEffect(function onStateUpdate() {
 		model.setState({...state});
 	});
-	// TODO Avoid nesting context providers.
 	return (
 		<DialogModelContext.Provider value={model}>
 			<DialogStateContext.Provider value={state}>

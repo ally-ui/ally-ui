@@ -12,7 +12,7 @@
 	export let initialOpen: boolean | undefined = undefined;
 
 	const openStore = writable(open);
-	// TODO Extract this synchronization behavior.
+	// TODO #20 Extract this synchronization behavior.
 	$: $openStore, dispatchOpen();
 	function dispatchOpen() {
 		if ($openStore !== undefined) {
@@ -26,7 +26,7 @@
 		}
 	}
 
-	// TODO Generate SSR-safe IDs.
+	// TODO #19 Generate SSR-safe IDs.
 	const id = '0';
 	const model = new DialogModel(id, {initialOpen});
 	const state = writable(model.initialState);
@@ -40,7 +40,7 @@
 			}
 		},
 	}));
-	// TODO Improve the interface for option synchronization.
+	// TODO #20 Improve the interface for option synchronization.
 	const [updateOpenOption, watchOpenOption] = createSyncedOption(
 		openStore,
 		($open) => {

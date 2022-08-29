@@ -38,7 +38,6 @@ export default function DialogRoot({
 		[state],
 	);
 
-	// TODO Avoid nesting context providers.
 	return (
 		<DialogModelContext.Provider value={model}>
 			<DialogStateContext.Provider value={state}>
