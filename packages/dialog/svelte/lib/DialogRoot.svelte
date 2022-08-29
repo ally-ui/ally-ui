@@ -40,7 +40,6 @@
 			}
 		},
 	}));
-	// TODO #20 Improve the interface for option synchronization.
 	createSyncedOption({
 		option: openStore,
 		onOptionChange: ($open) =>
