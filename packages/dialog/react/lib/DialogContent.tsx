@@ -1,4 +1,3 @@
-import type {DialogModel} from '@ally-ui/core-dialog';
 import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
 import React from 'react';
 import {useDialogModelContext, useDialogStateContext} from './context';
@@ -7,41 +6,37 @@ export interface DialogContentProps
 	extends React.DetailedHTMLProps<
 		React.HTMLAttributes<HTMLDivElement>,
 		HTMLDivElement
-	> {
-	model?: DialogModel;
-}
+	> {}
 
 const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
-	({model, children, ...restProps}, forwardedRef) => {
-		const resolvedModel = useDialogModelContext() ?? model;
-		if (resolvedModel === undefined) {
-			throw new Error(
-				'<Dialog.Content/> must have a `model` prop or be a child of `<Dialog.Root/>`',
-			);
+	({children, ...restProps}, forwardedRef) => {
+		const model = useDialogModelContext();
+		if (model === undefined) {
+			throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 		}
-		const id = useRunOnce(() => resolvedModel.init('content'));
+		const id = useRunOnce(() => model.init('content'));
 
-		const resolvedState = useDialogStateContext() ?? resolvedModel.getState();
+		const resolvedState = useDialogStateContext() ?? model.getState();
 
 		React.useEffect(
 			function mount() {
-				resolvedModel.mount(id);
+				model.mount(id);
 				return () => {
-					resolvedModel.unmount(id);
+					model.unmount(id);
 				};
 			},
-			[resolvedModel],
+			[model],
 		);
 
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node === null) {
-					resolvedModel.unbindNode(id);
+					model.unbindNode(id);
 				} else {
-					resolvedModel.bindNode(id, node);
+					model.bindNode(id, node);
 				}
 			},
-			[resolvedModel],
+			[model],
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
@@ -50,7 +45,7 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 				{resolvedState.open && (
 					<div
 						ref={ref}
-						{...resolvedModel.componentAttributes(id, resolvedState)}
+						{...model.componentAttributes(id, resolvedState)}
 						{...restProps}
 					>
 						{children}

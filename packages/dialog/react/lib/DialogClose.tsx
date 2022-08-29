@@ -1,4 +1,3 @@
-import type {DialogModel} from '@ally-ui/core-dialog';
 import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
 import React from 'react';
 import {useDialogModelContext} from './context';
@@ -7,39 +6,35 @@ export interface DialogCloseProps
 	extends React.DetailedHTMLProps<
 		React.ButtonHTMLAttributes<HTMLButtonElement>,
 		HTMLButtonElement
-	> {
-	model?: DialogModel;
-}
+	> {}
 
 const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
-	({model, children, onClick, ...restProps}, forwardedRef) => {
-		const resolvedModel = useDialogModelContext() ?? model;
-		if (resolvedModel === undefined) {
-			throw new Error(
-				'<Dialog.Close/> must have a `model` prop or be a child of `<Dialog.Root/>`',
-			);
+	({children, onClick, ...restProps}, forwardedRef) => {
+		const model = useDialogModelContext();
+		if (model === undefined) {
+			throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
 		}
-		const id = useRunOnce(() => resolvedModel.init('close'));
+		const id = useRunOnce(() => model.init('close'));
 
 		React.useEffect(
 			function mount() {
-				resolvedModel.mount(id);
+				model.mount(id);
 				return () => {
-					resolvedModel.unmount(id);
+					model.unmount(id);
 				};
 			},
-			[resolvedModel],
+			[model],
 		);
 
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node === null) {
-					resolvedModel.unbindNode(id);
+					model.unbindNode(id);
 				} else {
-					resolvedModel.bindNode(id, node);
+					model.bindNode(id, node);
 				}
 			},
-			[resolvedModel],
+			[model],
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
@@ -48,15 +43,15 @@ const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 		>(
 			(ev) => {
 				onClick?.(ev);
-				resolvedModel.close();
+				model.close();
 			},
-			[resolvedModel],
+			[model],
 		);
 
 		return (
 			<button
 				ref={ref}
-				{...resolvedModel.componentAttributes(id)}
+				{...model.componentAttributes(id)}
 				{...restProps}
 				onClick={handleClick}
 			>

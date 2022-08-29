@@ -1,39 +1,22 @@
 <script setup lang="ts">
-import type {DialogModel} from '@ally-ui/core-dialog';
-import {
-	defineProps,
-	inject,
-	onMounted,
-	onUnmounted,
-	ref,
-	watchEffect,
-} from 'vue';
+import {inject, onMounted, onUnmounted, ref, watchEffect} from 'vue';
 import {MODEL_KEY} from './context';
 
-const props = withDefaults(
-	defineProps<{
-		model?: DialogModel;
-	}>(),
-	{},
-);
-
-const resolvedModel = props.model ?? inject(MODEL_KEY);
-if (resolvedModel === undefined) {
-	throw new Error(
-		'<Dialog.Title/> must have a `model` prop or be a child of `<Dialog.Root/>`',
-	);
+const model = inject(MODEL_KEY);
+if (model === undefined) {
+	throw new Error('<Dialog.Title/> must be a child of `<Dialog.Root/>`');
 }
-const id = resolvedModel.init('title');
+const id = model.init('title');
 
-onMounted(() => resolvedModel.mount(id));
-onUnmounted(() => resolvedModel.unmount(id));
+onMounted(() => model.mount(id));
+onUnmounted(() => model.unmount(id));
 
 const node = ref<HTMLElement | null>(null);
 watchEffect(() => {
 	if (node.value === null) {
-		resolvedModel.unbindNode(id);
+		model.unbindNode(id);
 	} else {
-		resolvedModel.bindNode(id, node.value);
+		model.bindNode(id, node.value);
 	}
 });
 </script>
@@ -42,7 +25,7 @@ watchEffect(() => {
 	<h1
 		ref="node"
 		v-bind="{
-			...resolvedModel.componentAttributes(id),
+			...model.componentAttributes(id),
 			...$attrs,
 		}"
 	>

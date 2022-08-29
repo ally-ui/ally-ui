@@ -1,42 +1,38 @@
-import type {DialogModel} from '@ally-ui/core-dialog';
 import {combinedRef, createBindRef} from '@ally-ui/solid';
 import {JSX, onCleanup, onMount, splitProps} from 'solid-js';
 import {useDialogModelContext} from './context';
 
 export interface DialogTitleProps
 	extends JSX.HTMLAttributes<HTMLParagraphElement> {
-	model?: DialogModel;
 	ref?: (node: HTMLDivElement) => void;
 }
 
 export default function DialogTitle(props: DialogTitleProps) {
-	const [local, restProps] = splitProps(props, ['model', 'ref', 'children']);
-	const resolvedModel = useDialogModelContext() ?? local.model;
-	if (resolvedModel === undefined) {
-		throw new Error(
-			'<Dialog.Title/> must have a `model` prop or be a child of `<Dialog.Root/>`',
-		);
+	const [local, restProps] = splitProps(props, ['ref', 'children']);
+	const model = useDialogModelContext();
+	if (model === undefined) {
+		throw new Error('<Dialog.Title/> must be a child of `<Dialog.Root/>`');
 	}
-	const id = resolvedModel.init('title');
+	const id = model.init('title');
 
 	onMount(() => {
-		resolvedModel.mount(id);
+		model.mount(id);
 	});
 	onCleanup(() => {
-		resolvedModel.unmount(id);
+		model.unmount(id);
 	});
 
 	const bindRef = createBindRef((node) => {
 		if (node === null) {
-			resolvedModel.unbindNode(id);
+			model.unbindNode(id);
 		} else {
-			resolvedModel.bindNode(id, node);
+			model.bindNode(id, node);
 		}
 	});
 	const ref = combinedRef(bindRef, local.ref);
 
 	return (
-		<h1 ref={ref} {...resolvedModel.componentAttributes(id)} {...restProps}>
+		<h1 ref={ref} {...model.componentAttributes(id)} {...restProps}>
 			{local.children}
 		</h1>
 	);

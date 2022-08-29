@@ -1,43 +1,34 @@
-import type {DialogModel} from '@ally-ui/core-dialog';
 import {combinedRef, createBindRef, forwardEvent} from '@ally-ui/solid';
 import {JSX, onCleanup, onMount, splitProps} from 'solid-js';
 import {useDialogModelContext, useDialogStateContext} from './context';
 
 export interface DialogTriggerProps
 	extends JSX.HTMLAttributes<HTMLButtonElement> {
-	model?: DialogModel;
 	ref?: (node: HTMLButtonElement) => void;
 }
 
 export default function DialogTrigger(props: DialogTriggerProps) {
-	const [local, restProps] = splitProps(props, [
-		'model',
-		'ref',
-		'onClick',
-		'children',
-	]);
-	const resolvedModel = useDialogModelContext() ?? local.model;
-	if (resolvedModel === undefined) {
-		throw new Error(
-			'<Dialog.Trigger/> must have a `model` prop or be a child of `<Dialog.Root/>`',
-		);
+	const [local, restProps] = splitProps(props, ['ref', 'onClick', 'children']);
+	const model = useDialogModelContext();
+	if (model === undefined) {
+		throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
 	}
-	const id = resolvedModel.init('trigger');
+	const id = model.init('trigger');
 
-	const resolvedState = useDialogStateContext() ?? resolvedModel.getState();
+	const resolvedState = useDialogStateContext() ?? model.getState();
 
 	onMount(() => {
-		resolvedModel.mount(id);
+		model.mount(id);
 	});
 	onCleanup(() => {
-		resolvedModel.unmount(id);
+		model.unmount(id);
 	});
 
 	const bindRef = createBindRef((node) => {
 		if (node === null) {
-			resolvedModel.unbindNode(id);
+			model.unbindNode(id);
 		} else {
-			resolvedModel.bindNode(id, node);
+			model.bindNode(id, node);
 		}
 	});
 	const ref = combinedRef(bindRef, local.ref);
@@ -45,11 +36,11 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 	return (
 		<button
 			ref={ref}
-			{...resolvedModel.componentAttributes(id, resolvedState)}
+			{...model.componentAttributes(id, resolvedState)}
 			{...restProps}
 			onClick={(ev) => {
 				forwardEvent(ev, local.onClick);
-				resolvedModel.open();
+				model.open();
 			}}
 		>
 			{local.children}
