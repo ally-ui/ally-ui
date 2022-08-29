@@ -55,19 +55,17 @@ it('returns focus to a returnFocus element', () => {
 	expect(returnElement).toHaveFocus();
 });
 
-it('returns focus to a returnFocus element that updates after activation', () => {
+it('returns focus to a dynamic returnFocus element', () => {
 	const trapElement = screen.getByTestId('trap');
-	const returnElement = screen.getByTestId('outside-1');
-	const nextReturnElement = screen.getByTestId('outside-2');
+	const firstElement = screen.getByTestId('outside-1');
+	const secondElement = screen.getByTestId('outside-2');
+	let element = firstElement;
 	trap = observableFocusTrap({
 		container: trapElement,
-		returnFocusTo: returnElement,
+		returnFocusTo: () => element,
 	});
 	trap.activate();
-	trap.setOptions((prevOptions) => ({
-		...prevOptions,
-		returnFocusTo: nextReturnElement,
-	}));
+	element = secondElement;
 	trap.deactivate();
-	expect(nextReturnElement).toHaveFocus();
+	expect(secondElement).toHaveFocus();
 });
