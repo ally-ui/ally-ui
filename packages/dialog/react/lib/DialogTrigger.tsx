@@ -15,9 +15,7 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 	({model, children, onClick, ...restProps}, forwardedRef) => {
 		const resolvedModel = useDialogModelContext() ?? model;
 		if (resolvedModel === undefined) {
-			throw new Error(
-				'<Dialog.Trigger/> must have a `model` prop or be a child of `<Dialog.Root/>`',
-			);
+			throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
 		}
 		const id = useRunOnce(() => resolvedModel.init('trigger'));
 
