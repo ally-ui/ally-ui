@@ -23,7 +23,7 @@ export abstract class ComponentModel<
 		return `${this.rootModel.id}-${this.getType()}`;
 	}
 
-	getAttributes(): unknown {
+	getAttributes(): object {
 		return {};
 	}
 

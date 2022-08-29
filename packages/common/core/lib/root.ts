@@ -24,11 +24,12 @@ export abstract class RootModel<
 	/**
 	 * Initialize a component of the model. This should run before the component
 	 * is mounted and before a reference to the DOM is obtained.
-	 * @param type The type of component being initialized.
-	 * @param componentFactory A function that receives an ID and returns a component.
-	 * @returns The assigned ID for the component.
+	 * @param component The component to register.
+	 * @returns The registered component.
 	 */
-	registerComponent(component: ComponentModel) {
+	registerComponent<TComponentModel extends ComponentModel>(
+		component: TComponentModel,
+	): TComponentModel {
 		this.#components.set(component.getId(), component);
 		this.watchRegister?.(component);
 		return component;
