@@ -1,21 +1,36 @@
-import {ParentProps, splitProps} from 'solid-js';
+import {DialogModel, DialogModelOptions} from '@ally-ui/core-dialog';
+import {createSyncedOption} from '@ally-ui/solid';
+import {createEffect, ParentProps} from 'solid-js';
+import {createStore} from 'solid-js/store';
 import {DialogModelContext, DialogStateContext} from './context';
-import {createDialog, type CreateDialogOptions} from './createDialog';
 
-export interface DialogRootProps extends ParentProps, CreateDialogOptions {}
+export interface DialogRootProps extends ParentProps, DialogModelOptions {
+	open?: boolean;
+	onOpenChange?: (open: boolean) => void;
+}
 
 export default function DialogRoot(props: DialogRootProps) {
-	const [local, restProps] = splitProps(props, [
-		'initialOpen',
-		'onOpenChange',
-		'open',
-	]);
-	const [model, state] = createDialog(local);
+	const id = '0';
+	const model = new DialogModel(id, {initialOpen: props.initialOpen});
+	const [state, setState] = createStore({...model.initialState});
+	model.setOptions((prevOptions) => ({
+		...prevOptions,
+		requestStateUpdate: setState,
+	}));
+	createSyncedOption({
+		option: () => props.open,
+		onOptionChange: (open) => setState((prevState) => ({...prevState, open})),
+		internal: () => state.open,
+		onInternalChange: props.onOpenChange,
+	});
+	createEffect(function onStateUpdate() {
+		model.setState({...state});
+	});
 	// TODO Avoid nesting context providers.
 	return (
 		<DialogModelContext.Provider value={model}>
 			<DialogStateContext.Provider value={state}>
-				{restProps.children}
+				{props.children}
 			</DialogStateContext.Provider>
 		</DialogModelContext.Provider>
 	);

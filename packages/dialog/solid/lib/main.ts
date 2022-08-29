@@ -13,11 +13,6 @@ export default {
 	Trigger,
 };
 
-export {
-	createDialog,
-	type CreateDialogOptions,
-	type CreateDialogValue,
-} from './createDialog';
 export {default as DialogClose} from './DialogClose';
 export {default as DialogContent} from './DialogContent';
 export {default as DialogDescription} from './DialogDescription';
