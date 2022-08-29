@@ -8,5 +8,6 @@ export default defineConfig({
 		setupFiles: './vitest.setup.ts',
 		globalSetup: './vitest.global.setup.ts',
 		globals: true,
+		deps: {inline: [/svelte/]},
 	},
 });
