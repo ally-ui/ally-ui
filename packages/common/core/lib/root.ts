@@ -1,6 +1,7 @@
 import type {ComponentModel} from './component';
-import {findLastInMap} from './main';
 import {StateModel} from './state';
+import type {$Predicate} from './types';
+import {findLastInMap} from './utils/map';
 
 export interface RootOptions {}
 
@@ -121,27 +122,32 @@ export abstract class RootModel<
 		return `ally-${this.id}`;
 	}
 
-	getComponent({type, mounted, bound}: GetComponentFilter<TComponentType>) {
-		return findLastInMap(this.#components, (c) => {
-			if (mounted !== undefined && c.mounted !== mounted) {
-				return false;
-			}
-			if (bound !== undefined && (c.node !== undefined) !== bound) {
-				return false;
-			}
-			return c.type === type;
-		});
+	findComponent(
+		predicate: $Predicate<
+			ComponentModel<RootModel<TComponentType, TOptions, TState>>
+		>,
+	): ComponentModel<RootModel<TComponentType, TOptions, TState>> | undefined {
+		return findLastInMap(this.#components, predicate);
 	}
-}
-
-export interface GetComponentFilter<TComponentType extends string> {
-	type: TComponentType;
-	mounted?: boolean;
-	bound?: boolean;
 }
 
 export type $ComponentTypeOf<TRootModel> = TRootModel extends RootModel<
 	infer TComponentType
 >
 	? TComponentType
+	: never;
+
+export type $OptionsOf<TRootModel> = TRootModel extends RootModel<
+	any,
+	infer TOptions
+>
+	? TOptions
+	: never;
+
+export type $StateOf<TRootModel> = TRootModel extends RootModel<
+	any,
+	any,
+	infer TState
+>
+	? TState
 	: never;

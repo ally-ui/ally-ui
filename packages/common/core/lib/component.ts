@@ -8,7 +8,7 @@ export abstract class ComponentModel<
 > extends StateModel<TOptions, TState> {
 	rootModel: TRootModel;
 	options: TOptions;
-	type: string;
+	type: $ComponentTypeOf<TRootModel>;
 	mounted = false;
 	node?: HTMLElement;
 
