@@ -2,11 +2,11 @@ import {watchEffect, type Ref} from 'vue';
 
 export interface UseSyncedOptionOptions<TOption> {
 	/**
-	 * A mutable ref of the external option value.
+	 * A ref of the external option value.
 	 */
 	option?: Ref<TOption | undefined>;
 	/**
-	 * A mutable ref of the internal option value. This should be derived from internal state.
+	 * A ref of the internal option value. This should be derived from internal state.
 	 */
 	internal: Ref<TOption>;
 	/**
@@ -15,6 +15,12 @@ export interface UseSyncedOptionOptions<TOption> {
 	 * Pass a function to update internal state.
 	 */
 	onOptionChange: (option: TOption) => void;
+	/**
+	 * Called with the new internal option's value when it changes.
+	 *
+	 * Pass a function to update the external option.
+	 */
+	onInternalChange?: (internal: TOption) => void;
 }
 
 /**
@@ -24,6 +30,7 @@ export function useSyncedOption<TOption>({
 	option,
 	internal,
 	onOptionChange,
+	onInternalChange,
 }: UseSyncedOptionOptions<TOption>) {
 	let previousOption = option?.value;
 	if (previousOption !== undefined) {
@@ -46,7 +53,7 @@ export function useSyncedOption<TOption>({
 		if (internal.value === previousOption) {
 			return;
 		}
-		option.value = internal.value;
+		onInternalChange?.(internal.value);
 		previousOption = internal.value;
 	});
 }

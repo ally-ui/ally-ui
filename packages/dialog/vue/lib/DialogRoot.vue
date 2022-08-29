@@ -17,16 +17,6 @@ const props = withDefaults(
 const emit = defineEmits<{
 	(ev: 'update:open', open: boolean): void;
 }>();
-// TODO #20 Extract this synchronization behavior.
-const openRef = ref<boolean | undefined>(props.open);
-watchEffect(function emitOpen() {
-	if (openRef.value !== undefined) {
-		emit('update:open', openRef.value);
-	}
-});
-watchEffect(function updateOpenRef() {
-	openRef.value = props.open;
-});
 
 // TODO #19 Generate SSR-safe IDs.
 const id = '0';
@@ -44,9 +34,10 @@ model.setOptions((prevOptions) => ({
 }));
 
 useSyncedOption({
-	option: openRef,
+	option: computed(() => props.open),
 	onOptionChange: (open) => (state.value = {...state.value, open}),
 	internal: computed(() => state.value.open),
+	onInternalChange: (open) => emit('update:open', open),
 });
 
 watchEffect(function onStateUpdate() {
