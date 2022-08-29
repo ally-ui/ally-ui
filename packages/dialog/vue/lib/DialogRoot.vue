@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {DialogModel} from '@ally-ui/core-dialog';
 import {useSyncedOption} from '@ally-ui/vue';
-import {provide, ref, watchEffect} from 'vue';
+import {computed, provide, ref, watchEffect} from 'vue';
 import {MODEL_KEY, STATE_KEY} from './context';
 
 const props = withDefaults(
@@ -43,14 +43,14 @@ model.setOptions((prevOptions) => ({
 	},
 }));
 
-// TODO #20 Improve the interface for option synchronization.
-const updateOpenOption = useSyncedOption<boolean>(openRef, (open) => {
-	state.value = {...state.value, open};
+useSyncedOption({
+	option: openRef,
+	onOptionChange: (open) => (state.value = {...state.value, open}),
+	internal: computed(() => state.value.open),
 });
 
 watchEffect(function onStateUpdate() {
 	model.setState(state.value);
-	updateOpenOption(state.value.open);
 });
 
 provide(MODEL_KEY, model);
