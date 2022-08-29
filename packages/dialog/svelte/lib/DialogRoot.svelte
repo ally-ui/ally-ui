@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {DialogModel} from '@ally-ui/core-dialog';
-	import {createSyncedOption} from '@ally-ui/svelte';
+	import {bindStore, createSyncedOption} from '@ally-ui/svelte';
 	import {derived, readable, writable} from 'svelte/store';
 	import {setDialogContext} from './context';
 
@@ -9,22 +9,11 @@
 		initialOpen?: boolean;
 	}
 	export let open: boolean | undefined = undefined;
-	export let initialOpen: boolean | undefined = undefined;
-
 	const openStore = writable(open);
-	// TODO #20 Extract this synchronization behavior.
-	$: $openStore, dispatchOpen();
-	function dispatchOpen() {
-		if ($openStore !== undefined) {
-			open = $openStore;
-		}
-	}
-	$: open, updateOpenStore();
-	function updateOpenStore() {
-		if (open !== undefined) {
-			$openStore = open;
-		}
-	}
+	const watchOpen = bindStore(openStore, (o) => (open = o));
+	$: watchOpen(open);
+
+	export let initialOpen: boolean | undefined = undefined;
 
 	// TODO #19 Generate SSR-safe IDs.
 	const id = '0';
