@@ -264,15 +264,14 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 		}
 	}
 
-	// TODO How should we indicate that these methods should be attached to event listeners?
-	open() {
+	onTriggerClick() {
 		this.options.requestStateUpdate?.((prevState) => ({
 			...prevState,
 			open: true,
 		}));
 	}
 
-	close() {
+	onCloseClick() {
 		this.options.requestStateUpdate?.((prevState) => ({
 			...prevState,
 			open: false,
