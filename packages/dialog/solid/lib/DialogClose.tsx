@@ -1,41 +1,32 @@
-import type {DialogModel} from '@ally-ui/core-dialog';
 import {combinedRef, createBindRef, forwardEvent} from '@ally-ui/solid';
 import {JSX, onCleanup, onMount, splitProps} from 'solid-js';
 import {useDialogModelContext} from './context';
 
 export interface DialogCloseProps
 	extends JSX.HTMLAttributes<HTMLButtonElement> {
-	model?: DialogModel;
 	ref?: (node: HTMLButtonElement) => void;
 }
 
 export default function DialogClose(props: DialogCloseProps) {
-	const [local, restProps] = splitProps(props, [
-		'model',
-		'ref',
-		'onClick',
-		'children',
-	]);
-	const resolvedModel = useDialogModelContext() ?? local.model;
-	if (resolvedModel === undefined) {
-		throw new Error(
-			'<Dialog.Close/> must have a `model` prop or be a child of `<Dialog.Root/>`',
-		);
+	const [local, restProps] = splitProps(props, ['ref', 'onClick', 'children']);
+	const model = useDialogModelContext();
+	if (model === undefined) {
+		throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
 	}
-	const id = resolvedModel.init('close');
+	const id = model.init('close');
 
 	onMount(() => {
-		resolvedModel.mount(id);
+		model.mount(id);
 	});
 	onCleanup(() => {
-		resolvedModel.unmount(id);
+		model.unmount(id);
 	});
 
 	const bindRef = createBindRef((node) => {
 		if (node === null) {
-			resolvedModel.unbindNode(id);
+			model.unbindNode(id);
 		} else {
-			resolvedModel.bindNode(id, node);
+			model.bindNode(id, node);
 		}
 	});
 	const ref = combinedRef(bindRef, local.ref);
@@ -43,11 +34,11 @@ export default function DialogClose(props: DialogCloseProps) {
 	return (
 		<button
 			ref={ref}
-			{...resolvedModel.componentAttributes(id)}
+			{...model.componentAttributes(id)}
 			{...restProps}
 			onClick={(ev) => {
 				forwardEvent(ev, local.onClick);
-				resolvedModel.close();
+				model.close();
 			}}
 		>
 			{local.children}
