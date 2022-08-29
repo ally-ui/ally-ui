@@ -28,4 +28,11 @@ export class DialogTriggerModel extends ComponentModel<
 			'data-state': this.rootModel.getState().open ? 'open' : 'closed',
 		};
 	}
+
+	onClick() {
+		this.rootModel.getStateOptions().requestStateUpdate?.((prevState) => ({
+			...prevState,
+			open: true,
+		}));
+	}
 }
