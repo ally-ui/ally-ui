@@ -30,7 +30,7 @@ watchEffect(() => {
 			...model.componentAttributes(id, state),
 			...$attrs,
 		}"
-		@click="() => model.open()"
+		@click="() => model.onTriggerClick()"
 	>
 		<slot />
 	</button>

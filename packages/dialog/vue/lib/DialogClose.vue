@@ -28,7 +28,7 @@ watchEffect(() => {
 			...model.componentAttributes(id),
 			...$attrs,
 		}"
-		@click="() => model.close()"
+		@click="() => model.onCloseClick()"
 	>
 		<slot />
 	</button>

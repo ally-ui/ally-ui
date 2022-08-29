@@ -38,7 +38,7 @@
 	{...$model.componentAttributes(id)}
 	{...$$restProps}
 	use:eventForwarder
-	on:click={() => $model.open()}
+	on:click={() => $model.onTriggerClick()}
 >
 	<slot />
 </button>

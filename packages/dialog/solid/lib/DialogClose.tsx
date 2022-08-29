@@ -38,7 +38,7 @@ export default function DialogClose(props: DialogCloseProps) {
 			{...restProps}
 			onClick={(ev) => {
 				forwardEvent(ev, local.onClick);
-				model.close();
+				model.onCloseClick();
 			}}
 		>
 			{local.children}

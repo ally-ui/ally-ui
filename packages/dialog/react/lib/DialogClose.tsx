@@ -43,7 +43,7 @@ const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 		>(
 			(ev) => {
 				onClick?.(ev);
-				model.close();
+				model.onCloseClick();
 			},
 			[model],
 		);

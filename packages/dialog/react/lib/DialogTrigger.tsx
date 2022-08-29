@@ -48,7 +48,7 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 		>(
 			(ev) => {
 				onClick?.(ev);
-				resolvedModel.open();
+				resolvedModel.onTriggerClick();
 			},
 			[resolvedModel],
 		);

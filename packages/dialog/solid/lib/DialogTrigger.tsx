@@ -40,7 +40,7 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 			{...restProps}
 			onClick={(ev) => {
 				forwardEvent(ev, local.onClick);
-				model.open();
+				model.onTriggerClick();
 			}}
 		>
 			{local.children}
