@@ -1,32 +1,40 @@
 import {watchEffect, type Ref} from 'vue';
 
+export interface UseSyncedOptionOptions<TOption> {
+	/**
+	 * A ref of the external option value.
+	 */
+	option?: Ref<TOption | undefined>;
+	/**
+	 * A ref of the internal option value. This should be derived from internal state.
+	 */
+	internal: Ref<TOption>;
+	/**
+	 * Called with the new external option's value when it changes.
+	 *
+	 * Pass a function to update internal state.
+	 */
+	onOptionChange: (option: TOption) => void;
+	/**
+	 * Called with the new internal option's value when it changes.
+	 *
+	 * Pass a function to update the external option.
+	 */
+	onInternalChange?: (internal: TOption) => void;
+}
+
 /**
  * Synchronize state between an external option and internal state.
- *
- * @param option A mutable ref of the external option.
- * @param onOptionChange Called with the new external option's value when it
- * changes. Pass a function to update internal state.
- *
- * @returns A function to update the external option and mitigate infinite update cycles.
- * Call it when internal state updates with the updated value of the option.
  */
-export function useSyncedOption<TOption>(
-	option: Ref<TOption | undefined> | undefined,
-	onOptionChange: (option: TOption) => void,
-) {
+export function useSyncedOption<TOption>({
+	option,
+	internal,
+	onOptionChange,
+	onInternalChange,
+}: UseSyncedOptionOptions<TOption>) {
 	let previousOption = option?.value;
 	if (previousOption !== undefined) {
 		onOptionChange(previousOption);
-	}
-	function updateOption(internal: TOption) {
-		if (option === undefined) {
-			return;
-		}
-		if (internal === previousOption) {
-			return;
-		}
-		option.value = internal;
-		previousOption = internal;
 	}
 	watchEffect(function updateInternal() {
 		if (option?.value === undefined) {
@@ -38,5 +46,14 @@ export function useSyncedOption<TOption>(
 		onOptionChange(option.value);
 		previousOption = option.value;
 	});
-	return updateOption;
+	watchEffect(function updateOption() {
+		if (option === undefined) {
+			return;
+		}
+		if (internal.value === previousOption) {
+			return;
+		}
+		onInternalChange?.(internal.value);
+		previousOption = internal.value;
+	});
 }

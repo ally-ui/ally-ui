@@ -1,43 +1,50 @@
-import {get, type Unsubscriber} from 'svelte/store';
+import {onDestroy} from 'svelte';
+import {get, type Readable} from 'svelte/store';
 import {isWritable, type ReadOrWritable} from './store';
+
+export interface CreateSyncedOptionOptions<TOption> {
+	/**
+	 * A writable store containing the external option value.
+	 */
+	option?: ReadOrWritable<TOption>;
+	/**
+	 * The internal option value. This should be derived from internal state.
+	 */
+	internal: Readable<TOption>;
+	/**
+	 * Called with the new external option's value when it changes.
+	 *
+	 * Pass a function to update internal state.
+	 */
+	onOptionChange: (option: TOption) => void;
+}
 
 /**
  * Synchronize state between an external option and internal state.
- *
- * @param option A writable store containing the external option value.
- * @param onOptionChange Called with the new external option's value when it
- * changes. Pass a function to update internal state.
- *
- * @returns A pair of functions.
- *
- * The first function updates the external option and mitigates infinite update
- * cycles. Call it when internal state updates with the updated value of the
- * option.
- *
- * The second function starts a subscriber on the option store to update
- * internal state when it updates. It returns an unsubscriber for cleanup.
  */
-export function createSyncedOption<TOption>(
-	option: ReadOrWritable<TOption> | undefined,
-	onOptionChange: (option: TOption) => void,
-) {
+export function createSyncedOption<TOption>({
+	option,
+	internal,
+	onOptionChange,
+}: CreateSyncedOptionOptions<TOption>) {
 	let previousOption = option === undefined ? undefined : get(option);
 	if (previousOption !== undefined) {
 		onOptionChange(previousOption);
 	}
-	function updateOption(internal: TOption) {
-		if (isWritable(option)) {
-			option.set(internal);
+	const unsubcribeOption = option?.subscribe(($option) => {
+		if ($option === previousOption) {
+			return;
 		}
-	}
-	function watchOption(): Unsubscriber | undefined {
-		return option?.subscribe(($option) => {
-			if ($option === previousOption) {
-				return;
-			}
-			previousOption = $option;
-			onOptionChange($option);
-		});
-	}
-	return [updateOption, watchOption] as const;
+		previousOption = $option;
+		onOptionChange($option);
+	});
+	const unsubcribeInternal = internal.subscribe(($internal) => {
+		if (isWritable(option)) {
+			option.set($internal);
+		}
+	});
+	onDestroy(() => {
+		unsubcribeInternal();
+		unsubcribeOption?.();
+	});
 }

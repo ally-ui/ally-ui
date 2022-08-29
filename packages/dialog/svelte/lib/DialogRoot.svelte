@@ -1,7 +1,7 @@
 <script lang="ts">
-	import {DialogModel, type DialogModelState} from '@ally-ui/core-dialog';
-	import {createSyncedOption} from '@ally-ui/svelte';
-	import {readable, writable} from 'svelte/store';
+	import {DialogModel} from '@ally-ui/core-dialog';
+	import {bindStore, createSyncedOption} from '@ally-ui/svelte';
+	import {derived, readable, writable} from 'svelte/store';
 	import {setDialogContext} from './context';
 
 	interface $$Props {
@@ -9,22 +9,11 @@
 		initialOpen?: boolean;
 	}
 	export let open: boolean | undefined = undefined;
-	export let initialOpen: boolean | undefined = undefined;
-
 	const openStore = writable(open);
-	// TODO #20 Extract this synchronization behavior.
-	$: $openStore, dispatchOpen();
-	function dispatchOpen() {
-		if ($openStore !== undefined) {
-			open = $openStore;
-		}
-	}
-	$: open, updateOpenStore();
-	function updateOpenStore() {
-		if (open !== undefined) {
-			$openStore = open;
-		}
-	}
+	const watchOpen = bindStore(openStore, (o) => (open = o));
+	$: watchOpen(open);
+
+	export let initialOpen: boolean | undefined = undefined;
 
 	// TODO #19 Generate SSR-safe IDs.
 	const id = '0';
@@ -40,26 +29,17 @@
 			}
 		},
 	}));
-	// TODO #20 Improve the interface for option synchronization.
-	const [updateOpenOption, watchOpenOption] = createSyncedOption(
-		openStore,
-		($open) => {
-			state.update((prevState) => ({...prevState, open: $open}));
-		},
-	);
+	createSyncedOption({
+		option: openStore,
+		onOptionChange: ($open) =>
+			state.update((prevState) => ({...prevState, open: $open})),
+		internal: derived(state, ($state) => $state.open),
+	});
 	const modelStore = readable(model, (set) => {
-		const unsubscribeState = state.subscribe(($state) => {
+		return state.subscribe(($state) => {
 			model.setState($state);
-			updateOpenOption($state.open);
 			set(model);
 		});
-
-		const unsubscribeOpen = watchOpenOption();
-
-		return () => {
-			unsubscribeState();
-			unsubscribeOpen?.();
-		};
 	});
 
 	setDialogContext(modelStore);
