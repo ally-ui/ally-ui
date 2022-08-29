@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import {DialogModel} from '@ally-ui/core-dialog';
+import {useSyncedOption} from '@ally-ui/vue';
 import {provide, ref, watchEffect} from 'vue';
 import {MODEL_KEY, STATE_KEY} from './context';
-import {useDialog} from './useDialog';
 
 const props = withDefaults(
 	defineProps<{
@@ -16,7 +17,7 @@ const props = withDefaults(
 const emit = defineEmits<{
 	(ev: 'update:open', open: boolean): void;
 }>();
-
+// TODO Extract this synchronization behavior.
 const openRef = ref<boolean | undefined>(props.open);
 watchEffect(function emitOpen() {
 	if (openRef.value !== undefined) {
@@ -27,9 +28,29 @@ watchEffect(function updateOpenRef() {
 	openRef.value = props.open;
 });
 
-const [model, state] = useDialog({
-	openRef,
-	initialOpen: props.initialOpen,
+// TODO Generate SSR-safe IDs.
+const id = '0';
+const model = new DialogModel(id, {initialOpen: props.initialOpen});
+const state = ref(model.initialState);
+model.setOptions((prevOptions) => ({
+	...prevOptions,
+	requestStateUpdate: (updater) => {
+		if (updater instanceof Function) {
+			state.value = updater(state.value);
+		} else {
+			state.value = updater;
+		}
+	},
+}));
+
+// TODO Improve the interface for option synchronization.
+const updateOpenOption = useSyncedOption<boolean>(openRef, (open) => {
+	state.value = {...state.value, open};
+});
+
+watchEffect(function onStateUpdate() {
+	model.setState(state.value);
+	updateOpenOption(state.value.open);
 });
 
 provide(MODEL_KEY, model);
