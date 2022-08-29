@@ -10,36 +10,36 @@ export interface DialogTitleProps
 
 const DialogTitle = React.forwardRef<HTMLElement, DialogTitleProps>(
 	({children, ...restProps}, forwardedRef) => {
-		const resolvedModel = useDialogModelContext();
-		if (resolvedModel === undefined) {
+		const model = useDialogModelContext();
+		if (model === undefined) {
 			throw new Error('<Dialog.Title/> must be a child of `<Dialog.Root/>`');
 		}
-		const id = useRunOnce(() => resolvedModel.init('title'));
+		const id = useRunOnce(() => model.init('title'));
 
 		React.useEffect(
 			function mount() {
-				resolvedModel.mount(id);
+				model.mount(id);
 				return () => {
-					resolvedModel.unmount(id);
+					model.unmount(id);
 				};
 			},
-			[resolvedModel],
+			[model],
 		);
 
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node === null) {
-					resolvedModel.unbindNode(id);
+					model.unbindNode(id);
 				} else {
-					resolvedModel.bindNode(id, node);
+					model.bindNode(id, node);
 				}
 			},
-			[resolvedModel],
+			[model],
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
 		return (
-			<h1 ref={ref} {...resolvedModel.componentAttributes(id)} {...restProps}>
+			<h1 ref={ref} {...model.componentAttributes(id)} {...restProps}>
 				{children}
 			</h1>
 		);

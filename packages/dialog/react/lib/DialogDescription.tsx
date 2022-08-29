@@ -10,38 +10,38 @@ export interface DialogDescriptionProps
 
 const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 	({children, ...restProps}, forwardedRef) => {
-		const resolvedModel = useDialogModelContext();
-		if (resolvedModel === undefined) {
+		const model = useDialogModelContext();
+		if (model === undefined) {
 			throw new Error(
 				'<Dialog.Description/> must be a child of `<Dialog.Root/>`',
 			);
 		}
-		const id = useRunOnce(() => resolvedModel.init('description'));
+		const id = useRunOnce(() => model.init('description'));
 
 		React.useEffect(
 			function mount() {
-				resolvedModel.mount(id);
+				model.mount(id);
 				return () => {
-					resolvedModel.unmount(id);
+					model.unmount(id);
 				};
 			},
-			[resolvedModel],
+			[model],
 		);
 
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node === null) {
-					resolvedModel.unbindNode(id);
+					model.unbindNode(id);
 				} else {
-					resolvedModel.bindNode(id, node);
+					model.bindNode(id, node);
 				}
 			},
-			[resolvedModel],
+			[model],
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
 		return (
-			<p ref={ref} {...resolvedModel.componentAttributes(id)} {...restProps}>
+			<p ref={ref} {...model.componentAttributes(id)} {...restProps}>
 				{children}
 			</p>
 		);
