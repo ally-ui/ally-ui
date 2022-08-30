@@ -4,7 +4,8 @@
 	"scripts": {
 		"example": "vite",
 		"build": "vite build && vue-tsc --p tsconfig.build.json",
-		"build:watch": "concurrently \"vite build --watch\" \"vue-tsc --watch\""
+		"build:watch": "concurrently \"vite build --watch\" \"vue-tsc --watch\"",
+		"clean": "rimraf dist"
 	},
 	"author": "Bryan Lee",
 	"description": "Vue utilities for Ally UI",
