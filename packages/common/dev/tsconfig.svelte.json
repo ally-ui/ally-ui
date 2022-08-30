@@ -6,6 +6,6 @@
       script of a Svelte file. Therefore preserve all value imports. Requires TS 4.5 or higher.
      */
 		"preserveValueImports": true,
-		"types": ["svelte", "vite/client", "vitest/globals"]
+		"types": ["svelte", "svelte2tsx/svelte-jsx", "vite/client", "vitest/globals"]
 	}
 }
