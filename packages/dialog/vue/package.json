@@ -3,8 +3,8 @@
 	"version": "0.0.9",
 	"scripts": {
 		"example": "vite",
-		"build": "vue-tsc && vite build",
-		"build:watch": "vite build --watch",
+		"build": "vite build && vue-tsc --p tsconfig.build.json",
+		"build:watch": "concurrently \"vite build --watch\" \"vue-tsc --watch\"",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"coverage": "vitest run --coverage"
