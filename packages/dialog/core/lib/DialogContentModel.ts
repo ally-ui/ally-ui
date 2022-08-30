@@ -23,12 +23,8 @@ export class DialogContentModel extends ComponentModel<
 			id: this.getId(),
 			role: 'dialog',
 			'aria-modal': 'true',
-			'aria-labelledby': this.rootModel
-				.findComponent((c) => c.type === 'title')
-				?.getId(),
-			'aria-describedby': this.rootModel
-				.findComponent((c) => c.type === 'description')
-				?.getId(),
+			'aria-labelledby': this.rootModel.componentId('title'),
+			'aria-describedby': this.rootModel.componentId('description'),
 			'data-state': rootState.open ? 'open' : 'closed',
 		} as const;
 	}

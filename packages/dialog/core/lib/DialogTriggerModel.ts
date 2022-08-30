@@ -22,9 +22,7 @@ export class DialogTriggerModel extends ComponentModel<
 		return {
 			id: this.getId(),
 			'aria-haspopup': 'dialog',
-			'aria-controls': this.rootModel
-				.findComponent((c) => c.type === 'content')
-				?.getId(),
+			'aria-controls': this.rootModel.componentId('content'),
 			'data-state': rootState.open ? 'open' : 'closed',
 		} as const;
 	}

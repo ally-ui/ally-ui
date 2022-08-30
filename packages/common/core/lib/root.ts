@@ -123,6 +123,10 @@ export abstract class RootModel<
 		return `ally-${this.id}`;
 	}
 
+	componentId(type: TComponentType) {
+		return `${this.rootId()}-${type}`;
+	}
+
 	findComponent(
 		predicate: $Predicate<
 			ComponentModel<RootModel<TComponentType, TOptions, TState>>

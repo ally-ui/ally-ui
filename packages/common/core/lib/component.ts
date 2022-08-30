@@ -20,7 +20,7 @@ export abstract class ComponentModel<
 	}
 
 	getId(): string {
-		return `${this.rootModel.id}-${this.getType()}`;
+		return `${this.rootModel.rootId()}-${this.getType()}`;
 	}
 
 	getAttributes(_rootState?: $StateOf<TRootModel>) {
