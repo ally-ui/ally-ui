@@ -1,22 +1,29 @@
 <script lang="ts">
+	import {DialogContentModel} from '@ally-ui/core-dialog';
 	import {createEventForwarder} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
-	import {getDialogContext} from './context';
+	import {readable} from 'svelte/store';
+	import {getDialogRootModel, getDialogRootState} from './context';
 
 	type $$Props = svelteHTML.IntrinsicElements['div'] & {
 		node?: HTMLDivElement | undefined | null;
 	};
 
-	const model = getDialogContext();
-	if (model === undefined) {
+	const rootModel = getDialogRootModel();
+	if (rootModel === undefined) {
 		throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 	}
-	const id = $model.init('content');
+	const component = rootModel.registerComponent(
+		new DialogContentModel(rootModel, {}),
+	);
+	const id = component.getId();
+
+	const rootState = getDialogRootState() ?? readable(rootModel.getState());
 
 	onMount(() => {
-		$model.mount(id);
+		rootModel.mountComponent(id);
 		return () => {
-			$model.unmount(id);
+			rootModel.unmountComponent(id);
 		};
 	});
 
@@ -24,19 +31,19 @@
 	$: bindNode(node);
 	function bindNode(node?: HTMLElement | null) {
 		if (node == null) {
-			$model.unbindNode(id);
+			rootModel?.unbindComponent(id);
 		} else {
-			$model.bindNode(id, node);
+			rootModel?.bindComponent(id, node);
 		}
 	}
 
 	const eventForwarder = createEventForwarder(get_current_component());
 </script>
 
-{#if $model.getState().open}
+{#if $rootState.open}
 	<div
 		bind:this={node}
-		{...$model.componentAttributes(id)}
+		{...component.getAttributes($rootState)}
 		{...$$restProps}
 		use:eventForwarder
 	>

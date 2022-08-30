@@ -1,11 +1,14 @@
-import {DialogModel, DialogModelOptions} from '@ally-ui/core-dialog';
+import {
+	DialogRootModel,
+	type DialogRootModelOptions,
+} from '@ally-ui/core-dialog';
 import {useRunOnce, useSyncedOption} from '@ally-ui/react';
 import React from 'react';
-import {DialogModelContext, DialogStateContext} from './context';
+import {DialogRootModelContext, DialogRootStateContext} from './context';
 
 export interface DialogRootProps
 	extends React.PropsWithChildren,
-		DialogModelOptions {
+		DialogRootModelOptions {
 	open?: boolean;
 	onOpenChange?: (open: boolean) => void;
 }
@@ -17,32 +20,35 @@ export default function DialogRoot({
 	open,
 }: DialogRootProps) {
 	const id = React.useId();
-	const model = useRunOnce(() => new DialogModel(id, {initialOpen}));
-	const [state, setState] = React.useState(() => model.initialState);
+	const rootModel = useRunOnce(() => new DialogRootModel(id, {initialOpen}));
+	const [rootState, setRootState] = React.useState(
+		() => rootModel.initialState,
+	);
 	useRunOnce(() => {
-		model.setOptions((prevOptions) => ({
+		rootModel.setStateOptions((prevOptions) => ({
 			...prevOptions,
-			requestStateUpdate: setState,
+			requestStateUpdate: setRootState,
 		}));
 	});
 	useSyncedOption({
 		option: open,
-		onOptionChange: (open) => setState((prevState) => ({...prevState, open})),
-		internal: state.open,
+		onOptionChange: (open) =>
+			setRootState((prevState) => ({...prevState, open})),
+		internal: rootState.open,
 		onInternalChange: onOpenChange,
 	});
 	React.useEffect(
 		function onStateUpdate() {
-			model.setState(state);
+			rootModel.setState(rootState);
 		},
-		[state],
+		[rootState],
 	);
 
 	return (
-		<DialogModelContext.Provider value={model}>
-			<DialogStateContext.Provider value={state}>
+		<DialogRootModelContext.Provider value={rootModel}>
+			<DialogRootStateContext.Provider value={rootState}>
 				{children}
-			</DialogStateContext.Provider>
-		</DialogModelContext.Provider>
+			</DialogRootStateContext.Provider>
+		</DialogRootModelContext.Provider>
 	);
 }

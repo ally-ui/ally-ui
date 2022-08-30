@@ -1,45 +1,46 @@
-import type {DialogModel} from '@ally-ui/core-dialog';
+import {DialogTriggerModel} from '@ally-ui/core-dialog';
 import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
 import React from 'react';
-import {useDialogModelContext, useDialogStateContext} from './context';
+import {useDialogRootModel, useDialogRootState} from './context';
 
 export interface DialogTriggerProps
 	extends React.DetailedHTMLProps<
 		React.ButtonHTMLAttributes<HTMLButtonElement>,
 		HTMLButtonElement
-	> {
-	model?: DialogModel;
-}
+	> {}
 
 const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
-	({model, children, onClick, ...restProps}, forwardedRef) => {
-		const resolvedModel = useDialogModelContext() ?? model;
-		if (resolvedModel === undefined) {
+	({children, onClick, ...restProps}, forwardedRef) => {
+		const rootModel = useDialogRootModel();
+		if (rootModel === undefined) {
 			throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
 		}
-		const id = useRunOnce(() => resolvedModel.init('trigger'));
+		const component = useRunOnce(() =>
+			rootModel.registerComponent(new DialogTriggerModel(rootModel, {})),
+		);
+		const id = component.getId();
 
-		const resolvedState = useDialogStateContext() ?? resolvedModel.getState();
+		const rootState = useDialogRootState() ?? rootModel.getState();
 
 		React.useEffect(
 			function mount() {
-				resolvedModel.mount(id);
+				rootModel.mountComponent(id);
 				return () => {
-					resolvedModel.unmount(id);
+					rootModel.unmountComponent(id);
 				};
 			},
-			[resolvedModel],
+			[rootModel],
 		);
 
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node === null) {
-					resolvedModel.unbindNode(id);
+					rootModel.unbindComponent(id);
 				} else {
-					resolvedModel.bindNode(id, node);
+					rootModel.bindComponent(id, node);
 				}
 			},
-			[resolvedModel],
+			[rootModel],
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
@@ -48,15 +49,15 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 		>(
 			(ev) => {
 				onClick?.(ev);
-				resolvedModel.onTriggerClick();
+				component.onClick();
 			},
-			[resolvedModel],
+			[rootModel],
 		);
 
 		return (
 			<button
 				ref={ref}
-				{...resolvedModel.componentAttributes(id, resolvedState)}
+				{...component.getAttributes(rootState)}
 				{...restProps}
 				onClick={handleClick}
 			>

@@ -1,24 +1,28 @@
 <script lang="ts">
+	import {DialogDescriptionModel} from '@ally-ui/core-dialog';
 	import {createEventForwarder} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
-	import {getDialogContext} from './context';
+	import {getDialogRootModel} from './context';
 
 	type $$Props = svelteHTML.IntrinsicElements['p'] & {
 		node?: HTMLParagraphElement | undefined | null;
 	};
 
-	const model = getDialogContext();
-	if (model === undefined) {
+	const rootModel = getDialogRootModel();
+	if (rootModel === undefined) {
 		throw new Error(
 			'<Dialog.Description/> must be a child of `<Dialog.Root/>`',
 		);
 	}
-	const id = $model.init('description');
+	const component = rootModel.registerComponent(
+		new DialogDescriptionModel(rootModel, {}),
+	);
+	const id = component.getId();
 
 	onMount(() => {
-		$model.mount(id);
+		rootModel.mountComponent(id);
 		return () => {
-			$model.unmount(id);
+			rootModel.unmountComponent(id);
 		};
 	});
 
@@ -26,9 +30,9 @@
 	$: bindNode(node);
 	function bindNode(node?: HTMLElement | null) {
 		if (node == null) {
-			$model.unbindNode(id);
+			rootModel?.unbindComponent(id);
 		} else {
-			$model.bindNode(id, node);
+			rootModel?.bindComponent(id, node);
 		}
 	}
 
@@ -37,7 +41,7 @@
 
 <p
 	bind:this={node}
-	{...$model.componentAttributes(id)}
+	{...component.getAttributes()}
 	{...$$restProps}
 	use:eventForwarder
 >

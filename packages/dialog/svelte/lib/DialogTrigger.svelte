@@ -1,22 +1,29 @@
 <script lang="ts">
+	import {DialogTriggerModel} from '@ally-ui/core-dialog';
 	import {createEventForwarder} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
-	import {getDialogContext} from './context';
+	import {readable} from 'svelte/store';
+	import {getDialogRootModel, getDialogRootState} from './context';
 
 	type $$Props = svelteHTML.IntrinsicElements['button'] & {
 		node?: HTMLButtonElement | undefined | null;
 	};
 
-	const model = getDialogContext();
-	if (model === undefined) {
+	const rootModel = getDialogRootModel();
+	if (rootModel === undefined) {
 		throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
 	}
-	const id = $model.init('trigger');
+	const component = rootModel.registerComponent(
+		new DialogTriggerModel(rootModel, {}),
+	);
+	const id = component.getId();
+
+	const rootState = getDialogRootState() ?? readable(rootModel.getState());
 
 	onMount(() => {
-		$model.mount(id);
+		rootModel.mountComponent(id);
 		return () => {
-			$model.unmount(id);
+			rootModel.unmountComponent(id);
 		};
 	});
 
@@ -24,9 +31,9 @@
 	$: bindNode(node);
 	function bindNode(node?: HTMLElement | null) {
 		if (node == null) {
-			$model.unbindNode(id);
+			rootModel?.unbindComponent(id);
 		} else {
-			$model.bindNode(id, node);
+			rootModel?.bindComponent(id, node);
 		}
 	}
 
@@ -35,10 +42,10 @@
 
 <button
 	bind:this={node}
-	{...$model.componentAttributes(id)}
+	{...component.getAttributes($rootState)}
 	{...$$restProps}
 	use:eventForwarder
-	on:click={() => $model.onTriggerClick()}
+	on:click={() => component.onClick()}
 >
 	<slot />
 </button>

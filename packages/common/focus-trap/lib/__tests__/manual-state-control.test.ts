@@ -1,6 +1,6 @@
 import {screen} from '@testing-library/dom';
 import {writable} from 'svelte/store';
-import type {FocusTrapModel, FocusTrapState} from '../main';
+import type {FocusTrapModel, FocusTrapState} from '../FocusTrapModel';
 import {observableFocusTrap} from './observableFocusTrap';
 
 let trap: FocusTrapModel | undefined;

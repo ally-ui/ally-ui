@@ -1,6 +1,7 @@
+import {DialogTriggerModel} from '@ally-ui/core-dialog';
 import {combinedRef, createBindRef, forwardEvent} from '@ally-ui/solid';
 import {JSX, onCleanup, onMount, splitProps} from 'solid-js';
-import {useDialogModelContext, useDialogStateContext} from './context';
+import {useDialogRootModel, useDialogRootState} from './context';
 
 export interface DialogTriggerProps
 	extends JSX.HTMLAttributes<HTMLButtonElement> {
@@ -9,26 +10,29 @@ export interface DialogTriggerProps
 
 export default function DialogTrigger(props: DialogTriggerProps) {
 	const [local, restProps] = splitProps(props, ['ref', 'onClick', 'children']);
-	const model = useDialogModelContext();
-	if (model === undefined) {
+	const rootModel = useDialogRootModel();
+	if (rootModel === undefined) {
 		throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
 	}
-	const id = model.init('trigger');
+	const component = rootModel.registerComponent(
+		new DialogTriggerModel(rootModel, {}),
+	);
+	const id = component.getId();
 
-	const resolvedState = useDialogStateContext() ?? model.getState();
+	const rootState = useDialogRootState() ?? rootModel.getState();
 
 	onMount(() => {
-		model.mount(id);
+		rootModel.mountComponent(id);
 	});
 	onCleanup(() => {
-		model.unmount(id);
+		rootModel.unmountComponent(id);
 	});
 
 	const bindRef = createBindRef((node) => {
 		if (node === null) {
-			model.unbindNode(id);
+			rootModel.unbindComponent(id);
 		} else {
-			model.bindNode(id, node);
+			rootModel.bindComponent(id, node);
 		}
 	});
 	const ref = combinedRef(bindRef, local.ref);
@@ -36,11 +40,11 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 	return (
 		<button
 			ref={ref}
-			{...model.componentAttributes(id, resolvedState)}
+			{...component.getAttributes(rootState)}
 			{...restProps}
 			onClick={(ev) => {
 				forwardEvent(ev, local.onClick);
-				model.onTriggerClick();
+				component.onClick();
 			}}
 		>
 			{local.children}

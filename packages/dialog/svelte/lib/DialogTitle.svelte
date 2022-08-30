@@ -1,22 +1,26 @@
 <script lang="ts">
+	import {DialogTitleModel} from '@ally-ui/core-dialog';
 	import {createEventForwarder} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
-	import {getDialogContext} from './context';
+	import {getDialogRootModel} from './context';
 
 	type $$Props = svelteHTML.IntrinsicElements['h1'] & {
 		node?: HTMLHeadingElement | undefined | null;
 	};
 
-	const model = getDialogContext();
-	if (model === undefined) {
+	const rootModel = getDialogRootModel();
+	if (rootModel === undefined) {
 		throw new Error('<Dialog.Title/> must be a child of `<Dialog.Root/>`');
 	}
-	const id = $model.init('title');
+	const component = rootModel.registerComponent(
+		new DialogTitleModel(rootModel, {}),
+	);
+	const id = component.getId();
 
 	onMount(() => {
-		$model.mount(id);
+		rootModel.mountComponent(id);
 		return () => {
-			$model.unmount(id);
+			rootModel.unmountComponent(id);
 		};
 	});
 
@@ -24,9 +28,9 @@
 	$: bindNode(node);
 	function bindNode(node?: HTMLElement | null) {
 		if (node == null) {
-			$model.unbindNode(id);
+			rootModel?.unbindComponent(id);
 		} else {
-			$model.bindNode(id, node);
+			rootModel?.bindComponent(id, node);
 		}
 	}
 
@@ -35,7 +39,7 @@
 
 <h1
 	bind:this={node}
-	{...$model.componentAttributes(id)}
+	{...component.getAttributes()}
 	{...$$restProps}
 	use:eventForwarder
 >

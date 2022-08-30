@@ -1,22 +1,26 @@
 <script setup lang="ts">
+import {DialogCloseModel} from '@ally-ui/core-dialog';
 import {inject, onMounted, onUnmounted, ref, watchEffect} from 'vue';
-import {MODEL_KEY} from './context';
+import {DIALOG_ROOT_MODEL} from './context';
 
-const model = inject(MODEL_KEY);
-if (model === undefined) {
+const rootModel = inject(DIALOG_ROOT_MODEL);
+if (rootModel === undefined) {
 	throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
 }
-const id = model.init('close');
+const component = rootModel.registerComponent(
+	new DialogCloseModel(rootModel, {}),
+);
+const id = component.getId();
 
-onMounted(() => model.mount(id));
-onUnmounted(() => model.unmount(id));
+onMounted(() => rootModel.mountComponent(id));
+onUnmounted(() => rootModel.unmountComponent(id));
 
 const node = ref<HTMLElement | null>(null);
 watchEffect(() => {
 	if (node.value === null) {
-		model.unbindNode(id);
+		rootModel.unbindComponent(id);
 	} else {
-		model.bindNode(id, node.value);
+		rootModel.bindComponent(id, node.value);
 	}
 });
 </script>
@@ -24,11 +28,8 @@ watchEffect(() => {
 <template>
 	<button
 		ref="node"
-		v-bind="{
-			...model.componentAttributes(id),
-			...$attrs,
-		}"
-		@click="() => model.onCloseClick()"
+		v-bind="{...component.getAttributes(), ...$attrs}"
+		@click="() => component.onClick()"
 	>
 		<slot />
 	</button>

@@ -1,8 +1,8 @@
-import type {DialogModel} from '@ally-ui/core-dialog';
-import {getContext, setContext} from 'svelte';
+import type {DialogRootModel, DialogRootModelState} from '@ally-ui/core-dialog';
+import {createContext} from '@ally-ui/svelte';
 import type {Readable} from 'svelte/store';
 
-const KEY = Symbol('DIALOG_MODEL');
-export const getDialogContext = () => getContext(KEY) as Readable<DialogModel>;
-export const setDialogContext = (value: Readable<DialogModel>) =>
-	setContext(KEY, value);
+export const [getDialogRootModel, setDialogRootModel] =
+	createContext<DialogRootModel>('DIALOG_ROOT_MODEL');
+export const [getDialogRootState, setDialogRootState] =
+	createContext<Readable<DialogRootModelState>>('DIALOG_ROOT_STATE');
