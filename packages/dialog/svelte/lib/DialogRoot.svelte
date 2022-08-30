@@ -21,7 +21,6 @@
 	const rootState = writable(rootModel.initialState);
 	rootModel.setStateOptions((prevOptions) => ({
 		...prevOptions,
-		debug: true,
 		requestStateUpdate: (updater) => {
 			if (updater instanceof Function) {
 				rootState.update(updater);
