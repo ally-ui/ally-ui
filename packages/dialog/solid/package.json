@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/solid-dialog",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"scripts": {
 		"example": "vite",
 		"build": "tsc && vite build",
@@ -32,8 +32,8 @@
 		}
 	},
 	"dependencies": {
-		"@ally-ui/core-dialog": "^0.0.9",
-		"@ally-ui/solid": "^0.0.9"
+		"@ally-ui/core-dialog": "^0.0.10",
+		"@ally-ui/solid": "^0.0.10"
 	},
 	"peerDependencies": {
 		"solid-js": ">=1"

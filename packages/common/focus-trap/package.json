@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/focus-trap",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"scripts": {
 		"example": "vite",
 		"build": "tsc && vite build",
@@ -35,6 +35,6 @@
 		}
 	},
 	"dependencies": {
-		"@ally-ui/core": "^0.0.9"
+		"@ally-ui/core": "^0.0.10"
 	}
 }
