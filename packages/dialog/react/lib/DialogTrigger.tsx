@@ -1,6 +1,7 @@
+import {DialogTriggerModel} from '@ally-ui/core-dialog';
 import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
 import React from 'react';
-import {useDialogModelContext, useDialogStateContext} from './context';
+import {useDialogRootModel, useDialogRootState} from './context';
 
 export interface DialogTriggerProps
 	extends React.DetailedHTMLProps<
@@ -10,33 +11,36 @@ export interface DialogTriggerProps
 
 const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 	({children, onClick, ...restProps}, forwardedRef) => {
-		const model = useDialogModelContext();
-		if (model === undefined) {
+		const rootModel = useDialogRootModel();
+		if (rootModel === undefined) {
 			throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
 		}
-		const id = useRunOnce(() => model.init('trigger'));
+		const component = useRunOnce(() =>
+			rootModel.registerComponent(new DialogTriggerModel(rootModel, {})),
+		);
+		const id = component.getId();
 
-		const resolvedState = useDialogStateContext() ?? model.getState();
+		const rootState = useDialogRootState() ?? rootModel.getState();
 
 		React.useEffect(
 			function mount() {
-				model.mount(id);
+				rootModel.mountComponent(id);
 				return () => {
-					model.unmount(id);
+					rootModel.unmountComponent(id);
 				};
 			},
-			[model],
+			[rootModel],
 		);
 
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node === null) {
-					model.unbindNode(id);
+					rootModel.unbindComponent(id);
 				} else {
-					model.bindNode(id, node);
+					rootModel.bindComponent(id, node);
 				}
 			},
-			[model],
+			[rootModel],
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
@@ -45,15 +49,15 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 		>(
 			(ev) => {
 				onClick?.(ev);
-				model.onTriggerClick();
+				component.onClick();
 			},
-			[model],
+			[rootModel],
 		);
 
 		return (
 			<button
 				ref={ref}
-				{...model.componentAttributes(id, resolvedState)}
+				{...component.getAttributes(rootState)}
 				{...restProps}
 				onClick={handleClick}
 			>

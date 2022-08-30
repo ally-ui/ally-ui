@@ -1,6 +1,7 @@
+import {DialogTitleModel} from '@ally-ui/core-dialog';
 import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
 import React from 'react';
-import {useDialogModelContext} from './context';
+import {useDialogRootModel} from './context';
 
 export interface DialogTitleProps
 	extends React.DetailedHTMLProps<
@@ -10,36 +11,39 @@ export interface DialogTitleProps
 
 const DialogTitle = React.forwardRef<HTMLElement, DialogTitleProps>(
 	({children, ...restProps}, forwardedRef) => {
-		const model = useDialogModelContext();
-		if (model === undefined) {
+		const rootModel = useDialogRootModel();
+		if (rootModel === undefined) {
 			throw new Error('<Dialog.Title/> must be a child of `<Dialog.Root/>`');
 		}
-		const id = useRunOnce(() => model.init('title'));
+		const component = useRunOnce(() =>
+			rootModel.registerComponent(new DialogTitleModel(rootModel, {})),
+		);
+		const id = component.getId();
 
 		React.useEffect(
 			function mount() {
-				model.mount(id);
+				rootModel.mountComponent(id);
 				return () => {
-					model.unmount(id);
+					rootModel.unmountComponent(id);
 				};
 			},
-			[model],
+			[rootModel],
 		);
 
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node === null) {
-					model.unbindNode(id);
+					rootModel.unbindComponent(id);
 				} else {
-					model.bindNode(id, node);
+					rootModel.bindComponent(id, node);
 				}
 			},
-			[model],
+			[rootModel],
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
 		return (
-			<h1 ref={ref} {...model.componentAttributes(id)} {...restProps}>
+			<h1 ref={ref} {...component.getAttributes()} {...restProps}>
 				{children}
 			</h1>
 		);

@@ -1,6 +1,7 @@
+import {DialogDescriptionModel} from '@ally-ui/core-dialog';
 import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
 import React from 'react';
-import {useDialogModelContext} from './context';
+import {useDialogRootModel} from './context';
 
 export interface DialogDescriptionProps
 	extends React.DetailedHTMLProps<
@@ -10,38 +11,41 @@ export interface DialogDescriptionProps
 
 const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 	({children, ...restProps}, forwardedRef) => {
-		const model = useDialogModelContext();
-		if (model === undefined) {
+		const rootModel = useDialogRootModel();
+		if (rootModel === undefined) {
 			throw new Error(
 				'<Dialog.Description/> must be a child of `<Dialog.Root/>`',
 			);
 		}
-		const id = useRunOnce(() => model.init('description'));
+		const component = useRunOnce(() =>
+			rootModel.registerComponent(new DialogDescriptionModel(rootModel, {})),
+		);
+		const id = component.getId();
 
 		React.useEffect(
 			function mount() {
-				model.mount(id);
+				rootModel.mountComponent(id);
 				return () => {
-					model.unmount(id);
+					rootModel.unmountComponent(id);
 				};
 			},
-			[model],
+			[rootModel],
 		);
 
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node === null) {
-					model.unbindNode(id);
+					rootModel.unbindComponent(id);
 				} else {
-					model.bindNode(id, node);
+					rootModel.bindComponent(id, node);
 				}
 			},
-			[model],
+			[rootModel],
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
 		return (
-			<p ref={ref} {...model.componentAttributes(id)} {...restProps}>
+			<p ref={ref} {...component.getAttributes()} {...restProps}>
 				{children}
 			</p>
 		);

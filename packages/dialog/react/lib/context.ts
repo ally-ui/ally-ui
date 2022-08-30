@@ -1,16 +1,16 @@
-import type {DialogModel, DialogModelState} from '@ally-ui/core-dialog';
+import type {DialogRootModel, DialogRootModelState} from '@ally-ui/core-dialog';
 import React from 'react';
 
-export const DialogModelContext = React.createContext<DialogModel | undefined>(
-	undefined,
-);
-export function useDialogModelContext() {
-	return React.useContext(DialogModelContext);
+export const DialogRootModelContext = React.createContext<
+	DialogRootModel | undefined
+>(undefined);
+export function useDialogRootModel() {
+	return React.useContext(DialogRootModelContext);
 }
 
-export const DialogStateContext = React.createContext<
-	DialogModelState | undefined
+export const DialogRootStateContext = React.createContext<
+	DialogRootModelState | undefined
 >(undefined);
-export function useDialogStateContext() {
-	return React.useContext(DialogStateContext);
+export function useDialogRootState() {
+	return React.useContext(DialogRootStateContext);
 }

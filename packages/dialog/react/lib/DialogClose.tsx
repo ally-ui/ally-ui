@@ -1,6 +1,7 @@
+import {DialogCloseModel} from '@ally-ui/core-dialog';
 import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
 import React from 'react';
-import {useDialogModelContext} from './context';
+import {useDialogRootModel} from './context';
 
 export interface DialogCloseProps
 	extends React.DetailedHTMLProps<
@@ -10,31 +11,34 @@ export interface DialogCloseProps
 
 const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 	({children, onClick, ...restProps}, forwardedRef) => {
-		const model = useDialogModelContext();
-		if (model === undefined) {
+		const rootModel = useDialogRootModel();
+		if (rootModel === undefined) {
 			throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
 		}
-		const id = useRunOnce(() => model.init('close'));
+		const component = useRunOnce(() =>
+			rootModel.registerComponent(new DialogCloseModel(rootModel, {})),
+		);
+		const id = component.getId();
 
 		React.useEffect(
 			function mount() {
-				model.mount(id);
+				rootModel.mountComponent(id);
 				return () => {
-					model.unmount(id);
+					rootModel.unmountComponent(id);
 				};
 			},
-			[model],
+			[rootModel],
 		);
 
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node === null) {
-					model.unbindNode(id);
+					rootModel.unbindComponent(id);
 				} else {
-					model.bindNode(id, node);
+					rootModel.bindComponent(id, node);
 				}
 			},
-			[model],
+			[rootModel],
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
@@ -43,15 +47,15 @@ const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 		>(
 			(ev) => {
 				onClick?.(ev);
-				model.onCloseClick();
+				component.onClick();
 			},
-			[model],
+			[rootModel],
 		);
 
 		return (
 			<button
 				ref={ref}
-				{...model.componentAttributes(id)}
+				{...component.getAttributes()}
 				{...restProps}
 				onClick={handleClick}
 			>
