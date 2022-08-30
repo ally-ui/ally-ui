@@ -31,6 +31,7 @@
 			"require": "./dist/main.umd.cjs"
 		}
 	},
+	"sideEffects": false,
 	"peerDependencies": {
 		"solid-js": ">=1"
 	}
