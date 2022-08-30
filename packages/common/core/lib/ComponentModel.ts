@@ -1,5 +1,5 @@
-import type {$ComponentTypeOf, $StateOf, RootModel} from './root';
-import {StateModel} from './state';
+import type {$ComponentTypeOf, $StateOf, RootModel} from './RootModel';
+import {StateModel} from './StateModel';
 
 export abstract class ComponentModel<
 	TRootModel extends RootModel = any,

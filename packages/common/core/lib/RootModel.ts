@@ -1,6 +1,5 @@
-import type {ComponentModel} from './component';
-import {StateModel} from './state';
-import type {$Predicate} from './types';
+import type {ComponentModel} from './ComponentModel';
+import {StateModel} from './StateModel';
 import {findLastInMap} from './utils/map';
 
 export interface RootOptions {}
@@ -128,9 +127,9 @@ export abstract class RootModel<
 	}
 
 	findComponent(
-		predicate: $Predicate<
-			ComponentModel<RootModel<TComponentType, TOptions, TState>>
-		>,
+		predicate: (
+			component: ComponentModel<RootModel<TComponentType, TOptions, TState>>,
+		) => boolean,
 	): ComponentModel<RootModel<TComponentType, TOptions, TState>> | undefined {
 		return findLastInMap(this.#components, predicate);
 	}
