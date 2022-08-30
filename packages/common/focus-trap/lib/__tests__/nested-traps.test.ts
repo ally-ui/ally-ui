@@ -1,6 +1,6 @@
 import {screen} from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
-import type {FocusTrapModel} from '../main';
+import type {FocusTrapModel} from '../FocusTrapModel';
 import {observableFocusTrap} from './observableFocusTrap';
 
 let trap: FocusTrapModel | undefined;

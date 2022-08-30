@@ -1,5 +1,9 @@
 import {writable, type Writable} from 'svelte/store';
-import {FocusTrapModel, FocusTrapOptions, FocusTrapState} from '../main';
+import {
+	FocusTrapModel,
+	FocusTrapOptions,
+	FocusTrapState,
+} from '../FocusTrapModel';
 
 /**
  * Use Svelte Stores as the state implementation when testing the focus trap.
