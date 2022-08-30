@@ -20,7 +20,7 @@ export class DialogDescriptionModel extends ComponentModel<
 
 	getAttributes() {
 		return {
-			id: this.getId(),
+			id: this.domId(),
 		} as const;
 	}
 }

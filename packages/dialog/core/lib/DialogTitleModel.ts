@@ -20,7 +20,7 @@ export class DialogTitleModel extends ComponentModel<
 
 	getAttributes() {
 		return {
-			id: this.getId(),
+			id: this.domId(),
 		} as const;
 	}
 }

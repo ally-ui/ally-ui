@@ -30,7 +30,7 @@ export abstract class RootModel<
 	registerComponent<TComponentModel extends ComponentModel>(
 		component: TComponentModel,
 	): TComponentModel {
-		this.#components.set(component.getId(), component);
+		this.#components.set(component.domId(), component);
 		this.watchRegister?.(component);
 		return component;
 	}
@@ -119,12 +119,12 @@ export abstract class RootModel<
 
 	watchUnbind?(component: ComponentModel): void;
 
-	rootId() {
+	domId() {
 		return `ally-${this.id}`;
 	}
 
-	componentId(type: TComponentType) {
-		return `${this.rootId()}-${type}`;
+	componentDomId(type: TComponentType) {
+		return `${this.domId()}-${type}`;
 	}
 
 	findComponent(

@@ -20,11 +20,11 @@ export class DialogContentModel extends ComponentModel<
 
 	getAttributes(rootState: $StateOf<DialogRootModel>) {
 		return {
-			id: this.getId(),
+			id: this.domId(),
 			role: 'dialog',
 			'aria-modal': 'true',
-			'aria-labelledby': this.rootModel.componentId('title'),
-			'aria-describedby': this.rootModel.componentId('description'),
+			'aria-labelledby': this.rootModel.componentDomId('title'),
+			'aria-describedby': this.rootModel.componentDomId('description'),
 			'data-state': rootState.open ? 'open' : 'closed',
 		} as const;
 	}

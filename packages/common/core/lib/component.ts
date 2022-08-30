@@ -19,8 +19,8 @@ export abstract class ComponentModel<
 		this.type = this.getType();
 	}
 
-	getId(): string {
-		return `${this.rootModel.rootId()}-${this.getType()}`;
+	domId(): string {
+		return `${this.rootModel.domId()}-${this.getType()}`;
 	}
 
 	getAttributes(_rootState?: $StateOf<TRootModel>) {
