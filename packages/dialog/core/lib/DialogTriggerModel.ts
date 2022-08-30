@@ -1,4 +1,4 @@
-import {ComponentModel} from '@ally-ui/core';
+import {$StateOf, ComponentModel} from '@ally-ui/core';
 import type {DialogComponentType, DialogRootModel} from './DialogRootModel';
 
 export interface DialogTriggerModelOptions {}
@@ -18,15 +18,15 @@ export class DialogTriggerModel extends ComponentModel<
 		return 'trigger';
 	}
 
-	getAttributes() {
+	getAttributes(rootState: $StateOf<DialogRootModel>) {
 		return {
 			id: this.getId(),
 			'aria-haspopup': 'dialog',
 			'aria-controls': this.rootModel
 				.findComponent((c) => c.type === 'content')
 				?.getId(),
-			'data-state': this.rootModel.getState().open ? 'open' : 'closed',
-		};
+			'data-state': rootState.open ? 'open' : 'closed',
+		} as const;
 	}
 
 	onClick() {

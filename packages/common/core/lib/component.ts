@@ -1,4 +1,4 @@
-import type {$ComponentTypeOf, RootModel} from './root';
+import type {$ComponentTypeOf, $StateOf, RootModel} from './root';
 import {StateModel} from './state';
 
 export abstract class ComponentModel<
@@ -23,7 +23,7 @@ export abstract class ComponentModel<
 		return `${this.rootModel.id}-${this.getType()}`;
 	}
 
-	getAttributes(): object {
+	getAttributes(_rootState?: $StateOf<TRootModel>) {
 		return {};
 	}
 

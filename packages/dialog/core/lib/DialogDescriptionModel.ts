@@ -21,6 +21,6 @@ export class DialogDescriptionModel extends ComponentModel<
 	getAttributes() {
 		return {
 			id: this.getId(),
-		};
+		} as const;
 	}
 }
