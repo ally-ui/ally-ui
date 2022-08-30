@@ -33,6 +33,7 @@
 	},
 	"sideEffects": false,
 	"dependencies": {
+		"@ally-ui/core": "^0.0.10",
 		"@ally-ui/focus-trap": "^0.0.10"
 	}
 }

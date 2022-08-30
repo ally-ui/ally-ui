@@ -11,6 +11,7 @@ export default defineConfig({
 			fileName: 'main',
 		},
 		rollupOptions: {
+			external: [/@ally-ui\/[\w-]+/],
 			plugins: [typescript()],
 		},
 	},

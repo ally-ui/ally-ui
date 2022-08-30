@@ -12,7 +12,7 @@ export default defineConfig({
 			fileName: 'main',
 		},
 		rollupOptions: {
-			external: ['solid-js'],
+			external: ['solid-js', /@ally-ui\/[\w-]+/],
 			plugins: [
 				typescript({
 					tsconfig: './tsconfig.build.json',

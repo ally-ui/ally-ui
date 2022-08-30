@@ -12,7 +12,7 @@ export default defineConfig({
 			fileName: 'main',
 		},
 		rollupOptions: {
-			external: ['vue'],
+			external: ['vue', /@ally-ui\/[\w-]+/],
 			plugins: [],
 		},
 	},

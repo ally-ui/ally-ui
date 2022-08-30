@@ -12,7 +12,7 @@ export default defineConfig({
 			fileName: 'main',
 		},
 		rollupOptions: {
-			external: ['svelte'],
+			external: ['svelte', /@ally-ui\/[\w-]+/],
 			plugins: [
 				typescript({
 					tsconfig: './tsconfig.build.json',

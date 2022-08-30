@@ -13,11 +13,6 @@ export default defineConfig({
 		},
 		rollupOptions: {
 			external: ['react', 'react-dom'],
-			output: {
-				globals: {
-					react: 'React',
-				},
-			},
 			plugins: [
 				typescript({
 					tsconfig: './tsconfig.build.json',

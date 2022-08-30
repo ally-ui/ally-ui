@@ -12,12 +12,7 @@ export default defineConfig({
 			fileName: 'main',
 		},
 		rollupOptions: {
-			external: ['react', 'react-dom'],
-			output: {
-				globals: {
-					react: 'React',
-				},
-			},
+			external: ['react', 'react-dom', /@ally-ui\/[\w-]+/],
 			plugins: [
 				typescript({
 					tsconfig: './tsconfig.build.json',
