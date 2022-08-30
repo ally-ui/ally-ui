@@ -1,36 +1,40 @@
-import {DialogModel, DialogModelOptions} from '@ally-ui/core-dialog';
+import {
+	DialogRootModel,
+	type DialogRootModelOptions,
+} from '@ally-ui/core-dialog';
 import {createSyncedOption} from '@ally-ui/solid';
 import {createEffect, ParentProps} from 'solid-js';
 import {createStore} from 'solid-js/store';
-import {DialogModelContext, DialogStateContext} from './context';
+import {DialogRootModelContext, DialogRootStateContext} from './context';
 
-export interface DialogRootProps extends ParentProps, DialogModelOptions {
+export interface DialogRootProps extends ParentProps, DialogRootModelOptions {
 	open?: boolean;
 	onOpenChange?: (open: boolean) => void;
 }
 
 export default function DialogRoot(props: DialogRootProps) {
 	const id = '0';
-	const model = new DialogModel(id, {initialOpen: props.initialOpen});
-	const [state, setState] = createStore({...model.initialState});
-	model.setOptions((prevOptions) => ({
+	const rootModel = new DialogRootModel(id, {initialOpen: props.initialOpen});
+	const [rootState, setRootState] = createStore({...rootModel.initialState});
+	rootModel.setStateOptions((prevOptions) => ({
 		...prevOptions,
-		requestStateUpdate: setState,
+		requestStateUpdate: setRootState,
 	}));
 	createSyncedOption({
 		option: () => props.open,
-		onOptionChange: (open) => setState((prevState) => ({...prevState, open})),
-		internal: () => state.open,
+		onOptionChange: (open) =>
+			setRootState((prevState) => ({...prevState, open})),
+		internal: () => rootState.open,
 		onInternalChange: props.onOpenChange,
 	});
 	createEffect(function onStateUpdate() {
-		model.setState({...state});
+		rootModel.setState({...rootState});
 	});
 	return (
-		<DialogModelContext.Provider value={model}>
-			<DialogStateContext.Provider value={state}>
+		<DialogRootModelContext.Provider value={rootModel}>
+			<DialogRootStateContext.Provider value={rootState}>
 				{props.children}
-			</DialogStateContext.Provider>
-		</DialogModelContext.Provider>
+			</DialogRootStateContext.Provider>
+		</DialogRootModelContext.Provider>
 	);
 }

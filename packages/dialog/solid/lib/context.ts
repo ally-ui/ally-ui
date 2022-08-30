@@ -1,12 +1,12 @@
-import type {DialogModel, DialogModelState} from '@ally-ui/core-dialog';
+import type {DialogRootModel, DialogRootModelState} from '@ally-ui/core-dialog';
 import {createContext, useContext} from 'solid-js';
 
-export const DialogModelContext = createContext<DialogModel>();
-export function useDialogModelContext() {
-	return useContext(DialogModelContext);
+export const DialogRootModelContext = createContext<DialogRootModel>();
+export function useDialogRootModel() {
+	return useContext(DialogRootModelContext);
 }
 
-export const DialogStateContext = createContext<DialogModelState>();
-export function useDialogStateContext() {
-	return useContext(DialogStateContext);
+export const DialogRootStateContext = createContext<DialogRootModelState>();
+export function useDialogRootState() {
+	return useContext(DialogRootStateContext);
 }

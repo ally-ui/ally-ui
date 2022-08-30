@@ -1,6 +1,7 @@
+import {DialogDescriptionModel} from '@ally-ui/core-dialog';
 import {combinedRef, createBindRef} from '@ally-ui/solid';
 import {JSX, onCleanup, onMount, splitProps} from 'solid-js';
-import {useDialogModelContext} from './context';
+import {useDialogRootModel} from './context';
 
 export interface DialogDescriptionProps
 	extends JSX.HTMLAttributes<HTMLParagraphElement> {
@@ -9,32 +10,35 @@ export interface DialogDescriptionProps
 
 export default function DialogDescription(props: DialogDescriptionProps) {
 	const [local, restProps] = splitProps(props, ['ref', 'children']);
-	const model = useDialogModelContext();
-	if (model === undefined) {
+	const rootModel = useDialogRootModel();
+	if (rootModel === undefined) {
 		throw new Error(
 			'<Dialog.Description/> must be a child of `<Dialog.Root/>`',
 		);
 	}
-	const id = model.init('description');
+	const component = rootModel.registerComponent(
+		new DialogDescriptionModel(rootModel, {}),
+	);
+	const id = component.getId();
 
 	onMount(() => {
-		model.mount(id);
+		rootModel.mountComponent(id);
 	});
 	onCleanup(() => {
-		model.unmount(id);
+		rootModel.unmountComponent(id);
 	});
 
 	const bindRef = createBindRef((node) => {
 		if (node === null) {
-			model.unbindNode(id);
+			rootModel.unbindComponent(id);
 		} else {
-			model.bindNode(id, node);
+			rootModel.bindComponent(id, node);
 		}
 	});
 	const ref = combinedRef(bindRef, local.ref);
 
 	return (
-		<p ref={ref} {...model.componentAttributes(id)} {...restProps}>
+		<p ref={ref} {...component.getAttributes.bind(component)()} {...restProps}>
 			{local.children}
 		</p>
 	);
