@@ -1,22 +1,26 @@
 <script lang="ts">
+	import {DialogCloseModel} from '@ally-ui/core-dialog';
 	import {createEventForwarder} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
-	import {getDialogContext} from './context';
+	import {getDialogRootModel} from './context';
 
 	type $$Props = svelteHTML.IntrinsicElements['button'] & {
 		node?: HTMLButtonElement | undefined | null;
 	};
 
-	const model = getDialogContext();
-	if (model === undefined) {
+	const rootModel = getDialogRootModel();
+	if (rootModel === undefined) {
 		throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
 	}
-	const id = $model.init('close');
+	const component = rootModel.registerComponent(
+		new DialogCloseModel(rootModel, {}),
+	);
+	const id = component.getId();
 
 	onMount(() => {
-		$model.mount(id);
+		rootModel.mountComponent(id);
 		return () => {
-			$model.unmount(id);
+			rootModel.unmountComponent(id);
 		};
 	});
 
@@ -24,9 +28,9 @@
 	$: bindNode(node);
 	function bindNode(node?: HTMLElement | null) {
 		if (node == null) {
-			$model.unbindNode(id);
+			rootModel.unbindComponent(id);
 		} else {
-			$model.bindNode(id, node);
+			rootModel.bindComponent(id, node);
 		}
 	}
 
@@ -35,10 +39,10 @@
 
 <button
 	bind:this={node}
-	{...$model.componentAttributes(id)}
+	{...component.getAttributes()}
 	{...$$restProps}
 	use:eventForwarder
-	on:click={() => $model.onCloseClick()}
+	on:click={() => component.onClick()}
 >
 	<slot />
 </button>
