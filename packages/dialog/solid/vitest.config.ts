@@ -7,8 +7,7 @@ export default defineConfig({
 		environment: 'jsdom',
 		setupFiles: './vitest.setup.ts',
 		globals: true,
-		deps: {
-			inline: [/solid-testing-library/],
-		},
+		transformMode: {web: [/.tsx?/]},
+		deps: {registerNodeLoader: true, inline: [/solid-testing-library/]},
 	},
 });

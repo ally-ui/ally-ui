@@ -1,8 +1,7 @@
 import {cleanup, render, screen} from 'solid-testing-library';
-import type {CreateDialogOptions} from '../createDialog';
-import {Dialog} from '../main';
+import Dialog from '../main';
 
-function Initialization(options: CreateDialogOptions) {
+function Initialization(options: any) {
 	return (
 		<Dialog.Root {...options}>
 			<Dialog.Trigger data-testid="trigger">open dialog</Dialog.Trigger>
