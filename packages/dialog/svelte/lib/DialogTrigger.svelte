@@ -2,6 +2,7 @@
 	import {DialogTriggerModel} from '@ally-ui/core-dialog';
 	import {createEventForwarder} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
+	import {readable} from 'svelte/store';
 	import {getDialogRootModel, getDialogRootState} from './context';
 
 	type $$Props = svelteHTML.IntrinsicElements['button'] & {
@@ -17,7 +18,7 @@
 	);
 	const id = component.getId();
 
-	const rootState = getDialogRootState();
+	const rootState = getDialogRootState() ?? readable(rootModel.getState());
 
 	onMount(() => {
 		rootModel.mountComponent(id);
@@ -30,9 +31,9 @@
 	$: bindNode(node);
 	function bindNode(node?: HTMLElement | null) {
 		if (node == null) {
-			rootModel.unbindComponent(id);
+			rootModel?.unbindComponent(id);
 		} else {
-			rootModel.bindComponent(id, node);
+			rootModel?.bindComponent(id, node);
 		}
 	}
 

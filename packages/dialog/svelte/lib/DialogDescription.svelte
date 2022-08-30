@@ -30,9 +30,9 @@
 	$: bindNode(node);
 	function bindNode(node?: HTMLElement | null) {
 		if (node == null) {
-			rootModel.unbindComponent(id);
+			rootModel?.unbindComponent(id);
 		} else {
-			rootModel.bindComponent(id, node);
+			rootModel?.bindComponent(id, node);
 		}
 	}
 
