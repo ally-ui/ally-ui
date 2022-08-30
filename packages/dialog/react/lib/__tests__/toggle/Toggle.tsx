@@ -1,7 +1,7 @@
 import React from 'react';
-import Dialog, {type UseDialogOptions} from '../../main';
+import Dialog, {type DialogRootProps} from '../../main';
 
-export default function Toggle(options: UseDialogOptions) {
+export default function Toggle(options: DialogRootProps) {
 	return (
 		<React.StrictMode>
 			<Dialog.Root {...options}>
