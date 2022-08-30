@@ -1,36 +1,37 @@
 <script setup lang="ts">
+import {DialogContentModel} from '@ally-ui/core-dialog';
 import {inject, onMounted, onUnmounted, ref, watchEffect} from 'vue';
-import {MODEL_KEY, STATE_KEY} from './context';
+import {DIALOG_ROOT_MODEL, DIALOG_ROOT_STATE} from './context';
 
-const model = inject(MODEL_KEY);
-if (model === undefined) {
+const rootModel = inject(DIALOG_ROOT_MODEL);
+if (rootModel === undefined) {
 	throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 }
-const id = model.init('content');
+const component = rootModel.registerComponent(
+	new DialogContentModel(rootModel, {}),
+);
+const id = component.getId();
 
-const state = inject(STATE_KEY) ?? ref(model.getState());
+const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.getState());
 
-onMounted(() => model.mount(id));
-onUnmounted(() => model.unmount(id));
+onMounted(() => rootModel.mountComponent(id));
+onUnmounted(() => rootModel.unmountComponent(id));
 
 const node = ref<HTMLElement | null>(null);
 watchEffect(() => {
 	if (node.value === null) {
-		model.unbindNode(id);
+		rootModel.unbindComponent(id);
 	} else {
-		model.bindNode(id, node.value);
+		rootModel.bindComponent(id, node.value);
 	}
 });
 </script>
 
 <template>
 	<div
-		v-if="state.open"
+		v-if="rootState.open"
 		ref="node"
-		v-bind="{
-			...model.componentAttributes(id, state),
-			...$attrs,
-		}"
+		v-bind="{...component.getAttributes(rootState), ...$attrs}"
 	>
 		<slot />
 	</div>

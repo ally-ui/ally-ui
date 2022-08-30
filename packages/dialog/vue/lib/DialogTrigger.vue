@@ -1,24 +1,28 @@
 <script setup lang="ts">
+import {DialogTriggerModel} from '@ally-ui/core-dialog';
 import {inject, onMounted, onUnmounted, ref, watchEffect} from 'vue';
-import {MODEL_KEY, STATE_KEY} from './context';
+import {DIALOG_ROOT_MODEL, DIALOG_ROOT_STATE} from './context';
 
-const model = inject(MODEL_KEY);
-if (model === undefined) {
+const rootModel = inject(DIALOG_ROOT_MODEL);
+if (rootModel === undefined) {
 	throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
 }
-const id = model.init('trigger');
+const component = rootModel.registerComponent(
+	new DialogTriggerModel(rootModel, {}),
+);
+const id = component.getId();
 
-const state = inject(STATE_KEY) ?? ref(model.getState());
+const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.getState());
 
-onMounted(() => model.mount(id));
-onUnmounted(() => model.unmount(id));
+onMounted(() => rootModel.mountComponent(id));
+onUnmounted(() => rootModel.unmountComponent(id));
 
 const node = ref<HTMLElement | null>(null);
 watchEffect(() => {
 	if (node.value === null) {
-		model.unbindNode(id);
+		rootModel.unbindComponent(id);
 	} else {
-		model.bindNode(id, node.value);
+		rootModel.bindComponent(id, node.value);
 	}
 });
 </script>
@@ -27,10 +31,10 @@ watchEffect(() => {
 	<button
 		ref="node"
 		v-bind="{
-			...model.componentAttributes(id, state),
+			...component.getAttributes(rootState),
 			...$attrs,
 		}"
-		@click="() => model.onTriggerClick()"
+		@click="() => component.onClick()"
 	>
 		<slot />
 	</button>

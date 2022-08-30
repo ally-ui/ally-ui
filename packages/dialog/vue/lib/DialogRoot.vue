@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {DialogModel} from '@ally-ui/core-dialog';
+import {DialogRootModel} from '@ally-ui/core-dialog';
 import {useSyncedOption} from '@ally-ui/vue';
 import {computed, provide, ref, watchEffect} from 'vue';
-import {MODEL_KEY, STATE_KEY} from './context';
+import {DIALOG_ROOT_MODEL, DIALOG_ROOT_STATE} from './context';
 
 const props = withDefaults(
 	defineProps<{
@@ -20,32 +20,30 @@ const emit = defineEmits<{
 
 // TODO #19 Generate SSR-safe IDs.
 const id = '0';
-const model = new DialogModel(id, {initialOpen: props.initialOpen});
-const state = ref(model.initialState);
-model.setOptions((prevOptions) => ({
+const rootModel = new DialogRootModel(id, {initialOpen: props.initialOpen});
+const rootState = ref(rootModel.initialState);
+rootModel.setStateOptions((prevOptions) => ({
 	...prevOptions,
 	requestStateUpdate: (updater) => {
 		if (updater instanceof Function) {
-			state.value = updater(state.value);
+			rootState.value = updater(rootState.value);
 		} else {
-			state.value = updater;
+			rootState.value = updater;
 		}
 	},
 }));
-
 useSyncedOption({
 	option: computed(() => props.open),
-	onOptionChange: (open) => (state.value = {...state.value, open}),
-	internal: computed(() => state.value.open),
+	onOptionChange: (open) => (rootState.value = {...rootState.value, open}),
+	internal: computed(() => rootState.value.open),
 	onInternalChange: (open) => emit('update:open', open),
 });
-
 watchEffect(function onStateUpdate() {
-	model.setState(state.value);
+	rootModel.setState(rootState.value);
 });
 
-provide(MODEL_KEY, model);
-provide(STATE_KEY, state);
+provide(DIALOG_ROOT_MODEL, rootModel);
+provide(DIALOG_ROOT_STATE, rootState);
 </script>
 
 <template>
