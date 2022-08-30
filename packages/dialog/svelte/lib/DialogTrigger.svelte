@@ -1,3 +1,9 @@
+<script lang="ts" context="module">
+	export type DialogTriggerProps = svelteHTML.IntrinsicElements['button'] & {
+		node?: HTMLButtonElement | undefined | null;
+	};
+</script>
+
 <script lang="ts">
 	import {DialogTriggerModel} from '@ally-ui/core-dialog';
 	import {createEventForwarder} from '@ally-ui/svelte';
@@ -5,9 +11,7 @@
 	import {readable} from 'svelte/store';
 	import {getDialogRootModel, getDialogRootState} from './context';
 
-	type $$Props = svelteHTML.IntrinsicElements['button'] & {
-		node?: HTMLButtonElement | undefined | null;
-	};
+	type $$Props = DialogTriggerProps;
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {

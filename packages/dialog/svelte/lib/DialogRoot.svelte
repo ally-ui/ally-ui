@@ -1,13 +1,18 @@
+<script lang="ts" context="module">
+	export interface DialogRootProps {
+		open?: boolean;
+		initialOpen?: boolean;
+	}
+</script>
+
 <script lang="ts">
 	import {DialogRootModel} from '@ally-ui/core-dialog';
 	import {bindStore, createSyncedOption} from '@ally-ui/svelte';
 	import {derived, writable} from 'svelte/store';
 	import {setDialogRootModel, setDialogRootState} from './context';
 
-	interface $$Props {
-		open?: boolean;
-		initialOpen?: boolean;
-	}
+	type $$Props = DialogRootProps;
+
 	export let open: boolean | undefined = undefined;
 	const openStore = writable(open);
 	const watchOpen = bindStore(openStore, (o) => (open = o));

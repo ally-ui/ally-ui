@@ -1,3 +1,9 @@
+<script lang="ts" context="module">
+	export type DialogContentProps = svelteHTML.IntrinsicElements['div'] & {
+		node?: HTMLDivElement | undefined | null;
+	};
+</script>
+
 <script lang="ts">
 	import {DialogContentModel} from '@ally-ui/core-dialog';
 	import {createEventForwarder} from '@ally-ui/svelte';
@@ -5,9 +11,7 @@
 	import {readable} from 'svelte/store';
 	import {getDialogRootModel, getDialogRootState} from './context';
 
-	type $$Props = svelteHTML.IntrinsicElements['div'] & {
-		node?: HTMLDivElement | undefined | null;
-	};
+	type $$Props = DialogContentProps;
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {
