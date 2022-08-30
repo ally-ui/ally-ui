@@ -1,25 +1,16 @@
 export * from '@ally-ui/core-dialog';
-export {
-	default as DialogClose,
-	type DialogCloseProps,
-} from './DialogClose.svelte';
-export {
-	default as DialogContent,
-	type DialogContentProps,
-} from './DialogContent.svelte';
-export {
-	default as DialogDescription,
-	type DialogDescriptionProps,
-} from './DialogDescription.svelte';
-export {default as DialogRoot, type DialogRootProps} from './DialogRoot.svelte';
-export {
-	default as DialogTitle,
-	type DialogTitleProps,
-} from './DialogTitle.svelte';
-export {
-	default as DialogTrigger,
-	type DialogTriggerProps,
-} from './DialogTrigger.svelte';
+export * from './DialogClose';
+export {default as DialogClose} from './DialogClose.svelte';
+export * from './DialogContent';
+export {default as DialogContent} from './DialogContent.svelte';
+export * from './DialogDescription';
+export {default as DialogDescription} from './DialogDescription.svelte';
+export * from './DialogRoot';
+export {default as DialogRoot} from './DialogRoot.svelte';
+export * from './DialogTitle';
+export {default as DialogTitle} from './DialogTitle.svelte';
+export * from './DialogTrigger';
+export {default as DialogTrigger} from './DialogTrigger.svelte';
 
 import Close from './DialogClose.svelte';
 import Content from './DialogContent.svelte';

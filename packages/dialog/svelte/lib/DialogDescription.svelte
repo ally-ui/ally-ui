@@ -1,14 +1,9 @@
-<script lang="ts" context="module">
-	export type DialogDescriptionProps = svelteHTML.IntrinsicElements['p'] & {
-		node?: HTMLParagraphElement | undefined | null;
-	};
-</script>
-
 <script lang="ts">
 	import {DialogDescriptionModel} from '@ally-ui/core-dialog';
 	import {createEventForwarder} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
 	import {getDialogRootModel} from './context';
+	import type {DialogDescriptionProps} from './DialogDescription';
 
 	type $$Props = DialogDescriptionProps;
 

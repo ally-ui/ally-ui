@@ -1,15 +1,10 @@
-<script lang="ts" context="module">
-	export type DialogTriggerProps = svelteHTML.IntrinsicElements['button'] & {
-		node?: HTMLButtonElement | undefined | null;
-	};
-</script>
-
 <script lang="ts">
 	import {DialogTriggerModel} from '@ally-ui/core-dialog';
 	import {createEventForwarder} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
 	import {readable} from 'svelte/store';
 	import {getDialogRootModel, getDialogRootState} from './context';
+	import type {DialogTriggerProps} from './DialogTrigger';
 
 	type $$Props = DialogTriggerProps;
 

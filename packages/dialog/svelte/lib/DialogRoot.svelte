@@ -1,15 +1,9 @@
-<script lang="ts" context="module">
-	export interface DialogRootProps {
-		open?: boolean;
-		initialOpen?: boolean;
-	}
-</script>
-
 <script lang="ts">
 	import {DialogRootModel} from '@ally-ui/core-dialog';
 	import {bindStore, createSyncedOption} from '@ally-ui/svelte';
 	import {derived, writable} from 'svelte/store';
 	import {setDialogRootModel, setDialogRootState} from './context';
+	import type {DialogRootProps} from './DialogRoot';
 
 	type $$Props = DialogRootProps;
 
