@@ -1,4 +1,3 @@
-import typescript from '@rollup/plugin-typescript';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import {resolve} from 'path';
@@ -14,11 +13,7 @@ export default defineConfig({
 		},
 		rollupOptions: {
 			external: ['vue'],
-			plugins: [
-				typescript({
-					tsconfig: './tsconfig.build.json',
-				}),
-			],
+			plugins: [],
 		},
 	},
 	plugins: [vue(), vueJsx()],

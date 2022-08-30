@@ -4,16 +4,15 @@ import {useSyncedOption} from '@ally-ui/vue';
 import {computed, provide, ref, watchEffect} from 'vue';
 import {DIALOG_ROOT_MODEL, DIALOG_ROOT_STATE} from './context';
 
-const props = withDefaults(
-	defineProps<{
-		open?: boolean;
-		initialOpen?: boolean;
-	}>(),
-	{
-		open: undefined,
-		initialOpen: undefined,
-	},
-);
+export type DialogRootProps = {
+	open?: boolean;
+	initialOpen?: boolean;
+};
+
+const props = withDefaults(defineProps<DialogRootProps>(), {
+	open: undefined,
+	initialOpen: undefined,
+});
 const emit = defineEmits<{
 	(ev: 'update:open', open: boolean): void;
 }>();

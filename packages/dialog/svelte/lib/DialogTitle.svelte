@@ -3,10 +3,9 @@
 	import {createEventForwarder} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
 	import {getDialogRootModel} from './context';
+	import type {DialogTitleProps} from './DialogTitle';
 
-	type $$Props = svelteHTML.IntrinsicElements['h1'] & {
-		node?: HTMLHeadingElement | undefined | null;
-	};
+	type $$Props = DialogTitleProps;
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {

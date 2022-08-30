@@ -4,10 +4,9 @@
 	import {get_current_component, onMount} from 'svelte/internal';
 	import {readable} from 'svelte/store';
 	import {getDialogRootModel, getDialogRootState} from './context';
+	import type {DialogContentProps} from './DialogContent';
 
-	type $$Props = svelteHTML.IntrinsicElements['div'] & {
-		node?: HTMLDivElement | undefined | null;
-	};
+	type $$Props = DialogContentProps;
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {

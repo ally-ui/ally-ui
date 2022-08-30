@@ -3,10 +3,9 @@
 	import {createEventForwarder} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
 	import {getDialogRootModel} from './context';
+	import type {DialogCloseProps} from './DialogClose';
 
-	type $$Props = svelteHTML.IntrinsicElements['button'] & {
-		node?: HTMLButtonElement | undefined | null;
-	};
+	type $$Props = DialogCloseProps;
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {

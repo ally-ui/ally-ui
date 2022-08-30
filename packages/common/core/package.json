@@ -4,7 +4,8 @@
 	"scripts": {
 		"example": "vite",
 		"build": "tsc && vite build",
-		"build:watch": "vite build --watch"
+		"build:watch": "vite build --watch",
+		"clean": "rimraf dist"
 	},
 	"author": "Bryan Lee",
 	"description": "Core utilities for Ally UI",

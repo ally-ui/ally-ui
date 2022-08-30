@@ -1,9 +1,8 @@
 import {cleanup, render, screen} from '@testing-library/react';
 import React from 'react';
-import Dialog from '../main';
-import type {UseDialogOptions} from '../useDialog';
+import Dialog, {DialogRootProps} from '../main';
 
-function Attributes(options: UseDialogOptions) {
+function Attributes(options: DialogRootProps) {
 	return (
 		<React.StrictMode>
 			<Dialog.Root {...options}>

@@ -3,11 +3,10 @@
 	import {bindStore, createSyncedOption} from '@ally-ui/svelte';
 	import {derived, writable} from 'svelte/store';
 	import {setDialogRootModel, setDialogRootState} from './context';
+	import type {DialogRootProps} from './DialogRoot';
 
-	interface $$Props {
-		open?: boolean;
-		initialOpen?: boolean;
-	}
+	type $$Props = DialogRootProps;
+
 	export let open: boolean | undefined = undefined;
 	const openStore = writable(open);
 	const watchOpen = bindStore(openStore, (o) => (open = o));

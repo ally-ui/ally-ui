@@ -3,10 +3,9 @@
 	import {createEventForwarder} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
 	import {getDialogRootModel} from './context';
+	import type {DialogDescriptionProps} from './DialogDescription';
 
-	type $$Props = svelteHTML.IntrinsicElements['p'] & {
-		node?: HTMLParagraphElement | undefined | null;
-	};
+	type $$Props = DialogDescriptionProps;
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {

@@ -4,10 +4,9 @@
 	import {get_current_component, onMount} from 'svelte/internal';
 	import {readable} from 'svelte/store';
 	import {getDialogRootModel, getDialogRootState} from './context';
+	import type {DialogTriggerProps} from './DialogTrigger';
 
-	type $$Props = svelteHTML.IntrinsicElements['button'] & {
-		node?: HTMLButtonElement | undefined | null;
-	};
+	type $$Props = DialogTriggerProps;
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {

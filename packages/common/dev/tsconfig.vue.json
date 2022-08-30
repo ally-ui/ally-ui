@@ -5,6 +5,13 @@
 		// See <https://devblogs.microsoft.com/typescript/announcing-typescript-4-5-beta/#preserve-value-imports>
 		"preserveValueImports": true,
 		// Required in Vue projects
-		"jsx": "preserve"
+		"jsx": "preserve",
+		// The base config disables type emissions and uses Rollup for type
+		// definitions. However, Vue SFC components need vue-tsc to correctly
+		// resolve component types.
+		// Therefore, we re-enable type emissions here.
+		"noEmit": false,
+		"emitDeclarationOnly": true,
+		"declaration": true
 	}
 }
