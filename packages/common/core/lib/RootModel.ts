@@ -29,7 +29,7 @@ export abstract class RootModel<
 	registerComponent<TComponentModel extends ComponentModel>(
 		component: TComponentModel,
 	): TComponentModel {
-		this.#components.set(component.domId(), component);
+		this.#components.set(component.getId(), component);
 		this.watchRegister?.(component);
 		return component;
 	}

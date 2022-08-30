@@ -19,6 +19,10 @@ export abstract class ComponentModel<
 		this.type = this.getType();
 	}
 
+	getId() {
+		return this.getType();
+	}
+
 	domId(): string {
 		return `${this.rootModel.domId()}-${this.getType()}`;
 	}
