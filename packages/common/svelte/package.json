@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/svelte",
-	"version": "0.0.11",
+	"version": "0.0.12",
 	"scripts": {
 		"example": "vite",
 		"build": "svelte-package && rimraf dist/package.json",
