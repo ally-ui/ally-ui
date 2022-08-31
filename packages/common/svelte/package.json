@@ -28,7 +28,8 @@
 	"exports": {
 		".": {
 			"import": "./dist/main.js"
-		}
+		},
+		"./package.json": "./package.json"
 	},
 	"sideEffects": false,
 	"peerDependencies": {
