@@ -29,7 +29,8 @@
 		".": {
 			"import": "./dist/main.js",
 			"require": "./dist/main.umd.cjs"
-		}
+		},
+		"./package.json": "./package.json"
 	},
 	"sideEffects": false,
 	"peerDependencies": {
