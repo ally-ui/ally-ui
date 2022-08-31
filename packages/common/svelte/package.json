@@ -3,8 +3,8 @@
 	"version": "0.0.11",
 	"scripts": {
 		"example": "vite",
-		"build": "tsc && vite build",
-		"build:watch": "vite build --watch",
+		"build": "svelte-package && rimraf dist/package.json",
+		"build:watch": "svelte-package --watch",
 		"clean": "rimraf dist"
 	},
 	"author": "Bryan Lee",
@@ -22,13 +22,12 @@
 	"files": [
 		"dist"
 	],
-	"main": "./dist/main.umd.cjs",
 	"module": "./dist/main.js",
 	"types": "./dist/main.d.ts",
+	"svelte": "./dist/main.js",
 	"exports": {
 		".": {
-			"import": "./dist/main.js",
-			"require": "./dist/main.umd.cjs"
+			"import": "./dist/main.js"
 		}
 	},
 	"sideEffects": false,

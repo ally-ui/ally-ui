@@ -1,9 +1,14 @@
+<script lang="ts" context="module">
+	export type DialogCloseProps = svelteHTML.IntrinsicElements['button'] & {
+		node?: HTMLButtonElement | undefined | null;
+	};
+</script>
+
 <script lang="ts">
 	import {DialogCloseModel} from '@ally-ui/core-dialog';
 	import {createEventForwarder} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
 	import {getDialogRootModel} from './context';
-	import type {DialogCloseProps} from './DialogClose';
 
 	type $$Props = DialogCloseProps;
 
