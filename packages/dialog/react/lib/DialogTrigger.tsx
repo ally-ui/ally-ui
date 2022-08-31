@@ -1,16 +1,30 @@
-import {DialogTriggerModel} from '@ally-ui/core-dialog';
-import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
+import {
+	DialogTriggerModel,
+	type DialogTriggerModelAttributes,
+} from '@ally-ui/core-dialog';
+import {
+	Slot,
+	useMultipleRefs,
+	useRunOnce,
+	type SlottableProps,
+} from '@ally-ui/react';
 import React from 'react';
 import {useDialogRootModel, useDialogRootState} from './context';
 
-export interface DialogTriggerProps
-	extends React.DetailedHTMLProps<
+export interface DialogTriggerHandlers {
+	onClick: React.MouseEventHandler;
+}
+
+export type DialogTriggerProps = SlottableProps<
+	DialogTriggerModelAttributes & DialogTriggerHandlers,
+	React.DetailedHTMLProps<
 		React.ButtonHTMLAttributes<HTMLButtonElement>,
 		HTMLButtonElement
-	> {}
+	>
+>;
 
 const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
-	({children, onClick, ...restProps}, forwardedRef) => {
+	(props, forwardedRef) => {
 		const rootModel = useDialogRootModel();
 		if (rootModel === undefined) {
 			throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
@@ -48,21 +62,29 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 			React.MouseEventHandler<HTMLButtonElement>
 		>(
 			(ev) => {
-				onClick?.(ev);
+				if (!props.asChild) {
+					props.onClick?.(ev);
+				}
 				component.onClick();
 			},
 			[rootModel],
 		);
 
 		return (
-			<button
-				ref={ref}
-				{...component.getAttributes(rootState)}
-				{...restProps}
-				onClick={handleClick}
+			<Slot
+				slotRef={ref}
+				props={props}
+				attributes={{
+					...component.getAttributes(rootState),
+					onClick: handleClick,
+				}}
 			>
-				{children}
-			</button>
+				{({ref, children, attributes}) => (
+					<button ref={ref} {...attributes}>
+						{children}
+					</button>
+				)}
+			</Slot>
 		);
 	},
 );

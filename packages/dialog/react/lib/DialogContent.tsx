@@ -1,16 +1,23 @@
-import {DialogContentModel} from '@ally-ui/core-dialog';
-import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
+import {
+	DialogContentModel,
+	DialogContentModelAttributes,
+} from '@ally-ui/core-dialog';
+import {
+	Slot,
+	SlottableProps,
+	useMultipleRefs,
+	useRunOnce,
+} from '@ally-ui/react';
 import React from 'react';
 import {useDialogRootModel, useDialogRootState} from './context';
 
-export interface DialogContentProps
-	extends React.DetailedHTMLProps<
-		React.HTMLAttributes<HTMLDivElement>,
-		HTMLDivElement
-	> {}
+export type DialogContentProps = SlottableProps<
+	DialogContentModelAttributes,
+	React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+>;
 
 const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
-	({children, ...restProps}, forwardedRef) => {
+	(props, forwardedRef) => {
 		const rootModel = useDialogRootModel();
 		if (rootModel === undefined) {
 			throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
@@ -44,12 +51,21 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
+		// TODO #30 Use derived state on content component.
 		return (
 			<>
 				{rootState.open && (
-					<div ref={ref} {...component.getAttributes(rootState)} {...restProps}>
-						{children}
-					</div>
+					<Slot
+						slotRef={ref}
+						props={props}
+						attributes={component.getAttributes(rootState)}
+					>
+						{({ref, children, attributes}) => (
+							<div ref={ref} {...attributes}>
+								{children}
+							</div>
+						)}
+					</Slot>
 				)}
 			</>
 		);
