@@ -12,8 +12,11 @@
 	<h1>Ally UI Svelte Dialog</h1>
 	<Dialog.Root bind:open>
 		<div>
-			<button on:click={() => (open = !open)}> Manual toggle </button>
+			<button on:click={() => (open = !open)}>Manual toggle</button>
 			<Dialog.Trigger>Edit profile</Dialog.Trigger>
+			<Dialog.Trigger asChild let:props let:events>
+				<span {...props} use:events> Edit profile </span>
+			</Dialog.Trigger>
 			{#if open}
 				<span>Editing profile...</span>
 			{/if}
@@ -31,7 +34,9 @@
 				<label for="username">Username</label>
 				<input id="username" placeholder="@bryanmylee" />
 			</fieldset>
-			<Dialog.Close>Save changes</Dialog.Close>
+			<Dialog.Close asChild let:props let:events>
+				<span {...props} use:events>Save changes</span>
+			</Dialog.Close>
 			<Dialog.Close>x</Dialog.Close>
 		</Dialog.Content>
 	</Dialog.Root>

@@ -21,10 +21,6 @@ export function createEventHandlerAction<
 	return action;
 }
 
-interface ActionCleanup {
-	destroy(): void;
-}
-
 type EventHandlerMap = Partial<Record<keyof HTMLElementEventMap, EventHandler>>;
 
 export type EventHandler = [
@@ -41,6 +37,10 @@ type $EventHandlerNames<TEventHandlerMap extends EventHandlerMap> = {
 type EventHandlers<TEventHandlerMap extends EventHandlerMap> = {
 	[TKey in $EventHandlerNames<TEventHandlerMap>]: (ev: Event) => void;
 };
+
+interface ActionCleanup {
+	destroy(): void;
+}
 
 export type EventHandlerAction<TEventHandlerMap extends EventHandlerMap> = ((
 	node: HTMLElement,
