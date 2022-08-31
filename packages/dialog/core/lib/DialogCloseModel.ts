@@ -5,10 +5,13 @@ export interface DialogCloseModelOptions {}
 
 export interface DialogCloseModelState {}
 
+export interface DialogCloseModelAttributes {}
+
 export class DialogCloseModel extends ComponentModel<
 	DialogRootModel,
 	DialogCloseModelOptions,
-	DialogCloseModelState
+	DialogCloseModelState,
+	DialogCloseModelAttributes
 > {
 	deriveInitialState(): DialogCloseModelState {
 		return {};

@@ -5,10 +5,18 @@ export interface DialogTriggerModelOptions {}
 
 export interface DialogTriggerModelState {}
 
+export interface DialogTriggerModelAttributes {
+	id: string;
+	'aria-haspopup': 'dialog';
+	'aria-controls': string;
+	'data-state': 'open' | 'closed';
+}
+
 export class DialogTriggerModel extends ComponentModel<
 	DialogRootModel,
 	DialogTriggerModelOptions,
-	DialogTriggerModelState
+	DialogTriggerModelState,
+	DialogTriggerModelAttributes
 > {
 	deriveInitialState(): DialogTriggerModelState {
 		return {};
@@ -18,13 +26,15 @@ export class DialogTriggerModel extends ComponentModel<
 		return 'trigger';
 	}
 
-	getAttributes(rootState: $StateOf<DialogRootModel>) {
+	getAttributes(
+		rootState: $StateOf<DialogRootModel>,
+	): DialogTriggerModelAttributes {
 		return {
 			id: this.domId(),
 			'aria-haspopup': 'dialog',
 			'aria-controls': this.rootModel.componentDomId('content'),
 			'data-state': rootState.open ? 'open' : 'closed',
-		} as const;
+		};
 	}
 
 	onClick() {

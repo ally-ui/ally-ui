@@ -5,10 +5,15 @@ export interface DialogDescriptionModelOptions {}
 
 export interface DialogDescriptionModelState {}
 
+export interface DialogDescriptionModelAttributes {
+	id: string;
+}
+
 export class DialogDescriptionModel extends ComponentModel<
 	DialogRootModel,
 	DialogDescriptionModelOptions,
-	DialogDescriptionModelState
+	DialogDescriptionModelState,
+	DialogDescriptionModelAttributes
 > {
 	deriveInitialState(): DialogDescriptionModelState {
 		return {};
@@ -18,7 +23,7 @@ export class DialogDescriptionModel extends ComponentModel<
 		return 'description';
 	}
 
-	getAttributes() {
+	getAttributes(): DialogDescriptionModelAttributes {
 		return {
 			id: this.domId(),
 		} as const;
