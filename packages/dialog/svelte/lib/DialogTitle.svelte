@@ -1,9 +1,14 @@
+<script lang="ts" context="module">
+	export type DialogTitleProps = svelteHTML.IntrinsicElements['h1'] & {
+		node?: HTMLHeadingElement | undefined | null;
+	};
+</script>
+
 <script lang="ts">
 	import {DialogTitleModel} from '@ally-ui/core-dialog';
 	import {createEventForwarder} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
 	import {getDialogRootModel} from './context';
-	import type {DialogTitleProps} from './DialogTitle';
 
 	type $$Props = DialogTitleProps;
 
