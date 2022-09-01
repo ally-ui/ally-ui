@@ -8,12 +8,12 @@ export abstract class RootModel<
 	TComponentType extends string = any,
 	TOptions extends RootOptions = any,
 	TState = any,
-> extends StateModel<TOptions, TState> {
+> extends StateModel<TState> {
 	id: string;
 	options: TOptions;
 
-	constructor(id: string, initialOptions: TOptions) {
-		super(initialOptions);
+	constructor(id: string, initialOptions: TOptions, initialState: TState) {
+		super(initialState);
 		this.id = id;
 		this.options = initialOptions;
 	}
