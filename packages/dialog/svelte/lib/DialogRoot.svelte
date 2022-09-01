@@ -1,12 +1,14 @@
 <script lang="ts" context="module">
-	export interface DialogRootProps {
+	export interface DialogRootProps extends DialogRootModelOptions {
 		open?: boolean;
-		initialOpen?: boolean;
 	}
 </script>
 
 <script lang="ts">
-	import {DialogRootModel} from '@ally-ui/core-dialog';
+	import {
+		DialogRootModel,
+		type DialogRootModelOptions,
+	} from '@ally-ui/core-dialog';
 	import {bindStore, createSyncedOption} from '@ally-ui/svelte';
 	import {derived, writable} from 'svelte/store';
 	import {setDialogRootModel, setDialogRootState} from './context';
@@ -19,10 +21,11 @@
 	$: watchOpen(open);
 
 	export let initialOpen: boolean | undefined = undefined;
+	export let modal: boolean | undefined = undefined;
 
 	// TODO #19 Generate SSR-safe IDs.
 	const id = '0';
-	const rootModel = new DialogRootModel(id, {initialOpen});
+	const rootModel = new DialogRootModel(id, {initialOpen, modal});
 	const rootState = writable(rootModel.initialState);
 	rootModel.setStateOptions((prevOptions) => ({
 		...prevOptions,
