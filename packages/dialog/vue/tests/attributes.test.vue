@@ -4,15 +4,17 @@ import Dialog from '../lib/main';
 const props = withDefaults(
 	defineProps<{
 		initialOpen?: boolean;
+		modal?: boolean;
 	}>(),
 	{
-		initialOpen: false,
+		initialOpen: undefined,
+		modal: undefined,
 	},
 );
 </script>
 
 <template>
-	<Dialog.Root :initialOpen="props.initialOpen">
+	<Dialog.Root :initialOpen="props.initialOpen" :modal="props.modal">
 		<Dialog.Trigger data-testid="trigger">open dialog</Dialog.Trigger>
 		<Dialog.Content data-testid="content">
 			<Dialog.Title data-testid="title">title</Dialog.Title>
