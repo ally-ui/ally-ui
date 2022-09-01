@@ -1,1 +1,1 @@
-export {useSyncedOption} from './useSyncedOption';
+export * from './useSyncedOption';
