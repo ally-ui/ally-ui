@@ -24,10 +24,6 @@ export class DialogContentModel extends ComponentModel<
 	DialogContentModelState,
 	DialogContentModelAttributes
 > {
-	deriveInitialState(): DialogContentModelState {
-		return {};
-	}
-
 	getType(): DialogComponentType {
 		return 'content';
 	}

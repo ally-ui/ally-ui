@@ -15,10 +15,6 @@ export class DialogDescriptionModel extends ComponentModel<
 	DialogDescriptionModelState,
 	DialogDescriptionModelAttributes
 > {
-	deriveInitialState(): DialogDescriptionModelState {
-		return {};
-	}
-
 	getType(): DialogComponentType {
 		return 'description';
 	}

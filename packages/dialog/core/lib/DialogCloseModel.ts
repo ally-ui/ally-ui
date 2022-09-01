@@ -13,10 +13,6 @@ export class DialogCloseModel extends ComponentModel<
 	DialogCloseModelState,
 	DialogCloseModelAttributes
 > {
-	deriveInitialState(): DialogCloseModelState {
-		return {};
-	}
-
 	getType(): DialogComponentType {
 		return 'close';
 	}

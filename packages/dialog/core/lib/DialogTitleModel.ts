@@ -15,10 +15,6 @@ export class DialogTitleModel extends ComponentModel<
 	DialogTitleModelState,
 	DialogTitleModelAttributes
 > {
-	deriveInitialState(): DialogTitleModelState {
-		return {};
-	}
-
 	getType(): DialogComponentType {
 		return 'title';
 	}
