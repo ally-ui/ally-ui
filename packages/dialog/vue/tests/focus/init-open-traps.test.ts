@@ -11,3 +11,10 @@ it('traps focus in the dialog if initially open', async () => {
 	await screen.findByTestId('content');
 	expect(await screen.findByTestId('content')).toHaveFocusWithin();
 });
+
+it('traps focus in the dialog if state is initially open', async () => {
+	render(Focus, {props: {open: true}});
+	// Vue needs another frame for the child components to be mounted.
+	await screen.findByTestId('content');
+	expect(await screen.findByTestId('content')).toHaveFocusWithin();
+});
