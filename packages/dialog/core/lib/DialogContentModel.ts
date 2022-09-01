@@ -5,9 +5,15 @@ import type {
 	DialogRootModelState,
 } from './DialogRootModel';
 
-export interface DialogContentModelOptions {}
+export interface DialogContentModelOptions {
+	forceMount?: boolean;
+}
 
 export interface DialogContentModelState {}
+
+export interface DialogContentModelDerived {
+	show: boolean;
+}
 
 export interface DialogContentModelAttributes {
 	id: string;
@@ -22,10 +28,17 @@ export class DialogContentModel extends ComponentModel<
 	DialogRootModel,
 	DialogContentModelOptions,
 	DialogContentModelState,
+	DialogContentModelDerived,
 	DialogContentModelAttributes
 > {
 	getType(): DialogComponentType {
 		return 'content';
+	}
+
+	deriveState(rootState: DialogRootModelState): DialogContentModelDerived {
+		return {
+			show: this.options.forceMount || rootState.open,
+		};
 	}
 
 	getAttributes(rootState: DialogRootModelState): DialogContentModelAttributes {

@@ -1,4 +1,4 @@
-import {ComponentModel, RootModel, RootOptions} from '@ally-ui/core';
+import {ComponentModel, RootModel} from '@ally-ui/core';
 import {FocusTrapModel} from '@ally-ui/focus-trap';
 
 export type DialogComponentType =
@@ -8,7 +8,7 @@ export type DialogComponentType =
 	| 'description'
 	| 'close';
 
-export interface DialogRootModelOptions extends RootOptions {
+export interface DialogRootModelOptions {
 	initialOpen?: boolean;
 	modal?: boolean;
 }

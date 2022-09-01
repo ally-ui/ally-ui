@@ -5,6 +5,8 @@ export interface DialogTitleModelOptions {}
 
 export interface DialogTitleModelState {}
 
+export interface DialogTitleModelDerived {}
+
 export interface DialogTitleModelAttributes {
 	id: string;
 }
@@ -13,6 +15,7 @@ export class DialogTitleModel extends ComponentModel<
 	DialogRootModel,
 	DialogTitleModelOptions,
 	DialogTitleModelState,
+	DialogTitleModelDerived,
 	DialogTitleModelAttributes
 > {
 	getType(): DialogComponentType {

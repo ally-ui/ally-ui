@@ -5,6 +5,8 @@ export interface DialogTriggerModelOptions {}
 
 export interface DialogTriggerModelState {}
 
+export interface DialogTriggerModelDerived {}
+
 export interface DialogTriggerModelAttributes {
 	id: string;
 	'aria-haspopup': 'dialog';
@@ -16,6 +18,7 @@ export class DialogTriggerModel extends ComponentModel<
 	DialogRootModel,
 	DialogTriggerModelOptions,
 	DialogTriggerModelState,
+	DialogTriggerModelDerived,
 	DialogTriggerModelAttributes
 > {
 	getType(): DialogComponentType {
