@@ -2,12 +2,10 @@ import type {ComponentModel} from './ComponentModel';
 import {StateModel} from './StateModel';
 import {findLastInMap} from './utils/map';
 
-export interface RootOptions {}
-
 export abstract class RootModel<
 	TComponentType extends string = any,
-	TOptions extends RootOptions = any,
-	TState = any,
+	TOptions extends object = any,
+	TState extends object = any,
 > extends StateModel<TState> {
 	id: string;
 	options: TOptions;

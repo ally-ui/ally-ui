@@ -3,9 +3,10 @@ import {StateModel} from './StateModel';
 
 export abstract class ComponentModel<
 	TRootModel extends RootModel = any,
-	TOptions = any,
-	TState = any,
-	TAttributes = any,
+	TOptions extends object = any,
+	TState extends object = any,
+	TDerived extends object = any,
+	TAttributes extends object = any,
 > extends StateModel<TState> {
 	rootModel: TRootModel;
 	options: TOptions;
@@ -24,6 +25,10 @@ export abstract class ComponentModel<
 		this.type = this.getType();
 	}
 
+	abstract getType(): $ComponentTypeOf<TRootModel>;
+
+	deriveState?(_rootState?: $StateOf<TRootModel>, _state?: TState): TDerived;
+
 	getId() {
 		return this.getType();
 	}
@@ -32,9 +37,10 @@ export abstract class ComponentModel<
 		return `${this.rootModel.domId()}-${this.getType()}`;
 	}
 
-	getAttributes(_rootState?: $StateOf<TRootModel>): TAttributes {
+	getAttributes(
+		_rootState?: $StateOf<TRootModel>,
+		_state?: TState,
+	): TAttributes {
 		return {} as TAttributes;
 	}
-
-	abstract getType(): $ComponentTypeOf<TRootModel>;
 }
