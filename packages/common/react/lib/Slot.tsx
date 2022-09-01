@@ -1,8 +1,8 @@
 import type React from 'react';
 
-type SlotRenderProp<TAttributes extends object> = TAttributes & {
+type SlotRenderProp<TAttributes extends object> = {
 	ref: React.RefCallback<HTMLElement>;
-};
+} & TAttributes;
 
 type SlottablePropsAsChild<TAttributes extends object> = {
 	asChild: true;
