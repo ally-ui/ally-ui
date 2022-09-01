@@ -30,9 +30,7 @@ async function createTestServer() {
 	app.use('*', async (request, response) => {
 		try {
 			const templateName = request.originalUrl.replace('/', '');
-			const {render} = await vite.ssrLoadModule(
-				'/lib/__tests__/ssr/renderer.ts',
-			);
+			const {render} = await vite.ssrLoadModule('/tests/ssr/renderer.ts');
 			const rendered = await render(templateName);
 			response
 				.status(200)
