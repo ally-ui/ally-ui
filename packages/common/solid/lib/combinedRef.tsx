@@ -1,4 +1,4 @@
-type CallbackRef<TInstance> = (instance: TInstance) => void;
+import type {CallbackRef} from './types';
 
 export function combinedRef<TInstance>(
 	...refs: (CallbackRef<TInstance> | undefined)[]
