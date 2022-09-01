@@ -7,10 +7,12 @@ import {DIALOG_ROOT_MODEL, DIALOG_ROOT_STATE} from './context';
 export type DialogRootProps = {
 	open?: boolean;
 	initialOpen?: boolean;
+	modal?: boolean;
 };
 const props = withDefaults(defineProps<DialogRootProps>(), {
 	open: undefined,
 	initialOpen: undefined,
+	modal: undefined,
 });
 const emit = defineEmits<{
 	(ev: 'update:open', open: boolean): void;
@@ -18,7 +20,10 @@ const emit = defineEmits<{
 
 // TODO #19 Generate SSR-safe IDs.
 const id = '0';
-const rootModel = new DialogRootModel(id, {initialOpen: props.initialOpen});
+const rootModel = new DialogRootModel(id, {
+	initialOpen: props.initialOpen,
+	modal: props.modal,
+});
 const rootState = ref(rootModel.initialState);
 rootModel.setStateOptions((prevOptions) => ({
 	...prevOptions,

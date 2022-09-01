@@ -10,10 +10,12 @@ export type DialogComponentType =
 
 export interface DialogRootModelOptions extends RootOptions {
 	initialOpen?: boolean;
+	modal?: boolean;
 }
 
 export interface DialogRootModelState {
 	open: boolean;
+	modal: boolean;
 }
 
 export class DialogRootModel extends RootModel<
@@ -33,6 +35,7 @@ export class DialogRootModel extends RootModel<
 	): DialogRootModelState {
 		return {
 			open: initialOptions.initialOpen ?? false,
+			modal: initialOptions.modal ?? true,
 		};
 	}
 

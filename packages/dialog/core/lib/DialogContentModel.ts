@@ -12,7 +12,7 @@ export interface DialogContentModelState {}
 export interface DialogContentModelAttributes {
 	id: string;
 	role: 'dialog';
-	'aria-modal': 'true';
+	'aria-modal': 'true' | undefined;
 	'aria-labelledby': string;
 	'aria-describedby': string;
 	'data-state': 'open' | 'closed';
@@ -36,7 +36,7 @@ export class DialogContentModel extends ComponentModel<
 		return {
 			id: this.domId(),
 			role: 'dialog',
-			'aria-modal': 'true',
+			'aria-modal': rootState.modal ? 'true' : undefined,
 			'aria-labelledby': this.rootModel.componentDomId('title'),
 			'aria-describedby': this.rootModel.componentDomId('description'),
 			'data-state': rootState.open ? 'open' : 'closed',

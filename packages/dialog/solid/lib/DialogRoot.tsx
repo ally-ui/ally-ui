@@ -14,7 +14,10 @@ export interface DialogRootProps extends ParentProps, DialogRootModelOptions {
 
 export default function DialogRoot(props: DialogRootProps) {
 	const id = '0';
-	const rootModel = new DialogRootModel(id, {initialOpen: props.initialOpen});
+	const rootModel = new DialogRootModel(id, {
+		initialOpen: props.initialOpen,
+		modal: props.modal,
+	});
 	const [rootState, setRootState] = createStore({...rootModel.initialState});
 	rootModel.setStateOptions((prevOptions) => ({
 		...prevOptions,

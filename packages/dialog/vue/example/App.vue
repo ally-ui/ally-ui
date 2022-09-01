@@ -20,7 +20,7 @@ watchEffect(() => {
 				<Dialog.Trigger>Edit profile</Dialog.Trigger>
 				<span v-if="open">Editing profile...</span>
 			</div>
-			<Dialog.Content v-slot="props">
+			<Dialog.Content as-child v-slot="props">
 				<section v-bind="props">
 					<Dialog.Title
 						as-child
