@@ -10,7 +10,7 @@ export default function App() {
 	return (
 		<main>
 			<h1>Ally UI Solid Dialog</h1>
-			<Dialog.Root open={open()} onOpenChange={setOpen}>
+			<Dialog.Root initialOpen>
 				<div>
 					<button onClick={() => setOpen(!open())}>Manual toggle</button>
 					<Dialog.Trigger>Edit profile</Dialog.Trigger>
