@@ -1,6 +1,7 @@
 import {
 	DialogContentModel,
 	DialogContentModelAttributes,
+	DialogContentModelOptions,
 } from '@ally-ui/core-dialog';
 import {
 	Slot,
@@ -14,20 +15,24 @@ import {useDialogRootModel, useDialogRootState} from './context';
 export type DialogContentProps = SlottableProps<
 	DialogContentModelAttributes,
 	React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
->;
+> &
+	DialogContentModelOptions;
 
 const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
-	(props, forwardedRef) => {
+	({forceMount, ...props}, forwardedRef) => {
 		const rootModel = useDialogRootModel();
 		if (rootModel === undefined) {
 			throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 		}
 		const component = useRunOnce(() =>
-			rootModel.registerComponent(new DialogContentModel(rootModel, {})),
+			rootModel.registerComponent(
+				new DialogContentModel(rootModel, {forceMount}),
+			),
 		);
 		const id = component.getId();
 
 		const rootState = useDialogRootState() ?? rootModel.getState();
+		const derivedState = component.deriveState(rootState);
 
 		React.useEffect(
 			function mount() {
@@ -51,10 +56,9 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
-		// TODO #30 Use derived state on content component.
 		return (
 			<>
-				{rootState.open && (
+				{derivedState.show && (
 					<Slot
 						slotRef={ref}
 						props={props}
