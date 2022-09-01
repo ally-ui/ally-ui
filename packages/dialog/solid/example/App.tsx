@@ -18,21 +18,29 @@ export default function App() {
 						<span>Editing profile...</span>
 					</Show>
 				</div>
-				<Dialog.Content>
-					<Dialog.Title ref={titleRef}>Edit profile</Dialog.Title>
-					<Dialog.Description>
-						Make changes to your profile here. Click save when you're done
-					</Dialog.Description>
-					<fieldset>
-						<label for="name">Name</label>
-						<input id="name" placeholder="Bryan Lee" />
-					</fieldset>
-					<fieldset>
-						<label for="username">Username</label>
-						<input id="username" placeholder="@bryanmylee" />
-					</fieldset>
-					<Dialog.Close>Save changes</Dialog.Close>
-					<Dialog.Close>x</Dialog.Close>
+				<Dialog.Content asChild>
+					{(props) => (
+						<section {...props()}>
+							<Dialog.Title ref={titleRef} asChild>
+								{(props) => <h2 {...props()}>Edit profile</h2>}
+							</Dialog.Title>
+							<Dialog.Description>
+								Make changes to your profile here. Click save when you're done
+							</Dialog.Description>
+							<fieldset>
+								<label for="name">Name</label>
+								<input id="name" placeholder="Bryan Lee" />
+							</fieldset>
+							<fieldset>
+								<label for="username">Username</label>
+								<input id="username" placeholder="@bryanmylee" />
+							</fieldset>
+							<Dialog.Close>Save changes</Dialog.Close>
+							<Dialog.Close asChild>
+								{(props) => <a {...props}>x</a>}
+							</Dialog.Close>
+						</section>
+					)}
 				</Dialog.Content>
 			</Dialog.Root>
 		</main>

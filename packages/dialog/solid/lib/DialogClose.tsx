@@ -1,15 +1,27 @@
-import {DialogCloseModel} from '@ally-ui/core-dialog';
-import {combinedRef, createBindRef, forwardEvent} from '@ally-ui/solid';
-import {JSX, onCleanup, onMount, splitProps} from 'solid-js';
+import {
+	DialogCloseModel,
+	DialogCloseModelAttributes,
+} from '@ally-ui/core-dialog';
+import {
+	combinedRef,
+	createBindRef,
+	forwardEvent,
+	Slot,
+	type SlottableProps,
+} from '@ally-ui/solid';
+import {JSX, onCleanup, onMount} from 'solid-js';
 import {useDialogRootModel} from './context';
 
-export interface DialogCloseProps
-	extends JSX.HTMLAttributes<HTMLButtonElement> {
-	ref?: (node: HTMLButtonElement) => void;
+export interface DialogCloseHandlers {
+	onClick: JSX.EventHandlerUnion<HTMLElement, Event>;
 }
 
+export type DialogCloseProps = SlottableProps<
+	DialogCloseModelAttributes & DialogCloseHandlers,
+	JSX.HTMLAttributes<HTMLButtonElement>
+>;
+
 export default function DialogClose(props: DialogCloseProps) {
-	const [local, restProps] = splitProps(props, ['ref', 'onClick', 'children']);
 	const rootModel = useDialogRootModel();
 	if (rootModel === undefined) {
 		throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
@@ -33,19 +45,32 @@ export default function DialogClose(props: DialogCloseProps) {
 			rootModel.bindComponent(id, node);
 		}
 	});
-	const ref = combinedRef(bindRef, local.ref);
+	const ref = combinedRef(bindRef, props.ref);
+
+	const handleClick: DialogCloseHandlers['onClick'] = (ev) => {
+		if (!props.asChild) {
+			forwardEvent(
+				ev as MouseEvent & {
+					currentTarget: HTMLButtonElement;
+					target: Element;
+				},
+				props.onClick,
+			);
+		}
+		component.onClick();
+	};
 
 	return (
-		<button
+		<Slot
 			ref={ref}
-			{...component.getAttributes()}
-			{...restProps}
-			onClick={(ev) => {
-				forwardEvent(ev, local.onClick);
-				component.onClick();
-			}}
+			props={props}
+			attributes={{...component.getAttributes(), onClick: handleClick}}
 		>
-			{local.children}
-		</button>
+			{(renderProps) => (
+				<button ref={renderProps.ref} {...renderProps.attributes()}>
+					{renderProps.children}
+				</button>
+			)}
+		</Slot>
 	);
 }

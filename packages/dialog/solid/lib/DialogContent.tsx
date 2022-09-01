@@ -1,14 +1,22 @@
-import {DialogContentModel} from '@ally-ui/core-dialog';
-import {combinedRef, createDelayedBindRef} from '@ally-ui/solid';
-import {JSX, onCleanup, onMount, Show, splitProps} from 'solid-js';
+import {
+	DialogContentModel,
+	DialogContentModelAttributes,
+} from '@ally-ui/core-dialog';
+import {
+	combinedRef,
+	createDelayedBindRef,
+	Slot,
+	SlottableProps,
+} from '@ally-ui/solid';
+import {JSX, onCleanup, onMount, Show} from 'solid-js';
 import {useDialogRootModel, useDialogRootState} from './context';
 
-export interface DialogContentProps extends JSX.HTMLAttributes<HTMLDivElement> {
-	ref?: (node: HTMLDivElement) => void;
-}
+export type DialogContentProps = SlottableProps<
+	DialogContentModelAttributes,
+	JSX.HTMLAttributes<HTMLDivElement>
+>;
 
 export default function DialogContent(props: DialogContentProps) {
-	const [local, restProps] = splitProps(props, ['ref', 'children']);
 	const rootModel = useDialogRootModel();
 	if (rootModel === undefined) {
 		throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
@@ -37,13 +45,21 @@ export default function DialogContent(props: DialogContentProps) {
 		},
 		() => rootState.open,
 	);
-	const ref = combinedRef(bindRef, local.ref);
+	const ref = combinedRef(bindRef, props.ref);
 
 	return (
 		<Show when={rootState.open}>
-			<div ref={ref} {...component.getAttributes(rootState)} {...restProps}>
-				{local.children}
-			</div>
+			<Slot
+				ref={ref}
+				props={props}
+				attributes={component.getAttributes(rootState)}
+			>
+				{(renderProps) => (
+					<div ref={renderProps.ref} {...renderProps.attributes()}>
+						{renderProps.children}
+					</div>
+				)}
+			</Slot>
 		</Show>
 	);
 }

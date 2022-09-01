@@ -1,15 +1,17 @@
-import {DialogDescriptionModel} from '@ally-ui/core-dialog';
-import {combinedRef, createBindRef} from '@ally-ui/solid';
-import {JSX, onCleanup, onMount, splitProps} from 'solid-js';
+import {
+	DialogCloseModelAttributes,
+	DialogDescriptionModel,
+} from '@ally-ui/core-dialog';
+import {combinedRef, createBindRef, Slot, SlottableProps} from '@ally-ui/solid';
+import {JSX, onCleanup, onMount} from 'solid-js';
 import {useDialogRootModel} from './context';
 
-export interface DialogDescriptionProps
-	extends JSX.HTMLAttributes<HTMLParagraphElement> {
-	ref?: (node: HTMLDivElement) => void;
-}
+export type DialogDescriptionProps = SlottableProps<
+	DialogCloseModelAttributes,
+	JSX.HTMLAttributes<HTMLParagraphElement>
+>;
 
 export default function DialogDescription(props: DialogDescriptionProps) {
-	const [local, restProps] = splitProps(props, ['ref', 'children']);
 	const rootModel = useDialogRootModel();
 	if (rootModel === undefined) {
 		throw new Error(
@@ -35,11 +37,15 @@ export default function DialogDescription(props: DialogDescriptionProps) {
 			rootModel.bindComponent(id, node);
 		}
 	});
-	const ref = combinedRef(bindRef, local.ref);
+	const ref = combinedRef(bindRef, props.ref);
 
 	return (
-		<p ref={ref} {...component.getAttributes.bind(component)()} {...restProps}>
-			{local.children}
-		</p>
+		<Slot ref={ref} props={props} attributes={component.getAttributes()}>
+			{(renderProps) => (
+				<p ref={renderProps.ref} {...renderProps.attributes()}>
+					{renderProps.children}
+				</p>
+			)}
+		</Slot>
 	);
 }
