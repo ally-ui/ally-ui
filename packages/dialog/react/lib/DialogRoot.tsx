@@ -16,11 +16,14 @@ export interface DialogRootProps
 export default function DialogRoot({
 	children,
 	initialOpen,
+	modal,
 	onOpenChange,
 	open,
 }: DialogRootProps) {
 	const id = React.useId();
-	const rootModel = useRunOnce(() => new DialogRootModel(id, {initialOpen}));
+	const rootModel = useRunOnce(
+		() => new DialogRootModel(id, {initialOpen, modal}),
+	);
 	const [rootState, setRootState] = React.useState(
 		() => rootModel.initialState,
 	);
