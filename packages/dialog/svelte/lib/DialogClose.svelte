@@ -1,9 +1,18 @@
 <script lang="ts" context="module">
-	export type DialogCloseProps<TAsChild extends true | undefined> =
+	type DialogCloseProps<TAsChild extends true | undefined> =
 		svelteHTML.IntrinsicElements['button'] & {
 			node?: HTMLButtonElement | undefined | null;
 			asChild?: TAsChild;
 		};
+	type DialogCloseSlots<TAsChild extends true | undefined> = {
+		default: DefaultSlot<
+			TAsChild,
+			DialogCloseModelAttributes,
+			RefAction<{
+				click: [(ev: Event) => void, undefined];
+			}>
+		>;
+	};
 </script>
 
 <script lang="ts">
@@ -13,24 +22,16 @@
 	} from '@ally-ui/core-dialog';
 	import {
 		createEventForwarder,
-		createEventHandlerAction,
-		type EventHandlerAction,
+		createRefAction,
+		type DefaultSlot,
+		type RefAction,
 	} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
 	import {getDialogRootModel} from './context';
 
 	type TAsChild = $$Generic<true | undefined>;
 	type $$Props = DialogCloseProps<TAsChild>;
-	type $$Slots = {
-		default: undefined extends TAsChild
-			? Record<string, never>
-			: {
-					props: DialogCloseModelAttributes;
-					events: EventHandlerAction<{
-						click: [() => void, undefined];
-					}>;
-			  };
-	};
+	type $$Slots = DialogCloseSlots<TAsChild>;
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {
@@ -62,7 +63,7 @@
 		component.onClick();
 	}
 
-	const events = createEventHandlerAction({
+	const ref = createRefAction((n) => (node = n), {
 		click: [handleClick, undefined],
 	});
 
@@ -70,7 +71,7 @@
 
 	$: slotProps = {
 		props: component.getAttributes(),
-		events,
+		ref,
 	} as any; // Workaround to allow conditional slot type.
 
 	const eventForwarder = createEventForwarder(get_current_component());

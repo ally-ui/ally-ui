@@ -1,17 +1,32 @@
 <script lang="ts" context="module">
-	export type DialogContentProps = svelteHTML.IntrinsicElements['div'] & {
-		node?: HTMLDivElement | undefined | null;
+	type DialogContentProps<TAsChild extends true | undefined> =
+		svelteHTML.IntrinsicElements['div'] & {
+			node?: HTMLDivElement | undefined | null;
+			asChild?: TAsChild;
+		};
+	type DialogContentSlots<TAsChild extends true | undefined> = {
+		default: DefaultSlot<TAsChild, DialogContentModelAttributes, RefAction>;
 	};
 </script>
 
 <script lang="ts">
-	import {DialogContentModel} from '@ally-ui/core-dialog';
-	import {createEventForwarder} from '@ally-ui/svelte';
+	import {
+		DialogContentModel,
+		type DialogContentModelAttributes,
+	} from '@ally-ui/core-dialog';
+	import {
+		createEventForwarder,
+		createRefAction,
+		type DefaultSlot,
+		type RefAction,
+	} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
 	import {readable} from 'svelte/store';
 	import {getDialogRootModel, getDialogRootState} from './context';
 
-	type $$Props = DialogContentProps;
+	type TAsChild = $$Generic<true | undefined>;
+	type $$Props = DialogContentProps<TAsChild>;
+	type $$Slots = DialogContentSlots<TAsChild>;
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {
@@ -41,16 +56,30 @@
 		}
 	}
 
+	const ref = createRefAction((n) => (node = n));
+
+	export let asChild: TAsChild = undefined as TAsChild;
+
+	$: slotProps = {
+		props: component.getAttributes($rootState),
+		ref,
+	} as any; // Workaround to allow conditional slot type.
+
 	const eventForwarder = createEventForwarder(get_current_component());
 </script>
 
+<!-- TODO #30 Use derived state on content component. -->
 {#if $rootState.open}
-	<div
-		bind:this={node}
-		{...component.getAttributes($rootState)}
-		{...$$restProps}
-		use:eventForwarder
-	>
-		<slot />
-	</div>
+	{#if asChild}
+		<slot {...slotProps} />
+	{:else}
+		<div
+			bind:this={node}
+			{...component.getAttributes($rootState)}
+			{...$$restProps}
+			use:eventForwarder
+		>
+			<slot />
+		</div>
+	{/if}
 {/if}

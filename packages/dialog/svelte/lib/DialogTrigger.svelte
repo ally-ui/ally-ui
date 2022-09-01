@@ -1,9 +1,18 @@
 <script lang="ts" context="module">
-	export type DialogTriggerProps<TAsChild extends true | undefined> =
+	type DialogTriggerProps<TAsChild extends true | undefined> =
 		svelteHTML.IntrinsicElements['button'] & {
 			node?: HTMLButtonElement | undefined | null;
 			asChild?: TAsChild;
 		};
+	type DialogTriggerSlots<TAsChild extends true | undefined> = {
+		default: DefaultSlot<
+			TAsChild,
+			DialogTriggerModelAttributes,
+			RefAction<{
+				click: [(ev: Event) => void, undefined];
+			}>
+		>;
+	};
 </script>
 
 <script lang="ts">
@@ -13,8 +22,9 @@
 	} from '@ally-ui/core-dialog';
 	import {
 		createEventForwarder,
-		createEventHandlerAction,
-		type EventHandlerAction,
+		createRefAction,
+		type DefaultSlot,
+		type RefAction,
 	} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
 	import {readable} from 'svelte/store';
@@ -22,16 +32,7 @@
 
 	type TAsChild = $$Generic<true | undefined>;
 	type $$Props = DialogTriggerProps<TAsChild>;
-	type $$Slots = {
-		default: undefined extends TAsChild
-			? Record<string, never>
-			: {
-					props: DialogTriggerModelAttributes;
-					events: EventHandlerAction<{
-						click: [() => void, undefined];
-					}>;
-			  };
-	};
+	type $$Slots = DialogTriggerSlots<TAsChild>;
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {
@@ -65,7 +66,7 @@
 		component.onClick();
 	}
 
-	const events = createEventHandlerAction({
+	const ref = createRefAction((n) => (node = n), {
 		click: [handleClick, undefined],
 	});
 
@@ -73,7 +74,7 @@
 
 	$: slotProps = {
 		props: component.getAttributes($rootState),
-		events,
+		ref,
 	} as any; // Workaround to allow conditional slot type.
 
 	const eventForwarder = createEventForwarder(get_current_component());
