@@ -19,10 +19,10 @@ export default function App() {
 					{open && <span>Editing profile...</span>}
 				</div>
 				<Dialog.Content asChild>
-					{(p) => (
-						<section {...p}>
+					{(props) => (
+						<section {...props}>
 							<Dialog.Title ref={titleRef} asChild>
-								{(p) => <h2 {...p}>Edit profile</h2>}
+								{(props) => <h2 {...props}>Edit profile</h2>}
 							</Dialog.Title>
 							<Dialog.Description>
 								Make changes to your profile here. Click save when you're done
@@ -36,7 +36,9 @@ export default function App() {
 								<input id="username" placeholder="@bryanmylee" />
 							</fieldset>
 							<Dialog.Close>Save changes</Dialog.Close>
-							<Dialog.Close asChild>{(p) => <a {...p}>x</a>}</Dialog.Close>
+							<Dialog.Close asChild>
+								{(props) => <a {...props}>x</a>}
+							</Dialog.Close>
 						</section>
 					)}
 				</Dialog.Content>
