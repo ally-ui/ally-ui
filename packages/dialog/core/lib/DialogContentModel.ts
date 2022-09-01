@@ -1,14 +1,28 @@
-import {$StateOf, ComponentModel} from '@ally-ui/core';
-import type {DialogComponentType, DialogRootModel} from './DialogRootModel';
+import {ComponentModel} from '@ally-ui/core';
+import type {
+	DialogComponentType,
+	DialogRootModel,
+	DialogRootModelState,
+} from './DialogRootModel';
 
 export interface DialogContentModelOptions {}
 
 export interface DialogContentModelState {}
 
+export interface DialogContentModelAttributes {
+	id: string;
+	role: 'dialog';
+	'aria-modal': 'true';
+	'aria-labelledby': string;
+	'aria-describedby': string;
+	'data-state': 'open' | 'closed';
+}
+
 export class DialogContentModel extends ComponentModel<
 	DialogRootModel,
 	DialogContentModelOptions,
-	DialogContentModelState
+	DialogContentModelState,
+	DialogContentModelAttributes
 > {
 	deriveInitialState(): DialogContentModelState {
 		return {};
@@ -18,7 +32,7 @@ export class DialogContentModel extends ComponentModel<
 		return 'content';
 	}
 
-	getAttributes(rootState: $StateOf<DialogRootModel>) {
+	getAttributes(rootState: DialogRootModelState): DialogContentModelAttributes {
 		return {
 			id: this.domId(),
 			role: 'dialog',
@@ -26,6 +40,6 @@ export class DialogContentModel extends ComponentModel<
 			'aria-labelledby': this.rootModel.componentDomId('title'),
 			'aria-describedby': this.rootModel.componentDomId('description'),
 			'data-state': rootState.open ? 'open' : 'closed',
-		} as const;
+		};
 	}
 }

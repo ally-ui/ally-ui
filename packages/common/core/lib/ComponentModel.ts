@@ -5,6 +5,7 @@ export abstract class ComponentModel<
 	TRootModel extends RootModel = any,
 	TOptions = any,
 	TState = any,
+	TAttributes = any,
 > extends StateModel<TOptions, TState> {
 	rootModel: TRootModel;
 	options: TOptions;
@@ -27,8 +28,8 @@ export abstract class ComponentModel<
 		return `${this.rootModel.domId()}-${this.getType()}`;
 	}
 
-	getAttributes(_rootState?: $StateOf<TRootModel>) {
-		return {};
+	getAttributes(_rootState?: $StateOf<TRootModel>): TAttributes {
+		return {} as TAttributes;
 	}
 
 	abstract getType(): $ComponentTypeOf<TRootModel>;

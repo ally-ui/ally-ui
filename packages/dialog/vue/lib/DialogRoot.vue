@@ -8,7 +8,6 @@ export type DialogRootProps = {
 	open?: boolean;
 	initialOpen?: boolean;
 };
-
 const props = withDefaults(defineProps<DialogRootProps>(), {
 	open: undefined,
 	initialOpen: undefined,

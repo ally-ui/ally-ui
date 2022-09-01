@@ -1,16 +1,31 @@
 <script lang="ts" context="module">
-	export type DialogDescriptionProps = svelteHTML.IntrinsicElements['p'] & {
-		node?: HTMLParagraphElement | undefined | null;
+	type DialogDescriptionProps<TAsChild extends true | undefined> =
+		svelteHTML.IntrinsicElements['p'] & {
+			node?: HTMLParagraphElement | undefined | null;
+			asChild?: TAsChild;
+		};
+	type DialogDescriptionSlots<TAsChild extends true | undefined> = {
+		default: DefaultSlot<TAsChild, DialogDescriptionModelAttributes, RefAction>;
 	};
 </script>
 
 <script lang="ts">
-	import {DialogDescriptionModel} from '@ally-ui/core-dialog';
-	import {createEventForwarder} from '@ally-ui/svelte';
+	import {
+		DialogDescriptionModel,
+		type DialogDescriptionModelAttributes,
+	} from '@ally-ui/core-dialog';
+	import {
+		createEventForwarder,
+		createRefAction,
+		type DefaultSlot,
+		type RefAction,
+	} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
 	import {getDialogRootModel} from './context';
 
-	type $$Props = DialogDescriptionProps;
+	type TAsChild = $$Generic<true | undefined>;
+	type $$Props = DialogDescriptionProps<TAsChild>;
+	type $$Slots = DialogDescriptionSlots<TAsChild>;
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {
@@ -40,14 +55,27 @@
 		}
 	}
 
+	const ref = createRefAction((n) => (node = n));
+
+	export let asChild: TAsChild = undefined as TAsChild;
+
+	$: slotProps = {
+		props: component.getAttributes(),
+		ref,
+	} as any; // Workaround to allow conditional slot type.
+
 	const eventForwarder = createEventForwarder(get_current_component());
 </script>
 
-<p
-	bind:this={node}
-	{...component.getAttributes()}
-	{...$$restProps}
-	use:eventForwarder
->
-	<slot />
-</p>
+{#if asChild}
+	<slot {...slotProps} />
+{:else}
+	<p
+		bind:this={node}
+		{...component.getAttributes()}
+		{...$$restProps}
+		use:eventForwarder
+	>
+		<slot />
+	</p>
+{/if}

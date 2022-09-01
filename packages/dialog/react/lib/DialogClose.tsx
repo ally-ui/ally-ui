@@ -1,16 +1,30 @@
-import {DialogCloseModel} from '@ally-ui/core-dialog';
-import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
+import {
+	DialogCloseModel,
+	DialogCloseModelAttributes,
+} from '@ally-ui/core-dialog';
+import {
+	Slot,
+	SlottableProps,
+	useMultipleRefs,
+	useRunOnce,
+} from '@ally-ui/react';
 import React from 'react';
 import {useDialogRootModel} from './context';
 
-export interface DialogCloseProps
-	extends React.DetailedHTMLProps<
+export interface DialogCloseHandlers {
+	onClick: React.MouseEventHandler;
+}
+
+export type DialogCloseProps = SlottableProps<
+	DialogCloseModelAttributes & DialogCloseHandlers,
+	React.DetailedHTMLProps<
 		React.ButtonHTMLAttributes<HTMLButtonElement>,
 		HTMLButtonElement
-	> {}
+	>
+>;
 
 const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
-	({children, onClick, ...restProps}, forwardedRef) => {
+	(props, forwardedRef) => {
 		const rootModel = useDialogRootModel();
 		if (rootModel === undefined) {
 			throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
@@ -46,21 +60,29 @@ const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 			React.MouseEventHandler<HTMLButtonElement>
 		>(
 			(ev) => {
-				onClick?.(ev);
+				if (!props.asChild) {
+					props.onClick?.(ev);
+				}
 				component.onClick();
 			},
 			[rootModel],
 		);
 
 		return (
-			<button
-				ref={ref}
-				{...component.getAttributes()}
-				{...restProps}
-				onClick={handleClick}
+			<Slot
+				slotRef={ref}
+				props={props}
+				attributes={{
+					...component.getAttributes(),
+					onClick: handleClick,
+				}}
 			>
-				{children}
-			</button>
+				{({ref, children, attributes}) => (
+					<button ref={ref} {...attributes}>
+						{children}
+					</button>
+				)}
+			</Slot>
 		);
 	},
 );

@@ -1,16 +1,37 @@
 <script lang="ts" context="module">
-	export type DialogCloseProps = svelteHTML.IntrinsicElements['button'] & {
-		node?: HTMLButtonElement | undefined | null;
+	type DialogCloseProps<TAsChild extends true | undefined> =
+		svelteHTML.IntrinsicElements['button'] & {
+			node?: HTMLButtonElement | undefined | null;
+			asChild?: TAsChild;
+		};
+	type DialogCloseSlots<TAsChild extends true | undefined> = {
+		default: DefaultSlot<
+			TAsChild,
+			DialogCloseModelAttributes,
+			RefAction<{
+				click: [(ev: Event) => void, undefined];
+			}>
+		>;
 	};
 </script>
 
 <script lang="ts">
-	import {DialogCloseModel} from '@ally-ui/core-dialog';
-	import {createEventForwarder} from '@ally-ui/svelte';
+	import {
+		DialogCloseModel,
+		type DialogCloseModelAttributes,
+	} from '@ally-ui/core-dialog';
+	import {
+		createEventForwarder,
+		createRefAction,
+		type DefaultSlot,
+		type RefAction,
+	} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
 	import {getDialogRootModel} from './context';
 
-	type $$Props = DialogCloseProps;
+	type TAsChild = $$Generic<true | undefined>;
+	type $$Props = DialogCloseProps<TAsChild>;
+	type $$Slots = DialogCloseSlots<TAsChild>;
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {
@@ -38,15 +59,34 @@
 		}
 	}
 
+	function handleClick() {
+		component.onClick();
+	}
+
+	const ref = createRefAction((n) => (node = n), {
+		click: [handleClick, undefined],
+	});
+
+	export let asChild: TAsChild = undefined as TAsChild;
+
+	$: slotProps = {
+		props: component.getAttributes(),
+		ref,
+	} as any; // Workaround to allow conditional slot type.
+
 	const eventForwarder = createEventForwarder(get_current_component());
 </script>
 
-<button
-	bind:this={node}
-	{...component.getAttributes()}
-	{...$$restProps}
-	use:eventForwarder
-	on:click={() => component.onClick()}
->
-	<slot />
-</button>
+{#if asChild}
+	<slot {...slotProps} />
+{:else}
+	<button
+		bind:this={node}
+		{...component.getAttributes()}
+		{...$$restProps}
+		use:eventForwarder
+		on:click={() => component.onClick()}
+	>
+		<slot />
+	</button>
+{/if}

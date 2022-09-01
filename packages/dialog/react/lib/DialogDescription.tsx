@@ -1,16 +1,26 @@
-import {DialogDescriptionModel} from '@ally-ui/core-dialog';
-import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
+import {
+	DialogDescriptionModel,
+	type DialogDescriptionModelAttributes,
+} from '@ally-ui/core-dialog';
+import {
+	Slot,
+	SlottableProps,
+	useMultipleRefs,
+	useRunOnce,
+} from '@ally-ui/react';
 import React from 'react';
 import {useDialogRootModel} from './context';
 
-export interface DialogDescriptionProps
-	extends React.DetailedHTMLProps<
+export type DialogDescriptionProps = SlottableProps<
+	DialogDescriptionModelAttributes,
+	React.DetailedHTMLProps<
 		React.HTMLAttributes<HTMLParagraphElement>,
 		HTMLParagraphElement
-	> {}
+	>
+>;
 
 const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
-	({children, ...restProps}, forwardedRef) => {
+	(props, forwardedRef) => {
 		const rootModel = useDialogRootModel();
 		if (rootModel === undefined) {
 			throw new Error(
@@ -45,9 +55,13 @@ const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
 		return (
-			<p ref={ref} {...component.getAttributes()} {...restProps}>
-				{children}
-			</p>
+			<Slot slotRef={ref} props={props} attributes={component.getAttributes()}>
+				{({ref, attributes, children}) => (
+					<p ref={ref} {...attributes}>
+						{children}
+					</p>
+				)}
+			</Slot>
 		);
 	},
 );

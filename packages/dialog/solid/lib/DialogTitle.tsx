@@ -1,15 +1,17 @@
-import {DialogTitleModel} from '@ally-ui/core-dialog';
-import {combinedRef, createBindRef} from '@ally-ui/solid';
-import {JSX, onCleanup, onMount, splitProps} from 'solid-js';
+import {
+	DialogTitleModel,
+	DialogTitleModelAttributes,
+} from '@ally-ui/core-dialog';
+import {combinedRef, createBindRef, Slot, SlottableProps} from '@ally-ui/solid';
+import {JSX, onCleanup, onMount} from 'solid-js';
 import {useDialogRootModel} from './context';
 
-export interface DialogTitleProps
-	extends JSX.HTMLAttributes<HTMLParagraphElement> {
-	ref?: (node: HTMLDivElement) => void;
-}
+export type DialogTitleProps = SlottableProps<
+	DialogTitleModelAttributes,
+	JSX.HTMLAttributes<HTMLHeadingElement>
+>;
 
 export default function DialogTitle(props: DialogTitleProps) {
-	const [local, restProps] = splitProps(props, ['ref', 'children']);
 	const rootModel = useDialogRootModel();
 	if (rootModel === undefined) {
 		throw new Error('<Dialog.Title/> must be a child of `<Dialog.Root/>`');
@@ -33,11 +35,15 @@ export default function DialogTitle(props: DialogTitleProps) {
 			rootModel.bindComponent(id, node);
 		}
 	});
-	const ref = combinedRef(bindRef, local.ref);
+	const ref = combinedRef(bindRef, props.ref);
 
 	return (
-		<h1 ref={ref} {...component.getAttributes.bind(component)()} {...restProps}>
-			{local.children}
-		</h1>
+		<Slot ref={ref} props={props} attributes={component.getAttributes()}>
+			{(renderProps) => (
+				<h1 ref={renderProps.ref} {...renderProps.attributes()}>
+					{renderProps.children}
+				</h1>
+			)}
+		</Slot>
 	);
 }

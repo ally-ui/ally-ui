@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import {ref} from 'vue';
+import {ref, watchEffect} from 'vue';
 import Dialog from '../lib/main';
 
 const open = ref(true);
+const titleRef = ref<HTMLElement | null>(null);
+watchEffect(() => {
+	if (titleRef.value !== null) {
+		titleRef.value.style.color = 'gray';
+	}
+});
 </script>
 
 <template>
@@ -14,21 +20,29 @@ const open = ref(true);
 				<Dialog.Trigger>Edit profile</Dialog.Trigger>
 				<span v-if="open">Editing profile...</span>
 			</div>
-			<Dialog.Content>
-				<Dialog.Title>Edit profile</Dialog.Title>
-				<Dialog.Description>
-					Make changes to your profile here. Click save when you're done
-				</Dialog.Description>
-				<fieldset>
-					<label for="name">Name</label>
-					<input id="name" placeholder="Bryan Lee" />
-				</fieldset>
-				<fieldset>
-					<label for="username">Username</label>
-					<input id="username" placeholder="@bryanmylee" />
-				</fieldset>
-				<Dialog.Close>Save changes</Dialog.Close>
-				<Dialog.Close>x</Dialog.Close>
+			<Dialog.Content v-slot="props">
+				<section v-bind="props">
+					<Dialog.Title
+						as-child
+						v-slot="props"
+						:set-ref="(n) => (titleRef = n)"
+					>
+						<h2 v-bind="props">Edit profile</h2>
+					</Dialog.Title>
+					<Dialog.Description>
+						Make changes to your profile here. Click save when you're done
+					</Dialog.Description>
+					<fieldset>
+						<label for="name">Name</label>
+						<input id="name" placeholder="Bryan Lee" />
+					</fieldset>
+					<fieldset>
+						<label for="username">Username</label>
+						<input id="username" placeholder="@bryanmylee" />
+					</fieldset>
+					<Dialog.Close>Save changes</Dialog.Close>
+					<Dialog.Close>x</Dialog.Close>
+				</section>
 			</Dialog.Content>
 		</Dialog.Root>
 	</main>

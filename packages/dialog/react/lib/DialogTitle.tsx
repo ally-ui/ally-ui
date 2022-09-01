@@ -1,16 +1,26 @@
-import {DialogTitleModel} from '@ally-ui/core-dialog';
-import {useMultipleRefs, useRunOnce} from '@ally-ui/react';
+import {
+	DialogTitleModel,
+	type DialogTitleModelAttributes,
+} from '@ally-ui/core-dialog';
+import {
+	Slot,
+	SlottableProps,
+	useMultipleRefs,
+	useRunOnce,
+} from '@ally-ui/react';
 import React from 'react';
 import {useDialogRootModel} from './context';
 
-export interface DialogTitleProps
-	extends React.DetailedHTMLProps<
+export type DialogTitleProps = SlottableProps<
+	DialogTitleModelAttributes,
+	React.DetailedHTMLProps<
 		React.HTMLAttributes<HTMLHeadingElement>,
 		HTMLHeadingElement
-	> {}
+	>
+>;
 
 const DialogTitle = React.forwardRef<HTMLElement, DialogTitleProps>(
-	({children, ...restProps}, forwardedRef) => {
+	(props, forwardedRef) => {
 		const rootModel = useDialogRootModel();
 		if (rootModel === undefined) {
 			throw new Error('<Dialog.Title/> must be a child of `<Dialog.Root/>`');
@@ -43,9 +53,13 @@ const DialogTitle = React.forwardRef<HTMLElement, DialogTitleProps>(
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
 		return (
-			<h1 ref={ref} {...component.getAttributes()} {...restProps}>
-				{children}
-			</h1>
+			<Slot slotRef={ref} props={props} attributes={component.getAttributes()}>
+				{({ref, attributes, children}) => (
+					<h1 ref={ref} {...attributes}>
+						{children}
+					</h1>
+				)}
+			</Slot>
 		);
 	},
 );

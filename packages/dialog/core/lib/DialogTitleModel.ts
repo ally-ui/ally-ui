@@ -5,10 +5,15 @@ export interface DialogTitleModelOptions {}
 
 export interface DialogTitleModelState {}
 
+export interface DialogTitleModelAttributes {
+	id: string;
+}
+
 export class DialogTitleModel extends ComponentModel<
 	DialogRootModel,
 	DialogTitleModelOptions,
-	DialogTitleModelState
+	DialogTitleModelState,
+	DialogTitleModelAttributes
 > {
 	deriveInitialState(): DialogTitleModelState {
 		return {};
@@ -18,9 +23,9 @@ export class DialogTitleModel extends ComponentModel<
 		return 'title';
 	}
 
-	getAttributes() {
+	getAttributes(): DialogTitleModelAttributes {
 		return {
 			id: this.domId(),
-		} as const;
+		};
 	}
 }
