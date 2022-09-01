@@ -1,16 +1,16 @@
-export function createRefAction<TEventHandlerMap extends EventHandlerMap>(
-	bindNode: (node?: HTMLElement | null) => void,
-	eventHandlers: TEventHandlerMap,
+export function createRefAction<TEventHandlerMap extends EventHandlerMap = {}>(
+	setNode: (node?: HTMLElement | null) => void,
+	eventHandlers?: TEventHandlerMap,
 ): RefAction<TEventHandlerMap> {
-	const eventHandlerEntries = Object.entries(eventHandlers);
+	const eventHandlerEntries = Object.entries(eventHandlers || {});
 	const action: any = (node: HTMLElement) => {
-		bindNode(node);
+		setNode(node);
 		eventHandlerEntries.forEach(([event, [handler, options]]) => {
 			node.addEventListener(event, handler, options);
 		});
 		return {
 			destroy() {
-				bindNode(null);
+				setNode(null);
 				eventHandlerEntries.forEach(([event, [handler, options]]) => {
 					node.removeEventListener(event, handler, options);
 				});
@@ -45,7 +45,7 @@ interface ActionCleanup {
 	destroy(): void;
 }
 
-export type RefAction<TEventHandlerMap extends EventHandlerMap> = ((
+export type RefAction<TEventHandlerMap extends EventHandlerMap = {}> = ((
 	node: HTMLElement,
 ) => ActionCleanup) &
 	EventHandlers<TEventHandlerMap>;
