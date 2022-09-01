@@ -3,6 +3,14 @@ import {DialogTriggerModel} from '@ally-ui/core-dialog';
 import {inject, onMounted, onUnmounted, ref, watchEffect} from 'vue';
 import {DIALOG_ROOT_MODEL, DIALOG_ROOT_STATE} from './context';
 
+export type DialogTriggerProps = {
+	setRef?: (node: HTMLButtonElement | null) => void;
+	asChild?: true | undefined;
+};
+const props = withDefaults(defineProps<DialogTriggerProps>(), {
+	asChild: undefined,
+});
+
 const rootModel = inject(DIALOG_ROOT_MODEL);
 if (rootModel === undefined) {
 	throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
@@ -17,24 +25,39 @@ const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.getState());
 onMounted(() => rootModel.mountComponent(id));
 onUnmounted(() => rootModel.unmountComponent(id));
 
-const node = ref<HTMLElement | null>(null);
+const node = ref<HTMLButtonElement | null>(null);
+const setRef = (nodeValue: HTMLButtonElement | null) => {
+	node.value = nodeValue;
+};
 watchEffect(() => {
+	props.setRef?.(node.value);
 	if (node.value === null) {
 		rootModel.unbindComponent(id);
 	} else {
 		rootModel.bindComponent(id, node.value);
 	}
 });
+
+function handleClick() {
+	component.onClick();
+}
 </script>
 
 <template>
-	<button
-		ref="node"
+	<slot
+		v-if="props.asChild"
 		v-bind="{
 			...component.getAttributes(rootState),
+			onClick: handleClick,
 			...$attrs,
+			ref: setRef,
 		}"
-		@click="() => component.onClick()"
+	/>
+	<button
+		v-else
+		ref="node"
+		v-bind="{...component.getAttributes(rootState), ...$attrs}"
+		@click="handleClick"
 	>
 		<slot />
 	</button>
