@@ -24,19 +24,13 @@ export class DialogRootModel extends RootModel<
 	DialogRootModelState
 > {
 	constructor(id: string, initialOptions: DialogRootModelOptions) {
-		super(id, initialOptions);
+		super(id, initialOptions, {
+			open: initialOptions.initialOpen ?? false,
+			modal: initialOptions.modal ?? true,
+		});
 		if (this.initialState.open) {
 			this.#onOpenChangeEffect(true);
 		}
-	}
-
-	deriveInitialState(
-		initialOptions: DialogRootModelOptions,
-	): DialogRootModelState {
-		return {
-			open: initialOptions.initialOpen ?? false,
-			modal: initialOptions.modal ?? true,
-		};
 	}
 
 	watchBind(component: ComponentModel) {

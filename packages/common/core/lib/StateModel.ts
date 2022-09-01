@@ -20,8 +20,7 @@ export interface StateOptions<TState> {
  * The model is initialized with a set of initial options. These options can be
  * reactively updated by the state implementation with `setOptions`.
  */
-export abstract class StateModel<TOptions, TState> {
-	#options: TOptions;
+export abstract class StateModel<TState> {
 	initialState: TState;
 	#previousState: TState;
 	/**
@@ -31,15 +30,12 @@ export abstract class StateModel<TOptions, TState> {
 	#state: TState;
 	#stateOptions: StateOptions<TState>;
 
-	constructor(initialOptions: TOptions) {
-		this.#options = initialOptions;
-		this.initialState = this.deriveInitialState(initialOptions);
-		this.#previousState = this.initialState;
-		this.#state = this.initialState;
+	constructor(initialState: TState) {
+		this.initialState = initialState;
+		this.#previousState = initialState;
+		this.#state = initialState;
 		this.#stateOptions = {};
 	}
-
-	abstract deriveInitialState(initialOptions: TOptions): TState;
 
 	getStateOptions() {
 		return this.#stateOptions;
@@ -80,16 +76,4 @@ export abstract class StateModel<TOptions, TState> {
 	 * @param previousState The previous state.
 	 */
 	watchStateChange?(newState: TState, previousState: TState): void;
-
-	getOptions(): TOptions {
-		return this.#options;
-	}
-
-	setOptions(updater: Updater<TOptions>) {
-		if (updater instanceof Function) {
-			this.#options = updater(this.#options);
-		} else {
-			this.#options = updater;
-		}
-	}
 }

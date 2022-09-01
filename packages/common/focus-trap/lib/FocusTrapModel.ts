@@ -126,16 +126,12 @@ export class FocusTrapModel extends RootModel<
 	FocusTrapState
 > {
 	constructor(id: string, initialOptions: FocusTrapOptions) {
-		super(id, initialOptions);
+		super(id, initialOptions, {
+			active: initialOptions.initialActive ?? false,
+		});
 		if (this.getState().active) {
 			this.activate();
 		}
-	}
-
-	deriveInitialState(initialOptions: FocusTrapOptions): FocusTrapState {
-		return {
-			active: initialOptions.initialActive ?? false,
-		};
 	}
 
 	watchStateChange(newState: FocusTrapState, oldState: FocusTrapState) {

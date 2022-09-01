@@ -18,10 +18,6 @@ export class DialogTriggerModel extends ComponentModel<
 	DialogTriggerModelState,
 	DialogTriggerModelAttributes
 > {
-	deriveInitialState(): DialogTriggerModelState {
-		return {};
-	}
-
 	getType(): DialogComponentType {
 		return 'trigger';
 	}

@@ -6,15 +6,19 @@ export abstract class ComponentModel<
 	TOptions = any,
 	TState = any,
 	TAttributes = any,
-> extends StateModel<TOptions, TState> {
+> extends StateModel<TState> {
 	rootModel: TRootModel;
 	options: TOptions;
 	type: $ComponentTypeOf<TRootModel>;
 	mounted = false;
 	node?: HTMLElement;
 
-	constructor(rootModel: TRootModel, initialOptions: TOptions) {
-		super(initialOptions);
+	constructor(
+		rootModel: TRootModel,
+		initialOptions: TOptions,
+		initialState: TState = {} as TState,
+	) {
+		super(initialState);
 		this.rootModel = rootModel;
 		this.options = initialOptions;
 		this.type = this.getType();
