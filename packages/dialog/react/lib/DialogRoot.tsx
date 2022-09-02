@@ -19,10 +19,20 @@ export default function DialogRoot({
 	modal,
 	onOpenChange,
 	open,
+	clickOutsideDeactivates,
+	escapeDeactivates,
+	returnFocusTo,
 }: DialogRootProps) {
 	const id = React.useId();
 	const rootModel = useRunOnce(
-		() => new DialogRootModel(id, {initialOpen, modal}),
+		() =>
+			new DialogRootModel(id, {
+				initialOpen,
+				modal,
+				clickOutsideDeactivates,
+				escapeDeactivates,
+				returnFocusTo,
+			}),
 	);
 	const [rootState, setRootState] = React.useState(
 		() => rootModel.initialState,
