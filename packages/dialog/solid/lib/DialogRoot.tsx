@@ -30,6 +30,11 @@ export default function DialogRoot(props: DialogRootProps) {
 		internal: () => rootState.open,
 		onInternalChange: props.onOpenChange,
 	});
+	createSyncedOption({
+		option: () => props.modal,
+		onOptionChange: (modal) =>
+			setRootState((prevState) => ({...prevState, modal})),
+	});
 	createEffect(function onStateUpdate() {
 		rootModel.setState({...rootState});
 	});

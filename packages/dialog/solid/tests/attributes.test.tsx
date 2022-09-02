@@ -34,13 +34,6 @@ describe('content', () => {
 		expect(content).toHaveAttribute('aria-modal', 'true');
 	});
 
-	it('renders basic aria attributes for a non-modal dialog', () => {
-		render(() => <Attributes initialOpen modal={false} />);
-		const content = screen.getByTestId('content');
-		expect(content).toHaveAttribute('role', 'dialog');
-		expect(content).not.toHaveAttribute('aria-modal');
-	});
-
 	it('renders aria attributes that point to title and description', () => {
 		render(() => <Attributes initialOpen />);
 		const content = screen.getByTestId('content');
