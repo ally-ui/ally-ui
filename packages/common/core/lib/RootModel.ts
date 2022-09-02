@@ -1,12 +1,12 @@
 import type {ComponentModel} from './ComponentModel';
-import {StateModel} from './StateModel';
+import {ReactiveModel} from './ReactiveModel';
 import {findLastInMap} from './utils/map';
 
 export abstract class RootModel<
 	TComponentType extends string = any,
 	TOptions extends object = any,
 	TState extends object = any,
-> extends StateModel<TState> {
+> extends ReactiveModel<TState> {
 	id: string;
 	options: TOptions;
 
@@ -37,7 +37,7 @@ export abstract class RootModel<
 	deregisterComponent(componentId: string) {
 		const component = this.#components.get(componentId);
 		if (component === undefined) {
-			if (this.getStateOptions().debug) {
+			if (this.debug) {
 				console.error(`deregisterComponent(${componentId}), not found`);
 			}
 			return;
@@ -56,7 +56,7 @@ export abstract class RootModel<
 	mountComponent(componentId: string) {
 		const component = this.#components.get(componentId);
 		if (component === undefined) {
-			if (this.getStateOptions().debug) {
+			if (this.debug) {
 				console.error(`mountComponent(${componentId}), not initialized`);
 			}
 			return;
@@ -70,7 +70,7 @@ export abstract class RootModel<
 	unmountComponent(componentId: string) {
 		const component = this.#components.get(componentId);
 		if (component === undefined) {
-			if (this.getStateOptions().debug) {
+			if (this.debug) {
 				console.error(`unmountComponent(${componentId}), not found`);
 			}
 			return;
@@ -89,7 +89,7 @@ export abstract class RootModel<
 	bindComponent(componentId: string, node: HTMLElement) {
 		const component = this.#components.get(componentId);
 		if (component === undefined) {
-			if (this.getStateOptions().debug) {
+			if (this.debug) {
 				console.error(
 					`bindComponent(${componentId}, ${node}), not initialized`,
 				);
@@ -105,7 +105,7 @@ export abstract class RootModel<
 	unbindComponent(componentId: string) {
 		const component = this.#components.get(componentId);
 		if (component === undefined) {
-			if (this.getStateOptions().debug) {
+			if (this.debug) {
 				console.error(`unbindNode(${componentId}), not initialized`);
 			}
 			return;
