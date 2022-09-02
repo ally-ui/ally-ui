@@ -2,8 +2,7 @@ import {ComponentModel} from '@ally-ui/core';
 import type {
 	DialogComponentType,
 	DialogRootModel,
-	DialogRootModelOptions,
-	DialogRootModelReactive,
+	DialogRootModelState,
 } from './DialogRootModel';
 
 export interface DialogTriggerModelOptions {}
@@ -32,9 +31,7 @@ export class DialogTriggerModel extends ComponentModel<
 		return 'trigger';
 	}
 
-	getAttributes(
-		rootState: DialogRootModelOptions & DialogRootModelReactive,
-	): DialogTriggerModelAttributes {
+	getAttributes(rootState: DialogRootModelState): DialogTriggerModelAttributes {
 		return {
 			id: this.domId(),
 			'aria-haspopup': 'dialog',
