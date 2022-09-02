@@ -10,7 +10,7 @@ export interface CreateSyncedOptionOptions<TOption> {
 	/**
 	 * The internal option value. This should be derived from internal state.
 	 */
-	internal: Readable<TOption>;
+	internal?: Readable<TOption>;
 	/**
 	 * Called with the new external option's value when it changes.
 	 *
@@ -38,13 +38,13 @@ export function createSyncedOption<TOption>({
 		previousOption = $option;
 		onOptionChange($option);
 	});
-	const unsubcribeInternal = internal.subscribe(($internal) => {
+	const unsubcribeInternal = internal?.subscribe(($internal) => {
 		if (isWritable(option)) {
 			option.set($internal);
 		}
 	});
 	onDestroy(() => {
-		unsubcribeInternal();
+		unsubcribeInternal?.();
 		unsubcribeOption?.();
 	});
 }

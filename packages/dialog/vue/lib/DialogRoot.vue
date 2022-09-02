@@ -41,6 +41,10 @@ useSyncedOption({
 	internal: computed(() => rootState.value.open),
 	onInternalChange: (open) => emit('update:open', open),
 });
+useSyncedOption({
+	option: computed(() => props.modal),
+	onOptionChange: (modal) => (rootState.value = {...rootState.value, modal}),
+});
 watchEffect(function onStateUpdate() {
 	rootModel.setState(rootState.value);
 });

@@ -40,6 +40,11 @@ export default function DialogRoot({
 		internal: rootState.open,
 		onInternalChange: onOpenChange,
 	});
+	useSyncedOption({
+		option: modal,
+		onOptionChange: (modal) =>
+			setRootState((prevState) => ({...prevState, modal})),
+	});
 	React.useEffect(
 		function onStateUpdate() {
 			rootModel.setState(rootState);
