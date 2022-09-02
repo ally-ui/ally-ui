@@ -130,8 +130,8 @@ export class FocusTrapModel extends ReactiveModel<
 		}
 	}
 
-	watchStateChange(newState: FocusTrapState, oldState: FocusTrapState) {
-		if (newState.active !== oldState.active) {
+	watchStateChange(newState: FocusTrapState, prevState: FocusTrapState) {
+		if (newState.active !== prevState.active) {
 			this.#onActiveChangeEffect(newState.active);
 		}
 	}
@@ -320,8 +320,8 @@ export class FocusTrapModel extends ReactiveModel<
 		this.#watchEvents();
 		this.#trapFocus();
 		if (!this.state.active) {
-			this.requestStateUpdate?.((oldState) => ({
-				...oldState,
+			this.requestStateUpdate?.((prevState) => ({
+				...prevState,
 				active: true,
 			}));
 		}
@@ -331,8 +331,8 @@ export class FocusTrapModel extends ReactiveModel<
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
 		if (this.state.active) {
-			this.requestStateUpdate?.((oldState) => ({
-				...oldState,
+			this.requestStateUpdate?.((prevState) => ({
+				...prevState,
 				active: false,
 			}));
 		}

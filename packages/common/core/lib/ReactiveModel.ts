@@ -1,4 +1,4 @@
-export type Updater<TState> = ((oldState: TState) => TState) | TState;
+export type Updater<TState> = ((prevState: TState) => TState) | TState;
 
 /**
  * A base construct for a reactive state model that is decoupled from its state

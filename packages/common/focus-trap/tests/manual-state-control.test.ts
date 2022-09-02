@@ -52,7 +52,7 @@ it('activates if active is manually set to true', () => {
 		active: false,
 	});
 	trap = observableFocusTrap({container: trapElement}, manualTrapState);
-	manualTrapState.update((oldState) => ({...oldState, active: true}));
+	manualTrapState.update((prevState) => ({...prevState, active: true}));
 	expect(screen.getByTestId('inside-1')).toHaveFocus();
 });
 
@@ -63,6 +63,6 @@ it('deactivates if active is manually set to false', () => {
 		active: true,
 	});
 	trap = observableFocusTrap({container: trapElement}, manualTrapState);
-	manualTrapState.update((oldState) => ({...oldState, active: false}));
+	manualTrapState.update((prevState) => ({...prevState, active: false}));
 	expect(screen.getByTestId('inside-1')).not.toHaveFocus();
 });
