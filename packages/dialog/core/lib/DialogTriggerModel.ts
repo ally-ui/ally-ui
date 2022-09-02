@@ -1,9 +1,16 @@
-import {$StateOf, ComponentModel} from '@ally-ui/core';
-import type {DialogComponentType, DialogRootModel} from './DialogRootModel';
+import {ComponentModel} from '@ally-ui/core';
+import type {
+	DialogComponentType,
+	DialogRootModel,
+	DialogRootModelState,
+} from './DialogRootModel';
 
 export interface DialogTriggerModelOptions {}
 
-export interface DialogTriggerModelState {}
+export interface DialogTriggerModelReactive {}
+
+export type DialogTriggerModelState = DialogTriggerModelOptions &
+	DialogTriggerModelReactive;
 
 export interface DialogTriggerModelDerived {}
 
@@ -16,7 +23,6 @@ export interface DialogTriggerModelAttributes {
 
 export class DialogTriggerModel extends ComponentModel<
 	DialogRootModel,
-	DialogTriggerModelOptions,
 	DialogTriggerModelState,
 	DialogTriggerModelDerived,
 	DialogTriggerModelAttributes
@@ -25,9 +31,7 @@ export class DialogTriggerModel extends ComponentModel<
 		return 'trigger';
 	}
 
-	getAttributes(
-		rootState: $StateOf<DialogRootModel>,
-	): DialogTriggerModelAttributes {
+	getAttributes(rootState: DialogRootModelState): DialogTriggerModelAttributes {
 		return {
 			id: this.domId(),
 			'aria-haspopup': 'dialog',
@@ -37,7 +41,7 @@ export class DialogTriggerModel extends ComponentModel<
 	}
 
 	onClick() {
-		this.rootModel.getStateOptions().requestStateUpdate?.((prevState) => ({
+		this.rootModel.requestStateUpdate?.((prevState) => ({
 			...prevState,
 			open: true,
 		}));

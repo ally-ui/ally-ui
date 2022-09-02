@@ -24,6 +24,7 @@ afterEach(() => {
 it('activates if active state initializes as true', () => {
 	const trapElement = screen.getByTestId('trap');
 	const manualTrapState = writable<FocusTrapState>({
+		container: trapElement,
 		active: true,
 	});
 	trap = observableFocusTrap({container: trapElement}, manualTrapState);
@@ -33,6 +34,7 @@ it('activates if active state initializes as true', () => {
 it('deactivates if active state initializes as false', () => {
 	const trapElement = screen.getByTestId('trap');
 	const manualTrapState = writable<FocusTrapState>({
+		container: trapElement,
 		active: false,
 	});
 	trap = observableFocusTrap({container: trapElement}, manualTrapState);
@@ -42,19 +44,21 @@ it('deactivates if active state initializes as false', () => {
 it('activates if active is manually set to true', () => {
 	const trapElement = screen.getByTestId('trap');
 	const manualTrapState = writable<FocusTrapState>({
+		container: trapElement,
 		active: false,
 	});
 	trap = observableFocusTrap({container: trapElement}, manualTrapState);
-	manualTrapState.update((oldState) => ({...oldState, active: true}));
+	manualTrapState.update((prevState) => ({...prevState, active: true}));
 	expect(screen.getByTestId('inside-1')).toHaveFocus();
 });
 
 it('deactivates if active is manually set to false', () => {
 	const trapElement = screen.getByTestId('trap');
 	const manualTrapState = writable<FocusTrapState>({
+		container: trapElement,
 		active: true,
 	});
 	trap = observableFocusTrap({container: trapElement}, manualTrapState);
-	manualTrapState.update((oldState) => ({...oldState, active: false}));
+	manualTrapState.update((prevState) => ({...prevState, active: false}));
 	expect(screen.getByTestId('inside-1')).not.toHaveFocus();
 });

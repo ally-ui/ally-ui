@@ -3,7 +3,10 @@ import type {DialogComponentType, DialogRootModel} from './DialogRootModel';
 
 export interface DialogCloseModelOptions {}
 
-export interface DialogCloseModelState {}
+export interface DialogCloseModelReactive {}
+
+export type DialogCloseModelState = DialogCloseModelOptions &
+	DialogCloseModelReactive;
 
 export interface DialogCloseModelDerived {}
 
@@ -11,7 +14,6 @@ export interface DialogCloseModelAttributes {}
 
 export class DialogCloseModel extends ComponentModel<
 	DialogRootModel,
-	DialogCloseModelOptions,
 	DialogCloseModelState,
 	DialogCloseModelDerived,
 	DialogCloseModelAttributes
@@ -21,7 +23,7 @@ export class DialogCloseModel extends ComponentModel<
 	}
 
 	onClick() {
-		this.rootModel.getStateOptions().requestStateUpdate?.((prevState) => ({
+		this.rootModel.requestStateUpdate?.((prevState) => ({
 			...prevState,
 			open: false,
 		}));

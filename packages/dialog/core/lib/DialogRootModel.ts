@@ -11,22 +11,27 @@ export type DialogComponentType =
 export interface DialogRootModelOptions {
 	initialOpen?: boolean;
 	modal?: boolean;
+	clickOutsideDeactivates?: boolean | ((ev: MouseEvent) => boolean);
+	escapeDeactivates?: boolean | ((ev: KeyboardEvent) => boolean);
+	returnFocusTo?: HTMLElement | (() => HTMLElement | undefined);
 }
 
-export interface DialogRootModelState {
+export interface DialogRootModelReactive {
 	open: boolean;
-	modal: boolean;
 }
+
+export type DialogRootModelState = DialogRootModelOptions &
+	DialogRootModelReactive;
 
 export class DialogRootModel extends RootModel<
 	DialogComponentType,
-	DialogRootModelOptions,
 	DialogRootModelState
 > {
 	constructor(id: string, initialOptions: DialogRootModelOptions) {
-		super(id, initialOptions, {
-			open: initialOptions.initialOpen ?? false,
+		super(id, {
+			...initialOptions,
 			modal: initialOptions.modal ?? true,
+			open: initialOptions.initialOpen ?? false,
 		});
 		if (this.initialState.open) {
 			this.#onOpenChangeEffect(true);
@@ -53,10 +58,10 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 	}
 
 	watchStateChange(
-		newState: DialogRootModelState,
-		oldState: DialogRootModelState,
+		newState: DialogRootModelReactive,
+		prevState: DialogRootModelReactive,
 	) {
-		if (newState.open !== oldState.open) {
+		if (newState.open !== prevState.open) {
 			this.#onOpenChangeEffect(newState.open);
 		}
 	}
@@ -64,66 +69,65 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 	#waitingToOpen = false;
 	#contentTrap?: FocusTrapModel;
 	#onOpenChangeEffect(open: boolean) {
-		const handleOpen = () => {
-			const content = this.findComponent(
-				(c) => c.type === 'content' && c.node !== undefined,
-			);
-			if (content?.node === undefined) {
-				if (this.getStateOptions().debug) {
-					console.error(
-						`#onOpenChangeEffect(true), no content component with node`,
-					);
-				}
-				this.#waitingToOpen = true;
-				return;
-			}
-			this.#waitingToOpen = false;
-			this.#contentTrap = createFocusTrap(content.node);
-		};
-
-		const createFocusTrap = (contentElement: HTMLElement) => {
-			const getTriggerNode = () => {
-				const triggerComponent = this.findComponent(
-					(c) => c.type === 'trigger',
-				);
-				return triggerComponent?.node;
-			};
-			const contentTrap = new FocusTrapModel(this.id, {
-				container: contentElement,
-				initialActive: true,
-				returnFocusTo: getTriggerNode,
-			});
-			contentTrap.setStateOptions((prevOptions) => ({
-				...prevOptions,
-				requestStateUpdate: (updater) => {
-					this.getStateOptions().requestStateUpdate?.((oldState) => {
-						const newFocusTrapState =
-							updater instanceof Function
-								? updater({active: oldState.open})
-								: updater;
-						return {
-							...oldState,
-							open: newFocusTrapState.active,
-						};
-					});
-				},
-			}));
-			return contentTrap;
-		};
-
-		const handleClose = () => {
-			this.#waitingToOpen = false;
-			if (this.#contentTrap === undefined) {
-				return;
-			}
-			this.#contentTrap.deactivate();
-			this.#contentTrap = undefined;
-		};
-
 		if (open) {
-			handleOpen();
+			this.#onOpenChangeEffect__handleOpen();
 		} else {
-			handleClose();
+			this.#onOpenChangeEffect__handleClose();
 		}
 	}
+
+	#onOpenChangeEffect__handleOpen = () => {
+		const content = this.findComponent(
+			(c) => c.type === 'content' && c.node !== undefined,
+		);
+		if (content?.node === undefined) {
+			if (this.debug) {
+				console.error(
+					`#onOpenChangeEffect(true), no content component with node`,
+				);
+			}
+			this.#waitingToOpen = true;
+			return;
+		}
+		this.#waitingToOpen = false;
+		this.#contentTrap = this.#onOpenChangeEffect__createFocusTrap(content.node);
+	};
+
+	#onOpenChangeEffect__createFocusTrap = (contentElement: HTMLElement) => {
+		const contentTrap = new FocusTrapModel({
+			container: contentElement,
+			initialActive: true,
+			clickOutsideDeactivates: this.state.clickOutsideDeactivates,
+			escapeDeactivates: this.state.escapeDeactivates,
+			returnFocusTo:
+				this.state.returnFocusTo ?? this.#onOpenChangeEffect__getTriggerNode,
+		});
+		contentTrap.requestStateUpdate = (trapUpdater) => {
+			this.requestStateUpdate?.((prevState) => {
+				const trapState =
+					trapUpdater instanceof Function
+						? trapUpdater(contentTrap.state)
+						: trapUpdater;
+				return {
+					...prevState,
+					open: trapState.active,
+				};
+			});
+		};
+		return contentTrap;
+	};
+
+	#onOpenChangeEffect__getTriggerNode = () => {
+		const triggerComponent = this.findComponent((c) => c.type === 'trigger');
+		return triggerComponent?.node;
+	};
+
+	#onOpenChangeEffect__handleClose = () => {
+		this.#waitingToOpen = false;
+		if (this.#contentTrap === undefined) {
+			return;
+		}
+		this.#contentTrap.deactivate();
+		this.#contentTrap = undefined;
+	};
 }

@@ -28,7 +28,7 @@ it('disables on escape by default', async () => {
 	trap.activate();
 
 	await user.keyboard('{Esc}');
-	expect(trap.getState().active).toBe(false);
+	expect(trap.state.active).toBe(false);
 });
 
 it('disables on escape', async () => {
@@ -42,7 +42,7 @@ it('disables on escape', async () => {
 	trap.activate();
 
 	await user.keyboard('{Esc}');
-	expect(trap.getState().active).toBe(false);
+	expect(trap.state.active).toBe(false);
 });
 
 it('ignore escape', async () => {
@@ -56,7 +56,7 @@ it('ignore escape', async () => {
 	trap.activate();
 
 	await user.keyboard('{Esc}');
-	expect(trap.getState().active).toBe(true);
+	expect(trap.state.active).toBe(true);
 });
 
 it('disables on escape only with shift', async () => {
@@ -70,8 +70,8 @@ it('disables on escape only with shift', async () => {
 	trap.activate();
 
 	await user.keyboard('{Esc}');
-	expect(trap.getState().active).toBe(true);
+	expect(trap.state.active).toBe(true);
 
 	await user.keyboard('{Shift>}{Esc}{/Shift}');
-	expect(trap.getState().active).toBe(false);
+	expect(trap.state.active).toBe(false);
 });

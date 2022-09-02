@@ -1,4 +1,5 @@
 export * from './Slot';
+export * from './types';
 export * from './useLayoutPromise';
 export * from './useMultipleRefs';
 export * from './useRunOnce';

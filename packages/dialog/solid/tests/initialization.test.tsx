@@ -1,7 +1,7 @@
 import {cleanup, render, screen} from 'solid-testing-library';
-import Dialog from '../lib/main';
+import Dialog, {DialogRootProps} from '../lib/main';
 
-function Initialization(options: any) {
+function Initialization(options: DialogRootProps) {
 	return (
 		<Dialog.Root {...options}>
 			<Dialog.Trigger data-testid="trigger">open dialog</Dialog.Trigger>

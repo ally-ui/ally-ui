@@ -1,24 +1,9 @@
-import isEqual from 'lodash.isequal';
-
-export type Updater<TState> = ((oldState: TState) => TState) | TState;
-
-export interface StateOptions<TState> {
-	/**
-	 * Called by the core model when it **wants** to update state. It is up to
-	 * the state implementation to respond to the state update request and
-	 * trigger any side-effects e.g. updating the DOM.
-	 */
-	requestStateUpdate?: (updater: Updater<TState>) => void;
-	debug?: boolean;
-}
+export type Updater<TState> = ((prevState: TState) => TState) | TState;
 
 /**
  * A base construct for a stateful model that is decoupled from its state
  * implementation. This allows for bindings to a variety of state
  * implementations e.g. React `useState`, Svelte `writable`, and more.
- *
- * The model is initialized with a set of initial options. These options can be
- * reactively updated by the state implementation with `setOptions`.
  */
 export abstract class StateModel<TState> {
 	initialState: TState;
@@ -28,28 +13,21 @@ export abstract class StateModel<TState> {
 	 * implementation.
 	 */
 	#state: TState;
-	#stateOptions: StateOptions<TState>;
+	/**
+	 * Called by the core model when it **wants** to update state. It is up to
+	 * the state implementation to respond to the state update request and
+	 * trigger any side-effects e.g. updating the DOM.
+	 */
+	requestStateUpdate?: (updater: Updater<TState>) => void;
+	debug = false;
 
 	constructor(initialState: TState) {
 		this.initialState = initialState;
 		this.#previousState = initialState;
 		this.#state = initialState;
-		this.#stateOptions = {};
 	}
 
-	getStateOptions() {
-		return this.#stateOptions;
-	}
-
-	setStateOptions(updater: Updater<StateOptions<TState>>) {
-		if (updater instanceof Function) {
-			this.#stateOptions = updater(this.#stateOptions);
-		} else {
-			this.#stateOptions = updater;
-		}
-	}
-
-	getState(): TState {
+	get state(): TState {
 		return this.#state;
 	}
 
@@ -65,9 +43,7 @@ export abstract class StateModel<TState> {
 	setState(newState: TState) {
 		this.#previousState = this.#state;
 		this.#state = newState;
-		if (!isEqual(newState, this.#previousState)) {
-			this.watchStateChange?.(newState, this.#previousState);
-		}
+		this.watchStateChange?.(newState, this.#previousState);
 	}
 
 	/**

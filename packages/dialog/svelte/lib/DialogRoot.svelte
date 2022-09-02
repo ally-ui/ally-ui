@@ -1,13 +1,12 @@
 <script lang="ts" context="module">
-	export interface DialogRootProps extends DialogRootModelOptions {
-		open?: boolean;
-	}
+	type DialogRootProps = DialogRootModelOptions & Partial<DialogRootModelState>;
 </script>
 
 <script lang="ts">
 	import {
 		DialogRootModel,
 		type DialogRootModelOptions,
+		type DialogRootModelState,
 	} from '@ally-ui/core-dialog';
 	import {bindStore, createSyncedOption} from '@ally-ui/svelte';
 	import {derived, writable} from 'svelte/store';
@@ -29,16 +28,13 @@
 	const id = '0';
 	const rootModel = new DialogRootModel(id, {initialOpen, modal});
 	const rootState = writable(rootModel.initialState);
-	rootModel.setStateOptions((prevOptions) => ({
-		...prevOptions,
-		requestStateUpdate: (updater) => {
-			if (updater instanceof Function) {
-				rootState.update(updater);
-			} else {
-				rootState.set(updater);
-			}
-		},
-	}));
+	rootModel.requestStateUpdate = (updater) => {
+		if (updater instanceof Function) {
+			rootState.update(updater);
+		} else {
+			rootState.set(updater);
+		}
+	};
 	createSyncedOption({
 		option: openStore,
 		onOptionChange: ($open) =>

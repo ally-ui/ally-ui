@@ -28,7 +28,7 @@ it('ignores click inside', async () => {
 	trap.activate();
 
 	await user.click(screen.getByTestId('inside-1'));
-	expect(trap.getState().active).toBe(true);
+	expect(trap.state.active).toBe(true);
 });
 
 it('ignores click outside by default', async () => {
@@ -39,7 +39,7 @@ it('ignores click outside by default', async () => {
 	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.getState().active).toBe(true);
+	expect(trap.state.active).toBe(true);
 });
 
 it('ignores click outside', async () => {
@@ -53,7 +53,7 @@ it('ignores click outside', async () => {
 	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.getState().active).toBe(true);
+	expect(trap.state.active).toBe(true);
 });
 
 it('disables on click outside', async () => {
@@ -67,7 +67,7 @@ it('disables on click outside', async () => {
 	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.getState().active).toBe(false);
+	expect(trap.state.active).toBe(false);
 });
 
 it('disables on right click outside only with custom click handler', async () => {
@@ -81,11 +81,11 @@ it('disables on right click outside only with custom click handler', async () =>
 	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.getState().active).toBe(true);
+	expect(trap.state.active).toBe(true);
 
 	await user.pointer({
 		keys: '[MouseRight]',
 		target: screen.getByTestId('outside-1'),
 	});
-	expect(trap.getState().active).toBe(false);
+	expect(trap.state.active).toBe(false);
 });

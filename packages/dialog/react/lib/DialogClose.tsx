@@ -1,6 +1,6 @@
 import {
 	DialogCloseModel,
-	DialogCloseModelAttributes,
+	type DialogCloseModelAttributes,
 } from '@ally-ui/core-dialog';
 import {
 	Slot,

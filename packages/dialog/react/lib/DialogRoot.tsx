@@ -1,17 +1,19 @@
 import {
 	DialogRootModel,
 	type DialogRootModelOptions,
+	type DialogRootModelReactive,
 } from '@ally-ui/core-dialog';
-import {useRunOnce, useSyncedOption} from '@ally-ui/react';
+import {
+	useRunOnce,
+	useSyncedOption,
+	type ReactReactiveProps,
+} from '@ally-ui/react';
 import React from 'react';
 import {DialogRootModelContext, DialogRootStateContext} from './context';
 
-export interface DialogRootProps
-	extends React.PropsWithChildren,
-		DialogRootModelOptions {
-	open?: boolean;
-	onOpenChange?: (open: boolean) => void;
-}
+export type DialogRootProps = React.PropsWithChildren &
+	DialogRootModelOptions &
+	ReactReactiveProps<DialogRootModelReactive>;
 
 export default function DialogRoot({
 	children,
@@ -19,19 +21,26 @@ export default function DialogRoot({
 	modal,
 	onOpenChange,
 	open,
+	clickOutsideDeactivates,
+	escapeDeactivates,
+	returnFocusTo,
 }: DialogRootProps) {
 	const id = React.useId();
 	const rootModel = useRunOnce(
-		() => new DialogRootModel(id, {initialOpen, modal}),
+		() =>
+			new DialogRootModel(id, {
+				initialOpen,
+				modal,
+				clickOutsideDeactivates,
+				escapeDeactivates,
+				returnFocusTo,
+			}),
 	);
 	const [rootState, setRootState] = React.useState(
 		() => rootModel.initialState,
 	);
 	useRunOnce(() => {
-		rootModel.setStateOptions((prevOptions) => ({
-			...prevOptions,
-			requestStateUpdate: setRootState,
-		}));
+		rootModel.requestStateUpdate = setRootState;
 	});
 	useSyncedOption({
 		option: open,

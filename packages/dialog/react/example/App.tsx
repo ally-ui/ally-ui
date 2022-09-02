@@ -12,13 +12,19 @@ export default function App() {
 	return (
 		<main>
 			<h1>Ally UI React Dialog</h1>
-			<Dialog.Root open={open} onOpenChange={setOpen} initialOpen>
+			<Dialog.Root
+				open={open}
+				onOpenChange={setOpen}
+				initialOpen
+				escapeDeactivates={false}
+				clickOutsideDeactivates
+			>
 				<div>
 					<button onClick={() => setOpen((o) => !o)}>Manual toggle</button>
 					<Dialog.Trigger>Edit profile</Dialog.Trigger>
 					{open && <span>Editing profile...</span>}
 				</div>
-				<Dialog.Content asChild forceMount>
+				<Dialog.Content asChild>
 					{(props) => (
 						<section {...props}>
 							<Dialog.Title ref={titleRef} asChild>
