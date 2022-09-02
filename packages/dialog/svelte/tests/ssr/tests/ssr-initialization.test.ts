@@ -18,7 +18,7 @@ it('renders an initially closed dialog', () => {
 	expect(screen.queryByTestId('title')).toBeNull();
 	expect(screen.queryByTestId('description')).toBeNull();
 	expect(screen.queryByTestId('close')).toBeNull();
-});
+}, 10000);
 
 it('renders an initially opened dialog', () => {
 	document.body.innerHTML = rendered_open;
@@ -27,4 +27,4 @@ it('renders an initially opened dialog', () => {
 	expect(screen.queryByTestId('title')).not.toBeNull();
 	expect(screen.queryByTestId('description')).not.toBeNull();
 	expect(screen.queryByTestId('close')).not.toBeNull();
-});
+}, 10000);
