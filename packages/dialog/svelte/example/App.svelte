@@ -6,11 +6,26 @@
 	$: if (titleNode != null) {
 		titleNode.style.color = 'gray';
 	}
+	let outside = false;
+	let escape = true;
+	let returnFocus: HTMLElement | null = null;
 </script>
 
 <main>
+	<button on:click={() => (outside = !outside)} bind:this={returnFocus}>
+		Click outside {outside ? 'deactivates' : 'blocked'}
+	</button>
+	<button on:click={() => (escape = !escape)}>
+		Escape {escape ? 'deactivates' : 'blocked'}
+	</button>
 	<h1>Ally UI Svelte Dialog</h1>
-	<Dialog.Root bind:open>
+	<Dialog.Root
+		bind:open
+		initialOpen
+		clickOutsideDeactivates={outside}
+		escapeDeactivates={escape}
+		returnFocusTo={returnFocus ?? null}
+	>
 		<div>
 			<button on:click={() => (open = !open)}>Manual toggle</button>
 			<Dialog.Trigger>Edit profile</Dialog.Trigger>
@@ -18,7 +33,7 @@
 				<span>Editing profile...</span>
 			{/if}
 		</div>
-		<Dialog.Content asChild let:props let:ref forceMount>
+		<Dialog.Content asChild let:props let:ref>
 			<section {...props} use:ref>
 				<Dialog.Title bind:node={titleNode} asChild let:props let:ref>
 					<h2 {...props} use:ref>Edit profile</h2>

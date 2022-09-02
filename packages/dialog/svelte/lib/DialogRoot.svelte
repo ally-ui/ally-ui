@@ -15,6 +15,7 @@
 	type $$Props = DialogRootProps;
 
 	export let initialOpen: boolean | undefined = undefined;
+	// TODO #41 Remove unnecessary store overhead for each option.
 	export let open: boolean | undefined = undefined;
 	const openStore = writable(open);
 	const watchOpen = bindStore(openStore, (o) => (open = o));
@@ -23,6 +24,27 @@
 	const modalStore = writable(modal);
 	const watchModal = bindStore(modalStore, (m) => (modal = m));
 	$: watchModal(modal);
+	export let clickOutsideDeactivates: boolean | undefined = undefined;
+	const clickOutsideDeactivatesStore = writable(clickOutsideDeactivates);
+	const watchClickOutsideDeactivates = bindStore(
+		clickOutsideDeactivatesStore,
+		(c) => (clickOutsideDeactivates = c),
+	);
+	$: watchClickOutsideDeactivates(clickOutsideDeactivates);
+	export let escapeDeactivates: boolean | undefined = undefined;
+	const escapeDeactivatesStore = writable(escapeDeactivates);
+	const watchEscapeDeactivates = bindStore(
+		escapeDeactivatesStore,
+		(e) => (escapeDeactivates = e),
+	);
+	$: watchEscapeDeactivates(escapeDeactivates);
+	export let returnFocusTo: HTMLElement | undefined = undefined;
+	const returnFocusToStore = writable(returnFocusTo);
+	const watchReturnFocusTo = bindStore(
+		returnFocusToStore,
+		(r) => (returnFocusTo = r),
+	);
+	$: watchReturnFocusTo(returnFocusTo);
 
 	// TODO #19 Generate SSR-safe IDs.
 	const id = '0';
@@ -37,14 +59,32 @@
 	};
 	createSyncedOption({
 		option: openStore,
-		onOptionChange: ($open) =>
-			rootState.update((prevState) => ({...prevState, open: $open})),
-		internal: derived(rootState, ($state) => $state.open),
+		onOptionChange: (open) =>
+			rootState.update((prevState) => ({...prevState, open})),
+		internal: derived(rootState, ($rootState) => $rootState.open),
 	});
 	createSyncedOption({
 		option: modalStore,
-		onOptionChange: ($modal) =>
-			rootState.update((prevState) => ({...prevState, modal: $modal})),
+		onOptionChange: (modal) =>
+			rootState.update((prevState) => ({...prevState, modal})),
+	});
+	createSyncedOption({
+		option: clickOutsideDeactivatesStore,
+		onOptionChange: (clickOutsideDeactivates) =>
+			rootState.update((prevState) => ({
+				...prevState,
+				clickOutsideDeactivates,
+			})),
+	});
+	createSyncedOption({
+		option: escapeDeactivatesStore,
+		onOptionChange: (escapeDeactivates) =>
+			rootState.update((prevState) => ({...prevState, escapeDeactivates})),
+	});
+	createSyncedOption({
+		option: returnFocusToStore,
+		onOptionChange: (returnFocusTo) =>
+			rootState.update((prevState) => ({...prevState, returnFocusTo})),
 	});
 	$: rootModel.setState($rootState);
 
