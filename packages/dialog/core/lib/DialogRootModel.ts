@@ -11,6 +11,9 @@ export type DialogComponentType =
 export interface DialogRootModelOptions {
 	initialOpen?: boolean;
 	modal?: boolean;
+	clickOutsideDeactivates?: boolean | ((ev: MouseEvent) => boolean);
+	escapeDeactivates?: boolean | ((ev: KeyboardEvent) => boolean);
+	returnFocusTo?: HTMLElement | (() => HTMLElement | undefined);
 }
 
 export interface DialogRootModelState {
@@ -64,66 +67,68 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 	#waitingToOpen = false;
 	#contentTrap?: FocusTrapModel;
 	#onOpenChangeEffect(open: boolean) {
-		const handleOpen = () => {
-			const content = this.findComponent(
-				(c) => c.type === 'content' && c.node !== undefined,
-			);
-			if (content?.node === undefined) {
-				if (this.getStateOptions().debug) {
-					console.error(
-						`#onOpenChangeEffect(true), no content component with node`,
-					);
-				}
-				this.#waitingToOpen = true;
-				return;
-			}
-			this.#waitingToOpen = false;
-			this.#contentTrap = createFocusTrap(content.node);
-		};
-
-		const createFocusTrap = (contentElement: HTMLElement) => {
-			const getTriggerNode = () => {
-				const triggerComponent = this.findComponent(
-					(c) => c.type === 'trigger',
-				);
-				return triggerComponent?.node;
-			};
-			const contentTrap = new FocusTrapModel(this.id, {
-				container: contentElement,
-				initialActive: true,
-				returnFocusTo: getTriggerNode,
-			});
-			contentTrap.setStateOptions((prevOptions) => ({
-				...prevOptions,
-				requestStateUpdate: (updater) => {
-					this.getStateOptions().requestStateUpdate?.((oldState) => {
-						const newFocusTrapState =
-							updater instanceof Function
-								? updater({active: oldState.open})
-								: updater;
-						return {
-							...oldState,
-							open: newFocusTrapState.active,
-						};
-					});
-				},
-			}));
-			return contentTrap;
-		};
-
-		const handleClose = () => {
-			this.#waitingToOpen = false;
-			if (this.#contentTrap === undefined) {
-				return;
-			}
-			this.#contentTrap.deactivate();
-			this.#contentTrap = undefined;
-		};
-
 		if (open) {
-			handleOpen();
+			this.#onOpenChangeEffect__handleOpen();
 		} else {
-			handleClose();
+			this.#onOpenChangeEffect__handleClose();
 		}
 	}
+
+	#onOpenChangeEffect__handleOpen = () => {
+		const content = this.findComponent(
+			(c) => c.type === 'content' && c.node !== undefined,
+		);
+		if (content?.node === undefined) {
+			if (this.getStateOptions().debug) {
+				console.error(
+					`#onOpenChangeEffect(true), no content component with node`,
+				);
+			}
+			this.#waitingToOpen = true;
+			return;
+		}
+		this.#waitingToOpen = false;
+		this.#contentTrap = this.#onOpenChangeEffect__createFocusTrap(content.node);
+	};
+
+	#onOpenChangeEffect__createFocusTrap = (contentElement: HTMLElement) => {
+		const contentTrap = new FocusTrapModel(this.id, {
+			container: contentElement,
+			initialActive: true,
+			clickOutsideDeactivates: this.options.clickOutsideDeactivates,
+			escapeDeactivates: this.options.escapeDeactivates,
+			returnFocusTo:
+				this.options.returnFocusTo ?? this.#onOpenChangeEffect__getTriggerNode,
+		});
+		contentTrap.setStateOptions((prevOptions) => ({
+			...prevOptions,
+			requestStateUpdate: (updater) => {
+				this.getStateOptions().requestStateUpdate?.((oldState) => {
+					const newFocusTrapState =
+						updater instanceof Function
+							? updater({active: oldState.open})
+							: updater;
+					return {
+						...oldState,
+						open: newFocusTrapState.active,
+					};
+				});
+			},
+		}));
+		return contentTrap;
+	};
+
+	#onOpenChangeEffect__getTriggerNode = () => {
+		const triggerComponent = this.findComponent((c) => c.type === 'trigger');
+		return triggerComponent?.node;
+	};
+
+	#onOpenChangeEffect__handleClose = () => {
+		this.#waitingToOpen = false;
+		if (this.#contentTrap === undefined) {
+			return;
+		}
+		this.#contentTrap.deactivate();
+		this.#contentTrap = undefined;
+	};
 }
