@@ -1,4 +1,4 @@
-import {RootModel, type RootOptions} from '@ally-ui/core';
+import {RootModel} from '@ally-ui/core';
 
 function isEscapeEvent(ev: KeyboardEvent) {
 	return ev.key === 'Escape' || ev.key === 'Esc';
@@ -76,7 +76,7 @@ function getActualTarget(ev: Event) {
 		: ev.target;
 }
 
-export interface FocusTrapOptions extends RootOptions {
+export interface FocusTrapOptions {
 	/**
 	 * The container to trap focus within.
 	 */
