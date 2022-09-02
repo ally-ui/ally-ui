@@ -40,7 +40,7 @@
 	);
 	const id = component.getId();
 
-	const rootState = getDialogRootState() ?? readable(rootModel.getState());
+	const rootState = getDialogRootState() ?? readable(rootModel.state);
 	$: derivedState = component.deriveState($rootState);
 
 	onMount(() => {
