@@ -57,9 +57,9 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 
 	watchStateChange(
 		newState: DialogRootModelState,
-		oldState: DialogRootModelState,
+		prevState: DialogRootModelState,
 	) {
-		if (newState.open !== oldState.open) {
+		if (newState.open !== prevState.open) {
 			this.#onOpenChangeEffect(newState.open);
 		}
 	}
@@ -79,7 +79,7 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 			(c) => c.type === 'content' && c.node !== undefined,
 		);
 		if (content?.node === undefined) {
-			if (this.getStateOptions().debug) {
+			if (this.debug) {
 				console.error(
 					`#onOpenChangeEffect(true), no content component with node`,
 				);
@@ -92,7 +92,7 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 	};
 
 	#onOpenChangeEffect__createFocusTrap = (contentElement: HTMLElement) => {
-		const contentTrap = new FocusTrapModel(this.id, {
+		const contentTrap = new FocusTrapModel({
 			container: contentElement,
 			initialActive: true,
 			clickOutsideDeactivates: this.options.clickOutsideDeactivates,
@@ -100,21 +100,18 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 			returnFocusTo:
 				this.options.returnFocusTo ?? this.#onOpenChangeEffect__getTriggerNode,
 		});
-		contentTrap.setStateOptions((prevOptions) => ({
-			...prevOptions,
-			requestStateUpdate: (updater) => {
-				this.getStateOptions().requestStateUpdate?.((oldState) => {
-					const newFocusTrapState =
-						updater instanceof Function
-							? updater({active: oldState.open})
-							: updater;
-					return {
-						...oldState,
-						open: newFocusTrapState.active,
-					};
-				});
-			},
-		}));
+		contentTrap.requestStateUpdate = (trapUpdater) => {
+			this.requestStateUpdate?.((prevState) => {
+				const trapState =
+					trapUpdater instanceof Function
+						? trapUpdater(contentTrap.state)
+						: trapUpdater;
+				return {
+					...prevState,
+					open: trapState.active,
+				};
+			});
+		};
 		return contentTrap;
 	};
 

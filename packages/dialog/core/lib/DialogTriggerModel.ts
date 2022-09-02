@@ -37,7 +37,7 @@ export class DialogTriggerModel extends ComponentModel<
 	}
 
 	onClick() {
-		this.rootModel.getStateOptions().requestStateUpdate?.((prevState) => ({
+		this.rootModel.requestStateUpdate?.((prevState) => ({
 			...prevState,
 			open: true,
 		}));

@@ -21,7 +21,7 @@ export class DialogCloseModel extends ComponentModel<
 	}
 
 	onClick() {
-		this.rootModel.getStateOptions().requestStateUpdate?.((prevState) => ({
+		this.rootModel.requestStateUpdate?.((prevState) => ({
 			...prevState,
 			open: false,
 		}));
