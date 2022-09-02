@@ -1,17 +1,19 @@
 import {
 	DialogRootModel,
+	DialogRootModelState,
 	type DialogRootModelOptions,
 } from '@ally-ui/core-dialog';
-import {useRunOnce, useSyncedOption} from '@ally-ui/react';
+import {
+	useRunOnce,
+	useSyncedOption,
+	type ReactStateProps,
+} from '@ally-ui/react';
 import React from 'react';
 import {DialogRootModelContext, DialogRootStateContext} from './context';
 
-export interface DialogRootProps
-	extends React.PropsWithChildren,
-		DialogRootModelOptions {
-	open?: boolean;
-	onOpenChange?: (open: boolean) => void;
-}
+export type DialogRootProps = React.PropsWithChildren &
+	DialogRootModelOptions &
+	ReactStateProps<DialogRootModelState>;
 
 export default function DialogRoot({
 	children,
