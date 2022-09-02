@@ -4,11 +4,11 @@ export interface CreateSyncedOptionOptions<TOption> {
 	/**
 	 * An accessor to the external option value.
 	 */
-	option: Accessor<Exclude<TOption, Function> | undefined>;
+	option: Accessor<TOption | undefined>;
 	/**
 	 * An accessor to the internal option value. This should be derived from internal state.
 	 */
-	internal?: Accessor<Exclude<TOption, Function>>;
+	internal?: Accessor<TOption>;
 	/**
 	 * Called with the new external option's value when it changes.
 	 *
