@@ -15,13 +15,15 @@
 
 	type $$Props = DialogRootProps;
 
+	export let initialOpen: boolean | undefined = undefined;
 	export let open: boolean | undefined = undefined;
 	const openStore = writable(open);
 	const watchOpen = bindStore(openStore, (o) => (open = o));
 	$: watchOpen(open);
-
-	export let initialOpen: boolean | undefined = undefined;
 	export let modal: boolean | undefined = undefined;
+	const modalStore = writable(modal);
+	const watchModal = bindStore(modalStore, (m) => (modal = m));
+	$: watchModal(modal);
 
 	// TODO #19 Generate SSR-safe IDs.
 	const id = '0';
@@ -42,6 +44,11 @@
 		onOptionChange: ($open) =>
 			rootState.update((prevState) => ({...prevState, open: $open})),
 		internal: derived(rootState, ($state) => $state.open),
+	});
+	createSyncedOption({
+		option: modalStore,
+		onOptionChange: ($modal) =>
+			rootState.update((prevState) => ({...prevState, modal: $modal})),
 	});
 	$: rootModel.setState($rootState);
 
