@@ -1,6 +1,6 @@
 import {
-	DialogCloseModelAttributes,
 	DialogDescriptionModel,
+	type DialogCloseModelAttributes,
 } from '@ally-ui/core-dialog';
 import {combinedRef, createBindRef, Slot, SlottableProps} from '@ally-ui/solid';
 import {JSX, onCleanup, onMount} from 'solid-js';

@@ -1,7 +1,7 @@
 import {
 	DialogContentModel,
-	DialogContentModelAttributes,
-	DialogContentModelOptions,
+	type DialogContentModelAttributes,
+	type DialogContentModelOptions,
 } from '@ally-ui/core-dialog';
 import {
 	combinedRef,

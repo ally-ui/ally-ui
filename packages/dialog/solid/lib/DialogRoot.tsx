@@ -1,16 +1,16 @@
 import {
 	DialogRootModel,
-	DialogRootModelState,
 	type DialogRootModelOptions,
+	type DialogRootModelReactive,
 } from '@ally-ui/core-dialog';
-import {createSyncedOption, type SolidStateProps} from '@ally-ui/solid';
+import {createSyncedOption, type SolidReactiveProps} from '@ally-ui/solid';
 import {createEffect, ParentProps} from 'solid-js';
 import {createStore} from 'solid-js/store';
 import {DialogRootModelContext, DialogRootStateContext} from './context';
 
 export type DialogRootProps = ParentProps &
 	DialogRootModelOptions &
-	SolidStateProps<DialogRootModelState>;
+	SolidReactiveProps<DialogRootModelReactive>;
 
 export default function DialogRoot(props: DialogRootProps) {
 	const id = '0';

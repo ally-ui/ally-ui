@@ -1,6 +1,6 @@
 import {
 	DialogTriggerModel,
-	DialogTriggerModelAttributes,
+	type DialogTriggerModelAttributes,
 } from '@ally-ui/core-dialog';
 import {
 	combinedRef,

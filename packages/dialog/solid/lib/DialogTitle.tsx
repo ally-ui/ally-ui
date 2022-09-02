@@ -1,6 +1,6 @@
 import {
 	DialogTitleModel,
-	DialogTitleModelAttributes,
+	type DialogTitleModelAttributes,
 } from '@ally-ui/core-dialog';
 import {combinedRef, createBindRef, Slot, SlottableProps} from '@ally-ui/solid';
 import {JSX, onCleanup, onMount} from 'solid-js';
