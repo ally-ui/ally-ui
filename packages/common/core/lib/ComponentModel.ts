@@ -1,10 +1,10 @@
-import {ReactiveModel} from './ReactiveModel';
 import type {
 	$ComponentTypeOf,
 	$OptionsOf,
 	$StateOf,
 	RootModel,
 } from './RootModel';
+import {StateModel} from './StateModel';
 
 export abstract class ComponentModel<
 	TRootModel extends RootModel = any,
@@ -12,7 +12,7 @@ export abstract class ComponentModel<
 	TState extends object = any,
 	TDerived extends object = any,
 	TAttributes extends object = any,
-> extends ReactiveModel<TOptions & TState> {
+> extends StateModel<TOptions & TState> {
 	rootModel: TRootModel;
 	options: TOptions;
 	type: $ComponentTypeOf<TRootModel>;

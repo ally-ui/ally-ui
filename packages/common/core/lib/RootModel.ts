@@ -1,12 +1,12 @@
 import type {ComponentModel} from './ComponentModel';
-import {ReactiveModel} from './ReactiveModel';
+import {StateModel} from './StateModel';
 import {findLastInMap} from './utils/map';
 
 export abstract class RootModel<
 	TComponentType extends string = any,
 	TOptions extends object = any,
 	TState extends object = any,
-> extends ReactiveModel<TOptions & TState> {
+> extends StateModel<TOptions & TState> {
 	id: string;
 	options: TOptions;
 

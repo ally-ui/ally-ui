@@ -1,4 +1,4 @@
-import {ReactiveModel} from '@ally-ui/core';
+import {StateModel} from '@ally-ui/core';
 
 function isEscapeEvent(ev: KeyboardEvent) {
 	return ev.key === 'Escape' || ev.key === 'Esc';
@@ -120,7 +120,7 @@ export interface FocusTrapState {
 	active: boolean;
 }
 
-export class FocusTrapModel extends ReactiveModel<
+export class FocusTrapModel extends StateModel<
 	FocusTrapOptions & FocusTrapState
 > {
 	constructor(initialOptions: FocusTrapOptions) {

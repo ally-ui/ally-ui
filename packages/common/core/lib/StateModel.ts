@@ -4,11 +4,8 @@ export type Updater<TState> = ((prevState: TState) => TState) | TState;
  * A base construct for a reactive state model that is decoupled from its state
  * implementation. This allows for bindings to a variety of state
  * implementations e.g. React `useState`, Svelte `writable`, and more.
- *
- * The model is initialized with a set of initial options. These options can be
- * reactively updated by the state implementation with `setOptions`.
  */
-export abstract class ReactiveModel<TState> {
+export abstract class StateModel<TState> {
 	initialState: TState;
 	#previousState: TState;
 	/**
