@@ -1,4 +1,4 @@
-import {RootModel} from '@ally-ui/core';
+import {ReactiveModel} from '@ally-ui/core';
 
 function isEscapeEvent(ev: KeyboardEvent) {
 	return ev.key === 'Escape' || ev.key === 'Esc';
@@ -120,16 +120,12 @@ export interface FocusTrapState {
 	active: boolean;
 }
 
-export class FocusTrapModel extends RootModel<
-	string,
-	FocusTrapOptions,
-	FocusTrapState
+export class FocusTrapModel extends ReactiveModel<
+	FocusTrapOptions & FocusTrapState
 > {
-	constructor(id: string, initialOptions: FocusTrapOptions) {
-		super(id, initialOptions, {
-			active: initialOptions.initialActive ?? false,
-		});
-		if (this.getState().active) {
+	constructor(initialOptions: FocusTrapOptions) {
+		super({...initialOptions, active: initialOptions.initialActive ?? false});
+		if (this.state.active) {
 			this.activate();
 		}
 	}
@@ -156,7 +152,7 @@ export class FocusTrapModel extends RootModel<
 		}
 		const update = () => {
 			this.#focusableChildren = Array.from(
-				this.options.container.querySelectorAll(FOCUSABLE_SELECTORS.join(',')),
+				this.state.container.querySelectorAll(FOCUSABLE_SELECTORS.join(',')),
 			).filter(isHTMLElement);
 		};
 		update();
@@ -167,7 +163,7 @@ export class FocusTrapModel extends RootModel<
 			}
 		});
 
-		observer.observe(this.options.container, {
+		observer.observe(this.state.container, {
 			attributes: true,
 			childList: true,
 			subtree: true,
@@ -184,7 +180,7 @@ export class FocusTrapModel extends RootModel<
 		if (this.#unsubscribeEvents !== undefined) {
 			return;
 		}
-		this.options.container.addEventListener(
+		this.state.container.addEventListener(
 			'keydown',
 			this.#handleKey,
 			LISTENER_OPTIONS,
@@ -198,7 +194,7 @@ export class FocusTrapModel extends RootModel<
 		window.addEventListener('click', this.#handleClick, LISTENER_OPTIONS);
 
 		this.#unsubscribeEvents = () => {
-			this.options.container.removeEventListener(
+			this.state.container.removeEventListener(
 				'keydown',
 				this.#handleKey,
 				LISTENER_OPTIONS,
@@ -227,7 +223,7 @@ export class FocusTrapModel extends RootModel<
 		this.#previouslyFocused = document.activeElement ?? undefined;
 		this.#focusableChildren.at(0)?.focus();
 		this.#returnFocus = () => {
-			const {returnFocusTo} = this.options;
+			const {returnFocusTo} = this.state;
 			const elementToReturnFocusTo =
 				returnFocusTo instanceof Function ? returnFocusTo() : returnFocusTo;
 			const resolvedElement = elementToReturnFocusTo ?? this.#previouslyFocused;
@@ -250,7 +246,7 @@ export class FocusTrapModel extends RootModel<
 	};
 
 	#handleEsc = (ev: KeyboardEvent) => {
-		if (isValueOrHandler(this.options.escapeDeactivates ?? true, ev)) {
+		if (isValueOrHandler(this.state.escapeDeactivates ?? true, ev)) {
 			ev.preventDefault();
 			this.deactivate();
 		}
@@ -274,11 +270,11 @@ export class FocusTrapModel extends RootModel<
 	};
 
 	#handlePointerDown = (ev: MouseEvent) => {
-		if (isTargetContainedBy(getActualTarget(ev), this.options.container)) {
+		if (isTargetContainedBy(getActualTarget(ev), this.state.container)) {
 			return;
 		}
 		ev.preventDefault();
-		if (isValueOrHandler(this.options.clickOutsideDeactivates ?? false, ev)) {
+		if (isValueOrHandler(this.state.clickOutsideDeactivates ?? false, ev)) {
 			this.deactivate();
 		}
 	};
@@ -292,7 +288,7 @@ export class FocusTrapModel extends RootModel<
 		// Allow for touch gestures that spill out of the container element.
 		const touches = Array.from(ev.touches);
 		if (
-			touches.some((t) => isTargetContainedBy(t.target, this.options.container))
+			touches.some((t) => isTargetContainedBy(t.target, this.state.container))
 		) {
 			return;
 		}
@@ -301,7 +297,7 @@ export class FocusTrapModel extends RootModel<
 
 	#handleSingleTouch = (ev: TouchEvent) => {
 		const touch = ev.touches.item(0)!;
-		if (isTargetContainedBy(touch.target, this.options.container)) {
+		if (isTargetContainedBy(touch.target, this.state.container)) {
 			return;
 		}
 		ev.preventDefault();
@@ -309,10 +305,10 @@ export class FocusTrapModel extends RootModel<
 	};
 
 	#handleClick = (ev: MouseEvent) => {
-		if (isTargetContainedBy(getActualTarget(ev), this.options.container)) {
+		if (isTargetContainedBy(getActualTarget(ev), this.state.container)) {
 			return;
 		}
-		if (isValueOrHandler(this.options.clickOutsideDeactivates ?? false, ev)) {
+		if (isValueOrHandler(this.state.clickOutsideDeactivates ?? false, ev)) {
 			return;
 		}
 		ev.preventDefault();
@@ -323,8 +319,8 @@ export class FocusTrapModel extends RootModel<
 		this.#watchChildren();
 		this.#watchEvents();
 		this.#trapFocus();
-		if (!this.getState().active) {
-			this.getStateOptions().requestStateUpdate?.((oldState) => ({
+		if (!this.state.active) {
+			this.requestStateUpdate?.((oldState) => ({
 				...oldState,
 				active: true,
 			}));
@@ -334,8 +330,8 @@ export class FocusTrapModel extends RootModel<
 	deactivate() {
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
-		if (this.getState().active) {
-			this.getStateOptions().requestStateUpdate?.((oldState) => ({
+		if (this.state.active) {
+			this.requestStateUpdate?.((oldState) => ({
 				...oldState,
 				active: false,
 			}));
