@@ -18,7 +18,7 @@
 				<span>Editing profile...</span>
 			{/if}
 		</div>
-		<Dialog.Content asChild let:props let:ref>
+		<Dialog.Content asChild let:props let:ref forceMount>
 			<section {...props} use:ref>
 				<Dialog.Title bind:node={titleNode} asChild let:props let:ref>
 					<h2 {...props} use:ref>Edit profile</h2>

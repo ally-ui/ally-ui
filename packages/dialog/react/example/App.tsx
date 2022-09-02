@@ -18,7 +18,7 @@ export default function App() {
 					<Dialog.Trigger>Edit profile</Dialog.Trigger>
 					{open && <span>Editing profile...</span>}
 				</div>
-				<Dialog.Content asChild>
+				<Dialog.Content asChild forceMount>
 					{(props) => (
 						<section {...props}>
 							<Dialog.Title ref={titleRef} asChild>

@@ -5,6 +5,8 @@ export interface DialogDescriptionModelOptions {}
 
 export interface DialogDescriptionModelState {}
 
+export interface DialogDescriptionModelDerived {}
+
 export interface DialogDescriptionModelAttributes {
 	id: string;
 }
@@ -13,6 +15,7 @@ export class DialogDescriptionModel extends ComponentModel<
 	DialogRootModel,
 	DialogDescriptionModelOptions,
 	DialogDescriptionModelState,
+	DialogDescriptionModelDerived,
 	DialogDescriptionModelAttributes
 > {
 	getType(): DialogComponentType {

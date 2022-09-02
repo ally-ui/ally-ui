@@ -38,7 +38,7 @@ async function createTestServer() {
 				.end(rendered.html);
 		} catch (err: any) {
 			vite.ssrFixStacktrace(err);
-			console.log(err.stack);
+			console.error(err.stack);
 			response.status(500).end(err.stack);
 		}
 	});

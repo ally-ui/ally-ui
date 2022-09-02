@@ -1,9 +1,10 @@
 <script lang="ts" context="module">
 	type DialogContentProps<TAsChild extends true | undefined> =
-		svelteHTML.IntrinsicElements['div'] & {
-			node?: HTMLDivElement | undefined | null;
-			asChild?: TAsChild;
-		};
+		DialogContentModelOptions &
+			svelteHTML.IntrinsicElements['div'] & {
+				node?: HTMLDivElement | undefined | null;
+				asChild?: TAsChild;
+			};
 	type DialogContentSlots<TAsChild extends true | undefined> = {
 		default: DefaultSlot<TAsChild, DialogContentModelAttributes, RefAction>;
 	};
@@ -13,6 +14,7 @@
 	import {
 		DialogContentModel,
 		type DialogContentModelAttributes,
+		type DialogContentModelOptions,
 	} from '@ally-ui/core-dialog';
 	import {
 		createEventForwarder,
@@ -32,12 +34,14 @@
 	if (rootModel === undefined) {
 		throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 	}
+	export let forceMount: boolean | undefined = undefined;
 	const component = rootModel.registerComponent(
-		new DialogContentModel(rootModel, {}),
+		new DialogContentModel(rootModel, {forceMount}),
 	);
 	const id = component.getId();
 
 	const rootState = getDialogRootState() ?? readable(rootModel.getState());
+	$: derivedState = component.deriveState($rootState);
 
 	onMount(() => {
 		rootModel.mountComponent(id);
@@ -68,8 +72,7 @@
 	const eventForwarder = createEventForwarder(get_current_component());
 </script>
 
-<!-- TODO #30 Use derived state on content component. -->
-{#if $rootState.open}
+{#if derivedState.show}
 	{#if asChild}
 		<slot {...slotProps} />
 	{:else}

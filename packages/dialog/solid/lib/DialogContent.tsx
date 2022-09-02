@@ -1,6 +1,7 @@
 import {
 	DialogContentModel,
 	DialogContentModelAttributes,
+	DialogContentModelOptions,
 } from '@ally-ui/core-dialog';
 import {
 	combinedRef,
@@ -14,7 +15,8 @@ import {useDialogRootModel, useDialogRootState} from './context';
 export type DialogContentProps = SlottableProps<
 	DialogContentModelAttributes,
 	JSX.HTMLAttributes<HTMLDivElement>
->;
+> &
+	DialogContentModelOptions;
 
 export default function DialogContent(props: DialogContentProps) {
 	const rootModel = useDialogRootModel();
@@ -22,11 +24,12 @@ export default function DialogContent(props: DialogContentProps) {
 		throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 	}
 	const component = rootModel.registerComponent(
-		new DialogContentModel(rootModel, {}),
+		new DialogContentModel(rootModel, {forceMount: props.forceMount}),
 	);
 	const id = component.getId();
 
 	const rootState = useDialogRootState() ?? rootModel.getState();
+	const derivedState = () => component.deriveState(rootState);
 
 	onMount(() => {
 		rootModel.mountComponent(id);
@@ -43,12 +46,12 @@ export default function DialogContent(props: DialogContentProps) {
 				rootModel.bindComponent(id, node);
 			}
 		},
-		() => rootState.open,
+		() => derivedState().show,
 	);
 	const ref = combinedRef(bindRef, props.ref);
 
 	return (
-		<Show when={rootState.open}>
+		<Show when={derivedState().show}>
 			<Slot
 				ref={ref}
 				props={props}
