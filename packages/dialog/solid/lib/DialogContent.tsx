@@ -46,7 +46,7 @@ export default function DialogContent(props: DialogContentProps) {
 				rootModel.bindComponent(id, node);
 			}
 		},
-		() => rootState.open,
+		() => derivedState().show,
 	);
 	const ref = combinedRef(bindRef, props.ref);
 
