@@ -18,7 +18,7 @@ export default function App() {
 						<span>Editing profile...</span>
 					</Show>
 				</div>
-				<Dialog.Content asChild>
+				<Dialog.Content asChild forceMount>
 					{(props) => (
 						<section {...props()}>
 							<Dialog.Title ref={titleRef} asChild>
