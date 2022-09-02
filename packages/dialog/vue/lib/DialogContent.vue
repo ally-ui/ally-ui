@@ -22,7 +22,7 @@ const component = rootModel.registerComponent(
 );
 const id = component.getId();
 
-const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.getState());
+const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.state);
 const derivedState = computed(() => component.deriveState(rootState.value));
 
 onMounted(() => rootModel.mountComponent(id));

@@ -25,16 +25,13 @@ const rootModel = new DialogRootModel(id, {
 	modal: props.modal,
 });
 const rootState = ref(rootModel.initialState);
-rootModel.setStateOptions((prevOptions) => ({
-	...prevOptions,
-	requestStateUpdate: (updater) => {
-		if (updater instanceof Function) {
-			rootState.value = updater(rootState.value);
-		} else {
-			rootState.value = updater;
-		}
-	},
-}));
+rootModel.requestStateUpdate = (updater) => {
+	if (updater instanceof Function) {
+		rootState.value = updater(rootState.value);
+	} else {
+		rootState.value = updater;
+	}
+};
 useSyncedOption({
 	option: computed(() => props.open),
 	onOptionChange: (open) => (rootState.value = {...rootState.value, open}),

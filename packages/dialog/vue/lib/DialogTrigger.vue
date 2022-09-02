@@ -20,7 +20,7 @@ const component = rootModel.registerComponent(
 );
 const id = component.getId();
 
-const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.getState());
+const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.state);
 
 onMounted(() => rootModel.mountComponent(id));
 onUnmounted(() => rootModel.unmountComponent(id));
