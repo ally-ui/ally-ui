@@ -8,7 +8,7 @@ export interface UseSyncedOptionOptions<TOption> {
 	/**
 	 * A ref of the internal option value. This should be derived from internal state.
 	 */
-	internal: Ref<TOption>;
+	internal?: Ref<TOption>;
 	/**
 	 * Called with the new external option's value when it changes.
 	 *
@@ -48,6 +48,9 @@ export function useSyncedOption<TOption>({
 	});
 	watchEffect(function updateOption() {
 		if (option === undefined) {
+			return;
+		}
+		if (internal === undefined) {
 			return;
 		}
 		if (internal.value === previousOption) {
