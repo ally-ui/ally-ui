@@ -2,6 +2,7 @@ import {ComponentModel} from '@ally-ui/core';
 import type {
 	DialogComponentType,
 	DialogRootModel,
+	DialogRootModelOptions,
 	DialogRootModelState,
 } from './DialogRootModel';
 
@@ -35,13 +36,17 @@ export class DialogContentModel extends ComponentModel<
 		return 'content';
 	}
 
-	deriveState(rootState: DialogRootModelState): DialogContentModelDerived {
+	deriveState(
+		rootState: DialogRootModelState & DialogRootModelOptions,
+	): DialogContentModelDerived {
 		return {
 			show: this.options.forceMount || rootState.open,
 		};
 	}
 
-	getAttributes(rootState: DialogRootModelState): DialogContentModelAttributes {
+	getAttributes(
+		rootState: DialogRootModelState & DialogRootModelOptions,
+	): DialogContentModelAttributes {
 		return {
 			id: this.domId(),
 			role: 'dialog',

@@ -1,5 +1,10 @@
-import {$StateOf, ComponentModel} from '@ally-ui/core';
-import type {DialogComponentType, DialogRootModel} from './DialogRootModel';
+import {ComponentModel} from '@ally-ui/core';
+import type {
+	DialogComponentType,
+	DialogRootModel,
+	DialogRootModelOptions,
+	DialogRootModelState,
+} from './DialogRootModel';
 
 export interface DialogTriggerModelOptions {}
 
@@ -26,7 +31,7 @@ export class DialogTriggerModel extends ComponentModel<
 	}
 
 	getAttributes(
-		rootState: $StateOf<DialogRootModel>,
+		rootState: DialogRootModelOptions & DialogRootModelState,
 	): DialogTriggerModelAttributes {
 		return {
 			id: this.domId(),
