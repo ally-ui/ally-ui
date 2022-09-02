@@ -6,12 +6,12 @@ export abstract class RootModel<
 	TComponentType extends string = any,
 	TOptions extends object = any,
 	TState extends object = any,
-> extends ReactiveModel<TState> {
+> extends ReactiveModel<TOptions & TState> {
 	id: string;
 	options: TOptions;
 
 	constructor(id: string, initialOptions: TOptions, initialState: TState) {
-		super(initialState);
+		super({...initialOptions, ...initialState});
 		this.id = id;
 		this.options = initialOptions;
 	}

@@ -1,5 +1,10 @@
 import {ReactiveModel} from './ReactiveModel';
-import type {$ComponentTypeOf, $StateOf, RootModel} from './RootModel';
+import type {
+	$ComponentTypeOf,
+	$OptionsOf,
+	$StateOf,
+	RootModel,
+} from './RootModel';
 
 export abstract class ComponentModel<
 	TRootModel extends RootModel = any,
@@ -7,7 +12,7 @@ export abstract class ComponentModel<
 	TState extends object = any,
 	TDerived extends object = any,
 	TAttributes extends object = any,
-> extends ReactiveModel<TState> {
+> extends ReactiveModel<TOptions & TState> {
 	rootModel: TRootModel;
 	options: TOptions;
 	type: $ComponentTypeOf<TRootModel>;
@@ -19,7 +24,7 @@ export abstract class ComponentModel<
 		initialOptions: TOptions,
 		initialState: TState = {} as TState,
 	) {
-		super(initialState);
+		super({...initialOptions, ...initialState});
 		this.rootModel = rootModel;
 		this.options = initialOptions;
 		this.type = this.getType();
@@ -27,7 +32,10 @@ export abstract class ComponentModel<
 
 	abstract getType(): $ComponentTypeOf<TRootModel>;
 
-	deriveState?(_rootState?: $StateOf<TRootModel>, _state?: TState): TDerived;
+	deriveState?(
+		_rootState?: $OptionsOf<TRootModel> & $StateOf<TRootModel>,
+		_state?: TOptions & TState,
+	): TDerived;
 
 	getId() {
 		return this.getType();
@@ -38,8 +46,8 @@ export abstract class ComponentModel<
 	}
 
 	getAttributes(
-		_rootState?: $StateOf<TRootModel>,
-		_state?: TState,
+		_rootState?: $OptionsOf<TRootModel> & $StateOf<TRootModel>,
+		_state?: TOptions & TState,
 	): TAttributes {
 		return {} as TAttributes;
 	}
