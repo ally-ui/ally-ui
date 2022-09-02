@@ -114,6 +114,26 @@ export interface FocusTrapOptions {
 	 * Defaults to the previously focused element before the trap activated.
 	 */
 	returnFocusTo?: HTMLElement | (() => HTMLElement | undefined);
+	/**
+	 * Called when focus moves into the content after opening.
+	 */
+	onOpenAutoFocus?: () => void;
+	/**
+	 * Called when focus moves out of the content after closing.
+	 */
+	onCloseAutoFocus?: () => void;
+	/**
+	 * Called when the escape key is down.
+	 */
+	onEscapeKeyDown?: (ev: KeyboardEvent) => void;
+	/**
+	 * Called when a pointer event occurs outside of the content.
+	 */
+	onPointerDownOutside?: (ev: PointerEvent) => void;
+	/**
+	 * Called when an interaction (pointer or focus) occurs outside of the content.
+	 */
+	onInteractOutside?: (ev: MouseEvent | TouchEvent) => void;
 }
 
 export interface FocusTrapReactive {
@@ -180,13 +200,9 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		if (this.#unsubscribeEvents !== undefined) {
 			return;
 		}
-		this.state.container.addEventListener(
-			'keydown',
-			this.#handleKey,
-			LISTENER_OPTIONS,
-		);
+		window.addEventListener('keydown', this.#handleKey, LISTENER_OPTIONS);
 		window.addEventListener(
-			'mousedown',
+			'pointerdown',
 			this.#handlePointerDown,
 			LISTENER_OPTIONS,
 		);
@@ -194,13 +210,9 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		window.addEventListener('click', this.#handleClick, LISTENER_OPTIONS);
 
 		this.#unsubscribeEvents = () => {
-			this.state.container.removeEventListener(
-				'keydown',
-				this.#handleKey,
-				LISTENER_OPTIONS,
-			);
+			window.removeEventListener('keydown', this.#handleKey, LISTENER_OPTIONS);
 			window.removeEventListener(
-				'mousedown',
+				'pointerdown',
 				this.#handlePointerDown,
 				LISTENER_OPTIONS,
 			);
@@ -269,7 +281,7 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		}
 	};
 
-	#handlePointerDown = (ev: MouseEvent) => {
+	#handlePointerDown = (ev: PointerEvent) => {
 		if (isTargetContainedBy(getActualTarget(ev), this.state.container)) {
 			return;
 		}
