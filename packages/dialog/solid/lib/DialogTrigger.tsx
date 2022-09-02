@@ -31,7 +31,7 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 	);
 	const id = component.getId();
 
-	const rootState = useDialogRootState() ?? rootModel.getState();
+	const rootState = useDialogRootState() ?? rootModel.state;
 
 	onMount(() => {
 		rootModel.mountComponent(id);

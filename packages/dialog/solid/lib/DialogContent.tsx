@@ -28,7 +28,7 @@ export default function DialogContent(props: DialogContentProps) {
 	);
 	const id = component.getId();
 
-	const rootState = useDialogRootState() ?? rootModel.getState();
+	const rootState = useDialogRootState() ?? rootModel.state;
 	const derivedState = () => component.deriveState(rootState);
 
 	onMount(() => {
