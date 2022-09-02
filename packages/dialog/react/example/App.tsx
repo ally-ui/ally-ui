@@ -8,16 +8,28 @@ export default function App() {
 			node.style.color = 'gray';
 		}
 	}, []);
+	const [outside, setOutside] = React.useState(false);
+	const [escape, setEscape] = React.useState(true);
+	const [returnFocus, setReturnFocus] = React.useState<HTMLElement | null>(
+		null,
+	);
 
 	return (
 		<main>
+			<button onClick={() => setOutside((o) => !o)} ref={setReturnFocus}>
+				Click outside {outside ? 'deactivates' : 'blocked'}
+			</button>
+			<button onClick={() => setEscape((e) => !e)}>
+				Escape {escape ? 'deactivates' : 'blocked'}
+			</button>
 			<h1>Ally UI React Dialog</h1>
 			<Dialog.Root
 				open={open}
 				onOpenChange={setOpen}
 				initialOpen
-				escapeDeactivates={false}
-				clickOutsideDeactivates
+				clickOutsideDeactivates={outside}
+				escapeDeactivates={escape}
+				returnFocusTo={returnFocus ?? undefined}
 			>
 				<div>
 					<button onClick={() => setOpen((o) => !o)}>Manual toggle</button>

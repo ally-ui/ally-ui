@@ -6,11 +6,27 @@ export default function App() {
 	const titleRef = (node: HTMLElement) => {
 		node.style.color = 'gray';
 	};
+	const [outside, setOutside] = createSignal(false);
+	const [escape, setEscape] = createSignal(true);
+	const [returnFocus, setReturnFocus] = createSignal<HTMLElement | null>(null);
 
 	return (
 		<main>
+			<button onClick={() => setOutside((o) => !o)} ref={setReturnFocus}>
+				Click outside {outside() ? 'deactivates' : 'blocked'}
+			</button>
+			<button onClick={() => setEscape((e) => !e)}>
+				Escape {escape() ? 'deactivates' : 'blocked'}
+			</button>
 			<h1>Ally UI Solid Dialog</h1>
-			<Dialog.Root open={open()} onOpenChange={setOpen}>
+			<Dialog.Root
+				open={open()}
+				onOpenChange={setOpen}
+				initialOpen
+				clickOutsideDeactivates={outside()}
+				escapeDeactivates={escape()}
+				returnFocusTo={returnFocus() ?? undefined}
+			>
 				<div>
 					<button onClick={() => setOpen(!open())}>Manual toggle</button>
 					<Dialog.Trigger>Edit profile</Dialog.Trigger>
@@ -18,7 +34,7 @@ export default function App() {
 						<span>Editing profile...</span>
 					</Show>
 				</div>
-				<Dialog.Content asChild forceMount>
+				<Dialog.Content asChild>
 					{(props) => (
 						<section {...props()}>
 							<Dialog.Title ref={titleRef} asChild>

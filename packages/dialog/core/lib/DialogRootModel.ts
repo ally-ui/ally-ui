@@ -58,11 +58,34 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 	}
 
 	watchStateChange(
-		newState: DialogRootModelReactive,
-		prevState: DialogRootModelReactive,
+		{
+			open,
+			clickOutsideDeactivates,
+			escapeDeactivates,
+			returnFocusTo,
+		}: DialogRootModelState,
+		prevState: DialogRootModelState,
 	) {
-		if (newState.open !== prevState.open) {
-			this.#onOpenChangeEffect(newState.open);
+		if (open !== prevState.open) {
+			this.#onOpenChangeEffect(open);
+		}
+		if (clickOutsideDeactivates !== prevState.clickOutsideDeactivates) {
+			this.#contentTrap?.setState({
+				...this.#contentTrap.state,
+				clickOutsideDeactivates,
+			});
+		}
+		if (escapeDeactivates !== prevState.escapeDeactivates) {
+			this.#contentTrap?.setState({
+				...this.#contentTrap.state,
+				escapeDeactivates,
+			});
+		}
+		if (returnFocusTo !== prevState.returnFocusTo) {
+			this.#contentTrap?.setState({
+				...this.#contentTrap.state,
+				returnFocusTo,
+			});
 		}
 	}
 
