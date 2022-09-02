@@ -63,7 +63,7 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 
 	#waitingToOpen = false;
 	#contentTrap?: FocusTrapModel;
-	async #onOpenChangeEffect(open: boolean) {
+	#onOpenChangeEffect(open: boolean) {
 		const handleOpen = () => {
 			const content = this.findComponent(
 				(c) => c.type === 'content' && c.node !== undefined,
