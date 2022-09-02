@@ -8,7 +8,7 @@ export interface CreateSyncedOptionOptions<TOption> {
 	/**
 	 * An accessor to the internal option value. This should be derived from internal state.
 	 */
-	internal: Accessor<Exclude<TOption, Function>>;
+	internal?: Accessor<Exclude<TOption, Function>>;
 	/**
 	 * Called with the new external option's value when it changes.
 	 *
@@ -33,7 +33,11 @@ export function createSyncedOption<TOption>({
 	onInternalChange,
 }: CreateSyncedOptionOptions<TOption>) {
 	const untrackedOption = untrack(option);
-	if (untrackedOption !== undefined && untrackedOption !== untrack(internal)) {
+	if (
+		untrackedOption !== undefined &&
+		internal !== undefined &&
+		untrackedOption !== untrack(internal)
+	) {
 		onOptionChange(untrackedOption);
 	}
 	let previousOption = untrackedOption;
@@ -54,7 +58,9 @@ export function createSyncedOption<TOption>({
 	);
 	createEffect(
 		function updateOption() {
-			onInternalChange?.(internal());
+			if (internal !== undefined) {
+				onInternalChange?.(internal());
+			}
 		},
 		[internal],
 	);
