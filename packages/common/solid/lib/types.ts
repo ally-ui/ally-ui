@@ -1,11 +1,13 @@
 export type CallbackRef<TInstance> = (instance: TInstance) => void;
 
-export type SolidStateProps<TState> = Partial<
-	TState & SolidChangeHandlers<TState>
+export type SolidReactiveProps<TReactive> = Partial<
+	TReactive & SolidChangeHandlers<TReactive>
 >;
 
-type SolidChangeHandlers<TState> = {
-	[TKey in keyof TState as ChangeHandler<TKey>]: (value: TState[TKey]) => void;
+type SolidChangeHandlers<TReactive> = {
+	[TKey in keyof TReactive as ChangeHandler<TKey>]: (
+		value: TReactive[TKey],
+	) => void;
 };
 
 type ChangeHandler<TKey> = `on${TKey extends string

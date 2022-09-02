@@ -1,9 +1,11 @@
-export type ReactStateProps<TState> = Partial<
-	TState & ReactChangeHandlers<TState>
+export type ReactReactiveProps<TReactive> = Partial<
+	TReactive & ReactChangeHandlers<TReactive>
 >;
 
-type ReactChangeHandlers<TState> = {
-	[TKey in keyof TState as ChangeHandler<TKey>]: (value: TState[TKey]) => void;
+type ReactChangeHandlers<TReactive> = {
+	[TKey in keyof TReactive as ChangeHandler<TKey>]: (
+		value: TReactive[TKey],
+	) => void;
 };
 
 type ChangeHandler<TKey> = `on${TKey extends string

@@ -13,7 +13,7 @@ import {
  */
 export function observableFocusTrap(
 	options: FocusTrapOptions,
-	manualState?: Writable<FocusTrapOptions & FocusTrapState>,
+	manualState?: Writable<FocusTrapState>,
 ): FocusTrapModel {
 	const trap = new FocusTrapModel(options);
 

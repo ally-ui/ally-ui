@@ -3,7 +3,10 @@ import type {DialogComponentType, DialogRootModel} from './DialogRootModel';
 
 export interface DialogDescriptionModelOptions {}
 
-export interface DialogDescriptionModelState {}
+export interface DialogDescriptionModelReactive {}
+
+export type DialogDescriptionModelState = DialogDescriptionModelOptions &
+	DialogDescriptionModelReactive;
 
 export interface DialogDescriptionModelDerived {}
 
@@ -13,7 +16,6 @@ export interface DialogDescriptionModelAttributes {
 
 export class DialogDescriptionModel extends ComponentModel<
 	DialogRootModel,
-	DialogDescriptionModelOptions,
 	DialogDescriptionModelState,
 	DialogDescriptionModelDerived,
 	DialogDescriptionModelAttributes

@@ -4,16 +4,13 @@ import {findLastInMap} from './utils/map';
 
 export abstract class RootModel<
 	TComponentType extends string = any,
-	TOptions extends object = any,
 	TState extends object = any,
-> extends StateModel<TOptions & TState> {
+> extends StateModel<TState> {
 	id: string;
-	options: TOptions;
 
-	constructor(id: string, initialOptions: TOptions, initialState: TState) {
-		super({...initialOptions, ...initialState});
+	constructor(id: string, initialState: TState) {
+		super(initialState);
 		this.id = id;
-		this.options = initialOptions;
 	}
 
 	#components = new Map<string, ComponentModel>();
@@ -126,9 +123,9 @@ export abstract class RootModel<
 
 	findComponent(
 		predicate: (
-			component: ComponentModel<RootModel<TComponentType, TOptions, TState>>,
+			component: ComponentModel<RootModel<TComponentType, TState>>,
 		) => boolean,
-	): ComponentModel<RootModel<TComponentType, TOptions, TState>> | undefined {
+	): ComponentModel<RootModel<TComponentType, TState>> | undefined {
 		return findLastInMap(this.#components, predicate);
 	}
 }
@@ -139,15 +136,7 @@ export type $ComponentTypeOf<TRootModel> = TRootModel extends RootModel<
 	? TComponentType
 	: never;
 
-export type $OptionsOf<TRootModel> = TRootModel extends RootModel<
-	any,
-	infer TOptions
->
-	? TOptions
-	: never;
-
 export type $StateOf<TRootModel> = TRootModel extends RootModel<
-	any,
 	any,
 	infer TState
 >

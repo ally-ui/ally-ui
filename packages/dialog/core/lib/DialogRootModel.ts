@@ -16,26 +16,23 @@ export interface DialogRootModelOptions {
 	returnFocusTo?: HTMLElement | (() => HTMLElement | undefined);
 }
 
-export interface DialogRootModelState {
+export interface DialogRootModelReactive {
 	open: boolean;
 }
 
+export type DialogRootModelState = DialogRootModelOptions &
+	DialogRootModelReactive;
+
 export class DialogRootModel extends RootModel<
 	DialogComponentType,
-	DialogRootModelOptions,
 	DialogRootModelState
 > {
 	constructor(id: string, initialOptions: DialogRootModelOptions) {
-		super(
-			id,
-			{
-				...initialOptions,
-				modal: initialOptions.modal ?? true,
-			},
-			{
-				open: initialOptions.initialOpen ?? false,
-			},
-		);
+		super(id, {
+			...initialOptions,
+			modal: initialOptions.modal ?? true,
+			open: initialOptions.initialOpen ?? false,
+		});
 		if (this.initialState.open) {
 			this.#onOpenChangeEffect(true);
 		}
@@ -61,8 +58,8 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 	}
 
 	watchStateChange(
-		newState: DialogRootModelState,
-		prevState: DialogRootModelState,
+		newState: DialogRootModelReactive,
+		prevState: DialogRootModelReactive,
 	) {
 		if (newState.open !== prevState.open) {
 			this.#onOpenChangeEffect(newState.open);
@@ -100,10 +97,10 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 		const contentTrap = new FocusTrapModel({
 			container: contentElement,
 			initialActive: true,
-			clickOutsideDeactivates: this.options.clickOutsideDeactivates,
-			escapeDeactivates: this.options.escapeDeactivates,
+			clickOutsideDeactivates: this.state.clickOutsideDeactivates,
+			escapeDeactivates: this.state.escapeDeactivates,
 			returnFocusTo:
-				this.options.returnFocusTo ?? this.#onOpenChangeEffect__getTriggerNode,
+				this.state.returnFocusTo ?? this.#onOpenChangeEffect__getTriggerNode,
 		});
 		contentTrap.requestStateUpdate = (trapUpdater) => {
 			this.requestStateUpdate?.((prevState) => {

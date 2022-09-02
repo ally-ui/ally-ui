@@ -116,13 +116,13 @@ export interface FocusTrapOptions {
 	returnFocusTo?: HTMLElement | (() => HTMLElement | undefined);
 }
 
-export interface FocusTrapState {
+export interface FocusTrapReactive {
 	active: boolean;
 }
 
-export class FocusTrapModel extends StateModel<
-	FocusTrapOptions & FocusTrapState
-> {
+export type FocusTrapState = FocusTrapOptions & FocusTrapReactive;
+
+export class FocusTrapModel extends StateModel<FocusTrapState> {
 	constructor(initialOptions: FocusTrapOptions) {
 		super({...initialOptions, active: initialOptions.initialActive ?? false});
 		if (this.state.active) {

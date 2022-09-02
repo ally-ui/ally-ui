@@ -3,12 +3,15 @@ import type {
 	DialogComponentType,
 	DialogRootModel,
 	DialogRootModelOptions,
-	DialogRootModelState,
+	DialogRootModelReactive,
 } from './DialogRootModel';
 
 export interface DialogTriggerModelOptions {}
 
-export interface DialogTriggerModelState {}
+export interface DialogTriggerModelReactive {}
+
+export type DialogTriggerModelState = DialogTriggerModelOptions &
+	DialogTriggerModelReactive;
 
 export interface DialogTriggerModelDerived {}
 
@@ -21,7 +24,6 @@ export interface DialogTriggerModelAttributes {
 
 export class DialogTriggerModel extends ComponentModel<
 	DialogRootModel,
-	DialogTriggerModelOptions,
 	DialogTriggerModelState,
 	DialogTriggerModelDerived,
 	DialogTriggerModelAttributes
@@ -31,7 +33,7 @@ export class DialogTriggerModel extends ComponentModel<
 	}
 
 	getAttributes(
-		rootState: DialogRootModelOptions & DialogRootModelState,
+		rootState: DialogRootModelOptions & DialogRootModelReactive,
 	): DialogTriggerModelAttributes {
 		return {
 			id: this.domId(),

@@ -3,14 +3,17 @@ import type {
 	DialogComponentType,
 	DialogRootModel,
 	DialogRootModelOptions,
-	DialogRootModelState,
+	DialogRootModelReactive,
 } from './DialogRootModel';
 
 export interface DialogContentModelOptions {
 	forceMount?: boolean;
 }
 
-export interface DialogContentModelState {}
+export interface DialogContentModelReactive {}
+
+export type DialogContentModelState = DialogContentModelOptions &
+	DialogContentModelReactive;
 
 export interface DialogContentModelDerived {
 	show: boolean;
@@ -27,7 +30,6 @@ export interface DialogContentModelAttributes {
 
 export class DialogContentModel extends ComponentModel<
 	DialogRootModel,
-	DialogContentModelOptions,
 	DialogContentModelState,
 	DialogContentModelDerived,
 	DialogContentModelAttributes
@@ -37,15 +39,15 @@ export class DialogContentModel extends ComponentModel<
 	}
 
 	deriveState(
-		rootState: DialogRootModelState & DialogRootModelOptions,
+		rootState: DialogRootModelReactive & DialogRootModelOptions,
 	): DialogContentModelDerived {
 		return {
-			show: this.options.forceMount || rootState.open,
+			show: this.state.forceMount || rootState.open,
 		};
 	}
 
 	getAttributes(
-		rootState: DialogRootModelState & DialogRootModelOptions,
+		rootState: DialogRootModelReactive & DialogRootModelOptions,
 	): DialogContentModelAttributes {
 		return {
 			id: this.domId(),

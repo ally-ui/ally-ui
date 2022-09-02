@@ -3,7 +3,10 @@ import type {DialogComponentType, DialogRootModel} from './DialogRootModel';
 
 export interface DialogTitleModelOptions {}
 
-export interface DialogTitleModelState {}
+export interface DialogTitleModelReactive {}
+
+export type DialogTitleModelState = DialogTitleModelOptions &
+	DialogTitleModelReactive;
 
 export interface DialogTitleModelDerived {}
 
@@ -13,7 +16,6 @@ export interface DialogTitleModelAttributes {
 
 export class DialogTitleModel extends ComponentModel<
 	DialogRootModel,
-	DialogTitleModelOptions,
 	DialogTitleModelState,
 	DialogTitleModelDerived,
 	DialogTitleModelAttributes
