@@ -1,5 +1,3 @@
-import isEqual from 'lodash.isequal';
-
 export type Updater<TState> = ((oldState: TState) => TState) | TState;
 
 export interface StateOptions<TState> {
@@ -65,9 +63,7 @@ export abstract class StateModel<TState> {
 	setState(newState: TState) {
 		this.#previousState = this.#state;
 		this.#state = newState;
-		if (!isEqual(newState, this.#previousState)) {
-			this.watchStateChange?.(newState, this.#previousState);
-		}
+		this.watchStateChange?.(newState, this.#previousState);
 	}
 
 	/**
