@@ -18,7 +18,6 @@ export interface DialogRootModelOptions {
 
 export interface DialogRootModelState {
 	open: boolean;
-	modal: boolean;
 }
 
 export class DialogRootModel extends RootModel<
@@ -27,10 +26,16 @@ export class DialogRootModel extends RootModel<
 	DialogRootModelState
 > {
 	constructor(id: string, initialOptions: DialogRootModelOptions) {
-		super(id, initialOptions, {
-			open: initialOptions.initialOpen ?? false,
-			modal: initialOptions.modal ?? true,
-		});
+		super(
+			id,
+			{
+				...initialOptions,
+				modal: initialOptions.modal ?? true,
+			},
+			{
+				open: initialOptions.initialOpen ?? false,
+			},
+		);
 		if (this.initialState.open) {
 			this.#onOpenChangeEffect(true);
 		}
