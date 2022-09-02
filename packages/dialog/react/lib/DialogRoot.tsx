@@ -17,10 +17,10 @@ export type DialogRootProps = React.PropsWithChildren &
 
 export default function DialogRoot({
 	children,
+	open,
+	onOpenChange,
 	initialOpen,
 	modal,
-	onOpenChange,
-	open,
 	clickOutsideDeactivates,
 	escapeDeactivates,
 	returnFocusTo,
@@ -53,6 +53,21 @@ export default function DialogRoot({
 		option: modal,
 		onOptionChange: (modal) =>
 			setRootState((prevState) => ({...prevState, modal})),
+	});
+	useSyncedOption({
+		option: clickOutsideDeactivates,
+		onOptionChange: (clickOutsideDeactivates) =>
+			setRootState((prevState) => ({...prevState, clickOutsideDeactivates})),
+	});
+	useSyncedOption({
+		option: escapeDeactivates,
+		onOptionChange: (escapeDeactivates) =>
+			setRootState((prevState) => ({...prevState, escapeDeactivates})),
+	});
+	useSyncedOption({
+		option: returnFocusTo,
+		onOptionChange: (returnFocusTo) =>
+			setRootState((prevState) => ({...prevState, returnFocusTo})),
 	});
 	React.useEffect(
 		function onStateUpdate() {
