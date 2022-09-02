@@ -1,19 +1,19 @@
 import {
 	DialogRootModel,
-	DialogRootModelState,
 	type DialogRootModelOptions,
+	type DialogRootModelReactive,
 } from '@ally-ui/core-dialog';
 import {
 	useRunOnce,
 	useSyncedOption,
-	type ReactStateProps,
+	type ReactReactiveProps,
 } from '@ally-ui/react';
 import React from 'react';
 import {DialogRootModelContext, DialogRootStateContext} from './context';
 
 export type DialogRootProps = React.PropsWithChildren &
 	DialogRootModelOptions &
-	ReactStateProps<DialogRootModelState>;
+	ReactReactiveProps<DialogRootModelReactive>;
 
 export default function DialogRoot({
 	children,
