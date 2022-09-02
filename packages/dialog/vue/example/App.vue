@@ -9,18 +9,33 @@ watchEffect(() => {
 		titleRef.value.style.color = 'gray';
 	}
 });
+const outside = ref(false);
+const escape = ref(true);
+const returnFocus = ref<HTMLElement | null>(null);
 </script>
 
 <template>
 	<main>
+		<button @click="() => (outside = !outside)" ref="returnFocus">
+			Click outside {{ outside ? 'deactivates' : 'blocked' }}
+		</button>
+		<button @click="() => (escape = !escape)">
+			Escape {{ escape ? 'deactivates' : 'blocked' }}
+		</button>
 		<h1>Ally UI Vue Dialog</h1>
-		<Dialog.Root v-model:open="open">
+		<Dialog.Root
+			v-model:open="open"
+			initial-open
+			:click-outside-deactivates="outside"
+			:escape-deactivates="escape"
+			:return-focus-to="returnFocus ?? undefined"
+		>
 			<div>
 				<button @click="() => (open = !open)">Manual toggle</button>
 				<Dialog.Trigger>Edit profile</Dialog.Trigger>
 				<span v-if="open">Editing profile...</span>
 			</div>
-			<Dialog.Content as-child v-slot="props" force-mount>
+			<Dialog.Content as-child v-slot="props">
 				<section v-bind="props">
 					<Dialog.Title
 						as-child
