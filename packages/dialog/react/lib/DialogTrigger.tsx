@@ -34,7 +34,7 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 		);
 		const id = component.getId();
 
-		const rootState = useDialogRootState() ?? rootModel.getState();
+		const rootState = useDialogRootState() ?? rootModel.state;
 
 		React.useEffect(
 			function mount() {

@@ -38,10 +38,7 @@ export default function DialogRoot({
 		() => rootModel.initialState,
 	);
 	useRunOnce(() => {
-		rootModel.setStateOptions((prevOptions) => ({
-			...prevOptions,
-			requestStateUpdate: setRootState,
-		}));
+		rootModel.requestStateUpdate = setRootState;
 	});
 	useSyncedOption({
 		option: open,
