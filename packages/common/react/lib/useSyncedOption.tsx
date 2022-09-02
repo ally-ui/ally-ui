@@ -9,7 +9,7 @@ export interface UseSyncedOptionOptions<TOption> {
 	/**
 	 * The internal option value. This should be derived from internal state.
 	 */
-	internal: TOption;
+	internal?: TOption;
 	/**
 	 * Called with the new external option's value when it changes.
 	 *
@@ -59,7 +59,9 @@ export function useSyncedOption<TOption>({
 	);
 	React.useEffect(
 		function updateOption() {
-			onInternalChange?.(internal);
+			if (internal !== undefined) {
+				onInternalChange?.(internal);
+			}
 		},
 		[internal],
 	);
