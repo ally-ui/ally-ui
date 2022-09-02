@@ -1,7 +1,7 @@
 export type Updater<TState> = ((prevState: TState) => TState) | TState;
 
 /**
- * A base construct for a reactive state model that is decoupled from its state
+ * A base construct for a stateful model that is decoupled from its state
  * implementation. This allows for bindings to a variety of state
  * implementations e.g. React `useState`, Svelte `writable`, and more.
  */
