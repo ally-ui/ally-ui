@@ -282,32 +282,26 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 	};
 
 	activate() {
-		if (this.state.active) {
-			return;
-		}
 		this.#watchChildren();
 		this.#watchEvents();
 		this.#trapFocus();
-		// if (!this.state.active) {
-		this.requestStateUpdate?.((prevState) => ({
-			...prevState,
-			active: true,
-		}));
-		// }
+		if (!this.state.active) {
+			this.requestStateUpdate?.((prevState) => ({
+				...prevState,
+				active: true,
+			}));
+		}
 	}
 
 	deactivate() {
-		if (!this.state.active) {
-			return;
-		}
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
-		// if (this.state.active) {
-		this.requestStateUpdate?.((prevState) => ({
-			...prevState,
-			active: false,
-		}));
-		// }
+		if (this.state.active) {
+			this.requestStateUpdate?.((prevState) => ({
+				...prevState,
+				active: false,
+			}));
+		}
 		this.#returnFocus?.();
 	}
 }
