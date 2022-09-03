@@ -17,16 +17,6 @@ export function isTargetContainedBy(
 	return target instanceof Node && container.contains(target);
 }
 
-export function isValueOrHandler<TValue>(
-	valueOrHandler: boolean | ((value: TValue) => boolean),
-	value: TValue,
-) {
-	if (typeof valueOrHandler === 'function') {
-		return valueOrHandler(value);
-	}
-	return valueOrHandler;
-}
-
 /**
  * Check if a mutation may result in the list of focusable children in the DOM to update
  * @param mutation A DOM mutation observer record.

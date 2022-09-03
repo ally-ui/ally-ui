@@ -5,7 +5,6 @@ import {
 	isHTMLElement,
 	isTabEvent,
 	isTargetContainedBy,
-	isValueOrHandler,
 	mutationUpdatesFocusableChildren,
 } from './utils';
 
@@ -74,11 +73,7 @@ export interface FocusTrapOptions {
 	 */
 	onEscapeKeyDown?: (ev: KeyboardEvent) => void;
 	/**
-	 * Called when a pointer event occurs outside of the content.
-	 */
-	onPointerDownOutside?: (ev: PointerEvent) => void;
-	/**
-	 * Called when an interaction (pointer or focus) occurs outside of the content.
+	 * Called when an interaction (mouse or touch) occurs outside of the content.
 	 */
 	onInteractOutside?: (ev: MouseEvent | TouchEvent) => void;
 }
@@ -97,9 +92,9 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		}
 	}
 
-	watchStateChange(newState: FocusTrapState, prevState: FocusTrapState) {
-		if (newState.active !== prevState.active) {
-			this.#onActiveChangeEffect(newState.active);
+	watchStateChange({active}: FocusTrapState, prevState: FocusTrapState) {
+		if (active !== prevState.active) {
+			this.#onActiveChangeEffect(active);
 		}
 	}
 
@@ -147,25 +142,33 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		if (this.#unsubscribeEvents !== undefined) {
 			return;
 		}
-		window.addEventListener('keydown', this.#handleKey, LISTENER_OPTIONS);
+		window.addEventListener('keydown', this.#handleKeyDown, LISTENER_OPTIONS);
 		window.addEventListener(
-			'pointerdown',
-			this.#handlePointerDown,
+			'mousedown',
+			this.#handleMouseDown,
 			LISTENER_OPTIONS,
 		);
-		window.addEventListener('touchstart', this.#handleTouch, LISTENER_OPTIONS);
+		window.addEventListener(
+			'touchstart',
+			this.#handleTouchStart,
+			LISTENER_OPTIONS,
+		);
 		window.addEventListener('click', this.#handleClick, LISTENER_OPTIONS);
 
 		this.#unsubscribeEvents = () => {
-			window.removeEventListener('keydown', this.#handleKey, LISTENER_OPTIONS);
 			window.removeEventListener(
-				'pointerdown',
-				this.#handlePointerDown,
+				'keydown',
+				this.#handleKeyDown,
+				LISTENER_OPTIONS,
+			);
+			window.removeEventListener(
+				'mousedown',
+				this.#handleMouseDown,
 				LISTENER_OPTIONS,
 			);
 			window.removeEventListener(
 				'touchstart',
-				this.#handleTouch,
+				this.#handleTouchStart,
 				LISTENER_OPTIONS,
 			);
 			window.removeEventListener('click', this.#handleClick, LISTENER_OPTIONS);
@@ -193,25 +196,26 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		};
 	}
 
-	#handleKey = (ev: KeyboardEvent) => {
+	#handleKeyDown = (ev: KeyboardEvent) => {
 		if (isEscapeEvent(ev)) {
-			this.#handleEsc(ev);
+			this.#handleEscapeDown(ev);
 			return;
 		}
 		if (isTabEvent(ev)) {
-			this.#handleTab(ev);
+			this.#handleTabDown(ev);
 			return;
 		}
 	};
 
-	#handleEsc = (ev: KeyboardEvent) => {
-		if (isValueOrHandler(this.state.escapeDeactivates ?? true, ev)) {
-			ev.preventDefault();
-			this.deactivate();
+	#handleEscapeDown = (ev: KeyboardEvent) => {
+		this.state.onEscapeKeyDown?.(ev);
+		if (ev.defaultPrevented) {
+			return;
 		}
+		this.deactivate();
 	};
 
-	#handleTab = (ev: KeyboardEvent) => {
+	#handleTabDown = (ev: KeyboardEvent) => {
 		const firstFocusable = this.#focusableChildren.at(0);
 		const lastFocusable = this.#focusableChildren.at(-1);
 		const target = getActualTarget(ev);
@@ -228,73 +232,82 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		}
 	};
 
-	#handlePointerDown = (ev: PointerEvent) => {
+	#handleMouseDown = (ev: MouseEvent) => {
 		if (isTargetContainedBy(getActualTarget(ev), this.state.container)) {
 			return;
 		}
-		ev.preventDefault();
-		if (isValueOrHandler(this.state.clickOutsideDeactivates ?? false, ev)) {
-			this.deactivate();
-		}
-	};
-
-	#handleTouch = (ev: TouchEvent) => {
-		// Treat the touch as a regular pointer.
-		if (ev.touches.length === 1) {
-			this.#handleSingleTouch(ev);
+		this.state.onInteractOutside?.(ev);
+		if (ev.defaultPrevented) {
 			return;
 		}
-		// Allow for touch gestures that spill out of the container element.
-		const touches = Array.from(ev.touches);
+		this.deactivate();
+	};
+
+	#handleTouchStart = (ev: TouchEvent) => {
+		// Treat the touch as a single pointer.
+		if (ev.touches.length === 1) {
+			this.#handleTouchStart__single(ev);
+			return;
+		}
+		// Ignore touch gestures as long as one touch is within the container element.
 		if (
-			touches.some((t) => isTargetContainedBy(t.target, this.state.container))
+			Array.from(ev.touches).some((t) =>
+				isTargetContainedBy(t.target, this.state.container),
+			)
 		) {
 			return;
 		}
 		ev.preventDefault();
 	};
 
-	#handleSingleTouch = (ev: TouchEvent) => {
+	#handleTouchStart__single = (ev: TouchEvent) => {
 		const touch = ev.touches.item(0)!;
 		if (isTargetContainedBy(touch.target, this.state.container)) {
 			return;
 		}
-		ev.preventDefault();
-		return;
+		this.state.onInteractOutside?.(ev);
+		if (ev.defaultPrevented) {
+			return;
+		}
+		this.deactivate();
 	};
 
 	#handleClick = (ev: MouseEvent) => {
 		if (isTargetContainedBy(getActualTarget(ev), this.state.container)) {
 			return;
 		}
-		if (isValueOrHandler(this.state.clickOutsideDeactivates ?? false, ev)) {
-			return;
+		if (this.state.active) {
+			ev.preventDefault();
 		}
-		ev.preventDefault();
-		ev.stopImmediatePropagation();
 	};
 
 	activate() {
+		if (this.state.active) {
+			return;
+		}
 		this.#watchChildren();
 		this.#watchEvents();
 		this.#trapFocus();
-		if (!this.state.active) {
-			this.requestStateUpdate?.((prevState) => ({
-				...prevState,
-				active: true,
-			}));
-		}
+		// if (!this.state.active) {
+		this.requestStateUpdate?.((prevState) => ({
+			...prevState,
+			active: true,
+		}));
+		// }
 	}
 
 	deactivate() {
+		if (!this.state.active) {
+			return;
+		}
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
-		if (this.state.active) {
-			this.requestStateUpdate?.((prevState) => ({
-				...prevState,
-				active: false,
-			}));
-		}
+		// if (this.state.active) {
+		this.requestStateUpdate?.((prevState) => ({
+			...prevState,
+			active: false,
+		}));
+		// }
 		this.#returnFocus?.();
 	}
 }
