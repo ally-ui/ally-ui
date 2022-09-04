@@ -2,7 +2,7 @@ import {onDestroy} from 'svelte';
 import {get, type Readable} from 'svelte/store';
 import {isWritable, type ReadOrWritable} from './store';
 
-export interface CreateSyncedOptionOptions<TOption> {
+export interface CreateSyncedOptionStoreOptions<TOption> {
 	/**
 	 * A writable store containing the external option value.
 	 */
@@ -20,13 +20,13 @@ export interface CreateSyncedOptionOptions<TOption> {
 }
 
 /**
- * Synchronize state between an external option and internal state.
+ * Synchronize state between an external option store and internal state.
  */
-export function createSyncedOption<TOption>({
+export function createSyncedOptionStore<TOption>({
 	option,
 	internal,
 	onOptionChange,
-}: CreateSyncedOptionOptions<TOption>) {
+}: CreateSyncedOptionStoreOptions<TOption>) {
 	let previousOption = option === undefined ? undefined : get(option);
 	if (previousOption !== undefined) {
 		onOptionChange(previousOption);

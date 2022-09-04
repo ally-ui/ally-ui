@@ -8,7 +8,7 @@
 		type DialogRootModelOptions,
 		type DialogRootModelState,
 	} from '@ally-ui/core-dialog';
-	import {bindStore, createSyncedOption} from '@ally-ui/svelte';
+	import {bindStore, createSyncedOptionStore} from '@ally-ui/svelte';
 	import {derived, writable} from 'svelte/store';
 	import {setDialogRootModel, setDialogRootState} from './context';
 
@@ -37,13 +37,13 @@
 		}
 	};
 	// TODO #44 Reduce syncing boilerplate.
-	createSyncedOption({
+	createSyncedOptionStore({
 		option: openStore,
 		onOptionChange: (open) =>
 			rootState.update((prevState) => ({...prevState, open})),
 		internal: derived(rootState, ($rootState) => $rootState.open),
 	});
-	createSyncedOption({
+	createSyncedOptionStore({
 		option: modalStore,
 		onOptionChange: (modal) =>
 			rootState.update((prevState) => ({...prevState, modal})),
