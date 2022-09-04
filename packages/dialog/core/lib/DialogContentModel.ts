@@ -1,4 +1,5 @@
 import {ComponentModel} from '@ally-ui/core';
+import {FocusTrapModel} from '@ally-ui/focus-trap';
 import type {
 	DialogComponentType,
 	DialogRootModel,
@@ -7,6 +8,26 @@ import type {
 
 export interface DialogContentModelOptions {
 	forceMount?: boolean;
+	/**
+	 * Called when focus moves into the content after activation. It can be
+	 * prevented by calling `ev.preventDefault`.
+	 */
+	onOpenAutoFocus?: (ev: Event) => void;
+	/**
+	 * Called when focus moves out of the content after deactivation. It can be
+	 * prevented by calling `ev.preventDefault`.
+	 */
+	onCloseAutoFocus?: (ev: Event) => void;
+	/**
+	 * Called when the escape key is down. It can be prevented by calling
+	 * `ev.preventDefault`.
+	 */
+	onEscapeKeyDown?: (ev: KeyboardEvent) => void;
+	/**
+	 * Called when an interaction (mouse or touch) occurs outside of the content.
+	 * It can be prevented by calling `ev.preventDefault`.
+	 */
+	onInteractOutside?: (ev: MouseEvent | TouchEvent) => void;
 }
 
 export interface DialogContentModelReactive {}
@@ -53,4 +74,110 @@ export class DialogContentModel extends ComponentModel<
 			'data-state': rootState.open ? 'open' : 'closed',
 		};
 	}
+
+	watchStateChange(
+		{
+			onOpenAutoFocus,
+			onEscapeKeyDown,
+			onInteractOutside,
+		}: DialogContentModelState,
+		prevState: DialogContentModelState,
+	) {
+		// TODO #44 Reduce syncing boilerplate.
+		if (onOpenAutoFocus !== prevState.onOpenAutoFocus) {
+			this.#contentTrap?.setState({
+				...this.#contentTrap.state,
+				onActivateAutoFocus: onOpenAutoFocus,
+			});
+		}
+		// Note that we do not directly sync `onDeactivateAutoFocus` because we
+		// handle it manually.
+		if (onEscapeKeyDown !== prevState.onEscapeKeyDown) {
+			this.#contentTrap?.setState({
+				...this.#contentTrap.state,
+				onEscapeKeyDown,
+			});
+		}
+		if (onInteractOutside !== prevState.onInteractOutside) {
+			this.#contentTrap?.setState({
+				...this.#contentTrap.state,
+				onInteractOutside,
+			});
+		}
+	}
+
+	#contentTrap?: FocusTrapModel;
+	/**
+	 * Open content and trap focus if possible.
+	 * @param open The new open state.
+	 * @returns Whether content is waiting to open.
+	 */
+	onOpenChangeEffect(open: boolean): boolean {
+		if (open) {
+			return this.#onOpenChangeEffect__handleOpen();
+		} else {
+			return this.#onOpenChangeEffect__handleClose();
+		}
+	}
+
+	#onOpenChangeEffect__handleOpen = (): boolean => {
+		const content = this.rootModel.findComponent(
+			(c) => c.type === 'content' && c.node !== undefined,
+		);
+		if (content?.node === undefined) {
+			if (this.debug) {
+				console.error(
+					`#onOpenChangeEffect(true), no content component with node`,
+				);
+			}
+			return true;
+		}
+		this.#contentTrap = this.#onOpenChangeEffect__createFocusTrap(content.node);
+		return false;
+	};
+
+	#onOpenChangeEffect__createFocusTrap = (contentElement: HTMLElement) => {
+		const contentTrap = new FocusTrapModel({
+			container: contentElement,
+			initialActive: true,
+			onActivateAutoFocus: this.state.onOpenAutoFocus,
+			onDeactivateAutoFocus: this.#onCloseAutoFocus__toTrigger,
+			onEscapeKeyDown: this.state.onEscapeKeyDown,
+			onInteractOutside: this.state.onInteractOutside,
+		});
+		contentTrap.requestStateUpdate = (trapUpdater) => {
+			this.rootModel.requestStateUpdate?.((prevState) => {
+				const trapState =
+					trapUpdater instanceof Function
+						? trapUpdater(contentTrap.state)
+						: trapUpdater;
+				return {
+					...prevState,
+					open: trapState.active,
+				};
+			});
+		};
+		return contentTrap;
+	};
+
+	#onCloseAutoFocus__toTrigger = (ev: Event) => {
+		this.state.onCloseAutoFocus?.(ev);
+		if (ev.defaultPrevented) {
+			return;
+		}
+		ev.preventDefault();
+		const triggerComponent = this.rootModel.findComponent(
+			(c) => c.type === 'trigger',
+		);
+		triggerComponent?.node?.focus();
+	};
+
+	#onOpenChangeEffect__handleClose = (): boolean => {
+		if (this.#contentTrap === undefined) {
+			return false;
+		}
+		this.#contentTrap.deactivate();
+		this.#contentTrap = undefined;
+		return false;
+	};
 }

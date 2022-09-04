@@ -8,6 +8,12 @@
 	type DialogContentSlots<TAsChild extends true | undefined> = {
 		default: DefaultSlot<TAsChild, DialogContentModelAttributes, RefAction>;
 	};
+	type DialogContentEvents = {
+		openAutoFocus: Event;
+		closeAutoFocus: Event;
+		escapeKeyDown: KeyboardEvent;
+		interactOutside: MouseEvent | TouchEvent;
+	};
 </script>
 
 <script lang="ts">
@@ -18,17 +24,21 @@
 	} from '@ally-ui/core-dialog';
 	import {
 		createEventForwarder,
+		createNativeEventDispatcher,
 		createRefAction,
 		type DefaultSlot,
 		type RefAction,
 	} from '@ally-ui/svelte';
-	import {get_current_component, onMount} from 'svelte/internal';
+	import {onMount} from 'svelte/internal';
 	import {readable} from 'svelte/store';
 	import {getDialogRootModel, getDialogRootState} from './context';
 
 	type TAsChild = $$Generic<true | undefined>;
 	type $$Props = DialogContentProps<TAsChild>;
 	type $$Slots = DialogContentSlots<TAsChild>;
+	type $$Events = DialogContentEvents;
+
+	const dispatch = createNativeEventDispatcher<DialogContentEvents>();
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {
@@ -36,7 +46,13 @@
 	}
 	export let forceMount: boolean | undefined = undefined;
 	const component = rootModel.registerComponent(
-		new DialogContentModel(rootModel, {forceMount}),
+		new DialogContentModel(rootModel, {
+			forceMount,
+			onOpenAutoFocus: (ev) => dispatch('openAutoFocus', ev),
+			onCloseAutoFocus: (ev) => dispatch('closeAutoFocus', ev),
+			onEscapeKeyDown: (ev) => dispatch('escapeKeyDown', ev),
+			onInteractOutside: (ev) => dispatch('interactOutside', ev),
+		}),
 	);
 	const id = component.getId();
 
@@ -69,7 +85,12 @@
 		ref,
 	} as any; // Workaround to allow conditional slot type.
 
-	const eventForwarder = createEventForwarder(get_current_component());
+	const eventForwarder = createEventForwarder([
+		'openAutoFocus',
+		'closeAutoFocus',
+		'escapeKeyDown',
+		'interactOutside',
+	]);
 </script>
 
 {#if derivedState.show}

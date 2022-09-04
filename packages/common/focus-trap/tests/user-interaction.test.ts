@@ -70,23 +70,23 @@ describe('tab behavior', () => {
 });
 
 describe('click behavior', () => {
-	it('ignores clicks outside trap', async () => {
+	it('blocks clicks outside an active trap', async () => {
 		const user = userEvent.setup();
 		const button_outside1 = screen.getByTestId('outside-1');
 		const onClick = vi.fn();
 		button_outside1.addEventListener('click', onClick);
 
-		await user.pointer([{target: button_outside1}, {keys: '[MouseLeft]'}]);
+		await user.click(button_outside1);
 		expect(onClick).not.toHaveBeenCalled();
 
 		trap?.deactivate();
-		await user.pointer([{target: button_outside1}, {keys: '[MouseLeft]'}]);
+		await user.click(button_outside1);
 		expect(onClick).toHaveBeenCalledOnce();
 	});
 });
 
 describe('touch behavior', () => {
-	it('ignores single touches outside trap', async () => {
+	it('blocks single touches outside an active trap', async () => {
 		const user = userEvent.setup();
 		const button_outside1 = screen.getByTestId('outside-1');
 		const onClick = vi.fn();
@@ -95,30 +95,6 @@ describe('touch behavior', () => {
 		await user.pointer([
 			{keys: '[TouchA>]', target: button_outside1},
 			{keys: '[/TouchA]'},
-		]);
-		expect(onClick).not.toHaveBeenCalled();
-
-		trap?.deactivate();
-		await user.pointer([
-			{keys: '[TouchA>]', target: button_outside1},
-			{keys: '[/TouchA]'},
-		]);
-		expect(onClick).toHaveBeenCalledOnce();
-	});
-
-	it('allows gestures', async () => {
-		const user = userEvent.setup();
-		const button_outside1 = screen.getByTestId('outside-1');
-		const onClick = vi.fn();
-		button_outside1.addEventListener('click', onClick);
-		const button_inside1 = screen.getByTestId('inside-1');
-
-		await user.pointer([
-			{keys: '[TouchA>]', target: button_outside1},
-			{keys: '[TouchB>]', target: button_inside1},
-			{pointerName: 'TouchA', target: button_inside1},
-			{keys: '[/TouchA]'},
-			{keys: '[/TouchB]'},
 		]);
 		expect(onClick).not.toHaveBeenCalled();
 

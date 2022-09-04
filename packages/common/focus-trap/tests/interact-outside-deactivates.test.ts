@@ -20,7 +20,7 @@ afterEach(() => {
 	trap?.deactivate();
 });
 
-it('ignores click inside', async () => {
+it('does not disable on click inside', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
@@ -31,7 +31,7 @@ it('ignores click inside', async () => {
 	expect(trap.state.active).toBe(true);
 });
 
-it('ignores click outside by default', async () => {
+it('disables on click outside by default', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
@@ -39,44 +39,34 @@ it('ignores click outside by default', async () => {
 	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.state.active).toBe(true);
-});
-
-it('ignores click outside', async () => {
-	const user = userEvent.setup();
-
-	const trapElement = screen.getByTestId('trap');
-	trap = observableFocusTrap({
-		container: trapElement,
-		clickOutsideDeactivates: false,
-	});
-	trap.activate();
-
-	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.state.active).toBe(true);
-});
-
-it('disables on click outside', async () => {
-	const user = userEvent.setup();
-
-	const trapElement = screen.getByTestId('trap');
-	trap = observableFocusTrap({
-		container: trapElement,
-		clickOutsideDeactivates: true,
-	});
-	trap.activate();
-
-	await user.click(screen.getByTestId('outside-1'));
 	expect(trap.state.active).toBe(false);
 });
 
-it('disables on right click outside only with custom click handler', async () => {
+it('does not disable on click outside when interact outside is prevented', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
 	trap = observableFocusTrap({
 		container: trapElement,
-		clickOutsideDeactivates: (ev) => ev.button === 2,
+		onInteractOutside: (ev) => ev.preventDefault(),
+	});
+	trap.activate();
+
+	await user.click(screen.getByTestId('outside-1'));
+	expect(trap.state.active).toBe(true);
+});
+
+it('only disables on right click outside with custom on interact outside handler', async () => {
+	const user = userEvent.setup();
+
+	const trapElement = screen.getByTestId('trap');
+	trap = observableFocusTrap({
+		container: trapElement,
+		onInteractOutside: (ev) => {
+			if (ev instanceof MouseEvent && ev.button !== 2) {
+				ev.preventDefault();
+			}
+		},
 	});
 	trap.activate();
 

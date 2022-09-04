@@ -1,6 +1,7 @@
 import type {SvelteComponent} from 'svelte';
 import {
 	bubble,
+	get_current_component,
 	listen,
 	prevent_default,
 	stop_propagation,
@@ -18,15 +19,9 @@ interface EventOptions {
 	stopPropagation?: true;
 }
 
-interface CreateEventForwarderOptions {
-	except?: ForwardException[];
-}
-
 // CREDIT https://github.com/rgossiaux/svelte-headlessui/blob/master/src/lib/internal/forwardEventsBuilder.ts
-export function createEventForwarder(
-	component: SvelteComponent,
-	{except = []}: CreateEventForwarderOptions = {},
-) {
+export function createEventForwarder(except: ForwardException[] = []) {
+	const component = get_current_component() as SvelteComponent;
 	// `$on` is defined on component mount.
 	let $on: (eventType: string, handler: EventHandler) => Cleanup | undefined;
 	const eventsBeforeMount: [string, EventHandler][] = [];

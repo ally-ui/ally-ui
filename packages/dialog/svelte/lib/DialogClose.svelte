@@ -26,7 +26,7 @@
 		type DefaultSlot,
 		type RefAction,
 	} from '@ally-ui/svelte';
-	import {get_current_component, onMount} from 'svelte/internal';
+	import {onMount} from 'svelte/internal';
 	import {getDialogRootModel} from './context';
 
 	type TAsChild = $$Generic<true | undefined>;
@@ -74,7 +74,7 @@
 		ref,
 	} as any; // Workaround to allow conditional slot type.
 
-	const eventForwarder = createEventForwarder(get_current_component());
+	const eventForwarder = createEventForwarder();
 </script>
 
 {#if asChild}

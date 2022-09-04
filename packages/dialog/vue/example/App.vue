@@ -35,7 +35,30 @@ const returnFocus = ref<HTMLElement | null>(null);
 				<Dialog.Trigger>Edit profile</Dialog.Trigger>
 				<span v-if="open">Editing profile...</span>
 			</div>
-			<Dialog.Content as-child v-slot="props">
+			<Dialog.Content
+				as-child
+				v-slot="props"
+				@close-auto-focus="
+					(ev) => {
+						ev.preventDefault();
+						returnFocus?.focus();
+					}
+				"
+				@escape-key-down="
+					(ev) => {
+						if (!escape) {
+							ev.preventDefault();
+						}
+					}
+				"
+				@interact-outside="
+					(ev) => {
+						if (!outside) {
+							ev.preventDefault();
+						}
+					}
+				"
+			>
 				<section v-bind="props">
 					<Dialog.Title
 						as-child

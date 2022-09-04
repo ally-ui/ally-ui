@@ -1,45 +1,12 @@
 import {StateModel} from '@ally-ui/core';
-
-function isEscapeEvent(ev: KeyboardEvent) {
-	return ev.key === 'Escape' || ev.key === 'Esc';
-}
-
-function isTabEvent(ev: KeyboardEvent) {
-	return ev.key === 'Tab';
-}
-
-function isHTMLElement(el: Element): el is HTMLElement {
-	return el instanceof HTMLElement;
-}
-
-function isTargetContainedBy(target: EventTarget | null, container: Element) {
-	return target instanceof Node && container.contains(target);
-}
-
-function isValueOrHandler<TValue>(
-	valueOrHandler: boolean | ((value: TValue) => boolean),
-	value: TValue,
-) {
-	if (typeof valueOrHandler === 'function') {
-		return valueOrHandler(value);
-	}
-	return valueOrHandler;
-}
-
-/**
- * Check if a mutation may result in the list of focusable children in the DOM to update
- * @param mutation A DOM mutation observer record.
- * @returns If the mutation may update the list of focusable children in the DOM.
- */
-function mutationUpdatesFocusableChildren(mutation: MutationRecord) {
-	if (mutation.type === 'childList') {
-		return true;
-	}
-	if (mutation.type === 'attributes' && mutation.attributeName === 'tabindex') {
-		return true;
-	}
-	return false;
-}
+import {
+	getActualTarget,
+	isEscapeEvent,
+	isHTMLElement,
+	isTabEvent,
+	isTargetContainedBy,
+	mutationUpdatesFocusableChildren,
+} from './utils';
 
 const LISTENER_OPTIONS: AddEventListenerOptions = {
 	capture: true,
@@ -55,27 +22,6 @@ const FOCUSABLE_SELECTORS = [
 	'[tabindex]:not([tabindex="-1"])',
 ];
 
-// CREDIT https://github.com/focus-trap/focus-trap/blob/master/index.js#L85
-/**
- * If the trap is inside a shadow DOM, `event.target` will always be the shadow
- * host. However, `event.target.composedPath()` will be an array of nodes
- * "clicked" from inner-most (the actual element inside the shadow) to
- * outer-most (the host HTML document). If we have access to `composedPath()`,
- * then use its first element; otherwise, fall back to `event.target` (and this
- * only works for an _open_ shadow DOM; otherwise, `composedPath()[0] ===
- * event.target` always).
-
- * @param ev The event to find the target of.
- * @returns The target of the event.
- */
-function getActualTarget(ev: Event) {
-	return ev.target instanceof Element &&
-		ev.target.shadowRoot &&
-		typeof ev.composedPath === 'function'
-		? ev.composedPath()[0]
-		: ev.target;
-}
-
 export interface FocusTrapOptions {
 	/**
 	 * The container to trap focus within.
@@ -88,32 +34,25 @@ export interface FocusTrapOptions {
 	 */
 	initialActive?: boolean;
 	/**
-	 * Whether clicking outside the focus trap container deactivates the trap.
-	 *
-	 * Pass a handler function to configure when the trap should deactivate based
-	 * on each individual mouse click.
-	 *
-	 * Defaults to `false`.
+	 * Called when focus moves into the content after activation. It can be
+	 * prevented by calling `ev.preventDefault`.
 	 */
-	clickOutsideDeactivates?: boolean | ((ev: MouseEvent) => boolean);
+	onActivateAutoFocus?: (ev: Event) => void;
 	/**
-	 * Whether pressing escape deactives the trap.
-	 *
-	 * Pass a handler function to configure when the trap should deactivate based
-	 * on each individual keystroke.
-	 *
-	 * Defaults to `false`.
+	 * Called when focus moves out of the content after deactivation. It can be
+	 * prevented by calling `ev.preventDefault`.
 	 */
-	escapeDeactivates?: boolean | ((ev: KeyboardEvent) => boolean);
+	onDeactivateAutoFocus?: (ev: Event) => void;
 	/**
-	 * A custom element to return focus to on deactivation.
-	 *
-	 * Pass a getter function to dynamically get the element to return focus to
-	 * on deactivation.
-	 *
-	 * Defaults to the previously focused element before the trap activated.
+	 * Called when the escape key is down. It can be prevented by calling
+	 * `ev.preventDefault`.
 	 */
-	returnFocusTo?: HTMLElement | (() => HTMLElement | undefined);
+	onEscapeKeyDown?: (ev: KeyboardEvent) => void;
+	/**
+	 * Called when an interaction (mouse or touch) occurs outside of the content.
+	 * It can be prevented by calling `ev.preventDefault`.
+	 */
+	onInteractOutside?: (ev: MouseEvent | TouchEvent) => void;
 }
 
 export interface FocusTrapReactive {
@@ -130,9 +69,9 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		}
 	}
 
-	watchStateChange(newState: FocusTrapState, prevState: FocusTrapState) {
-		if (newState.active !== prevState.active) {
-			this.#onActiveChangeEffect(newState.active);
+	watchStateChange({active}: FocusTrapState, prevState: FocusTrapState) {
+		if (active !== prevState.active) {
+			this.#onActiveChangeEffect(active);
 		}
 	}
 
@@ -146,7 +85,7 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 
 	#focusableChildren: HTMLElement[] = [];
 	#unsubscribeChildren?: () => void;
-	#watchChildren() {
+	#subscribeChildren() {
 		if (this.#unsubscribeChildren !== undefined) {
 			return;
 		}
@@ -176,40 +115,25 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 	}
 
 	#unsubscribeEvents?: () => void;
-	#watchEvents() {
+	#subscribeEvents() {
 		if (this.#unsubscribeEvents !== undefined) {
 			return;
 		}
-		this.state.container.addEventListener(
-			'keydown',
-			this.#handleKey,
-			LISTENER_OPTIONS,
-		);
-		window.addEventListener(
-			'mousedown',
-			this.#handlePointerDown,
-			LISTENER_OPTIONS,
-		);
-		window.addEventListener('touchstart', this.#handleTouch, LISTENER_OPTIONS);
-		window.addEventListener('click', this.#handleClick, LISTENER_OPTIONS);
+		window.addEventListener('keydown', this.#onKeyDown, LISTENER_OPTIONS);
+		window.addEventListener('mousedown', this.#onInteract, LISTENER_OPTIONS);
+		window.addEventListener('touchstart', this.#onInteract, LISTENER_OPTIONS);
+		window.addEventListener('mouseup', this.#onInteractEnd, LISTENER_OPTIONS);
+		window.addEventListener('touchend', this.#onInteractEnd, LISTENER_OPTIONS);
+		window.addEventListener('click', this.#onClick, LISTENER_OPTIONS);
 
+		// prettier-ignore
 		this.#unsubscribeEvents = () => {
-			this.state.container.removeEventListener(
-				'keydown',
-				this.#handleKey,
-				LISTENER_OPTIONS,
-			);
-			window.removeEventListener(
-				'mousedown',
-				this.#handlePointerDown,
-				LISTENER_OPTIONS,
-			);
-			window.removeEventListener(
-				'touchstart',
-				this.#handleTouch,
-				LISTENER_OPTIONS,
-			);
-			window.removeEventListener('click', this.#handleClick, LISTENER_OPTIONS);
+			window.removeEventListener('keydown', this.#onKeyDown, LISTENER_OPTIONS);
+			window.removeEventListener('mousedown', this.#onInteract, LISTENER_OPTIONS);
+			window.removeEventListener('touchstart', this.#onInteract, LISTENER_OPTIONS);
+			window.removeEventListener('mouseup', this.#onInteractEnd, LISTENER_OPTIONS);
+			window.removeEventListener('touchend', this.#onInteractEnd, LISTENER_OPTIONS);
+			window.removeEventListener('click', this.#onClick, LISTENER_OPTIONS);
 			this.#unsubscribeEvents = undefined;
 		};
 	}
@@ -220,39 +144,51 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		if (this.#returnFocus !== undefined) {
 			return;
 		}
-		this.#previouslyFocused = document.activeElement ?? undefined;
-		this.#focusableChildren.at(0)?.focus();
 		this.#returnFocus = () => {
-			const {returnFocusTo} = this.state;
-			const elementToReturnFocusTo =
-				returnFocusTo instanceof Function ? returnFocusTo() : returnFocusTo;
-			const resolvedElement = elementToReturnFocusTo ?? this.#previouslyFocused;
-			if (resolvedElement instanceof HTMLElement) {
-				resolvedElement.focus();
-			}
 			this.#returnFocus = undefined;
+			const focusEvent = new Event('focus-trap.on-deactivate-auto-focus', {
+				cancelable: true,
+			});
+			this.state.onDeactivateAutoFocus?.(focusEvent);
+			if (focusEvent.defaultPrevented) {
+				return;
+			}
+			if (this.#previouslyFocused instanceof HTMLElement) {
+				this.#previouslyFocused.focus();
+			}
 		};
+
+		this.#previouslyFocused = document.activeElement ?? undefined;
+		const focusEvent = new Event('focus-trap.on-activate-auto-focus', {
+			cancelable: true,
+		});
+		this.state.onActivateAutoFocus?.(focusEvent);
+		if (focusEvent.defaultPrevented) {
+			return;
+		}
+		this.#focusableChildren.at(0)?.focus();
 	}
 
-	#handleKey = (ev: KeyboardEvent) => {
+	#onKeyDown = (ev: KeyboardEvent) => {
 		if (isEscapeEvent(ev)) {
-			this.#handleEsc(ev);
+			this.#onKeyDown__escape(ev);
 			return;
 		}
 		if (isTabEvent(ev)) {
-			this.#handleTab(ev);
+			this.#onKeyDown__tab(ev);
 			return;
 		}
 	};
 
-	#handleEsc = (ev: KeyboardEvent) => {
-		if (isValueOrHandler(this.state.escapeDeactivates ?? true, ev)) {
-			ev.preventDefault();
-			this.deactivate();
+	#onKeyDown__escape = (ev: KeyboardEvent) => {
+		this.state.onEscapeKeyDown?.(ev);
+		if (ev.defaultPrevented) {
+			return;
 		}
+		this.deactivate();
 	};
 
-	#handleTab = (ev: KeyboardEvent) => {
+	#onKeyDown__tab = (ev: KeyboardEvent) => {
 		const firstFocusable = this.#focusableChildren.at(0);
 		const lastFocusable = this.#focusableChildren.at(-1);
 		const target = getActualTarget(ev);
@@ -269,55 +205,53 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		}
 	};
 
-	#handlePointerDown = (ev: MouseEvent) => {
+	#waitingToDeactivate = false;
+	/**
+	 * Check mouse or touch interactions via `mousedown` or `touchstart`.
+	 */
+	#onInteract = (ev: MouseEvent | TouchEvent) => {
 		if (isTargetContainedBy(getActualTarget(ev), this.state.container)) {
 			return;
 		}
-		ev.preventDefault();
-		if (isValueOrHandler(this.state.clickOutsideDeactivates ?? false, ev)) {
-			this.deactivate();
+		this.state.onInteractOutside?.(ev);
+		if (ev.defaultPrevented) {
+			this.#waitingToDeactivate = false;
+			return;
+		}
+		this.#waitingToDeactivate = true;
+	};
+
+	#onInteractEnd = () => {
+		if (this.#waitingToDeactivate) {
+			/**
+			 * The `click` event is fired after the full click action occurs. If we
+			 * deactivate the focus trap synchronously, the click handler will be
+			 * removed before it has a chance to call `ev.preventDefault` and
+			 * `ev.stopPropagation`.
+			 *
+			 * Therefore, we have to schedule the deactivation for one tick after
+			 * interaction ends.
+			 */
+			setTimeout(() => {
+				this.deactivate();
+				this.#waitingToDeactivate = false;
+			});
 		}
 	};
 
-	#handleTouch = (ev: TouchEvent) => {
-		// Treat the touch as a regular pointer.
-		if (ev.touches.length === 1) {
-			this.#handleSingleTouch(ev);
-			return;
-		}
-		// Allow for touch gestures that spill out of the container element.
-		const touches = Array.from(ev.touches);
-		if (
-			touches.some((t) => isTargetContainedBy(t.target, this.state.container))
-		) {
-			return;
-		}
-		ev.preventDefault();
-	};
-
-	#handleSingleTouch = (ev: TouchEvent) => {
-		const touch = ev.touches.item(0)!;
-		if (isTargetContainedBy(touch.target, this.state.container)) {
-			return;
-		}
-		ev.preventDefault();
-		return;
-	};
-
-	#handleClick = (ev: MouseEvent) => {
+	#onClick = (ev: MouseEvent) => {
 		if (isTargetContainedBy(getActualTarget(ev), this.state.container)) {
 			return;
 		}
-		if (isValueOrHandler(this.state.clickOutsideDeactivates ?? false, ev)) {
-			return;
+		if (this.state.active) {
+			ev.preventDefault();
+			ev.stopPropagation();
 		}
-		ev.preventDefault();
-		ev.stopImmediatePropagation();
 	};
 
 	activate() {
-		this.#watchChildren();
-		this.#watchEvents();
+		this.#subscribeChildren();
+		this.#subscribeEvents();
 		this.#trapFocus();
 		if (!this.state.active) {
 			this.requestStateUpdate?.((prevState) => ({
@@ -330,12 +264,12 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 	deactivate() {
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
+		this.#returnFocus?.();
 		if (this.state.active) {
 			this.requestStateUpdate?.((prevState) => ({
 				...prevState,
 				active: false,
 			}));
 		}
-		this.#returnFocus?.();
 	}
 }

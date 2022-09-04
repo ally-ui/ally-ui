@@ -19,14 +19,24 @@ afterEach(() => {
 	trap?.deactivate();
 });
 
-it('focuses on the first element in the trap when trapped', () => {
+it('focuses on the first element in the trap on activation', () => {
 	const trapElement = screen.getByTestId('trap');
 	trap = observableFocusTrap({container: trapElement});
 	trap.activate();
 	expect(screen.getByTestId('inside-1')).toHaveFocus();
 });
 
-it('returns focus to the previously focused element when untrapped', () => {
+it('prevents focus going to the first element in the trap on activation', () => {
+	const trapElement = screen.getByTestId('trap');
+	trap = observableFocusTrap({
+		container: trapElement,
+		onActivateAutoFocus: (ev) => ev.preventDefault(),
+	});
+	trap.activate();
+	expect(screen.getByTestId('inside-1')).not.toHaveFocus();
+});
+
+it('returns focus to the previously focused element on deactivation', () => {
 	const trapElement = screen.getByTestId('trap');
 	screen.getByTestId('outside-1').focus();
 	trap = observableFocusTrap({container: trapElement});
@@ -35,7 +45,7 @@ it('returns focus to the previously focused element when untrapped', () => {
 	expect(screen.getByTestId('outside-1')).toHaveFocus();
 });
 
-it('does not return focus if no previously focused element when untrapped', () => {
+it('does not return focus if there is no previously focused element on deactivation', () => {
 	const trapElement = screen.getByTestId('trap');
 	trap = observableFocusTrap({container: trapElement});
 	trap.activate();
@@ -43,29 +53,17 @@ it('does not return focus if no previously focused element when untrapped', () =
 	expect(screen.getByTestId('inside-1')).toHaveFocus();
 });
 
-it('returns focus to a returnFocus element', () => {
+it('prevents focus returning to the previous element on deactivation', () => {
 	const trapElement = screen.getByTestId('trap');
 	const returnElement = screen.getByTestId('outside-2');
 	trap = observableFocusTrap({
 		container: trapElement,
-		returnFocusTo: returnElement,
+		onDeactivateAutoFocus: (ev) => {
+			ev.preventDefault();
+			returnElement.focus();
+		},
 	});
 	trap.activate();
 	trap.deactivate();
 	expect(returnElement).toHaveFocus();
-});
-
-it('returns focus to a dynamic returnFocus element', () => {
-	const trapElement = screen.getByTestId('trap');
-	const firstElement = screen.getByTestId('outside-1');
-	const secondElement = screen.getByTestId('outside-2');
-	let element = firstElement;
-	trap = observableFocusTrap({
-		container: trapElement,
-		returnFocusTo: () => element,
-	});
-	trap.activate();
-	element = secondElement;
-	trap.deactivate();
-	expect(secondElement).toHaveFocus();
 });

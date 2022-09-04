@@ -24,27 +24,6 @@
 	const modalStore = writable(modal);
 	const watchModal = bindStore(modalStore, (m) => (modal = m));
 	$: watchModal(modal);
-	export let clickOutsideDeactivates: boolean | undefined = undefined;
-	const clickOutsideDeactivatesStore = writable(clickOutsideDeactivates);
-	const watchClickOutsideDeactivates = bindStore(
-		clickOutsideDeactivatesStore,
-		(c) => (clickOutsideDeactivates = c),
-	);
-	$: watchClickOutsideDeactivates(clickOutsideDeactivates);
-	export let escapeDeactivates: boolean | undefined = undefined;
-	const escapeDeactivatesStore = writable(escapeDeactivates);
-	const watchEscapeDeactivates = bindStore(
-		escapeDeactivatesStore,
-		(e) => (escapeDeactivates = e),
-	);
-	$: watchEscapeDeactivates(escapeDeactivates);
-	export let returnFocusTo: HTMLElement | undefined = undefined;
-	const returnFocusToStore = writable(returnFocusTo);
-	const watchReturnFocusTo = bindStore(
-		returnFocusToStore,
-		(r) => (returnFocusTo = r),
-	);
-	$: watchReturnFocusTo(returnFocusTo);
 
 	// TODO #19 Generate SSR-safe IDs.
 	const id = '0';
@@ -57,6 +36,7 @@
 			rootState.set(updater);
 		}
 	};
+	// TODO #44 Reduce syncing boilerplate.
 	createSyncedOption({
 		option: openStore,
 		onOptionChange: (open) =>
@@ -67,24 +47,6 @@
 		option: modalStore,
 		onOptionChange: (modal) =>
 			rootState.update((prevState) => ({...prevState, modal})),
-	});
-	createSyncedOption({
-		option: clickOutsideDeactivatesStore,
-		onOptionChange: (clickOutsideDeactivates) =>
-			rootState.update((prevState) => ({
-				...prevState,
-				clickOutsideDeactivates,
-			})),
-	});
-	createSyncedOption({
-		option: escapeDeactivatesStore,
-		onOptionChange: (escapeDeactivates) =>
-			rootState.update((prevState) => ({...prevState, escapeDeactivates})),
-	});
-	createSyncedOption({
-		option: returnFocusToStore,
-		onOptionChange: (returnFocusTo) =>
-			rootState.update((prevState) => ({...prevState, returnFocusTo})),
 	});
 	$: rootModel.setState($rootState);
 

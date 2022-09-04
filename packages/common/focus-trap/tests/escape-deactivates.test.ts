@@ -31,27 +31,13 @@ it('disables on escape by default', async () => {
 	expect(trap.state.active).toBe(false);
 });
 
-it('disables on escape', async () => {
+it('does not escape when escape is prevented', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
 	trap = observableFocusTrap({
 		container: trapElement,
-		escapeDeactivates: true,
-	});
-	trap.activate();
-
-	await user.keyboard('{Esc}');
-	expect(trap.state.active).toBe(false);
-});
-
-it('ignore escape', async () => {
-	const user = userEvent.setup();
-
-	const trapElement = screen.getByTestId('trap');
-	trap = observableFocusTrap({
-		container: trapElement,
-		escapeDeactivates: false,
+		onEscapeKeyDown: (ev) => ev.preventDefault(),
 	});
 	trap.activate();
 
@@ -59,13 +45,17 @@ it('ignore escape', async () => {
 	expect(trap.state.active).toBe(true);
 });
 
-it('disables on escape only with shift', async () => {
+it('only disables on escape with shift', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
 	trap = observableFocusTrap({
 		container: trapElement,
-		escapeDeactivates: (ev) => ev.shiftKey,
+		onEscapeKeyDown: (ev) => {
+			if (!ev.shiftKey) {
+				ev.preventDefault();
+			}
+		},
 	});
 	trap.activate();
 

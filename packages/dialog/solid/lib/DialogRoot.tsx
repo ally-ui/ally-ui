@@ -17,12 +17,10 @@ export default function DialogRoot(props: DialogRootProps) {
 	const rootModel = new DialogRootModel(id, {
 		initialOpen: props.initialOpen,
 		modal: props.modal,
-		clickOutsideDeactivates: props.clickOutsideDeactivates,
-		escapeDeactivates: props.escapeDeactivates,
-		returnFocusTo: props.returnFocusTo,
 	});
 	const [rootState, setRootState] = createStore({...rootModel.initialState});
 	rootModel.requestStateUpdate = setRootState;
+	// TODO #44 Reduce syncing boilerplate.
 	createSyncedOption({
 		option: () => props.open,
 		onOptionChange: (open) =>
@@ -35,24 +33,10 @@ export default function DialogRoot(props: DialogRootProps) {
 		onOptionChange: (modal) =>
 			setRootState((prevState) => ({...prevState, modal})),
 	});
-	createSyncedOption({
-		option: () => props.clickOutsideDeactivates,
-		onOptionChange: (clickOutsideDeactivates) =>
-			setRootState((prevState) => ({...prevState, clickOutsideDeactivates})),
-	});
-	createSyncedOption({
-		option: () => props.escapeDeactivates,
-		onOptionChange: (escapeDeactivates) =>
-			setRootState((prevState) => ({...prevState, escapeDeactivates})),
-	});
-	createSyncedOption({
-		option: () => props.returnFocusTo,
-		onOptionChange: (returnFocusTo) =>
-			setRootState((prevState) => ({...prevState, returnFocusTo})),
-	});
 	createEffect(function onStateUpdate() {
 		rootModel.setState({...rootState});
 	});
+
 	return (
 		<DialogRootModelContext.Provider value={rootModel}>
 			<DialogRootStateContext.Provider value={rootState}>

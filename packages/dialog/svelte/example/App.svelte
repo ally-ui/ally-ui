@@ -19,13 +19,7 @@
 		Escape {escape ? 'deactivates' : 'blocked'}
 	</button>
 	<h1>Ally UI Svelte Dialog</h1>
-	<Dialog.Root
-		bind:open
-		initialOpen
-		clickOutsideDeactivates={outside}
-		escapeDeactivates={escape}
-		returnFocusTo={returnFocus ?? null}
-	>
+	<Dialog.Root bind:open initialOpen>
 		<div>
 			<button on:click={() => (open = !open)}>Manual toggle</button>
 			<Dialog.Trigger>Edit profile</Dialog.Trigger>
@@ -33,7 +27,25 @@
 				<span>Editing profile...</span>
 			{/if}
 		</div>
-		<Dialog.Content asChild let:props let:ref>
+		<Dialog.Content
+			asChild
+			let:props
+			let:ref
+			on:closeAutoFocus={(ev) => {
+				ev.preventDefault();
+				returnFocus?.focus();
+			}}
+			on:escapeKeyDown={(ev) => {
+				if (!escape) {
+					ev.preventDefault();
+				}
+			}}
+			on:interactOutside={(ev) => {
+				if (!outside) {
+					ev.preventDefault();
+				}
+			}}
+		>
 			<section {...props} use:ref>
 				<Dialog.Title bind:node={titleNode} asChild let:props let:ref>
 					<h2 {...props} use:ref>Edit profile</h2>
