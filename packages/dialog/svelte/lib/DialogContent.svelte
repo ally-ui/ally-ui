@@ -29,11 +29,7 @@
 		type DefaultSlot,
 		type RefAction,
 	} from '@ally-ui/svelte';
-	import {
-		createEventDispatcher,
-		get_current_component,
-		onMount,
-	} from 'svelte/internal';
+	import {createEventDispatcher, onMount} from 'svelte/internal';
 	import {readable, writable} from 'svelte/store';
 	import {getDialogRootModel, getDialogRootState} from './context';
 
@@ -99,14 +95,12 @@
 		ref,
 	} as any; // Workaround to allow conditional slot type.
 
-	const eventForwarder = createEventForwarder(get_current_component(), {
-		except: [
-			'openAutoFocus',
-			'closeAutoFocus',
-			'escapeKeyDown',
-			'interactOutside',
-		],
-	});
+	const eventForwarder = createEventForwarder([
+		'openAutoFocus',
+		'closeAutoFocus',
+		'escapeKeyDown',
+		'interactOutside',
+	]);
 </script>
 
 {#if derivedState.show}
