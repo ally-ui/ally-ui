@@ -91,12 +91,8 @@ export class DialogContentModel extends ComponentModel<
 				onActivateAutoFocus,
 			});
 		}
-		if (onDeactivateAutoFocus !== prevState.onDeactivateAutoFocus) {
-			this.#contentTrap?.setState({
-				...this.#contentTrap.state,
-				onDeactivateAutoFocus,
-			});
-		}
+		// Note that we do not directly sync `onDeactivateAutoFocus` because we
+		// handle it manually.
 		if (onEscapeKeyDown !== prevState.onEscapeKeyDown) {
 			this.#contentTrap?.setState({
 				...this.#contentTrap.state,
@@ -146,7 +142,7 @@ export class DialogContentModel extends ComponentModel<
 			container: contentElement,
 			initialActive: true,
 			onActivateAutoFocus: this.state.onActivateAutoFocus,
-			onDeactivateAutoFocus: this.#focusTrap__onDeactivateAutoFocus,
+			onDeactivateAutoFocus: this.#onDeactivateAutoFocus__toTrigger,
 			onEscapeKeyDown: this.state.onEscapeKeyDown,
 			onInteractOutside: this.state.onInteractOutside,
 		});
@@ -165,7 +161,11 @@ export class DialogContentModel extends ComponentModel<
 		return contentTrap;
 	};
 
-	#focusTrap__onDeactivateAutoFocus = (ev: Event) => {
+	#onDeactivateAutoFocus__toTrigger = (ev: Event) => {
+		this.state.onDeactivateAutoFocus?.(ev);
+		if (ev.defaultPrevented) {
+			return;
+		}
 		ev.preventDefault();
 		const triggerComponent = this.rootModel.findComponent(
 			(c) => c.type === 'trigger',
