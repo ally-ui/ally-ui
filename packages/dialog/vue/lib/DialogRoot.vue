@@ -11,21 +11,15 @@ import {DIALOG_ROOT_MODEL, DIALOG_ROOT_STATE} from './context';
 export type DialogRootProps = {
 	initialOpen?: boolean;
 	modal?: boolean;
-	clickOutsideDeactivates?: boolean | ((ev: MouseEvent) => boolean);
-	escapeDeactivates?: boolean | ((ev: KeyboardEvent) => boolean);
-	returnFocusTo?: HTMLElement | (() => HTMLElement | undefined);
 	open?: boolean;
 };
 const props = withDefaults(defineProps<DialogRootProps>(), {
 	initialOpen: undefined,
 	modal: undefined,
-	clickOutsideDeactivates: undefined,
-	escapeDeactivates: undefined,
-	returnFocusTo: undefined,
 	open: undefined,
 });
 const emit = defineEmits<{
-	(ev: 'update:open', open: boolean): void;
+	(type: 'update:open', open: boolean): void;
 }>();
 
 // TODO #19 Generate SSR-safe IDs.
@@ -33,9 +27,6 @@ const id = '0';
 const rootModel = new DialogRootModel(id, {
 	initialOpen: props.initialOpen,
 	modal: props.modal,
-	clickOutsideDeactivates: props.clickOutsideDeactivates,
-	escapeDeactivates: props.escapeDeactivates,
-	returnFocusTo: props.returnFocusTo,
 });
 const rootState = ref(rootModel.initialState);
 rootModel.requestStateUpdate = (updater) => {
@@ -54,21 +45,6 @@ useSyncedOption({
 useSyncedOption({
 	option: computed(() => props.modal),
 	onOptionChange: (modal) => (rootState.value = {...rootState.value, modal}),
-});
-useSyncedOption({
-	option: computed(() => props.clickOutsideDeactivates),
-	onOptionChange: (clickOutsideDeactivates) =>
-		(rootState.value = {...rootState.value, clickOutsideDeactivates}),
-});
-useSyncedOption({
-	option: computed(() => props.escapeDeactivates),
-	onOptionChange: (escapeDeactivates) =>
-		(rootState.value = {...rootState.value, escapeDeactivates}),
-});
-useSyncedOption({
-	option: computed(() => props.returnFocusTo),
-	onOptionChange: (returnFocusTo) =>
-		(rootState.value = {...rootState.value, returnFocusTo}),
 });
 watchEffect(function onStateUpdate() {
 	rootModel.setState(rootState.value);
