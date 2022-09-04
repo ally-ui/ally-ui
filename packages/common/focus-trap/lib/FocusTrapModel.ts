@@ -34,24 +34,6 @@ export interface FocusTrapOptions {
 	 */
 	initialActive?: boolean;
 	/**
-	 * Whether clicking outside the focus trap container deactivates the trap.
-	 *
-	 * Pass a handler function to configure when the trap should deactivate based
-	 * on each individual mouse click.
-	 *
-	 * Defaults to `false`.
-	 */
-	clickOutsideDeactivates?: boolean | ((ev: MouseEvent) => boolean);
-	/**
-	 * Whether pressing escape deactives the trap.
-	 *
-	 * Pass a handler function to configure when the trap should deactivate based
-	 * on each individual keystroke.
-	 *
-	 * Defaults to `false`.
-	 */
-	escapeDeactivates?: boolean | ((ev: KeyboardEvent) => boolean);
-	/**
 	 * A custom element to return focus to on deactivation.
 	 *
 	 * Pass a getter function to dynamically get the element to return focus to
@@ -69,11 +51,13 @@ export interface FocusTrapOptions {
 	 */
 	onCloseAutoFocus?: () => void;
 	/**
-	 * Called when the escape key is down.
+	 * Called when the escape key is down. It can be prevented by calling
+	 * `ev.preventDefault`.
 	 */
 	onEscapeKeyDown?: (ev: KeyboardEvent) => void;
 	/**
 	 * Called when an interaction (mouse or touch) occurs outside of the content.
+	 * It can be prevented by calling `ev.preventDefault`.
 	 */
 	onInteractOutside?: (ev: MouseEvent | TouchEvent) => void;
 }
