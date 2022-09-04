@@ -21,9 +21,6 @@ export default function DialogRoot({
 	onOpenChange,
 	initialOpen,
 	modal,
-	clickOutsideDeactivates,
-	escapeDeactivates,
-	returnFocusTo,
 }: DialogRootProps) {
 	const id = React.useId();
 	const rootModel = useRunOnce(
@@ -31,9 +28,6 @@ export default function DialogRoot({
 			new DialogRootModel(id, {
 				initialOpen,
 				modal,
-				clickOutsideDeactivates,
-				escapeDeactivates,
-				returnFocusTo,
 			}),
 	);
 	const [rootState, setRootState] = React.useState(
@@ -42,6 +36,7 @@ export default function DialogRoot({
 	useRunOnce(() => {
 		rootModel.requestStateUpdate = setRootState;
 	});
+	// TODO #44 Reduce syncing boilerplate.
 	useSyncedOption({
 		option: open,
 		onOptionChange: (open) =>
@@ -53,21 +48,6 @@ export default function DialogRoot({
 		option: modal,
 		onOptionChange: (modal) =>
 			setRootState((prevState) => ({...prevState, modal})),
-	});
-	useSyncedOption({
-		option: clickOutsideDeactivates,
-		onOptionChange: (clickOutsideDeactivates) =>
-			setRootState((prevState) => ({...prevState, clickOutsideDeactivates})),
-	});
-	useSyncedOption({
-		option: escapeDeactivates,
-		onOptionChange: (escapeDeactivates) =>
-			setRootState((prevState) => ({...prevState, escapeDeactivates})),
-	});
-	useSyncedOption({
-		option: returnFocusTo,
-		onOptionChange: (returnFocusTo) =>
-			setRootState((prevState) => ({...prevState, returnFocusTo})),
 	});
 	React.useEffect(
 		function onStateUpdate() {

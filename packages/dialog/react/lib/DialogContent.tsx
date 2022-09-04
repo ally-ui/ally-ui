@@ -8,6 +8,7 @@ import {
 	SlottableProps,
 	useMultipleRefs,
 	useRunOnce,
+	useSyncedOption,
 } from '@ally-ui/react';
 import React from 'react';
 import {useDialogRootModel, useDialogRootState} from './context';
@@ -19,17 +20,65 @@ export type DialogContentProps = SlottableProps<
 	DialogContentModelOptions;
 
 const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
-	({forceMount, ...props}, forwardedRef) => {
+	(
+		{
+			forceMount,
+			onActivateAutoFocus,
+			onDeactivateAutoFocus,
+			onEscapeKeyDown,
+			onInteractOutside,
+			...props
+		},
+		forwardedRef,
+	) => {
 		const rootModel = useDialogRootModel();
 		if (rootModel === undefined) {
 			throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 		}
 		const component = useRunOnce(() =>
 			rootModel.registerComponent(
-				new DialogContentModel(rootModel, {forceMount}),
+				new DialogContentModel(rootModel, {
+					forceMount,
+					onActivateAutoFocus,
+					onDeactivateAutoFocus,
+					onEscapeKeyDown,
+					onInteractOutside,
+				}),
 			),
 		);
 		const id = component.getId();
+
+		const [state, setState] = React.useState(() => component.initialState);
+		useRunOnce(() => {
+			component.requestStateUpdate = setState;
+		});
+		// TODO #44 Reduce syncing boilerplate.
+		useSyncedOption({
+			option: onActivateAutoFocus,
+			onOptionChange: (onActivateAutoFocus) =>
+				setState((prevState) => ({...prevState, onActivateAutoFocus})),
+		});
+		useSyncedOption({
+			option: onDeactivateAutoFocus,
+			onOptionChange: (onDeactivateAutoFocus) =>
+				setState((prevState) => ({...prevState, onDeactivateAutoFocus})),
+		});
+		useSyncedOption({
+			option: onEscapeKeyDown,
+			onOptionChange: (onEscapeKeyDown) =>
+				setState((prevState) => ({...prevState, onEscapeKeyDown})),
+		});
+		useSyncedOption({
+			option: onInteractOutside,
+			onOptionChange: (onInteractOutside) =>
+				setState((prevState) => ({...prevState, onInteractOutside})),
+		});
+		React.useEffect(
+			function onStateUpdate() {
+				component.setState(state);
+			},
+			[state],
+		);
 
 		const rootState = useDialogRootState() ?? rootModel.state;
 		const derivedState = component.deriveState(rootState);
