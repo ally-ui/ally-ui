@@ -19,14 +19,7 @@ export default function App() {
 				Escape {escape() ? 'deactivates' : 'blocked'}
 			</button>
 			<h1>Ally UI Solid Dialog</h1>
-			<Dialog.Root
-				open={open()}
-				onOpenChange={setOpen}
-				initialOpen
-				clickOutsideDeactivates={outside()}
-				escapeDeactivates={escape()}
-				returnFocusTo={returnFocus() ?? undefined}
-			>
+			<Dialog.Root open={open()} onOpenChange={setOpen} initialOpen>
 				<div>
 					<button onClick={() => setOpen(!open())}>Manual toggle</button>
 					<Dialog.Trigger>Edit profile</Dialog.Trigger>
@@ -34,7 +27,23 @@ export default function App() {
 						<span>Editing profile...</span>
 					</Show>
 				</div>
-				<Dialog.Content asChild>
+				<Dialog.Content
+					asChild
+					onDeactivateAutoFocus={(ev) => {
+						ev.preventDefault();
+						returnFocus()?.focus();
+					}}
+					onEscapeKeyDown={(ev) => {
+						if (!escape()) {
+							ev.preventDefault();
+						}
+					}}
+					onInteractOutside={(ev) => {
+						if (!outside()) {
+							ev.preventDefault();
+						}
+					}}
+				>
 					{(props) => (
 						<section {...props()}>
 							<Dialog.Title ref={titleRef} asChild>

@@ -6,10 +6,12 @@ import {
 import {
 	combinedRef,
 	createDelayedBindRef,
+	createSyncedOption,
 	Slot,
 	SlottableProps,
 } from '@ally-ui/solid';
-import {JSX, onCleanup, onMount, Show} from 'solid-js';
+import {createEffect, JSX, onCleanup, onMount, Show} from 'solid-js';
+import {createStore} from 'solid-js/store';
 import {useDialogRootModel, useDialogRootState} from './context';
 
 export type DialogContentProps = SlottableProps<
@@ -24,9 +26,41 @@ export default function DialogContent(props: DialogContentProps) {
 		throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 	}
 	const component = rootModel.registerComponent(
-		new DialogContentModel(rootModel, {forceMount: props.forceMount}),
+		new DialogContentModel(rootModel, {
+			forceMount: props.forceMount,
+			onActivateAutoFocus: props.onActivateAutoFocus,
+			onDeactivateAutoFocus: props.onDeactivateAutoFocus,
+			onEscapeKeyDown: props.onEscapeKeyDown,
+			onInteractOutside: props.onInteractOutside,
+		}),
 	);
 	const id = component.getId();
+	const [state, setState] = createStore(component.initialState);
+	component.requestStateUpdate = setState;
+	// TODO #44 Reduce syncing boilerplate.
+	createSyncedOption({
+		option: () => props.onActivateAutoFocus,
+		onOptionChange: (onActivateAutoFocus) =>
+			setState((prevState) => ({...prevState, onActivateAutoFocus})),
+	});
+	createSyncedOption({
+		option: () => props.onDeactivateAutoFocus,
+		onOptionChange: (onDeactivateAutoFocus) =>
+			setState((prevState) => ({...prevState, onDeactivateAutoFocus})),
+	});
+	createSyncedOption({
+		option: () => props.onEscapeKeyDown,
+		onOptionChange: (onEscapeKeyDown) =>
+			setState((prevState) => ({...prevState, onEscapeKeyDown})),
+	});
+	createSyncedOption({
+		option: () => props.onInteractOutside,
+		onOptionChange: (onInteractOutside) =>
+			setState((prevState) => ({...prevState, onInteractOutside})),
+	});
+	createEffect(function onStateUpdate() {
+		component.setState({...state});
+	});
 
 	const rootState = useDialogRootState() ?? rootModel.state;
 	const derivedState = () => component.deriveState(rootState);
