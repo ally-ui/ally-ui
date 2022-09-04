@@ -31,6 +31,7 @@
 	};
 	// TODO #44 Reduce syncing boilerplate.
 	const watchOpen = createSyncedOption<boolean>({
+		initialOption: open,
 		onOptionChange: (open) =>
 			rootState.update((prevState) => ({...prevState, open})),
 		internal: derived(rootState, ($rootState) => $rootState.open),

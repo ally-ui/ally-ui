@@ -3,6 +3,10 @@ import type {Readable} from 'svelte/store';
 
 export interface CreateSyncedOptionOptions<TOption> {
 	/**
+	 * The initial value of the option.
+	 */
+	initialOption?: TOption;
+	/**
 	 * The internal option value. This should be derived from internal state.
 	 */
 	internal?: Readable<TOption>;
@@ -24,16 +28,24 @@ export interface CreateSyncedOptionOptions<TOption> {
  * Synchronize state between an external option and internal state.
  */
 export function createSyncedOption<TOption>({
+	initialOption,
 	internal,
 	onOptionChange,
 	onInternalChange,
 }: CreateSyncedOptionOptions<TOption>) {
-	let previousOption: TOption | undefined = undefined;
+	let previousOption = initialOption;
+	if (previousOption !== undefined) {
+		onOptionChange(previousOption);
+	}
 	function watchOption(option?: TOption) {
-		if (option !== undefined && option !== previousOption) {
-			previousOption = option;
-			onOptionChange(option);
+		if (option === undefined) {
+			return;
 		}
+		if (option === previousOption) {
+			return;
+		}
+		previousOption = option;
+		onOptionChange(option);
 	}
 	const unsubcribeInternal = internal?.subscribe(($internal) => {
 		onInternalChange?.($internal);
