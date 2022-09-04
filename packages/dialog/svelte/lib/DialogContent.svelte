@@ -8,6 +8,12 @@
 	type DialogContentSlots<TAsChild extends true | undefined> = {
 		default: DefaultSlot<TAsChild, DialogContentModelAttributes, RefAction>;
 	};
+	type DialogContentEvents = {
+		openAutoFocus: Event;
+		closeAutoFocus: Event;
+		escapeKeyDown: KeyboardEvent;
+		interactOutside: MouseEvent | TouchEvent;
+	};
 </script>
 
 <script lang="ts">
@@ -17,53 +23,26 @@
 		type DialogContentModelOptions,
 	} from '@ally-ui/core-dialog';
 	import {
-		bindStore,
 		createEventForwarder,
 		createRefAction,
-		createSyncedOption,
+		type ComponentEvents,
 		type DefaultSlot,
 		type RefAction,
 	} from '@ally-ui/svelte';
-	import {get_current_component, onMount} from 'svelte/internal';
+	import {
+		createEventDispatcher,
+		get_current_component,
+		onMount,
+	} from 'svelte/internal';
 	import {readable, writable} from 'svelte/store';
 	import {getDialogRootModel, getDialogRootState} from './context';
 
 	type TAsChild = $$Generic<true | undefined>;
 	type $$Props = DialogContentProps<TAsChild>;
 	type $$Slots = DialogContentSlots<TAsChild>;
+	type $$Events = ComponentEvents<DialogContentEvents>;
 
-	// TODO #41 Remove unnecessary store overhead for each option.
-	export let onOpenAutoFocus: ((ev: Event) => void) | undefined = undefined;
-	const onOpenAutoFocusStore = writable(onOpenAutoFocus);
-	const watchOnOpenAutoFocus = bindStore(
-		onOpenAutoFocusStore,
-		(o) => (onOpenAutoFocus = o),
-	);
-	$: watchOnOpenAutoFocus(onOpenAutoFocus);
-	export let onCloseAutoFocus: ((ev: Event) => void) | undefined = undefined;
-	const onCloseAutoFocusStore = writable(onCloseAutoFocus);
-	const watchOnCloseAutoFocus = bindStore(
-		onCloseAutoFocusStore,
-		(o) => (onCloseAutoFocus = o),
-	);
-	$: watchOnCloseAutoFocus(onCloseAutoFocus);
-	export let onEscapeKeyDown: ((ev: KeyboardEvent) => void) | undefined =
-		undefined;
-	const onEscapeKeyDownStore = writable(onEscapeKeyDown);
-	const watchOnEscapeKeyDown = bindStore(
-		onEscapeKeyDownStore,
-		(o) => (onEscapeKeyDown = o),
-	);
-	$: watchOnEscapeKeyDown(onEscapeKeyDown);
-	export let onInteractOutside:
-		| ((ev: MouseEvent | TouchEvent) => void)
-		| undefined = undefined;
-	const onInteractOutsideStore = writable(onInteractOutside);
-	const watchOnInteractOutside = bindStore(
-		onInteractOutsideStore,
-		(o) => (onInteractOutside = o),
-	);
-	$: watchOnInteractOutside(onInteractOutside);
+	const dispatch = createEventDispatcher<DialogContentEvents>();
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {
@@ -71,7 +50,13 @@
 	}
 	export let forceMount: boolean | undefined = undefined;
 	const component = rootModel.registerComponent(
-		new DialogContentModel(rootModel, {forceMount}),
+		new DialogContentModel(rootModel, {
+			forceMount,
+			onOpenAutoFocus: (ev) => dispatch('openAutoFocus', ev),
+			onCloseAutoFocus: (ev) => dispatch('closeAutoFocus', ev),
+			onEscapeKeyDown: (ev) => dispatch('escapeKeyDown', ev),
+			onInteractOutside: (ev) => dispatch('interactOutside', ev),
+		}),
 	);
 	const id = component.getId();
 
@@ -83,27 +68,6 @@
 			state.set(updater);
 		}
 	};
-	// TODO #44 Reduce syncing boilerplate.
-	createSyncedOption({
-		option: onOpenAutoFocusStore,
-		onOptionChange: (onOpenAutoFocus) =>
-			state.update((prevState) => ({...prevState, onOpenAutoFocus})),
-	});
-	createSyncedOption({
-		option: onCloseAutoFocusStore,
-		onOptionChange: (onCloseAutoFocus) =>
-			state.update((prevState) => ({...prevState, onCloseAutoFocus})),
-	});
-	createSyncedOption({
-		option: onEscapeKeyDownStore,
-		onOptionChange: (onEscapeKeyDown) =>
-			state.update((prevState) => ({...prevState, onEscapeKeyDown})),
-	});
-	createSyncedOption({
-		option: onInteractOutsideStore,
-		onOptionChange: (onInteractOutside) =>
-			state.update((prevState) => ({...prevState, onInteractOutside})),
-	});
 	$: component.setState($state);
 
 	const rootState = getDialogRootState() ?? readable(rootModel.state);
@@ -135,7 +99,14 @@
 		ref,
 	} as any; // Workaround to allow conditional slot type.
 
-	const eventForwarder = createEventForwarder(get_current_component());
+	const eventForwarder = createEventForwarder(get_current_component(), {
+		except: [
+			'openAutoFocus',
+			'closeAutoFocus',
+			'escapeKeyDown',
+			'interactOutside',
+		],
+	});
 </script>
 
 {#if derivedState.show}
