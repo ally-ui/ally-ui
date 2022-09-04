@@ -34,22 +34,13 @@ export interface FocusTrapOptions {
 	 */
 	initialActive?: boolean;
 	/**
-	 * A custom element to return focus to on deactivation.
-	 *
-	 * Pass a getter function to dynamically get the element to return focus to
-	 * on deactivation.
-	 *
-	 * Defaults to the previously focused element before the trap activated.
+	 * Called when focus moves into the content after activation.
 	 */
-	returnFocusTo?: HTMLElement | (() => HTMLElement | undefined);
+	onActivateAutoFocus?: () => void;
 	/**
-	 * Called when focus moves into the content after opening.
+	 * Called when focus moves out of the content after deactivation.
 	 */
-	onOpenAutoFocus?: () => void;
-	/**
-	 * Called when focus moves out of the content after closing.
-	 */
-	onCloseAutoFocus?: () => void;
+	onDeactivateAutoFocus?: (ev: Event) => void;
 	/**
 	 * Called when the escape key is down. It can be prevented by calling
 	 * `ev.preventDefault`.
@@ -153,15 +144,17 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		}
 		this.#previouslyFocused = document.activeElement ?? undefined;
 		this.#focusableChildren.at(0)?.focus();
+		this.state.onActivateAutoFocus?.();
 		this.#returnFocus = () => {
-			const {returnFocusTo} = this.state;
-			const elementToReturnFocusTo =
-				returnFocusTo instanceof Function ? returnFocusTo() : returnFocusTo;
-			const resolvedElement = elementToReturnFocusTo ?? this.#previouslyFocused;
-			if (resolvedElement instanceof HTMLElement) {
-				resolvedElement.focus();
-			}
 			this.#returnFocus = undefined;
+			const focusEvent = new Event('focus');
+			this.state.onDeactivateAutoFocus?.(focusEvent);
+			if (focusEvent.defaultPrevented) {
+				return;
+			}
+			if (this.#previouslyFocused instanceof HTMLElement) {
+				this.#previouslyFocused.focus();
+			}
 		};
 	}
 
@@ -260,12 +253,12 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 	deactivate() {
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
+		this.#returnFocus?.();
 		if (this.state.active) {
 			this.requestStateUpdate?.((prevState) => ({
 				...prevState,
 				active: false,
 			}));
 		}
-		this.#returnFocus?.();
 	}
 }
