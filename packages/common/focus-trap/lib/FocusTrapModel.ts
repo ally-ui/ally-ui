@@ -142,36 +142,21 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		if (this.#unsubscribeEvents !== undefined) {
 			return;
 		}
-		window.addEventListener('keydown', this.#handleKeyDown, LISTENER_OPTIONS);
-		window.addEventListener(
-			'mousedown',
-			this.#handleMouseDown,
-			LISTENER_OPTIONS,
-		);
-		window.addEventListener(
-			'touchstart',
-			this.#handleTouchStart,
-			LISTENER_OPTIONS,
-		);
-		window.addEventListener('click', this.#handleClick, LISTENER_OPTIONS);
+		window.addEventListener('keydown', this.#onKeyDown, LISTENER_OPTIONS);
+		window.addEventListener('mousedown', this.#onInteract, LISTENER_OPTIONS);
+		window.addEventListener('touchstart', this.#onInteract, LISTENER_OPTIONS);
+		window.addEventListener('mouseup', this.#onInteractEnd, LISTENER_OPTIONS);
+		window.addEventListener('touchend', this.#onInteractEnd, LISTENER_OPTIONS);
+		window.addEventListener('click', this.#onClick, LISTENER_OPTIONS);
 
+		// prettier-ignore
 		this.#unsubscribeEvents = () => {
-			window.removeEventListener(
-				'keydown',
-				this.#handleKeyDown,
-				LISTENER_OPTIONS,
-			);
-			window.removeEventListener(
-				'mousedown',
-				this.#handleMouseDown,
-				LISTENER_OPTIONS,
-			);
-			window.removeEventListener(
-				'touchstart',
-				this.#handleTouchStart,
-				LISTENER_OPTIONS,
-			);
-			window.removeEventListener('click', this.#handleClick, LISTENER_OPTIONS);
+			window.removeEventListener('keydown', this.#onKeyDown, LISTENER_OPTIONS);
+			window.removeEventListener('mousedown', this.#onInteract, LISTENER_OPTIONS);
+			window.removeEventListener('touchstart', this.#onInteract, LISTENER_OPTIONS);
+			window.removeEventListener('mouseup', this.#onInteractEnd, LISTENER_OPTIONS);
+			window.removeEventListener('touchend', this.#onInteractEnd, LISTENER_OPTIONS);
+			window.removeEventListener('click', this.#onClick, LISTENER_OPTIONS);
 			this.#unsubscribeEvents = undefined;
 		};
 	}
@@ -196,18 +181,18 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		};
 	}
 
-	#handleKeyDown = (ev: KeyboardEvent) => {
+	#onKeyDown = (ev: KeyboardEvent) => {
 		if (isEscapeEvent(ev)) {
-			this.#handleEscapeDown(ev);
+			this.#onKeyDown__escape(ev);
 			return;
 		}
 		if (isTabEvent(ev)) {
-			this.#handleTabDown(ev);
+			this.#onKeyDown__tab(ev);
 			return;
 		}
 	};
 
-	#handleEscapeDown = (ev: KeyboardEvent) => {
+	#onKeyDown__escape = (ev: KeyboardEvent) => {
 		this.state.onEscapeKeyDown?.(ev);
 		if (ev.defaultPrevented) {
 			return;
@@ -215,7 +200,7 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		this.deactivate();
 	};
 
-	#handleTabDown = (ev: KeyboardEvent) => {
+	#onKeyDown__tab = (ev: KeyboardEvent) => {
 		const firstFocusable = this.#focusableChildren.at(0);
 		const lastFocusable = this.#focusableChildren.at(-1);
 		const target = getActualTarget(ev);
@@ -232,52 +217,47 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		}
 	};
 
-	#handleMouseDown = (ev: MouseEvent) => {
+	#waitingToDeactivate = false;
+	/**
+	 * Check mouse or touch interactions via `mousedown` or `touchstart`.
+	 */
+	#onInteract = (ev: MouseEvent | TouchEvent) => {
 		if (isTargetContainedBy(getActualTarget(ev), this.state.container)) {
 			return;
 		}
 		this.state.onInteractOutside?.(ev);
 		if (ev.defaultPrevented) {
+			this.#waitingToDeactivate = false;
 			return;
 		}
-		this.deactivate();
+		this.#waitingToDeactivate = true;
 	};
 
-	#handleTouchStart = (ev: TouchEvent) => {
-		// Treat the touch as a single pointer.
-		if (ev.touches.length === 1) {
-			this.#handleTouchStart__single(ev);
-			return;
+	#onInteractEnd = () => {
+		if (this.#waitingToDeactivate) {
+			/**
+			 * The `click` event is fired after the full click action occurs. If we
+			 * deactivate the focus trap synchronously, the click handler will be
+			 * removed before it has a chance to call `ev.preventDefault` and
+			 * `ev.stopPropagation`.
+			 *
+			 * Therefore, we have to schedule the deactivation for one tick after
+			 * interaction ends.
+			 */
+			setTimeout(() => {
+				this.deactivate();
+				this.#waitingToDeactivate = false;
+			});
 		}
-		// Ignore touch gestures as long as one touch is within the container element.
-		if (
-			Array.from(ev.touches).some((t) =>
-				isTargetContainedBy(t.target, this.state.container),
-			)
-		) {
-			return;
-		}
-		ev.preventDefault();
 	};
 
-	#handleTouchStart__single = (ev: TouchEvent) => {
-		const touch = ev.touches.item(0)!;
-		if (isTargetContainedBy(touch.target, this.state.container)) {
-			return;
-		}
-		this.state.onInteractOutside?.(ev);
-		if (ev.defaultPrevented) {
-			return;
-		}
-		this.deactivate();
-	};
-
-	#handleClick = (ev: MouseEvent) => {
+	#onClick = (ev: MouseEvent) => {
 		if (isTargetContainedBy(getActualTarget(ev), this.state.container)) {
 			return;
 		}
 		if (this.state.active) {
 			ev.preventDefault();
+			ev.stopPropagation();
 		}
 	};
 
