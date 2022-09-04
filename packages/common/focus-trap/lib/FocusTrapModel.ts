@@ -34,11 +34,13 @@ export interface FocusTrapOptions {
 	 */
 	initialActive?: boolean;
 	/**
-	 * Called when focus moves into the content after activation.
+	 * Called when focus moves into the content after activation. It can be
+	 * prevented by calling `ev.preventDefault`.
 	 */
-	onActivateAutoFocus?: () => void;
+	onActivateAutoFocus?: (ev: Event) => void;
 	/**
-	 * Called when focus moves out of the content after deactivation.
+	 * Called when focus moves out of the content after deactivation. It can be
+	 * prevented by calling `ev.preventDefault`.
 	 */
 	onDeactivateAutoFocus?: (ev: Event) => void;
 	/**
@@ -83,7 +85,7 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 
 	#focusableChildren: HTMLElement[] = [];
 	#unsubscribeChildren?: () => void;
-	#watchChildren() {
+	#subscribeChildren() {
 		if (this.#unsubscribeChildren !== undefined) {
 			return;
 		}
@@ -113,7 +115,7 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 	}
 
 	#unsubscribeEvents?: () => void;
-	#watchEvents() {
+	#subscribeEvents() {
 		if (this.#unsubscribeEvents !== undefined) {
 			return;
 		}
@@ -142,12 +144,11 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		if (this.#returnFocus !== undefined) {
 			return;
 		}
-		this.#previouslyFocused = document.activeElement ?? undefined;
-		this.#focusableChildren.at(0)?.focus();
-		this.state.onActivateAutoFocus?.();
 		this.#returnFocus = () => {
 			this.#returnFocus = undefined;
-			const focusEvent = new Event('focus');
+			const focusEvent = new Event('focus-trap.on-deactivate-auto-focus', {
+				cancelable: true,
+			});
 			this.state.onDeactivateAutoFocus?.(focusEvent);
 			if (focusEvent.defaultPrevented) {
 				return;
@@ -156,6 +157,16 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 				this.#previouslyFocused.focus();
 			}
 		};
+
+		this.#previouslyFocused = document.activeElement ?? undefined;
+		const focusEvent = new Event('focus-trap.on-activate-auto-focus', {
+			cancelable: true,
+		});
+		this.state.onActivateAutoFocus?.(focusEvent);
+		if (focusEvent.defaultPrevented) {
+			return;
+		}
+		this.#focusableChildren.at(0)?.focus();
 	}
 
 	#onKeyDown = (ev: KeyboardEvent) => {
@@ -239,8 +250,8 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 	};
 
 	activate() {
-		this.#watchChildren();
-		this.#watchEvents();
+		this.#subscribeChildren();
+		this.#subscribeEvents();
 		this.#trapFocus();
 		if (!this.state.active) {
 			this.requestStateUpdate?.((prevState) => ({
