@@ -146,7 +146,7 @@ export class DialogContentModel extends ComponentModel<
 			container: contentElement,
 			initialActive: true,
 			onActivateAutoFocus: this.state.onActivateAutoFocus,
-			onDeactivateAutoFocus: this.state.onDeactivateAutoFocus,
+			onDeactivateAutoFocus: this.#focusTrap__onDeactivateAutoFocus,
 			onEscapeKeyDown: this.state.onEscapeKeyDown,
 			onInteractOutside: this.state.onInteractOutside,
 		});
@@ -165,11 +165,12 @@ export class DialogContentModel extends ComponentModel<
 		return contentTrap;
 	};
 
-	#onOpenChangeEffect__getTriggerNode = () => {
+	#focusTrap__onDeactivateAutoFocus = (ev: Event) => {
+		ev.preventDefault();
 		const triggerComponent = this.rootModel.findComponent(
 			(c) => c.type === 'trigger',
 		);
-		return triggerComponent?.node;
+		triggerComponent?.node?.focus();
 	};
 
 	#onOpenChangeEffect__handleClose = (): boolean => {
