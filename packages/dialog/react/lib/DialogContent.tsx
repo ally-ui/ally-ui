@@ -23,8 +23,8 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 	(
 		{
 			forceMount,
-			onActivateAutoFocus,
-			onDeactivateAutoFocus,
+			onOpenAutoFocus,
+			onCloseAutoFocus,
 			onEscapeKeyDown,
 			onInteractOutside,
 			...props
@@ -39,8 +39,8 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 			rootModel.registerComponent(
 				new DialogContentModel(rootModel, {
 					forceMount,
-					onActivateAutoFocus,
-					onDeactivateAutoFocus,
+					onOpenAutoFocus,
+					onCloseAutoFocus,
 					onEscapeKeyDown,
 					onInteractOutside,
 				}),
@@ -54,14 +54,14 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 		});
 		// TODO #44 Reduce syncing boilerplate.
 		useSyncedOption({
-			option: onActivateAutoFocus,
-			onOptionChange: (onActivateAutoFocus) =>
-				setState((prevState) => ({...prevState, onActivateAutoFocus})),
+			option: onOpenAutoFocus,
+			onOptionChange: (onOpenAutoFocus) =>
+				setState((prevState) => ({...prevState, onOpenAutoFocus})),
 		});
 		useSyncedOption({
-			option: onDeactivateAutoFocus,
-			onOptionChange: (onDeactivateAutoFocus) =>
-				setState((prevState) => ({...prevState, onDeactivateAutoFocus})),
+			option: onCloseAutoFocus,
+			onOptionChange: (onCloseAutoFocus) =>
+				setState((prevState) => ({...prevState, onCloseAutoFocus})),
 		});
 		useSyncedOption({
 			option: onEscapeKeyDown,

@@ -28,8 +28,8 @@ export default function DialogContent(props: DialogContentProps) {
 	const component = rootModel.registerComponent(
 		new DialogContentModel(rootModel, {
 			forceMount: props.forceMount,
-			onActivateAutoFocus: props.onActivateAutoFocus,
-			onDeactivateAutoFocus: props.onDeactivateAutoFocus,
+			onOpenAutoFocus: props.onOpenAutoFocus,
+			onCloseAutoFocus: props.onCloseAutoFocus,
 			onEscapeKeyDown: props.onEscapeKeyDown,
 			onInteractOutside: props.onInteractOutside,
 		}),
@@ -39,14 +39,14 @@ export default function DialogContent(props: DialogContentProps) {
 	component.requestStateUpdate = setState;
 	// TODO #44 Reduce syncing boilerplate.
 	createSyncedOption({
-		option: () => props.onActivateAutoFocus,
-		onOptionChange: (onActivateAutoFocus) =>
-			setState((prevState) => ({...prevState, onActivateAutoFocus})),
+		option: () => props.onOpenAutoFocus,
+		onOptionChange: (onOpenAutoFocus) =>
+			setState((prevState) => ({...prevState, onOpenAutoFocus})),
 	});
 	createSyncedOption({
-		option: () => props.onDeactivateAutoFocus,
-		onOptionChange: (onDeactivateAutoFocus) =>
-			setState((prevState) => ({...prevState, onDeactivateAutoFocus})),
+		option: () => props.onCloseAutoFocus,
+		onOptionChange: (onCloseAutoFocus) =>
+			setState((prevState) => ({...prevState, onCloseAutoFocus})),
 	});
 	createSyncedOption({
 		option: () => props.onEscapeKeyDown,

@@ -12,12 +12,12 @@ export interface DialogContentModelOptions {
 	 * Called when focus moves into the content after activation. It can be
 	 * prevented by calling `ev.preventDefault`.
 	 */
-	onActivateAutoFocus?: (ev: Event) => void;
+	onOpenAutoFocus?: (ev: Event) => void;
 	/**
 	 * Called when focus moves out of the content after deactivation. It can be
 	 * prevented by calling `ev.preventDefault`.
 	 */
-	onDeactivateAutoFocus?: (ev: Event) => void;
+	onCloseAutoFocus?: (ev: Event) => void;
 	/**
 	 * Called when the escape key is down. It can be prevented by calling
 	 * `ev.preventDefault`.
@@ -77,18 +77,17 @@ export class DialogContentModel extends ComponentModel<
 
 	watchStateChange(
 		{
-			onActivateAutoFocus,
-			onDeactivateAutoFocus,
+			onOpenAutoFocus,
 			onEscapeKeyDown,
 			onInteractOutside,
 		}: DialogContentModelState,
 		prevState: DialogContentModelState,
 	) {
 		// TODO #44 Reduce syncing boilerplate.
-		if (onActivateAutoFocus !== prevState.onActivateAutoFocus) {
+		if (onOpenAutoFocus !== prevState.onOpenAutoFocus) {
 			this.#contentTrap?.setState({
 				...this.#contentTrap.state,
-				onActivateAutoFocus,
+				onActivateAutoFocus: onOpenAutoFocus,
 			});
 		}
 		// Note that we do not directly sync `onDeactivateAutoFocus` because we
@@ -141,8 +140,8 @@ export class DialogContentModel extends ComponentModel<
 		const contentTrap = new FocusTrapModel({
 			container: contentElement,
 			initialActive: true,
-			onActivateAutoFocus: this.state.onActivateAutoFocus,
-			onDeactivateAutoFocus: this.#onDeactivateAutoFocus__toTrigger,
+			onActivateAutoFocus: this.state.onOpenAutoFocus,
+			onDeactivateAutoFocus: this.#onCloseAutoFocus__toTrigger,
 			onEscapeKeyDown: this.state.onEscapeKeyDown,
 			onInteractOutside: this.state.onInteractOutside,
 		});
@@ -161,8 +160,8 @@ export class DialogContentModel extends ComponentModel<
 		return contentTrap;
 	};
 
-	#onDeactivateAutoFocus__toTrigger = (ev: Event) => {
-		this.state.onDeactivateAutoFocus?.(ev);
+	#onCloseAutoFocus__toTrigger = (ev: Event) => {
+		this.state.onCloseAutoFocus?.(ev);
 		if (ev.defaultPrevented) {
 			return;
 		}

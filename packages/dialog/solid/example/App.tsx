@@ -29,7 +29,7 @@ export default function App() {
 				</div>
 				<Dialog.Content
 					asChild
-					onDeactivateAutoFocus={(ev) => {
+					onCloseAutoFocus={(ev) => {
 						ev.preventDefault();
 						returnFocus()?.focus();
 					}}
