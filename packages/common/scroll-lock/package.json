@@ -1,0 +1,42 @@
+{
+	"name": "@ally-ui/scroll-lock",
+	"version": "0.0.13",
+	"scripts": {
+		"example": "vite",
+		"build": "tsc && vite build",
+		"build:watch": "vite build --watch",
+		"clean": "rimraf dist",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"coverage": "vitest run --coverage"
+	},
+	"author": "Bryan Lee",
+	"description": "A tiny scroll lock implementation for JavaScript",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ally-ui/ally-ui.git"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"type": "module",
+	"files": [
+		"dist"
+	],
+	"main": "./dist/main.umd.cjs",
+	"module": "./dist/main.js",
+	"types": "./dist/main.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/main.js",
+			"require": "./dist/main.umd.cjs"
+		},
+		"./package.json": "./package.json"
+	},
+	"sideEffects": false,
+	"dependencies": {
+		"@ally-ui/core": "^0.0.13"
+	}
+}
