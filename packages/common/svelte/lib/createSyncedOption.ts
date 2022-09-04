@@ -1,12 +1,7 @@
 import {onDestroy} from 'svelte';
-import {get, type Readable} from 'svelte/store';
-import {isWritable, type ReadOrWritable} from './store';
+import type {Readable} from 'svelte/store';
 
 export interface CreateSyncedOptionOptions<TOption> {
-	/**
-	 * A writable store containing the external option value.
-	 */
-	option?: ReadOrWritable<TOption>;
 	/**
 	 * The internal option value. This should be derived from internal state.
 	 */
@@ -17,34 +12,34 @@ export interface CreateSyncedOptionOptions<TOption> {
 	 * Pass a function to update internal state.
 	 */
 	onOptionChange: (option: TOption) => void;
+	/**
+	 * Called with the new internal option's value when it changes.
+	 *
+	 * Pass a function to update the external option.
+	 */
+	onInternalChange?: (option: TOption) => void;
 }
 
 /**
  * Synchronize state between an external option and internal state.
  */
 export function createSyncedOption<TOption>({
-	option,
 	internal,
 	onOptionChange,
+	onInternalChange,
 }: CreateSyncedOptionOptions<TOption>) {
-	let previousOption = option === undefined ? undefined : get(option);
-	if (previousOption !== undefined) {
-		onOptionChange(previousOption);
+	let previousOption: TOption | undefined = undefined;
+	function watchOption(option?: TOption) {
+		if (option !== undefined && option !== previousOption) {
+			previousOption = option;
+			onOptionChange(option);
+		}
 	}
-	const unsubcribeOption = option?.subscribe(($option) => {
-		if ($option === previousOption) {
-			return;
-		}
-		previousOption = $option;
-		onOptionChange($option);
-	});
 	const unsubcribeInternal = internal?.subscribe(($internal) => {
-		if (isWritable(option)) {
-			option.set($internal);
-		}
+		onInternalChange?.($internal);
 	});
 	onDestroy(() => {
 		unsubcribeInternal?.();
-		unsubcribeOption?.();
 	});
+	return watchOption;
 }
