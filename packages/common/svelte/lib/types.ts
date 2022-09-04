@@ -8,7 +8,3 @@ export type DefaultSlot<
 			props: TProps;
 			ref: TRef;
 	  };
-
-export type ComponentEvents<TEvents> = {
-	[TKey in keyof TEvents]: CustomEvent<TEvents[TKey]>;
-};

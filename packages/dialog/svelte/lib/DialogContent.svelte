@@ -24,21 +24,21 @@
 	} from '@ally-ui/core-dialog';
 	import {
 		createEventForwarder,
+		createNativeEventDispatcher,
 		createRefAction,
-		type ComponentEvents,
 		type DefaultSlot,
 		type RefAction,
 	} from '@ally-ui/svelte';
-	import {createEventDispatcher, onMount} from 'svelte/internal';
-	import {readable, writable} from 'svelte/store';
+	import {onMount} from 'svelte/internal';
+	import {readable} from 'svelte/store';
 	import {getDialogRootModel, getDialogRootState} from './context';
 
 	type TAsChild = $$Generic<true | undefined>;
 	type $$Props = DialogContentProps<TAsChild>;
 	type $$Slots = DialogContentSlots<TAsChild>;
-	type $$Events = ComponentEvents<DialogContentEvents>;
+	type $$Events = DialogContentEvents;
 
-	const dispatch = createEventDispatcher<DialogContentEvents>();
+	const dispatch = createNativeEventDispatcher<DialogContentEvents>();
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {
@@ -55,16 +55,6 @@
 		}),
 	);
 	const id = component.getId();
-
-	const state = writable(component.initialState);
-	component.requestStateUpdate = (updater) => {
-		if (updater instanceof Function) {
-			state.update(updater);
-		} else {
-			state.set(updater);
-		}
-	};
-	$: component.setState($state);
 
 	const rootState = getDialogRootState() ?? readable(rootModel.state);
 	$: derivedState = component.deriveState($rootState);

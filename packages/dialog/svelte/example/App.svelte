@@ -32,17 +32,17 @@
 			let:props
 			let:ref
 			on:closeAutoFocus={(ev) => {
-				ev.detail.preventDefault();
+				ev.preventDefault();
 				returnFocus?.focus();
 			}}
 			on:escapeKeyDown={(ev) => {
 				if (!escape) {
-					ev.detail.preventDefault();
+					ev.preventDefault();
 				}
 			}}
 			on:interactOutside={(ev) => {
 				if (!outside) {
-					ev.detail.preventDefault();
+					ev.preventDefault();
 				}
 			}}
 		>
