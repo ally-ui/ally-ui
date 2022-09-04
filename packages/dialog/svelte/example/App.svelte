@@ -19,13 +19,7 @@
 		Escape {escape ? 'deactivates' : 'blocked'}
 	</button>
 	<h1>Ally UI Svelte Dialog</h1>
-	<Dialog.Root
-		bind:open
-		initialOpen
-		clickOutsideDeactivates={outside}
-		escapeDeactivates={escape}
-		returnFocusTo={returnFocus ?? null}
-	>
+	<Dialog.Root bind:open initialOpen>
 		<div>
 			<button on:click={() => (open = !open)}>Manual toggle</button>
 			<Dialog.Trigger>Edit profile</Dialog.Trigger>

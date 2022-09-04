@@ -17,18 +17,53 @@
 		type DialogContentModelOptions,
 	} from '@ally-ui/core-dialog';
 	import {
+		bindStore,
 		createEventForwarder,
 		createRefAction,
+		createSyncedOption,
 		type DefaultSlot,
 		type RefAction,
 	} from '@ally-ui/svelte';
 	import {get_current_component, onMount} from 'svelte/internal';
-	import {readable} from 'svelte/store';
+	import {readable, writable} from 'svelte/store';
 	import {getDialogRootModel, getDialogRootState} from './context';
 
 	type TAsChild = $$Generic<true | undefined>;
 	type $$Props = DialogContentProps<TAsChild>;
 	type $$Slots = DialogContentSlots<TAsChild>;
+
+	// TODO #41 Remove unnecessary store overhead for each option.
+	export let onOpenAutoFocus: ((ev: Event) => void) | undefined = undefined;
+	const onOpenAutoFocusStore = writable(onOpenAutoFocus);
+	const watchOnOpenAutoFocus = bindStore(
+		onOpenAutoFocusStore,
+		(o) => (onOpenAutoFocus = o),
+	);
+	$: watchOnOpenAutoFocus(onOpenAutoFocus);
+	export let onCloseAutoFocus: ((ev: Event) => void) | undefined = undefined;
+	const onCloseAutoFocusStore = writable(onCloseAutoFocus);
+	const watchOnCloseAutoFocus = bindStore(
+		onCloseAutoFocusStore,
+		(o) => (onCloseAutoFocus = o),
+	);
+	$: watchOnCloseAutoFocus(onCloseAutoFocus);
+	export let onEscapeKeyDown: ((ev: KeyboardEvent) => void) | undefined =
+		undefined;
+	const onEscapeKeyDownStore = writable(onEscapeKeyDown);
+	const watchOnEscapeKeyDown = bindStore(
+		onEscapeKeyDownStore,
+		(o) => (onEscapeKeyDown = o),
+	);
+	$: watchOnEscapeKeyDown(onEscapeKeyDown);
+	export let onInteractOutside:
+		| ((ev: MouseEvent | TouchEvent) => void)
+		| undefined = undefined;
+	const onInteractOutsideStore = writable(onInteractOutside);
+	const watchOnInteractOutside = bindStore(
+		onInteractOutsideStore,
+		(o) => (onInteractOutside = o),
+	);
+	$: watchOnInteractOutside(onInteractOutside);
 
 	const rootModel = getDialogRootModel();
 	if (rootModel === undefined) {
@@ -39,6 +74,37 @@
 		new DialogContentModel(rootModel, {forceMount}),
 	);
 	const id = component.getId();
+
+	const state = writable(component.initialState);
+	component.requestStateUpdate = (updater) => {
+		if (updater instanceof Function) {
+			state.update(updater);
+		} else {
+			state.set(updater);
+		}
+	};
+	// TODO #44 Reduce syncing boilerplate.
+	createSyncedOption({
+		option: onOpenAutoFocusStore,
+		onOptionChange: (onOpenAutoFocus) =>
+			state.update((prevState) => ({...prevState, onOpenAutoFocus})),
+	});
+	createSyncedOption({
+		option: onCloseAutoFocusStore,
+		onOptionChange: (onCloseAutoFocus) =>
+			state.update((prevState) => ({...prevState, onCloseAutoFocus})),
+	});
+	createSyncedOption({
+		option: onEscapeKeyDownStore,
+		onOptionChange: (onEscapeKeyDown) =>
+			state.update((prevState) => ({...prevState, onEscapeKeyDown})),
+	});
+	createSyncedOption({
+		option: onInteractOutsideStore,
+		onOptionChange: (onInteractOutside) =>
+			state.update((prevState) => ({...prevState, onInteractOutside})),
+	});
+	$: component.setState($state);
 
 	const rootState = getDialogRootState() ?? readable(rootModel.state);
 	$: derivedState = component.deriveState($rootState);
