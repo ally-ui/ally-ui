@@ -32,6 +32,11 @@ export interface ScrollLockReactive {
 export type ScrollLockState = ScrollLockOptions & ScrollLockReactive;
 
 export class ScrollLockModel extends StateModel<ScrollLockState> {
+	static SUPPORTS_OVERSCROLL_BEHAVIOR = CSS.supports(
+		'overscroll-behavior',
+		'contain',
+	);
+
 	/**
 	 * Keep track of all active locks and only handle the latest lock.
 	 */
@@ -70,6 +75,17 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 			);
 			ScrollLockModel.activeLocks.splice(idx, 1);
 			this.#unregisterLock = undefined;
+		};
+	}
+
+	#unblockOverscroll?: () => void;
+	#blockOverscroll() {
+		const {container} = this.state;
+		const previous = getComputedStyle(container).overscrollBehavior;
+		container.style.overscrollBehavior = 'contain';
+		this.#unblockOverscroll = () => {
+			container.style.overscrollBehavior = previous;
+			this.#unblockOverscroll = undefined;
 		};
 	}
 
@@ -112,6 +128,9 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 		const target = ev.target;
 		if (target instanceof Element && !this.state.container.contains(target)) {
 			ev.preventDefault();
+		}
+		if (ScrollLockModel.SUPPORTS_OVERSCROLL_BEHAVIOR) {
+			return;
 		}
 		if (this.#shouldPrevent(ev)) {
 			ev.preventDefault();
@@ -176,6 +195,7 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 
 	activate() {
 		this.#registerLock();
+		this.#blockOverscroll();
 		this.#subscribeEvents();
 		if (!this.state.active) {
 			this.requestStateUpdate?.((prevState) => ({...prevState, active: true}));
@@ -184,6 +204,7 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 
 	deactivate() {
 		this.#unregisterLock?.();
+		this.#unblockOverscroll?.();
 		this.#unsubscribeEvents?.();
 		if (this.state.active) {
 			this.requestStateUpdate?.((prevState) => ({...prevState, active: false}));
