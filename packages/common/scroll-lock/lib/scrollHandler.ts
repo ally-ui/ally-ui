@@ -4,49 +4,33 @@ function isTextArea(node: Element) {
 	return node.tagName === 'TEXTAREA';
 }
 
-function canBeScrolled(node: Element, overflow: 'overflowX' | 'overflowY') {
+function canBeScrolled(node: Element, axis: Axis) {
+	const overflow = axis === 'v' ? 'overflowY' : 'overflowX';
 	const styles = getComputedStyle(node);
-	return (
-		// Not not scrollable.
-		styles[overflow] !== 'hidden' &&
-		// Contains scroll inside itself.
-		(styles.overflowY === styles.overflowX ||
-			styles[overflow] === 'visible' ||
-			// `textarea` will always _contain_ scroll inside itself. It can only be hidden.
-			!isTextArea(node))
-	);
-}
-function canBeScrolledVertically(node: Element) {
-	return canBeScrolled(node, 'overflowY');
-}
-function canBeScrolledHorizontally(node: Element) {
-	return canBeScrolled(node, 'overflowX');
-}
-function canBeScrolledOnAxis(node: Element, axis: Axis) {
-	return axis === 'v'
-		? canBeScrolledVertically(node)
-		: canBeScrolledHorizontally(node);
+	if (styles[overflow] === 'hidden') {
+		return false;
+	}
+	if (styles[overflow] === 'visible') {
+		return true;
+	}
+	// Contains scroll within itself.
+	if (styles.overflowY === styles.overflowX) {
+		return true;
+	}
+	// `textarea` will always _contain_ scroll inside itself. It can only be hidden.
+	if (!isTextArea(node)) {
+		return true;
+	}
+	return false;
 }
 
-type ScrollVariables = [position: number, scroll: number, capacity: number];
-function getVerticalScrollVariables({
-	scrollTop,
-	scrollHeight,
-	clientHeight,
-}: Element): ScrollVariables {
-	return [scrollTop, scrollHeight, clientHeight];
-}
-function getHorizontalScrollVariables({
-	scrollLeft,
-	scrollWidth,
-	clientWidth,
-}: Element): ScrollVariables {
-	return [scrollLeft, scrollWidth, clientWidth];
-}
-function getScrollVariablesOnAxis(node: Element, axis: Axis): ScrollVariables {
-	return axis === 'v'
-		? getVerticalScrollVariables(node)
-		: getHorizontalScrollVariables(node);
+type ScrollData = [position: number, scroll: number, capacity: number];
+
+function getScrollData(node: Element, axis: Axis): ScrollData {
+	if (axis === 'v') {
+		return [node.scrollTop, node.scrollHeight, node.clientHeight];
+	}
+	return [node.scrollLeft, node.scrollWidth, node.clientWidth];
 }
 
 export function canLocationBeScrolled(node: Element, axis: Axis) {
@@ -57,8 +41,8 @@ export function canLocationBeScrolled(node: Element, axis: Axis) {
 		if (typeof ShadowRoot !== 'undefined' && current instanceof ShadowRoot) {
 			current = current.host as HTMLElement;
 		}
-		if (canBeScrolledOnAxis(current, axis)) {
-			const [, scroll, capacity] = getScrollVariablesOnAxis(current, axis);
+		if (canBeScrolled(current, axis)) {
+			const [, scroll, capacity] = getScrollData(current, axis);
 			if (scroll > capacity) {
 				return true;
 			}
@@ -69,84 +53,74 @@ export function canLocationBeScrolled(node: Element, axis: Axis) {
 	return false;
 }
 
+/**
+ * If the element's direction is rtl (right-to-left), then scrollLeft is 0 when
+ * the scrollbar is at its rightmost position, and then increasingly negative as
+ * you scroll towards the end of the content.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollLeft
+ */
 function getDirectionFactor(axis: Axis, direction: string | null) {
-	/**
-	 * If the element's direction is rtl (right-to-left), then scrollLeft is 0
-	 * when the scrollbar is at its rightmost position, and then increasingly
-	 * negative as you scroll towards the end of the content.
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollLeft
-	 */
 	return axis === 'h' && direction === 'rtl' ? -1 : 1;
 }
 
 export interface ShouldPreventScrollOptions {
 	axis: Axis;
 	endTarget: Element;
-	event: Event;
-	noOverscroll: boolean;
-	sourceDelta: number;
+	overscroll: boolean;
+	delta: number;
 }
 
-export function shouldPreventScroll({
-	axis,
-	endTarget,
-	event,
-	noOverscroll,
-	sourceDelta,
-}: ShouldPreventScrollOptions) {
+// CREDIT https://github.com/theKashey/react-remove-scroll/blob/master/src/handleScroll.ts
+export function shouldPreventScroll(
+	ev: Event,
+	{axis, endTarget, overscroll, delta}: ShouldPreventScrollOptions,
+) {
 	const directionFactor = getDirectionFactor(
 		axis,
 		window.getComputedStyle(endTarget).direction,
 	);
-	const delta = directionFactor * sourceDelta;
+	delta *= directionFactor;
 
-	let target = event.target as Element | null;
+	let target = ev.target as Element | null;
 	if (target === null) {
 		return false;
 	}
-	const targetInLock = endTarget.contains(target);
 
-	let cancelScroll = false;
+	const isPortalledTarget = !endTarget.contains(target);
 	let availableScroll = 0;
 	let availableScrollTop = 0;
 	do {
-		const [position, scroll, capacity] = getScrollVariablesOnAxis(
-			target!,
-			axis,
-		);
-
+		const [position, scroll, capacity] = getScrollData(target!, axis);
 		const elementScroll = scroll - capacity - directionFactor * position;
-
 		if (
 			(position !== 0 || elementScroll !== 0) &&
-			canBeScrolledOnAxis(target!, axis)
+			canBeScrolled(target!, axis)
 		) {
 			availableScroll += elementScroll;
 			availableScrollTop += position;
 		}
-
 		target = target!.parentNode as Element | null;
 	} while (
 		// Portalled content.
-		(!targetInLock && target !== document.body) ||
+		(isPortalledTarget && target !== document.body) ||
 		// Self content.
-		(targetInLock && (endTarget.contains(target) || endTarget === target))
+		(!isPortalledTarget && (endTarget.contains(target) || endTarget === target))
 	);
 
-	if (
-		delta > 0 &&
-		((noOverscroll && availableScroll === 0) ||
-			(!noOverscroll && delta > availableScroll))
-	) {
-		cancelScroll = true;
-	} else if (
-		delta <= 0 &&
-		((noOverscroll && availableScrollTop === 0) ||
-			(!noOverscroll && -delta > availableScrollTop))
-	) {
-		cancelScroll = true;
+	if (delta > 0) {
+		if (overscroll) {
+			return delta > availableScroll;
+		}
+		return availableScroll === 0;
 	}
 
-	return cancelScroll;
+	if (delta <= 0) {
+		if (overscroll) {
+			return -delta > availableScrollTop;
+		}
+		return availableScrollTop === 0;
+	}
+
+	return false;
 }

@@ -1,7 +1,7 @@
 import {StateModel} from '@ally-ui/core';
 import {canLocationBeScrolled, shouldPreventScroll} from './scrollHandler';
-import type {Axis, Coord, QueuedEvent} from './types';
-import {coordIsEqual, getTouchCoord, getWheelDelta} from './utils';
+import type {Coord} from './types';
+import {getDeltaAxis, getTouchCoord, getWheelDelta} from './utils';
 
 const LISTENER_OPTIONS: AddEventListenerOptions = {
 	capture: true,
@@ -23,18 +23,6 @@ export interface ScrollLockOptions {
 	 * Defaults to `false`.
 	 */
 	allowPinchZoom?: boolean;
-	/**
-	 * Called when scroll events are captured.
-	 */
-	onScrollCapture?: (ev: WheelEvent | TouchEvent) => void;
-	/**
-	 * Called when mouse wheel events are captured.
-	 */
-	onWheelCapture?: (ev: WheelEvent) => void;
-	/**
-	 * Called when touch move events are captured.
-	 */
-	onTouchMoveCapture?: (ev: TouchEvent) => void;
 }
 
 export interface ScrollLockReactive {
@@ -43,7 +31,6 @@ export interface ScrollLockReactive {
 
 export type ScrollLockState = ScrollLockOptions & ScrollLockReactive;
 
-// CREDIT https://github.com/theKashey/react-remove-scroll/blob/master/src/handleScroll.ts
 export class ScrollLockModel extends StateModel<ScrollLockState> {
 	/**
 	 * Keep track of all active locks and only handle the latest lock.
@@ -91,79 +78,37 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 		if (this.#unsubscribeEvents !== undefined) {
 			return;
 		}
-		const {container} = this.state;
-		// prettier-ignore
-		{
-			window.addEventListener('wheel', this.#onWindowScroll, LISTENER_OPTIONS);
-			window.addEventListener('touchmove', this.#onWindowScroll, LISTENER_OPTIONS);
-			window.addEventListener('touchstart', this.#onWindowTouchStart, LISTENER_OPTIONS);
-			container.addEventListener('wheel', this.#onScroll, LISTENER_OPTIONS);
-			container.addEventListener('touchmove', this.#onTouchMove, LISTENER_OPTIONS);
-		}
+		window.addEventListener('touchstart', this.#onTouchStart, LISTENER_OPTIONS);
+		window.addEventListener('wheel', this.#onScroll, LISTENER_OPTIONS);
+		window.addEventListener('touchmove', this.#onScroll, LISTENER_OPTIONS);
 		// prettier-ignore
 		this.#unsubscribeEvents = () => {
-			window.removeEventListener('wheel', this.#onWindowScroll, LISTENER_OPTIONS);
-			window.removeEventListener('touchmove', this.#onWindowScroll, LISTENER_OPTIONS);
-			window.removeEventListener('touchstart', this.#onWindowTouchStart, LISTENER_OPTIONS)
-			container.removeEventListener('wheel', this.#onScroll, LISTENER_OPTIONS);
-			container.removeEventListener('touchmove', this.#onTouchMove, LISTENER_OPTIONS);
+			window.removeEventListener('touchstart', this.#onTouchStart, LISTENER_OPTIONS)
+			window.removeEventListener('wheel', this.#onScroll, LISTENER_OPTIONS);
+			window.removeEventListener('touchmove', this.#onScroll, LISTENER_OPTIONS);
 			this.#unsubscribeEvents = undefined;
 		};
 	}
 
-	#onWindowScroll = (ev: WheelEvent | TouchEvent) => {
+	#prevCoord: Coord = [0, 0];
+	#onTouchStart = (ev: TouchEvent) => {
+		this.#prevCoord = getTouchCoord(ev);
+	};
+
+	#onScroll = (ev: WheelEvent | TouchEvent) => {
+		if (!ev.cancelable) {
+			return;
+		}
 		if (ScrollLockModel.activeLocks.at(-1) !== this) {
 			return;
 		}
-		const delta =
-			ev instanceof WheelEvent ? getWheelDelta(ev) : getTouchCoord(ev);
-		const sourceEvent = this.queuedEvents.find(
-			(p) =>
-				p.name === ev.type &&
-				p.target === ev.target &&
-				coordIsEqual(p.delta, delta),
-		);
-		if (sourceEvent !== undefined && sourceEvent.shouldPrevent) {
-			ev.preventDefault();
-			return;
-		}
-		if (sourceEvent === undefined) {
+		const target = ev.target as Element | null;
+		if (!this.state.container.contains(target)) {
 			ev.preventDefault();
 		}
-	};
-
-	touchStart: Coord = [0, 0];
-	activeAxis: Axis | undefined = undefined;
-	#onWindowTouchStart = (ev: TouchEvent) => {
-		this.touchStart = getTouchCoord(ev);
-		this.activeAxis = undefined;
-	};
-
-	queuedEvents: QueuedEvent[] = [];
-	#queueEvent = (ev: QueuedEvent) => {
-		this.queuedEvents.push(ev);
-		setTimeout(() => {
-			const idx = this.queuedEvents.findIndex((e) => e === ev);
-			this.queuedEvents.slice(idx);
-		});
-	};
-
-	#onScroll = (ev: WheelEvent) => {
-		this.#queueEvent({
-			name: ev.type,
-			delta: getWheelDelta(ev),
-			target: ev.target as Element,
-			shouldPrevent: this.#shouldPrevent(ev),
-		});
-	};
-
-	#onTouchMove = (ev: TouchEvent) => {
-		this.#queueEvent({
-			name: ev.type,
-			delta: getTouchCoord(ev),
-			target: ev.target as Element,
-			shouldPrevent: this.#shouldPrevent(ev),
-		});
+		if (this.#shouldPrevent(ev)) {
+			ev.preventDefault();
+		}
 	};
 
 	#shouldPrevent(ev: WheelEvent | TouchEvent) {
@@ -171,62 +116,43 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 			return !(this.state.allowPinchZoom ?? false);
 		}
 
-		let deltaX: number;
-		let deltaY: number;
-		if (ev instanceof TouchEvent) {
-			const [x, y] = getTouchCoord(ev);
-			const [startX, startY] = this.touchStart;
-			deltaX = startX - x;
-			deltaY = startY - y;
-		} else {
-			deltaX = ev.deltaX;
-			deltaY = ev.deltaY;
-		}
-
-		let currentAxis: Axis | undefined;
+		const delta = this.#getDelta(ev);
 		const target = ev.target as Element;
-		const moveDirection: Axis = Math.abs(deltaX) > Math.abs(deltaY) ? 'h' : 'v';
+		const moveAxis = getDeltaAxis(delta);
 
 		// Horizontal `touchmove` on range inputs does not cause scroll.
 		if (
 			ev instanceof TouchEvent &&
-			moveDirection === 'h' &&
+			moveAxis === 'h' &&
 			target instanceof HTMLInputElement &&
 			target.type === 'range'
 		) {
 			return false;
 		}
 
-		let canBeScrolledInMainDirection = canLocationBeScrolled(
-			target,
-			moveDirection,
-		);
-
-		console.log(canBeScrolledInMainDirection);
+		let canBeScrolledInMainDirection = canLocationBeScrolled(target, moveAxis);
 
 		if (!canBeScrolledInMainDirection) {
 			return true;
 		}
 
-		currentAxis = moveDirection;
-		if (
-			this.activeAxis === undefined &&
-			ev instanceof TouchEvent &&
-			(deltaX !== 0 || deltaY !== 0)
-		) {
-			this.activeAxis = currentAxis;
-		}
-
-		const cancellingAxis = this.activeAxis ?? currentAxis;
-
-		return shouldPreventScroll({
-			axis: cancellingAxis,
+		return shouldPreventScroll(ev, {
+			axis: moveAxis,
 			endTarget: this.state.container,
-			event: ev,
-			sourceDelta: cancellingAxis === 'h' ? deltaX : deltaY,
-			noOverscroll: true,
+			delta: moveAxis === 'h' ? delta[0] : delta[1],
+			overscroll: false,
 		});
 	}
+
+	#getDelta = (ev: WheelEvent | TouchEvent): Coord => {
+		if (ev instanceof WheelEvent) {
+			return getWheelDelta(ev);
+		}
+		const [x, y] = getTouchCoord(ev);
+		const [prevX, prevY] = this.#prevCoord;
+		this.#prevCoord = [x, y];
+		return [prevX - x, prevY - y];
+	};
 
 	activate() {
 		this.#registerLock();
