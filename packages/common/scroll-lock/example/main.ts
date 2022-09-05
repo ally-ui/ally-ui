@@ -6,7 +6,7 @@ const LONG_TEXT = `Lorem ipsum dolor, sit amet consectetur adipisicing elit. Del
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
     <h1>Ally UI Scroll Lock</h1>
-    <div style="position:sticky;top:0;background:white;">
+    <div style="position:sticky;top:0;background:white;border:1px solid red;">
       <button id="enable">Enable</button>
       <button id="disable">Disable</button>
       <div id="except" style="height:25vh;width:100vw;overflow:auto;">
