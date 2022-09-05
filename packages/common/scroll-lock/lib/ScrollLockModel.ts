@@ -1,17 +1,21 @@
 import {StateModel} from '@ally-ui/core';
 
 export interface ScrollLockOptions {
-	active: boolean;
+	initialActive?: boolean;
 	onScrollCapture?: (ev: WheelEvent | TouchEvent) => void;
 	onWheelCapture?: (ev: WheelEvent) => void;
 	onTouchMoveCapture?: (ev: TouchEvent) => void;
 }
 
-export type ScrollLockState = ScrollLockOptions;
+export interface ScrollLockReactive {
+	active: boolean;
+}
+
+export type ScrollLockState = ScrollLockOptions & ScrollLockReactive;
 
 export class ScrollLockModel extends StateModel<ScrollLockState> {
 	constructor(initialOptions: ScrollLockOptions) {
-		super(initialOptions);
+		super({...initialOptions, active: initialOptions.initialActive ?? false});
 		if (this.state.active) {
 			this.activate();
 		}
