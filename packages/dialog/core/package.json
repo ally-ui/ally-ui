@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/core-dialog",
-	"version": "0.0.14",
+	"version": "0.0.15",
 	"scripts": {
 		"example": "vite",
 		"build": "tsc && vite build",
@@ -34,8 +34,8 @@
 	},
 	"sideEffects": false,
 	"dependencies": {
-		"@ally-ui/core": "^0.0.14",
-		"@ally-ui/focus-trap": "^0.0.14",
-		"@ally-ui/scroll-lock": "^0.0.14"
+		"@ally-ui/core": "^0.0.15",
+		"@ally-ui/focus-trap": "^0.0.15",
+		"@ally-ui/scroll-lock": "^0.0.15"
 	}
 }
