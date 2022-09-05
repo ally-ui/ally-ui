@@ -23,13 +23,7 @@ const returnFocus = ref<HTMLElement | null>(null);
 			Escape {{ escape ? 'deactivates' : 'blocked' }}
 		</button>
 		<h1>Ally UI Vue Dialog</h1>
-		<Dialog.Root
-			v-model:open="open"
-			initial-open
-			:click-outside-deactivates="outside"
-			:escape-deactivates="escape"
-			:return-focus-to="returnFocus ?? undefined"
-		>
+		<Dialog.Root v-model:open="open" initial-open>
 			<div>
 				<button @click="() => (open = !open)">Manual toggle</button>
 				<Dialog.Trigger>Edit profile</Dialog.Trigger>
