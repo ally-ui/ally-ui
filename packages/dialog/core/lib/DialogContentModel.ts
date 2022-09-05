@@ -1,5 +1,6 @@
 import {ComponentModel} from '@ally-ui/core';
 import {FocusTrapModel} from '@ally-ui/focus-trap';
+import {ScrollLockModel} from '@ally-ui/scroll-lock';
 import type {
 	DialogComponentType,
 	DialogRootModel,
@@ -107,6 +108,7 @@ export class DialogContentModel extends ComponentModel<
 	}
 
 	#contentTrap?: FocusTrapModel;
+	#scrollLock?: ScrollLockModel;
 	/**
 	 * Open content and trap focus if possible.
 	 * @param open The new open state.
@@ -121,18 +123,16 @@ export class DialogContentModel extends ComponentModel<
 	}
 
 	#onOpenChangeEffect__handleOpen = (): boolean => {
-		const content = this.rootModel.findComponent(
-			(c) => c.type === 'content' && c.node !== undefined,
-		);
-		if (content?.node === undefined) {
+		if (this.node === undefined) {
 			if (this.debug) {
 				console.error(
-					`#onOpenChangeEffect(true), no content component with node`,
+					`#onOpenChangeEffect__handleOpen, no content component with node`,
 				);
 			}
 			return true;
 		}
-		this.#contentTrap = this.#onOpenChangeEffect__createFocusTrap(content.node);
+		this.#contentTrap = this.#onOpenChangeEffect__createFocusTrap(this.node);
+		this.#scrollLock = this.#onOpenChangeEffect__createScrollLock(this.node);
 		return false;
 	};
 
@@ -160,6 +160,26 @@ export class DialogContentModel extends ComponentModel<
 		return contentTrap;
 	};
 
+	#onOpenChangeEffect__createScrollLock = (contentElement: HTMLElement) => {
+		const scrollLock = new ScrollLockModel({
+			container: contentElement,
+			initialActive: true,
+		});
+		scrollLock.requestStateUpdate = (lockUpdater) => {
+			this.rootModel.requestStateUpdate?.((prevState) => {
+				const lockState =
+					lockUpdater instanceof Function
+						? lockUpdater(scrollLock.state)
+						: lockUpdater;
+				return {
+					...prevState,
+					open: lockState.active,
+				};
+			});
+		};
+		return scrollLock;
+	};
+
 	#onCloseAutoFocus__toTrigger = (ev: Event) => {
 		this.state.onCloseAutoFocus?.(ev);
 		if (ev.defaultPrevented) {
@@ -173,11 +193,10 @@ export class DialogContentModel extends ComponentModel<
 	};
 
 	#onOpenChangeEffect__handleClose = (): boolean => {
-		if (this.#contentTrap === undefined) {
-			return false;
-		}
-		this.#contentTrap.deactivate();
+		this.#contentTrap?.deactivate();
+		this.#scrollLock?.deactivate();
 		this.#contentTrap = undefined;
+		this.#scrollLock = undefined;
 		return false;
 	};
 }
