@@ -1,7 +1,12 @@
 import {StateModel} from '@ally-ui/core';
-import {canLocationBeScrolled, shouldPreventScroll} from './scrollHandler';
 import type {Coord} from './types';
-import {getDeltaAxis, getTouchCoord, getWheelDelta} from './utils';
+import {
+	canLocationBeScrolled,
+	getDeltaAxis,
+	getTouchCoord,
+	getWheelDelta,
+	shouldPreventScroll,
+} from './utils';
 
 const LISTENER_OPTIONS: AddEventListenerOptions = {
 	capture: true,
