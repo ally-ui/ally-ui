@@ -82,8 +82,8 @@ export function shouldPreventScroll(
 	);
 	delta *= directionFactor;
 
-	let availableScroll = 0;
-	let availableScrollTop = 0;
+	let availableEnd = 0;
+	let availableStart = 0;
 	let {target} = ev;
 	const isPortalledTarget = !endTarget.contains(target as Node);
 	do {
@@ -99,8 +99,8 @@ export function shouldPreventScroll(
 			(position !== 0 || elementScroll !== 0) &&
 			canBeScrolled(target, axis)
 		) {
-			availableScroll += elementScroll;
-			availableScrollTop += position;
+			availableEnd += elementScroll;
+			availableStart += position;
 		}
 		target = target.parentNode;
 	} while (
@@ -113,16 +113,16 @@ export function shouldPreventScroll(
 
 	if (delta > 0) {
 		if (overscroll) {
-			return delta > availableScroll;
+			return delta > availableEnd;
 		}
-		return availableScroll === 0;
+		return availableEnd === 0;
 	}
 
 	if (delta <= 0) {
 		if (overscroll) {
-			return -delta > availableScrollTop;
+			return -delta > availableStart;
 		}
-		return availableScrollTop === 0;
+		return availableStart === 0;
 	}
 
 	return false;
