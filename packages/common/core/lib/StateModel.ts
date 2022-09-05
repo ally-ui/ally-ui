@@ -48,6 +48,10 @@ export abstract class StateModel<TState> {
 
 	/**
 	 * Watch for changes to state and trigger any effects in the core model.
+	 *
+	 * Note we cannot call this during `constructor` because the prototype of the
+	 * implementing object would not have been set yet.
+	 *
 	 * @param newState The new state.
 	 * @param previousState The previous state.
 	 */
