@@ -9,12 +9,16 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <div style="position:sticky;top:0;background:white;">
       <button id="enable">Enable</button>
       <button id="disable">Disable</button>
-      <div id="except" style="height:25vh;overflow:auto;">
-        <p>${LONG_TEXT}</p>
-        <p>${LONG_TEXT}</p>
+      <div id="except" style="height:25vh;width:100vw;overflow:auto;">
+        <div style="width:200vw;">
+          <p>${LONG_TEXT}</p>
+          <p>${LONG_TEXT}</p>
+          <p>${LONG_TEXT}</p>
+          <p>${LONG_TEXT}</p>
+        </div>
       </div>
     </div>
-    <section>
+    <section style="width:200vw;">
       <p>${LONG_TEXT}</p>
       <p>${LONG_TEXT}</p>
       <p>${LONG_TEXT}</p>
