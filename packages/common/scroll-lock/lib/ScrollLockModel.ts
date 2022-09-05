@@ -79,11 +79,13 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 			return;
 		}
 		window.addEventListener('touchstart', this.#onTouchStart, LISTENER_OPTIONS);
+		window.addEventListener('touchend', this.#onTouchEnd, LISTENER_OPTIONS);
 		window.addEventListener('wheel', this.#onScroll, LISTENER_OPTIONS);
 		window.addEventListener('touchmove', this.#onScroll, LISTENER_OPTIONS);
 		// prettier-ignore
 		this.#unsubscribeEvents = () => {
 			window.removeEventListener('touchstart', this.#onTouchStart, LISTENER_OPTIONS)
+			window.removeEventListener('touchend', this.#onTouchEnd, LISTENER_OPTIONS);
 			window.removeEventListener('wheel', this.#onScroll, LISTENER_OPTIONS);
 			window.removeEventListener('touchmove', this.#onScroll, LISTENER_OPTIONS);
 			this.#unsubscribeEvents = undefined;
@@ -93,6 +95,11 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 	#prevCoord: Coord = [0, 0];
 	#onTouchStart = (ev: TouchEvent) => {
 		this.#prevCoord = getTouchCoord(ev);
+	};
+
+	#overscrolled = false;
+	#onTouchEnd = () => {
+		this.#overscrolled = false;
 	};
 
 	#onScroll = (ev: WheelEvent | TouchEvent) => {
@@ -114,6 +121,10 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 	#shouldPrevent(ev: WheelEvent | TouchEvent) {
 		if (ev instanceof TouchEvent && ev.touches.length === 2) {
 			return !(this.state.allowPinchZoom ?? false);
+		}
+
+		if (ev instanceof TouchEvent && this.#overscrolled) {
+			return true;
 		}
 
 		const delta = this.#getDelta(ev);
@@ -139,12 +150,18 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 			return true;
 		}
 
-		return shouldPreventScroll(ev, {
+		const prevent = shouldPreventScroll(ev, {
 			axis: moveAxis,
 			endTarget: this.state.container,
 			delta: moveAxis === 'h' ? delta[0] : delta[1],
 			overscroll: false,
 		});
+
+		if (ev instanceof TouchEvent && prevent) {
+			this.#overscrolled = true;
+		}
+
+		return prevent;
 	}
 
 	#getDelta = (ev: WheelEvent | TouchEvent): Coord => {
