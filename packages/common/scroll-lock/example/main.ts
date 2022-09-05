@@ -10,6 +10,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
       <button id="enable">Enable</button>
       <button id="disable">Disable</button>
       <div id="except" style="height:25vh;width:100vw;overflow:auto;">
+        <input type="range" style="width:200vw;"/>
         <div style="width:200vw;">
           <p>${LONG_TEXT}</p>
           <p>${LONG_TEXT}</p>
