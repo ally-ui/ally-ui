@@ -55,11 +55,8 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 	}
 
 	#waitingToOpen = false;
-	watchStateChange(
-		{open}: DialogRootModelState,
-		prevState: DialogRootModelState,
-	) {
-		if (open !== prevState.open) {
+	watchStateChange({open}: DialogRootModelState, prev: DialogRootModelState) {
+		if (open !== prev.open) {
 			this.#onOpenChangeEffect(open);
 		}
 	}

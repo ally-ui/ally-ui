@@ -69,8 +69,8 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		}
 	}
 
-	watchStateChange({active}: FocusTrapState, prevState: FocusTrapState) {
-		if (active !== prevState.active) {
+	watchStateChange({active}: FocusTrapState, prev: FocusTrapState) {
+		if (active !== prev.active) {
 			this.#onActiveChangeEffect(active);
 		}
 	}

@@ -81,10 +81,10 @@ export class DialogContentModel extends ComponentModel<
 			onEscapeKeyDown,
 			onInteractOutside,
 		}: DialogContentModelState,
-		prevState: DialogContentModelState,
+		prev: DialogContentModelState,
 	) {
 		// TODO #44 Reduce syncing boilerplate.
-		if (onOpenAutoFocus !== prevState.onOpenAutoFocus) {
+		if (onOpenAutoFocus !== prev.onOpenAutoFocus) {
 			this.#contentTrap?.setState({
 				...this.#contentTrap.state,
 				onActivateAutoFocus: onOpenAutoFocus,
@@ -92,13 +92,13 @@ export class DialogContentModel extends ComponentModel<
 		}
 		// Note that we do not directly sync `onDeactivateAutoFocus` because we
 		// handle it manually.
-		if (onEscapeKeyDown !== prevState.onEscapeKeyDown) {
+		if (onEscapeKeyDown !== prev.onEscapeKeyDown) {
 			this.#contentTrap?.setState({
 				...this.#contentTrap.state,
 				onEscapeKeyDown,
 			});
 		}
-		if (onInteractOutside !== prevState.onInteractOutside) {
+		if (onInteractOutside !== prev.onInteractOutside) {
 			this.#contentTrap?.setState({
 				...this.#contentTrap.state,
 				onInteractOutside,

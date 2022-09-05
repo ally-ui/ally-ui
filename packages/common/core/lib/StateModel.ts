@@ -7,7 +7,7 @@ export type Updater<TState> = ((prevState: TState) => TState) | TState;
  */
 export abstract class StateModel<TState> {
 	initialState: TState;
-	#previousState: TState;
+	#prev: TState;
 	/**
 	 * The current state of the model. This should be controlled by the state
 	 * implementation.
@@ -23,7 +23,7 @@ export abstract class StateModel<TState> {
 
 	constructor(initialState: TState) {
 		this.initialState = initialState;
-		this.#previousState = initialState;
+		this.#prev = initialState;
 		this.#state = initialState;
 	}
 
@@ -41,9 +41,9 @@ export abstract class StateModel<TState> {
 	 * @param newState The new state value.
 	 */
 	setState(newState: TState) {
-		this.#previousState = this.#state;
+		this.#prev = this.#state;
 		this.#state = newState;
-		this.watchStateChange?.(newState, this.#previousState);
+		this.watchStateChange?.(newState, this.#prev);
 	}
 
 	/**
@@ -53,7 +53,7 @@ export abstract class StateModel<TState> {
 	 * implementing object would not have been set yet.
 	 *
 	 * @param newState The new state.
-	 * @param previousState The previous state.
+	 * @param prev The previous state.
 	 */
-	watchStateChange?(newState: TState, previousState: TState): void;
+	watchStateChange?(newState: TState, prev: TState): void;
 }
