@@ -5,6 +5,7 @@ import {
 	getDeltaAxis,
 	getTouchCoord,
 	getWheelDelta,
+	isTouchEvent,
 	shouldPreventScroll,
 } from './utils';
 
@@ -143,11 +144,11 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 	};
 
 	#shouldPrevent(ev: WheelEvent | TouchEvent) {
-		if (ev instanceof TouchEvent && ev.touches.length === 2) {
+		if (isTouchEvent(ev) && ev.touches.length === 2) {
 			return !(this.state.allowPinchZoom ?? false);
 		}
 
-		if (ev instanceof TouchEvent && this.#overscrolled) {
+		if (isTouchEvent(ev) && this.#overscrolled) {
 			return true;
 		}
 
@@ -160,7 +161,7 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 
 		// Horizontal `touchmove` on range inputs does not cause scroll.
 		if (
-			ev instanceof TouchEvent &&
+			isTouchEvent(ev) &&
 			moveAxis === 'h' &&
 			target instanceof HTMLInputElement &&
 			target.type === 'range'
@@ -181,7 +182,7 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 			overscroll: false,
 		});
 
-		if (ev instanceof TouchEvent && prevent) {
+		if (isTouchEvent(ev) && prevent) {
 			this.#overscrolled = true;
 		}
 
@@ -189,7 +190,7 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 	}
 
 	#getDelta = (ev: WheelEvent | TouchEvent): Coord => {
-		if (ev instanceof WheelEvent) {
+		if (!isTouchEvent(ev)) {
 			return getWheelDelta(ev);
 		}
 		const [x, y] = getTouchCoord(ev);

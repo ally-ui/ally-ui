@@ -13,6 +13,15 @@ export function getTouchCoord(ev: TouchEvent): Coord {
 	return [touch.clientX, touch.clientY];
 }
 
+/**
+ * We cannot use `instanceof WheelEvent` or `instanceof TouchEvent` because iOS
+ * Safari does not support `WheelEvent` and macOS Safari does not support
+ * `TouchEvent`.
+ */
+export function isTouchEvent(ev: WheelEvent | TouchEvent): ev is TouchEvent {
+	return 'touches' in ev;
+}
+
 export function getDeltaAxis([x, y]: Coord): Axis {
 	return Math.abs(x) > Math.abs(y) ? 'h' : 'v';
 }
