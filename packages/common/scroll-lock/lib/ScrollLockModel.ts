@@ -86,8 +86,11 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 
 	#unblockOverscroll?: () => void;
 	#blockOverscroll() {
+		if (this.#unblockOverscroll !== undefined) {
+			return;
+		}
 		const {container} = this.state;
-		const previous = getComputedStyle(container).overscrollBehavior;
+		const previous = container.style.overscrollBehavior;
 		container.style.overscrollBehavior = 'contain';
 		this.#unblockOverscroll = () => {
 			container.style.overscrollBehavior = previous;
