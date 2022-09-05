@@ -125,7 +125,7 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 		if (ScrollLockModel.activeLocks.at(-1) !== this) {
 			return;
 		}
-		const target = ev.target;
+		const {target} = ev;
 		if (target instanceof Element && !this.state.container.contains(target)) {
 			ev.preventDefault();
 		}
