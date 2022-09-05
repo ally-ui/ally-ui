@@ -138,9 +138,9 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 		if (target instanceof Element && !this.state.container.contains(target)) {
 			ev.preventDefault();
 		}
-		if (ScrollLockModel.SUPPORTS_OVERSCROLL_BEHAVIOR) {
-			return;
-		}
+		// if (ScrollLockModel.SUPPORTS_OVERSCROLL_BEHAVIOR) {
+		// 	return;
+		// }
 		if (this.#shouldPrevent(ev)) {
 			ev.preventDefault();
 		}
