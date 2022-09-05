@@ -82,30 +82,33 @@ export function shouldPreventScroll(
 	);
 	delta *= directionFactor;
 
-	let target = ev.target as Element | null;
-	if (target === null) {
-		return false;
-	}
-
-	const isPortalledTarget = !endTarget.contains(target);
 	let availableScroll = 0;
 	let availableScrollTop = 0;
+	let {target} = ev;
+	const isPortalledTarget = !endTarget.contains(target as Node);
 	do {
-		const [position, scroll, capacity] = getScrollData(target!, axis);
+		if (target === null) {
+			return false;
+		}
+		if (!(target instanceof Element)) {
+			return false;
+		}
+		const [position, scroll, capacity] = getScrollData(target, axis);
 		const elementScroll = scroll - capacity - directionFactor * position;
 		if (
 			(position !== 0 || elementScroll !== 0) &&
-			canBeScrolled(target!, axis)
+			canBeScrolled(target, axis)
 		) {
 			availableScroll += elementScroll;
 			availableScrollTop += position;
 		}
-		target = target!.parentNode as Element | null;
+		target = target.parentNode;
 	} while (
 		// Portalled content.
 		(isPortalledTarget && target !== document.body) ||
 		// Self content.
-		(!isPortalledTarget && (endTarget.contains(target) || endTarget === target))
+		(!isPortalledTarget &&
+			(endTarget.contains(target as Node) || endTarget === target))
 	);
 
 	if (delta > 0) {

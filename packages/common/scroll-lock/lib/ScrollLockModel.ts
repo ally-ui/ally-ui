@@ -102,8 +102,8 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 		if (ScrollLockModel.activeLocks.at(-1) !== this) {
 			return;
 		}
-		const target = ev.target as Element | null;
-		if (!this.state.container.contains(target)) {
+		const target = ev.target;
+		if (target instanceof Element && !this.state.container.contains(target)) {
 			ev.preventDefault();
 		}
 		if (this.#shouldPrevent(ev)) {
@@ -117,8 +117,11 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 		}
 
 		const delta = this.#getDelta(ev);
-		const target = ev.target as Element;
 		const moveAxis = getDeltaAxis(delta);
+		const target = ev.target;
+		if (!(target instanceof Element)) {
+			return false;
+		}
 
 		// Horizontal `touchmove` on range inputs does not cause scroll.
 		if (
