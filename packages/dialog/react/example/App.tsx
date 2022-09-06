@@ -47,7 +47,7 @@ export default function App() {
 					}}
 				>
 					{(props) => (
-						<section {...props}>
+						<section {...props()}>
 							<Dialog.Title ref={titleRef} asChild>
 								{(props) => <h2 {...props}>Edit profile</h2>}
 							</Dialog.Title>
@@ -64,7 +64,15 @@ export default function App() {
 							</fieldset>
 							<Dialog.Close>Save changes</Dialog.Close>
 							<Dialog.Close asChild>
-								{(props) => <a {...props}>x</a>}
+								{(props) => (
+									<a
+										{...props({
+											onClick: () => console.log('clicked close'),
+										})}
+									>
+										x
+									</a>
+								)}
 							</Dialog.Close>
 						</section>
 					)}

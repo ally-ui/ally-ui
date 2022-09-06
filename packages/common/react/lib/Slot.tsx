@@ -1,13 +1,21 @@
 import type React from 'react';
 
-type SlotRenderProp<TAttributes extends object> = {
+type SlotRenderPropGetter<
+	TAttributes extends object,
+	TRegularProps extends object,
+> = (userProps?: TRegularProps) => {
 	ref: React.RefCallback<HTMLElement>;
 } & TAttributes;
 
-type SlottablePropsAsChild<TAttributes extends object> = {
+type SlottablePropsAsChild<
+	TAttributes extends object,
+	TRegularProps extends object,
+> = {
 	asChild: true;
 } & {
-	children: (props: SlotRenderProp<TAttributes>) => React.ReactNode;
+	children: (
+		props: SlotRenderPropGetter<TAttributes, TRegularProps>,
+	) => React.ReactNode;
 };
 
 type SlottablePropsAsRegular<TRegularProps extends React.PropsWithChildren> = {
@@ -26,7 +34,9 @@ type SlottablePropsAsRegular<TRegularProps extends React.PropsWithChildren> = {
 export type SlottableProps<
 	TAttributes extends object,
 	TRegularProps extends React.PropsWithChildren,
-> = SlottablePropsAsChild<TAttributes> | SlottablePropsAsRegular<TRegularProps>;
+> =
+	| SlottablePropsAsChild<TAttributes, Exclude<TRegularProps, 'children'>>
+	| SlottablePropsAsRegular<TRegularProps>;
 
 interface RegularRenderProp<TAttributes extends object> {
 	ref: React.RefCallback<HTMLElement>;
@@ -52,6 +62,15 @@ export interface SlotProps<
 	 * The regular template.
 	 */
 	children: (props: RegularRenderProp<TAttributes>) => React.ReactNode;
+	/**
+	 * How attributes should be merged with user props.
+	 *
+	 * Defaults to merging user props **over** attributes.
+	 */
+	mergeProps?: (
+		attributes: TAttributes,
+		userProps: TRegularProps,
+	) => TRegularProps;
 }
 
 /**
@@ -65,14 +84,17 @@ export function Slot<
 	props,
 	attributes,
 	children,
+	mergeProps = (a, b) => ({...a, ...b}),
 }: SlotProps<TAttributes, TRegularProps>) {
 	if (props.asChild) {
 		return (
 			<>
-				{props.children({
+				{props.children((userProps) => ({
 					ref: slotRef,
-					...attributes,
-				})}
+					...(userProps === undefined
+						? attributes
+						: (mergeProps(attributes, userProps) as any)),
+				}))}
 			</>
 		);
 	}

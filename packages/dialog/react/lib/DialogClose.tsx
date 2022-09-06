@@ -76,6 +76,14 @@ const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 					...component.getAttributes(),
 					onClick: handleClick,
 				}}
+				mergeProps={(attributes, userProps) => ({
+					...attributes,
+					...userProps,
+					onClick: (ev) => {
+						userProps.onClick?.(ev);
+						attributes.onClick(ev);
+					},
+				})}
 			>
 				{({ref, children, attributes}) => (
 					<button ref={ref} {...attributes}>
