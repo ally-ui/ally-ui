@@ -62,13 +62,16 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 	}
 
 	#onOpenChangeEffect(open: boolean) {
-		const content = this.findComponent((c) => c.type === 'content') as
-			| DialogContentModel
-			| undefined;
+		const content = this.findComponent<DialogContentModel>(
+			(c) => c.type === 'content',
+		);
 		if (content === undefined) {
 			this.#waitingToOpen = open;
+		} else if (open) {
+			this.#waitingToOpen = !content.open();
 		} else {
-			this.#waitingToOpen = content.onOpenChangeEffect(open);
+			this.#waitingToOpen = false;
+			content.close();
 		}
 	}
 }

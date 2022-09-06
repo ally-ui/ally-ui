@@ -110,38 +110,27 @@ export class DialogContentModel extends ComponentModel<
 	#contentTrap?: FocusTrapModel;
 	#scrollLock?: ScrollLockModel;
 	/**
-	 * Open content and trap focus if possible.
-	 * @param open The new open state.
-	 * @returns Whether content is waiting to open.
+	 * Open the content modal.
+	 * @returns Whether the content successfully opened.
 	 */
-	onOpenChangeEffect(open: boolean): boolean {
-		if (open) {
-			return this.#onOpenChangeEffect__handleOpen();
-		} else {
-			return this.#onOpenChangeEffect__handleClose();
-		}
-	}
-
-	#onOpenChangeEffect__handleOpen = (): boolean => {
+	open(): boolean {
 		if (this.node === undefined) {
 			if (this.debug) {
-				console.error(
-					`#onOpenChangeEffect__handleOpen, no content component with node`,
-				);
+				console.error(`open, no content component with node`);
 			}
-			return true;
+			return false;
 		}
-		this.#contentTrap = this.#onOpenChangeEffect__createFocusTrap(this.node);
-		this.#scrollLock = this.#onOpenChangeEffect__createScrollLock(this.node);
-		return false;
-	};
+		this.#contentTrap = this.#createFocusTrap(this.node);
+		this.#scrollLock = this.#createScrollLock(this.node);
+		return true;
+	}
 
-	#onOpenChangeEffect__createFocusTrap = (contentElement: HTMLElement) => {
+	#createFocusTrap(contentElement: HTMLElement) {
 		const contentTrap = new FocusTrapModel({
 			container: contentElement,
 			initialActive: true,
 			onActivateAutoFocus: this.state.onOpenAutoFocus,
-			onDeactivateAutoFocus: this.#onCloseAutoFocus__toTrigger,
+			onDeactivateAutoFocus: this.#onDeactivateFocusToTrigger,
 			onEscapeKeyDown: this.state.onEscapeKeyDown,
 			onInteractOutside: this.state.onInteractOutside,
 		});
@@ -158,9 +147,21 @@ export class DialogContentModel extends ComponentModel<
 			});
 		};
 		return contentTrap;
+	}
+
+	#onDeactivateFocusToTrigger = (ev: Event) => {
+		this.state.onCloseAutoFocus?.(ev);
+		if (ev.defaultPrevented) {
+			return;
+		}
+		ev.preventDefault();
+		const triggerComponent = this.rootModel.findComponent(
+			(c) => c.type === 'trigger',
+		);
+		triggerComponent?.node?.focus();
 	};
 
-	#onOpenChangeEffect__createScrollLock = (contentElement: HTMLElement) => {
+	#createScrollLock(contentElement: HTMLElement) {
 		const scrollLock = new ScrollLockModel({
 			container: contentElement,
 			initialActive: true,
@@ -178,25 +179,13 @@ export class DialogContentModel extends ComponentModel<
 			});
 		};
 		return scrollLock;
-	};
+	}
 
-	#onCloseAutoFocus__toTrigger = (ev: Event) => {
-		this.state.onCloseAutoFocus?.(ev);
-		if (ev.defaultPrevented) {
-			return;
-		}
-		ev.preventDefault();
-		const triggerComponent = this.rootModel.findComponent(
-			(c) => c.type === 'trigger',
-		);
-		triggerComponent?.node?.focus();
-	};
-
-	#onOpenChangeEffect__handleClose = (): boolean => {
+	close() {
 		this.#contentTrap?.deactivate();
 		this.#scrollLock?.deactivate();
 		this.#contentTrap = undefined;
 		this.#scrollLock = undefined;
-		return false;
-	};
+		return true;
+	}
 }
