@@ -65,6 +65,14 @@ export default function DialogClose(props: DialogCloseProps) {
 			ref={ref}
 			props={props}
 			attributes={{...component.getAttributes(), onClick: handleClick}}
+			mergeProps={(attributes, userProps) => ({
+				...attributes,
+				...userProps,
+				onClick: (ev) => {
+					forwardEvent(ev, userProps.onClick);
+					attributes.onClick(ev);
+				},
+			})}
 		>
 			{(renderProps) => (
 				<button ref={renderProps.ref} {...renderProps.attributes()}>

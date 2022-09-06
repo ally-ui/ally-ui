@@ -1,17 +1,23 @@
 import {Accessor, JSX, ParentProps, splitProps} from 'solid-js';
 import type {CallbackRef} from './types';
 
-type SlotRenderProp<TAttributes extends object> = Accessor<
-	{
-		ref: CallbackRef<HTMLElement>;
-	} & TAttributes
->;
+type SlotRenderPropGetter<
+	TAttributes extends object,
+	TRegularProps extends object,
+> = (userProps?: TRegularProps) => {
+	ref: CallbackRef<HTMLElement>;
+} & TAttributes;
 
-type SlottablePropsAsChild<TAttributes extends object> = {
+type SlottablePropsAsChild<
+	TAttributes extends object,
+	TRegularProps extends object,
+> = {
 	asChild: true;
 } & {
 	ref?: CallbackRef<HTMLElement>;
-	children: (props: SlotRenderProp<TAttributes>) => JSX.Element;
+	children: (
+		props: SlotRenderPropGetter<TAttributes, TRegularProps>,
+	) => JSX.Element;
 };
 
 type SlottablePropsAsRegular<TRegularProps extends ParentProps> = {
@@ -32,7 +38,9 @@ type SlottablePropsAsRegular<TRegularProps extends ParentProps> = {
 export type SlottableProps<
 	TAttributes extends object,
 	TRegularProps extends ParentProps,
-> = SlottablePropsAsChild<TAttributes> | SlottablePropsAsRegular<TRegularProps>;
+> =
+	| SlottablePropsAsChild<TAttributes, Exclude<TRegularProps, 'children'>>
+	| SlottablePropsAsRegular<TRegularProps>;
 
 interface RegularRenderProp<TAttributes extends object> {
 	ref: CallbackRef<HTMLElement>;
@@ -58,6 +66,15 @@ export interface SlotProps<
 	 * The regular template.
 	 */
 	children: (props: RegularRenderProp<TAttributes>) => JSX.Element;
+	/**
+	 * How attributes should be merged with user props.
+	 *
+	 * Defaults to merging user props **over** attributes.
+	 */
+	mergeProps?: (
+		attributes: TAttributes,
+		userProps: TRegularProps,
+	) => TRegularProps;
 }
 
 /**
@@ -67,13 +84,19 @@ export function Slot<
 	TAttributes extends object,
 	TRegularProps extends ParentProps,
 >(slotProps: SlotProps<TAttributes, TRegularProps>) {
+	const mergeProps = slotProps.mergeProps ?? ((a, b) => ({...a, ...b}));
 	// `asChild` is never updated dynamically, so an early return here is okay.
 	if (slotProps.props.asChild) {
-		const renderProp = () => ({
-			ref: slotProps.ref,
-			...slotProps.attributes,
-		});
-		return <>{slotProps.props.children(renderProp)}</>;
+		return (
+			<>
+				{slotProps.props.children((userProps) => ({
+					ref: slotProps.ref,
+					...(userProps === undefined
+						? slotProps.attributes
+						: (mergeProps(slotProps.attributes, userProps) as any)),
+				}))}
+			</>
+		);
 	}
 	const [, restProps] = splitProps(slotProps.props, ['asChild', 'children']);
 	const attributes = () => ({...slotProps.attributes, ...restProps});
