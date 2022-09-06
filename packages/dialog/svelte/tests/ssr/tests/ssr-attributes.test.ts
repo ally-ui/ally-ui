@@ -1,11 +1,11 @@
 import {screen} from '@testing-library/dom';
-import {renderServerTemplate} from '../renderServerTemplate';
+import {renderToString} from '../renderToString__client';
 
 let rendered_open: string;
 let rendered_closed: string;
 beforeAll(async () => {
-	rendered_open = await renderServerTemplate('init--open.test');
-	rendered_closed = await renderServerTemplate('init--closed.test');
+	rendered_open = await renderToString('init--open.test');
+	rendered_closed = await renderToString('init--closed.test');
 });
 afterEach(() => {
 	document.body.innerHTML = '';

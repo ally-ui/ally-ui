@@ -2,12 +2,12 @@ import express, {type Express} from 'express';
 import {createServer} from 'vite';
 
 export default async function setup() {
-	const app = await createTestServer();
+	const app = await setupTestServer();
 	const server = app.listen();
 
 	const address = server.address();
 	if (typeof address === 'object') {
-		process.env.TEST_SERVER_PORT = String(address?.port);
+		process.env.SVELTE_SSR_PORT = String(address?.port);
 	}
 
 	return function teardown() {
@@ -16,7 +16,7 @@ export default async function setup() {
 }
 
 let cachedApp: Express;
-async function createTestServer() {
+async function setupTestServer() {
 	if (cachedApp !== undefined) {
 		return cachedApp;
 	}
@@ -30,8 +30,10 @@ async function createTestServer() {
 	app.use('*', async (request, response) => {
 		try {
 			const templateName = request.originalUrl.replace('/', '');
-			const {render} = await vite.ssrLoadModule('/tests/ssr/renderer.ts');
-			const rendered = await render(templateName);
+			const {renderToString} = await vite.ssrLoadModule(
+				'/tests/ssr/renderToString__server.ts',
+			);
+			const rendered = await renderToString(templateName);
 			response
 				.status(200)
 				.set({'Content-Type': 'text/html'})
