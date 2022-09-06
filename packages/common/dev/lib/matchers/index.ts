@@ -1,5 +1,5 @@
 import {toHaveFocusWithin} from './toHaveFocusWithin';
 
-export default {
+export const matchers = {
 	toHaveFocusWithin,
 };

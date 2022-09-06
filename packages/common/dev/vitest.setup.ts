@@ -1,5 +1,5 @@
-import {matchers} from '@ally-ui/dev';
 import '@testing-library/jest-dom';
+import {matchers} from './lib/main';
 
 expect.extend(matchers);
 

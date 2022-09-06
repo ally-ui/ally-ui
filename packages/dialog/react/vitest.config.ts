@@ -5,7 +5,7 @@ export default defineConfig({
 	plugins: [react()],
 	test: {
 		environment: 'jsdom',
-		setupFiles: './vitest.setup.ts',
+		setupFiles: '@ally-ui/dev/vitest.setup.ts',
 		globals: true,
 	},
 });

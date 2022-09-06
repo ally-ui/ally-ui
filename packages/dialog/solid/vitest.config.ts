@@ -5,7 +5,7 @@ export default defineConfig({
 	plugins: [solid()],
 	test: {
 		environment: 'jsdom',
-		setupFiles: './vitest.setup.ts',
+		setupFiles: '@ally-ui/dev/vitest.setup.ts',
 		globals: true,
 		transformMode: {web: [/.tsx?/]},
 		deps: {registerNodeLoader: true, inline: [/solid-testing-library/]},

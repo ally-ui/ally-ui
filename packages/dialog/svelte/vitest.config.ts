@@ -5,7 +5,7 @@ export default defineConfig({
 	plugins: [svelte({hot: !process.env.VITEST})],
 	test: {
 		environment: 'jsdom',
-		setupFiles: './vitest.setup.ts',
+		setupFiles: '@ally-ui/dev/vitest.setup.ts',
 		globalSetup: './vitest.global.setup.ts',
 		globals: true,
 		deps: {inline: [/svelte/]},
