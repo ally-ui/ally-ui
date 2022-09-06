@@ -38,10 +38,9 @@ export interface ScrollLockReactive {
 export type ScrollLockState = ScrollLockOptions & ScrollLockReactive;
 
 export class ScrollLockModel extends StateModel<ScrollLockState> {
-	static SUPPORTS_OVERSCROLL_BEHAVIOR = CSS.supports(
-		'overscroll-behavior',
-		'contain',
-	);
+	static SUPPORTS_OVERSCROLL_BEHAVIOR =
+		typeof document !== 'undefined' &&
+		CSS.supports('overscroll-behavior', 'contain');
 
 	/**
 	 * Keep track of all active locks and only handle the latest lock.
