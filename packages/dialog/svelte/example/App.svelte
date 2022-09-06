@@ -63,7 +63,13 @@
 				</fieldset>
 				<Dialog.Close>Save changes</Dialog.Close>
 				<Dialog.Close asChild let:props let:ref>
-					<span {...props} use:ref>x</span>
+					<span
+						on:click={() => console.log('clicked close')}
+						{...props}
+						use:ref
+					>
+						x
+					</span>
 				</Dialog.Close>
 			</section>
 		</Dialog.Content>

@@ -9,6 +9,9 @@ watchEffect(() => {
 		titleRef.value.style.color = 'gray';
 	}
 });
+
+const click = () => console.log('clicked close');
+
 const outside = ref(false);
 const escape = ref(true);
 const returnFocus = ref<HTMLElement | null>(null);
@@ -73,7 +76,9 @@ const returnFocus = ref<HTMLElement | null>(null);
 						<input id="username" placeholder="@bryanmylee" />
 					</fieldset>
 					<Dialog.Close>Save changes</Dialog.Close>
-					<Dialog.Close>x</Dialog.Close>
+					<Dialog.Close as-child v-slot="props">
+						<span v-bind="props" @click="click">x</span>
+					</Dialog.Close>
 				</section>
 			</Dialog.Content>
 		</Dialog.Root>

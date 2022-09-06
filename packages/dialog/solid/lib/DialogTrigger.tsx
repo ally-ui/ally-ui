@@ -67,6 +67,14 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 			ref={ref}
 			props={props}
 			attributes={{...component.getAttributes(rootState), onClick: handleClick}}
+			mergeProps={(attributes, userProps) => ({
+				...attributes,
+				...userProps,
+				onClick: (ev) => {
+					forwardEvent(ev, userProps.onClick);
+					attributes.onClick(ev);
+				},
+			})}
 		>
 			{(renderProps) => (
 				<button ref={renderProps.ref} {...renderProps.attributes()}>

@@ -78,6 +78,14 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 					...component.getAttributes(rootState),
 					onClick: handleClick,
 				}}
+				mergeProps={(attributes, userProps) => ({
+					...attributes,
+					...userProps,
+					onClick: (ev) => {
+						userProps.onClick?.(ev);
+						attributes.onClick(ev);
+					},
+				})}
 			>
 				{({ref, children, attributes}) => (
 					<button ref={ref} {...attributes}>
