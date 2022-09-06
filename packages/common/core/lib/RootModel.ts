@@ -121,12 +121,13 @@ export abstract class RootModel<
 		return `${this.domId()}-${type}`;
 	}
 
-	findComponent(
-		predicate: (
-			component: ComponentModel<RootModel<TComponentType, TState>>,
-		) => boolean,
-	): ComponentModel<RootModel<TComponentType, TState>> | undefined {
-		return findLastInMap(this.#components, predicate);
+	findComponent<TComponentModel extends ComponentModel>(
+		predicate: (component: TComponentModel) => boolean,
+	): TComponentModel | undefined {
+		return findLastInMap(
+			this.#components as Map<string, TComponentModel>,
+			predicate,
+		);
 	}
 }
 
