@@ -5,10 +5,7 @@
 		"example": "vite",
 		"build": "tsc && vite build",
 		"build:watch": "vite build --watch",
-		"clean": "rimraf dist",
-		"test": "vitest run",
-		"test:watch": "vitest",
-		"coverage": "vitest run --coverage"
+		"clean": "rimraf dist"
 	},
 	"author": "Bryan Lee",
 	"description": "A tiny scroll lock implementation for JavaScript",
