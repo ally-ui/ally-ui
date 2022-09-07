@@ -8,6 +8,5 @@ export default {
 		source: 'lib',
 		dir: 'dist',
 		exports: (filepath) => filepath === 'main.ts',
-		files: (filepath) => !/^__tests__\/.+/.test(filepath),
 	},
 };

@@ -1,6 +1,5 @@
 {
 	"extends": "@ally-ui/dev/tsconfig.svelte.json",
-	"include": ["lib", "example", "tests", "vitest.setup.ts"],
 	"compilerOptions": {
 		"outDir": "dist"
 	}

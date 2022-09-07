@@ -1,4 +1,5 @@
 {
+	"include": ["lib", "example", "tests", "vitest.setup.ts"],
 	"compilerOptions": {
 		"module": "ESNext",
 		"moduleResolution": "Node",
