@@ -10,12 +10,12 @@
 
 :root {
 	--user-font-scale: 1rem - 16px;
-	--theme-w-max: calc(100% - 1rem);
+	--theme-w-main: calc(100% - 1rem);
 }
 
 @media (min-width: 50rem) {
 	:root {
-		--theme-w-max: 46em;
+		--theme-w-main: 46em;
 	}
 }
 

@@ -32,28 +32,26 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 					: CONFIG.SITE.title
 			}
 		</title>
-		<style>
+		<style lang="postcss">
 			body {
-				grid-template-rows: var(--theme-h-nav) 1fr;
-				--theme-p-gutter: 0.5rem;
-				--theme-p-doc: 2rem;
+				grid-template-rows: theme(height.nav) 1fr;
 			}
 
 			main {
 				grid-template-columns:
-					minmax(var(--theme-p-gutter), 1fr) minmax(0, var(--theme-w-max))
-					minmax(var(--theme-p-gutter), 1fr);
+					minmax(theme(spacing.2), 1fr) minmax(0, theme(width.main))
+					minmax(theme(spacing.2), 1fr);
 			}
 
 			@media (min-width: 50rem) {
 				main {
-					grid-template-columns: 20rem minmax(0, var(--theme-w-max));
+					grid-template-columns: 20rem minmax(0, theme(width.main));
 				}
 			}
 
 			@media (min-width: 72rem) {
 				main {
-					grid-template-columns: 20rem minmax(0, var(--theme-w-max)) 18rem;
+					grid-template-columns: 20rem minmax(0, theme(width.main)) 18rem;
 				}
 			}
 		</style>
@@ -81,10 +79,7 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 			>
 				<LeftSidebar currentPage={currentPage} />
 			</aside>
-			<div
-				id="grid-main"
-				class="col-[2] flex flex-col h-full py-[var(--theme-p-doc)] px-[var(--theme-p-gutter)]"
-			>
+			<div id="grid-main" class="col-[2] flex flex-col h-full py-8 px-2">
 				<PageContent
 					frontmatter={frontmatter}
 					headings={headings}

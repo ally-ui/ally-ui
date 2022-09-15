@@ -52,7 +52,7 @@ const sidebar = SIDEBAR[langCode];
 	});
 </script>
 
-<style>
+<style lang="postcss">
 	nav {
 		width: 100%;
 		margin-right: 1rem;
@@ -71,12 +71,12 @@ const sidebar = SIDEBAR[langCode];
 	}
 
 	.nav-groups > :first-child {
-		padding-top: var(--theme-p-doc);
+		padding-top: theme(spacing.8);
 	}
 
 	.nav-groups > :last-child {
 		padding-bottom: 2rem;
-		margin-bottom: var(--theme-h-nav);
+		margin-bottom: theme(height.nav);
 	}
 
 	.nav-group-title {

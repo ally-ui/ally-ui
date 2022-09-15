@@ -21,7 +21,7 @@ const lang = getLanguageFromURL(currentPage);
 		<div class="menu-toggle">
 			<SidebarToggle client:idle />
 		</div>
-		<div class="logo flex">
+		<div class="flex logo">
 			<a href="/">
 				<AstroLogo size={40} />
 				<h1>{CONFIG.SITE.title ?? 'Documentation'}</h1>
@@ -39,10 +39,10 @@ const lang = getLanguageFromURL(currentPage);
 	</nav>
 </header>
 
-<style>
+<style lang="postcss">
 	header {
 		z-index: 11;
-		height: var(--theme-h-nav);
+		height: theme(height.nav);
 		width: 100%;
 		background-color: var(--theme-navbar-bg);
 		display: flex;

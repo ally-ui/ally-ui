@@ -7,7 +7,14 @@ module.exports = {
 			md: '50rem',
 			lg: '72rem',
 		},
-		extend: {},
+		extend: {
+			height: {
+				nav: '6rem',
+			},
+			width: {
+				main: 'var(--theme-w-main)',
+			},
+		},
 	},
 	plugins: [require('./tailwindcss/sidebar.cjs')],
 };

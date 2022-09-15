@@ -18,7 +18,7 @@ const {headings, githubEditUrl} = Astro.props as Props;
 	</div>
 </nav>
 
-<style>
+<style lang="postcss">
 	.sidebar-nav {
 		width: 100%;
 		position: sticky;
@@ -28,7 +28,7 @@ const {headings, githubEditUrl} = Astro.props as Props;
 	.sidebar-nav-inner {
 		height: 100%;
 		padding: 0;
-		padding-top: var(--theme-p-doc);
+		padding-top: theme(spacing.8);
 		overflow: auto;
 	}
 </style>
