@@ -10,12 +10,12 @@
 
 :root {
 	--user-font-scale: 1rem - 16px;
-	--max-width: calc(100% - 1rem);
+	--theme-w-max: calc(100% - 1rem);
 }
 
-@media (min-width: 50em) {
+@media (min-width: 50rem) {
 	:root {
-		--max-width: 46em;
+		--theme-w-max: 46em;
 	}
 }
 
@@ -259,7 +259,7 @@ blockquote code {
 	background-color: var(--theme-bg);
 }
 
-@media (min-width: 37.75em) {
+@media (min-width: 37.75rem) {
 	pre {
 		--padding-inline: 1.25rem;
 		border-radius: 8px;

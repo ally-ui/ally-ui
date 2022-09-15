@@ -36,23 +36,17 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 					: CONFIG.SITE.title
 			}
 		</title>
-		<style>
+		<style lang="postcss">
 			body {
-				width: 100%;
-				display: grid;
-				grid-template-rows: var(--theme-navbar-height) 1fr;
-				--gutter: 0.5rem;
-				--doc-padding: 2rem;
+				grid-template-rows: var(--theme-h-nav) 1fr;
+				--theme-p-gutter: 0.5rem;
+				--theme-p-doc: 2rem;
 			}
 
-			.layout {
-				display: grid;
-				grid-auto-flow: column;
-				grid-template-columns: minmax(var(--gutter), 1fr) minmax(
-						0,
-						var(--max-width)
-					) minmax(var(--gutter), 1fr);
-				overflow-x: hidden;
+			main {
+				grid-template-columns:
+					minmax(var(--theme-p-gutter), 1fr) minmax(0, var(--theme-w-max))
+					minmax(var(--theme-p-gutter), 1fr);
 			}
 
 			.grid-sidebar {
@@ -70,7 +64,7 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 			}
 
 			#grid-main {
-				padding: var(--doc-padding) var(--gutter);
+				padding: var(--theme-p-doc) var(--theme-p-gutter);
 				grid-column: 2;
 				display: flex;
 				flex-direction: column;
@@ -81,10 +75,10 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 				display: none;
 			}
 
-			@media (min-width: 50em) {
-				.layout {
+			@media (min-width: 50rem) {
+				main {
 					overflow: initial;
-					grid-template-columns: 20rem minmax(0, var(--max-width));
+					grid-template-columns: 20rem minmax(0, var(--theme-w-max));
 					gap: 1em;
 				}
 
@@ -96,9 +90,9 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 				}
 			}
 
-			@media (min-width: 72em) {
-				.layout {
-					grid-template-columns: 20rem minmax(0, var(--max-width)) 18rem;
+			@media (min-width: 72rem) {
+				main {
+					grid-template-columns: 20rem minmax(0, var(--theme-w-max)) 18rem;
 					padding-left: 0;
 					padding-right: 0;
 					margin: 0 auto;
@@ -111,7 +105,7 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 			}
 		</style>
 		<style is:global>
-			.layout > * {
+			main > * {
 				width: 100%;
 				height: 100%;
 			}
@@ -127,9 +121,9 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 		</style>
 	</head>
 
-	<body>
+	<body class="w-full grid">
 		<Header currentPage={currentPage} />
-		<main class="layout">
+		<main class="grid grid-flow-col overflow-x-hidden">
 			<aside id="grid-left" class="grid-sidebar" title="Site Navigation">
 				<LeftSidebar currentPage={currentPage} />
 			</aside>
