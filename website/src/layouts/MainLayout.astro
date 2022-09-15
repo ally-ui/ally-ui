@@ -49,58 +49,15 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 					minmax(var(--theme-p-gutter), 1fr);
 			}
 
-			.grid-sidebar {
-				height: 100vh;
-				position: sticky;
-				top: 0;
-				padding: 0;
-			}
-
-			#grid-left {
-				position: fixed;
-				background-color: var(--theme-bg);
-				z-index: 10;
-				display: none;
-			}
-
-			#grid-main {
-				padding: var(--theme-p-doc) var(--theme-p-gutter);
-				grid-column: 2;
-				display: flex;
-				flex-direction: column;
-				height: 100%;
-			}
-
-			#grid-right {
-				display: none;
-			}
-
 			@media (min-width: 50rem) {
 				main {
-					overflow: initial;
 					grid-template-columns: 20rem minmax(0, var(--theme-w-max));
-					gap: 1em;
-				}
-
-				#grid-left {
-					display: flex;
-					padding-left: 2rem;
-					position: sticky;
-					grid-column: 1;
 				}
 			}
 
 			@media (min-width: 72rem) {
 				main {
 					grid-template-columns: 20rem minmax(0, var(--theme-w-max)) 18rem;
-					padding-left: 0;
-					padding-right: 0;
-					margin: 0 auto;
-				}
-
-				#grid-right {
-					grid-column: 3;
-					display: flex;
 				}
 			}
 		</style>
@@ -121,13 +78,22 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 		</style>
 	</head>
 
-	<body class="w-full grid">
+	<body class="grid w-full">
 		<Header currentPage={currentPage} />
-		<main class="grid grid-flow-col overflow-x-hidden">
-			<aside id="grid-left" class="grid-sidebar" title="Site Navigation">
+		<main
+			class="grid grid-flow-col overflow-x-hidden md:overflow-x-auto md:gap-4 lg:px-0 lg:mx-auto lg:my-0"
+		>
+			<aside
+				id="grid-left"
+				title="Site Navigation"
+				class="top-0 h-screen p-0 fixed bg-[var(--theme-bg)] z-10 hidden md:flex md:pl-8 md:sticky md:col-[1]"
+			>
 				<LeftSidebar currentPage={currentPage} />
 			</aside>
-			<div id="grid-main">
+			<div
+				id="grid-main"
+				class="col-[2] flex flex-col h-full py-[var(--theme-p-doc)] px-[var(--theme-p-gutter)]"
+			>
 				<PageContent
 					frontmatter={frontmatter}
 					headings={headings}
@@ -136,7 +102,11 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 					<slot />
 				</PageContent>
 			</div>
-			<aside id="grid-right" class="grid-sidebar" title="Table of Contents">
+			<aside
+				id="grid-right"
+				title="Table of Contents"
+				class="sticky top-0 hidden h-screen p-0 lg:col-[3] lg:flex"
+			>
 				<RightSidebar headings={headings} githubEditUrl={githubEditUrl} />
 			</aside>
 		</main>
