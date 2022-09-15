@@ -19,6 +19,7 @@
 	},
 	"namespace": "@ally-ui",
 	"workspaces": [
+		"./website",
 		"./packages/**/*"
 	],
 	"devDependencies": {
