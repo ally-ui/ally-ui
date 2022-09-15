@@ -8,5 +8,6 @@ export default {
 		source: 'lib',
 		dir: 'dist',
 		exports: (filepath) => filepath === 'main.ts',
+		copyPackageJson: false,
 	},
 };

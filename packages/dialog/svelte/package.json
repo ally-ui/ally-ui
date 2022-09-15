@@ -3,7 +3,7 @@
 	"version": "0.0.16",
 	"scripts": {
 		"example": "vite",
-		"build": "svelte-package && rimraf dist/package.json",
+		"build": "svelte-package",
 		"build:watch": "svelte-package --watch",
 		"clean": "rimraf dist",
 		"test": "vitest run",
