@@ -1,5 +1,5 @@
 ---
-import { getLanguageFromURL, KNOWN_LANGUAGE_CODES } from '../../languages';
+import {getLanguageFromURL, KNOWN_LANGUAGE_CODES} from '../../languages';
 import * as CONFIG from '../../config';
 import AstroLogo from './AstroLogo.astro';
 import SkipToContent from './SkipToContent.astro';
@@ -11,7 +11,7 @@ type Props = {
 	currentPage: string;
 };
 
-const { currentPage } = Astro.props as Props;
+const {currentPage} = Astro.props as Props;
 const lang = getLanguageFromURL(currentPage);
 ---
 
@@ -28,7 +28,11 @@ const lang = getLanguageFromURL(currentPage);
 			</a>
 		</div>
 		<div style="flex-grow: 1;"></div>
-		{KNOWN_LANGUAGE_CODES.length > 1 && <LanguageSelect lang={lang} client:idle />}
+		{
+			KNOWN_LANGUAGE_CODES.length > 1 && (
+				<LanguageSelect lang={lang} client:idle />
+			)
+		}
 		<div class="search-item">
 			<Search client:idle />
 		</div>

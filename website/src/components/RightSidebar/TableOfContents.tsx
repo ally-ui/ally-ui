@@ -1,13 +1,13 @@
-import type { FunctionalComponent } from 'preact';
-import { useState, useEffect, useRef } from 'preact/hooks';
-import type { MarkdownHeading } from 'astro';
+import type {MarkdownHeading} from 'astro';
+import type {FunctionalComponent} from 'preact';
+import {useEffect, useRef, useState} from 'preact/hooks';
 
 type ItemOffsets = {
 	id: string;
 	topOffset: number;
 };
 
-const TableOfContents: FunctionalComponent<{ headings: MarkdownHeading[] }> = ({
+const TableOfContents: FunctionalComponent<{headings: MarkdownHeading[]}> = ({
 	headings = [],
 }) => {
 	const itemOffsets = useRef<ItemOffsets[]>([]);
@@ -34,11 +34,15 @@ const TableOfContents: FunctionalComponent<{ headings: MarkdownHeading[] }> = ({
 		<>
 			<h2 className="heading">On this page</h2>
 			<ul>
-				<li className={`heading-link depth-2 ${activeId === 'overview' ? 'active' : ''}`.trim()}>
+				<li
+					className={`heading-link depth-2 ${
+						activeId === 'overview' ? 'active' : ''
+					}`.trim()}
+				>
 					<a href="#overview">Overview</a>
 				</li>
 				{headings
-					.filter(({ depth }) => depth > 1 && depth < 4)
+					.filter(({depth}) => depth > 1 && depth < 4)
 					.map((heading) => (
 						<li
 							className={`heading-link depth-${heading.depth} ${
