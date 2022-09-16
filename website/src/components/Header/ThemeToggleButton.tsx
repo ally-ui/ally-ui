@@ -56,7 +56,7 @@ const ThemeToggle: FunctionalComponent = () => {
 	);
 
 	return (
-		<div className="inline-flex h-12 p-1 rounded-full flex-center bg-shade-100 text-shade-text focus-within:ring-2 ring-accent">
+		<div className="inline-flex h-10 p-1 rounded-full flex-center bg-shade-100 text-shade-text focus-within:ring-2 ring-accent">
 			{themes.map((t, i) => {
 				const icon = icons[i];
 				const checked = t === theme;

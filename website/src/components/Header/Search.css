@@ -8,19 +8,23 @@
 }
 
 .DocSearch-Modal {
-	@apply [@media(min-width:768px)]:rounded-3xl shadow bg-shade;
+	@apply [@media(min-width:768px)]:rounded-[calc(theme(spacing.3)+theme(borderRadius.xl))] shadow bg-shade;
 }
 
 .DocSearch-SearchBar {
-	@apply p-4;
+	@apply p-3;
 }
 
 .DocSearch-Form {
-	@apply h-12 bg-shade-100 rounded-xl;
+	@apply h-10 bg-shade-100 rounded-xl outline-none;
 }
 
 .DocSearch-Input {
-	@apply focus:ring-0;
+	@apply focus:ring-0 text-sm text-shade-text placeholder:text-shade-text/50;
+}
+
+.DocSearch-MagnifierLabel {
+	@apply hidden;
 }
 
 .DocSearch-NoResults {
@@ -36,7 +40,7 @@
 }
 
 .DocSearch-Footer {
-	@apply [@media(min-width:768px)]:rounded-b-3xl p-6 bg-shade-100 shadow-none;
+	@apply [@media(min-width:768px)]:rounded-b-[calc(theme(spacing.3)+theme(borderRadius.xl))] p-6 bg-shade-100 shadow-none;
 }
 
 .DocSearch-Commands-Key {
