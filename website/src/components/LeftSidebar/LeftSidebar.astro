@@ -17,24 +17,46 @@ const sidebar = SIDEBAR[langCode];
 		{
 			Object.entries(sidebar).map(([header, children]) => (
 				<li>
-					<h2 class="font-bold">{header}</h2>
-					<ul>
-						{children.map((child) => {
-							const url = Astro.site?.pathname + child.link;
-							return (
-								<li>
-									<a
-										href={url}
-										aria-current={
-											currentPageMatch === child.link ? 'page' : false
-										}
-									>
-										{child.text}
-									</a>
-								</li>
-							);
-						})}
-					</ul>
+					<details class="group">
+						<summary class="flex items-center justify-between px-4 py-2 font-bold rounded-full hover:bg-shade-100 ring-inset">
+							<span>{header}</span>
+							<span class="group-open:rotate-90">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="icon icon-tabler icon-tabler-chevron-right"
+									width="24"
+									height="24"
+									viewBox="0 0 24 24"
+									stroke-width="2.5"
+									stroke="currentColor"
+									fill="none"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+									<polyline points="9 6 15 12 9 18" />
+								</svg>
+							</span>
+						</summary>
+						<ul>
+							{children.map((child) => {
+								const url = Astro.site?.pathname + child.link;
+								return (
+									<li>
+										<a
+											href={url}
+											aria-current={
+												currentPageMatch === child.link ? 'page' : false
+											}
+											class="flex px-4 py-2 pl-6 font-medium rounded-full hover:bg-shade-100 ring-inset"
+										>
+											{child.text}
+										</a>
+									</li>
+								);
+							})}
+						</ul>
+					</details>
 				</li>
 			))
 		}

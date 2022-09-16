@@ -18,3 +18,12 @@ body {
 *:focus {
 	@apply ring-2 ring-accent;
 }
+
+details > summary {
+	list-style: none;
+}
+
+details > summary::-webkit-details-marker,
+details > summary::marker {
+	display: none;
+}
