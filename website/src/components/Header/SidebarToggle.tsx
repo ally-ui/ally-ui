@@ -5,14 +5,43 @@ import {useEffect, useState} from 'preact/hooks';
 const MenuToggle: FunctionalComponent = () => {
 	const [sidebarShown, setSidebarShown] = useState(false);
 
-	useEffect(() => {
-		const body = document.querySelector('body')!;
-		if (sidebarShown) {
-			body.classList.add('sidebar');
-		} else {
-			body.classList.remove('sidebar');
-		}
-	}, [sidebarShown]);
+	useEffect(
+		function syncSidebar() {
+			const body = document.querySelector('body')!;
+			if (sidebarShown) {
+				body.classList.add('sidebar');
+			} else {
+				body.classList.remove('sidebar');
+			}
+		},
+		[sidebarShown],
+	);
+
+	useEffect(
+		function closeSidebarOnClickOutside() {
+			if (!sidebarShown) {
+				return;
+			}
+			const sidebar = document.querySelector('#sidebar');
+			if (sidebar === null) {
+				return;
+			}
+			const handleClick = (ev: Event) => {
+				if (!(ev.target instanceof Element)) {
+					return;
+				}
+				if (sidebar.contains(ev.target)) {
+					return;
+				}
+				setSidebarShown(false);
+			};
+			window.addEventListener('click', handleClick);
+			return () => {
+				window.removeEventListener('click', handleClick);
+			};
+		},
+		[sidebarShown],
+	);
 
 	return (
 		<button

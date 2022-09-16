@@ -43,14 +43,17 @@ const ThemeToggle: FunctionalComponent = () => {
 		return 'light';
 	});
 
-	useEffect(() => {
-		const root = document.documentElement;
-		if (theme === 'light') {
-			root.classList.remove('dark');
-		} else {
-			root.classList.add('dark');
-		}
-	}, [theme]);
+	useEffect(
+		function syncDark() {
+			const root = document.documentElement;
+			if (theme === 'light') {
+				root.classList.remove('dark');
+			} else {
+				root.classList.add('dark');
+			}
+		},
+		[theme],
+	);
 
 	return (
 		<div className="theme-toggle">

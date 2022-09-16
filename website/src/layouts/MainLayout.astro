@@ -63,11 +63,11 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 			<aside
 				id="grid-left"
 				title="Site Navigation"
-				class="sticky top-0 hidden h-[calc(100vh-theme(height.nav))] p-4 md:block sidebar:block -md:fixed -md:top-[theme(height.nav)] -md:w-80"
+				class="sticky top-0 hidden h-[calc(100vh-theme(height.nav))] md:block sidebar:block -md:fixed -md:top-[theme(height.nav)] -md:w-80"
 			>
 				<LeftSidebar currentPage={currentPage} />
 			</aside>
-			<div id="grid-main" class="col-[2] flex flex-col h-full p-4">
+			<div id="grid-main" class="col-[2] flex flex-col h-full">
 				<PageContent
 					frontmatter={frontmatter}
 					headings={headings}
@@ -79,7 +79,7 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 			<aside
 				id="grid-right"
 				title="Table of Contents"
-				class="sticky top-0 hidden h[calc(100vh-theme(height.nav))] lg:col-[3] lg:flex p-4"
+				class="sticky top-0 hidden h[calc(100vh-theme(height.nav))] lg:col-[3] lg:flex"
 			>
 				<RightSidebar headings={headings} githubEditUrl={githubEditUrl} />
 			</aside>
