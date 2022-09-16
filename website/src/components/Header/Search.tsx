@@ -54,13 +54,10 @@ export default function Search() {
 				<span>Search</span>
 
 				<span className="absolute inset-0 left-auto flex h-full right-2 aspect-square flex-center -md:hidden">
-					<span className="sr-only">Press </span>
-
-					<kbd className="flex text-sm border-[1.5px] border-current rounded-md text-shade-text/25 flex-center wh-6">
+					<kbd className="flex text-sm font-black border-2 border-current rounded-md text-shade-text/25 flex-center wh-6">
 						/
 					</kbd>
-
-					<span className="sr-only"> to search</span>
+					<span className="sr-only">Press / to search</span>
 				</span>
 			</button>
 
