@@ -1,5 +1,5 @@
 import React from 'react';
-import {useRunOnce} from './useRunOnce';
+import {useRunOnce} from './useRunOnce.react';
 
 export interface UseSyncedOptionOptions<TOption> {
 	/**
