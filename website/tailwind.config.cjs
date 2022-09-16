@@ -8,6 +8,17 @@ module.exports = {
 			lg: '72rem',
 		},
 		extend: {
+			colors: {
+				accent: {
+					DEFAULT: 'rgb(var(--tw-accent) / <alpha-value>)',
+				},
+				shade: {
+					DEFAULT: 'rgb(var(--tw-shade) / <alpha-value>)',
+					100: 'rgb(var(--tw-shade-100) / <alpha-value>)',
+					200: 'rgb(var(--tw-shade-200) / <alpha-value>)',
+					text: 'rgb(var(--tw-shade-text) / <alpha-value>)',
+				},
+			},
 			height: {
 				nav: '6rem',
 			},
