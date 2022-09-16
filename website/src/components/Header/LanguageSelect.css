@@ -40,7 +40,7 @@
 	pointer-events: none;
 }
 
-@media (min-width: 50rem) {
+@media screen(md) {
 	.language-select {
 		width: 100%;
 	}

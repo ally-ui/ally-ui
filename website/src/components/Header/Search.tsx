@@ -7,7 +7,6 @@ import './Search.css';
 import * as docSearchReact from '@docsearch/react';
 import {createPortal} from 'react-dom';
 
-/** FIXME: This is still kinda nasty, but DocSearch is not ESM ready. */
 const DocSearchModal =
 	docSearchReact.DocSearchModal ||
 	(docSearchReact as any).default.DocSearchModal;

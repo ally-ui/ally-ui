@@ -60,7 +60,7 @@
 	line-height: 14px;
 }
 
-@media (min-width: 50rem) {
+@media screen(md) {
 	.search-hint {
 		display: flex;
 	}
