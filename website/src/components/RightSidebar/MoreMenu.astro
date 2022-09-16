@@ -9,12 +9,16 @@ const {editHref} = Astro.props as Props;
 const showMoreSection = CONFIG.COMMUNITY_INVITE_URL;
 ---
 
-{showMoreSection && <h2 class="mb-2 text-xl font-bold">More</h2>}
+{showMoreSection && <h2 class="mb-2 text-lg font-bold">More</h2>}
 <ul>
 	{
 		editHref && (
-			<li class="px-2 py-1 border-l-2 hover:text-accent focus:text-accent border-shade-200">
-				<a href={editHref} target="_blank">
+			<li>
+				<a
+					href={editHref}
+					target="_blank"
+					class="block px-4 py-2 font-medium border-l-2 hover:text-accent focus:text-accent border-shade-200 ring-inset"
+				>
 					Edit this page
 				</a>
 			</li>
@@ -22,8 +26,12 @@ const showMoreSection = CONFIG.COMMUNITY_INVITE_URL;
 	}
 	{
 		CONFIG.COMMUNITY_INVITE_URL && (
-			<li class="px-2 py-1 border-l-2 hover:text-accent focus:text-accent border-shade-200">
-				<a href={CONFIG.COMMUNITY_INVITE_URL} target="_blank">
+			<li>
+				<a
+					href={CONFIG.COMMUNITY_INVITE_URL}
+					target="_blank"
+					class="block px-4 py-2 font-medium border-l-2 hover:text-accent focus:text-accent border-shade-200 ring-inset"
+				>
 					Join our community
 				</a>
 			</li>
