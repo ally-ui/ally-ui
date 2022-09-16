@@ -1,6 +1,7 @@
 ---
 import {getLanguageFromURL} from '../../languages';
 import {SIDEBAR} from '../../config';
+import cx from 'classnames';
 
 type Props = {
 	currentPage: string;
@@ -21,8 +22,11 @@ const sidebar = SIDEBAR[langCode];
 		{
 			Object.entries(sidebar).map(([header, children]) => (
 				<li>
-					<details class="group">
-						<summary class="flex items-center justify-between p-2 pl-4 font-bold rounded-full hover:bg-shade-100 ring-inset">
+					<details
+						class="group"
+						open={children.some((child) => child.link === currentPageMatch)}
+					>
+						<summary class="flex items-center justify-between p-2 pl-4 font-bold rounded-full hover:text-accent hover:bg-shade-100 ring-inset">
 							<span>{header}</span>
 							<span class="group-open:rotate-90">
 								<svg
@@ -52,7 +56,13 @@ const sidebar = SIDEBAR[langCode];
 											aria-current={
 												currentPageMatch === child.link ? 'page' : false
 											}
-											class="flex px-4 py-2 pl-6 font-medium rounded-full hover:bg-shade-100 ring-inset"
+											class={cx(
+												'flex px-4 py-2 pl-6 font-medium rounded-full hover:text-accent hover:bg-shade-100 ring-inset',
+												{
+													'text-accent bg-shade-100':
+														currentPageMatch === child.link,
+												},
+											)}
 										>
 											{child.text}
 										</a>
