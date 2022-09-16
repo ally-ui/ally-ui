@@ -27,5 +27,8 @@ module.exports = {
 			},
 		},
 	},
-	plugins: [require('./tailwindcss/sidebar.cjs')],
+	plugins: [
+		require('./tailwindcss/has-pointer.cjs'),
+		require('./tailwindcss/sidebar.cjs'),
+	],
 };
