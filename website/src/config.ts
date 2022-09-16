@@ -1,6 +1,7 @@
 export const SITE = {
-	title: 'Documentation',
-	description: 'Your website description.',
+	title: 'Ally UI',
+	description:
+		'An agnostic and accessible component library for all UI frameworks',
 	defaultLanguage: 'en_US',
 };
 
