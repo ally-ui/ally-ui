@@ -1,7 +1,6 @@
 import cx from 'classnames';
 import type {FunctionalComponent} from 'preact';
 import {useEffect, useState} from 'preact/hooks';
-import './ThemeToggleButton.css';
 
 const themes = ['light', 'dark'];
 
@@ -79,6 +78,7 @@ const ThemeToggle: FunctionalComponent = () => {
 								localStorage.setItem('theme', t);
 								setTheme(t);
 							}}
+							className="appearance-none focus:ring-0"
 						/>
 					</label>
 				);
