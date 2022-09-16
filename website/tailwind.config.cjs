@@ -23,6 +23,9 @@ module.exports = {
 					200: 'rgb(var(--tw-shade-200) / <alpha-value>)',
 					text: 'rgb(var(--tw-shade-text) / <alpha-value>)',
 				},
+				line: {
+					DEFAULT: 'rgb(var(--tw-line) / <alpha-value>)',
+				},
 			},
 			fontFamily: {
 				mono: ['IBM Plex Mono', ...defaultTheme.fontFamily.mono],

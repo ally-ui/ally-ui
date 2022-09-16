@@ -49,14 +49,14 @@ export default function Search() {
 				type="button"
 				ref={searchButtonRef}
 				onClick={onOpen}
-				className="relative flex w-full h-10 rounded-full bg-shade-100 flex-center text-shade-text"
+				className="relative flex w-full h-10 rounded-full bg-shade-100 flex-center text-shade-text/50"
 			>
 				<span>Search</span>
 
 				<span className="absolute inset-0 left-auto flex h-full right-2 aspect-square flex-center -md:hidden">
 					<span className="sr-only">Press </span>
 
-					<kbd className="flex text-sm border-2 border-current rounded-md text-shade-text/50 flex-center wh-6">
+					<kbd className="flex text-sm border-[1.5px] border-current rounded-md text-shade-text/25 flex-center wh-6">
 						/
 					</kbd>
 

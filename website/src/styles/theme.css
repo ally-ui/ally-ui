@@ -56,6 +56,7 @@
 	--tw-shade-100: 240 248 255;
 	--tw-shade-200: 215 236 255;
 	--tw-shade-text: 36 77 115;
+	--tw-line: 234 238 242;
 
 	--theme-accent: hsla(var(--color-blue), 1);
 	--theme-text-accent: hsla(var(--color-blue), 1);
@@ -91,6 +92,7 @@ body {
 	--tw-shade-100: 35 52 68;
 	--tw-shade-200: 60 84 105;
 	--tw-shade-text: 203 227 250;
+	--tw-line: 35 52 68;
 
 	--theme-accent-opacity: 0.15;
 	--theme-accent: hsla(var(--color-blue), 1);
