@@ -24,7 +24,7 @@ const LanguageSelect: FunctionComponent<{lang: string}> = ({lang}) => {
 				</svg>
 			</div>
 			<select
-				className="flex-grow w-12 px-8 py-3 pl-10 rounded-full md:w-full bg-shade-100"
+				className="flex items-center flex-grow w-12 h-12 px-4 pl-10 rounded-full md:w-full bg-shade-100"
 				value={lang}
 				onChange={(e) => {
 					const newLang = e.target.value;

@@ -11,6 +11,14 @@ body {
 	font-size: clamp(0.9rem, 0.75rem + 0.375vw + var(--user-font-scale), 1rem);
 }
 
+* {
+	outline: none;
+}
+
+*:focus {
+	@apply ring-2 ring-accent;
+}
+
 /* .content > section > * + * {
 	margin-top: 1.25rem;
 }

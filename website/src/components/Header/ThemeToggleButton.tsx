@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import type {FunctionalComponent} from 'preact';
 import {useEffect, useState} from 'preact/hooks';
 import './ThemeToggleButton.css';
@@ -56,12 +57,16 @@ const ThemeToggle: FunctionalComponent = () => {
 	);
 
 	return (
-		<div className="theme-toggle">
+		<div className="inline-flex h-12 p-1 rounded-full flex-center bg-shade-100 text-shade-text focus-within:ring-2 ring-accent">
 			{themes.map((t, i) => {
 				const icon = icons[i];
 				const checked = t === theme;
 				return (
-					<label className={checked ? ' checked' : ''}>
+					<label
+						className={cx('px-3 py-1 h-full flex items-center rounded-full', {
+							'bg-shade dark:bg-shade-200 text-accent': checked,
+						})}
+					>
 						{icon}
 						<input
 							type="radio"
