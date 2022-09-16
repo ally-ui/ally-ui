@@ -39,28 +39,3 @@ const lang = getLanguageFromURL(currentPage);
 		<LanguageSelect lang={lang} client:idle />
 	</nav>
 </header>
-
-<style lang="postcss">
-	@media screen(md) {
-		header {
-			position: static;
-			padding: 2rem 0rem;
-		}
-
-		.logo {
-			width: auto;
-			margin: 0;
-			z-index: 0;
-		}
-
-		.logo h1 {
-			display: initial;
-		}
-	}
-</style>
-
-<style is:global>
-	.search-item > * {
-		flex-grow: 1;
-	}
-</style>
