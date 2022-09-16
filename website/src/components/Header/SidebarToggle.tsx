@@ -43,6 +43,28 @@ const MenuToggle: FunctionalComponent = () => {
 		[sidebarShown],
 	);
 
+	useEffect(
+		function closeSidebarOnEscape() {
+			if (!sidebarShown) {
+				return;
+			}
+			const sidebar = document.querySelector('#sidebar');
+			if (sidebar === null) {
+				return;
+			}
+			const handleKeyDown = (ev: KeyboardEvent) => {
+				if (ev.key === 'Escape') {
+					setSidebarShown(false);
+				}
+			};
+			window.addEventListener('keydown', handleKeyDown);
+			return () => {
+				window.removeEventListener('keydown', handleKeyDown);
+			};
+		},
+		[sidebarShown],
+	);
+
 	return (
 		<button
 			type="button"
