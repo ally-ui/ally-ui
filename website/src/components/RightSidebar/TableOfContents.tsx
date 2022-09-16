@@ -1,3 +1,4 @@
+/** @jsxImportSource preact */
 import type {MarkdownHeading} from 'astro';
 import cx from 'classnames';
 import type {FunctionalComponent} from 'preact';
