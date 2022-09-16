@@ -7,6 +7,9 @@ module.exports = {
 			sm: '37.75rem',
 			md: '50rem',
 			lg: '72rem',
+			'-lg': {max: '72rem'},
+			'-md': {max: '50rem'},
+			'-sm': {max: '37.75rem'},
 		},
 		extend: {
 			colors: {

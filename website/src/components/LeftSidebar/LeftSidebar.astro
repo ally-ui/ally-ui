@@ -12,17 +12,17 @@ const langCode = getLanguageFromURL(currentPage);
 const sidebar = SIDEBAR[langCode];
 ---
 
-<nav aria-labelledby="grid-left" class="w-full">
-	<ul class="h-full max-h-screen overflow-y-auto bg-shade nav-groups">
+<nav aria-labelledby="grid-left" class="w-full h-full" id="sidebar">
+	<ul class="h-full max-h-screen overflow-y-auto bg-shade">
 		{
 			Object.entries(sidebar).map(([header, children]) => (
-				<li class="p-4">
+				<li>
 					<h2 class="font-bold">{header}</h2>
-					<ul class="nav-groups">
+					<ul>
 						{children.map((child) => {
 							const url = Astro.site?.pathname + child.link;
 							return (
-								<li class="">
+								<li>
 									<a
 										href={url}
 										aria-current={
@@ -40,12 +40,3 @@ const sidebar = SIDEBAR[langCode];
 		}
 	</ul>
 </nav>
-
-<script is:inline>
-	window.addEventListener('DOMContentLoaded', () => {
-		var target = document.querySelector('[aria-current="page"]');
-		if (target && target.offsetTop > window.innerHeight - 100) {
-			document.querySelector('.nav-groups').scrollTop = target.offsetTop;
-		}
-	});
-</script>

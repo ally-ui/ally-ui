@@ -11,8 +11,8 @@ type Props = {
 const {headings, githubEditUrl} = Astro.props as Props;
 ---
 
-<nav class="sticky top-0 w-full" aria-labelledby="grid-right">
-	<div class="h-full pt-8 space-y-4 overflow-auto">
+<nav aria-labelledby="grid-right" class="w-full">
+	<div class="h-full space-y-4 overflow-auto">
 		<TableOfContents client:media="(min-width: 50em)" headings={headings} />
 		<MoreMenu editHref={githubEditUrl} />
 	</div>

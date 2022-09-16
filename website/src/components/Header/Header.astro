@@ -24,9 +24,7 @@ const lang = getLanguageFromURL(currentPage);
 		class="flex items-center justify-end w-full gap-4 p-4 max-w-7xl"
 		title="Top Navigation"
 	>
-		<div class="menu-toggle">
-			<SidebarToggle client:idle />
-		</div>
+		<div class="md:hidden"><SidebarToggle client:idle /></div>
 		<a
 			href="/"
 			class="flex items-center transition-colors hover:text-accent focus:text-accent"
@@ -59,10 +57,6 @@ const lang = getLanguageFromURL(currentPage);
 
 		.logo h1 {
 			display: initial;
-		}
-
-		.menu-toggle {
-			display: none;
 		}
 	}
 </style>
