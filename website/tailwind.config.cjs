@@ -33,7 +33,9 @@ module.exports = {
 	},
 	plugins: [
 		require('@tailwindcss/typography'),
+		require('./tailwindcss/flex.cjs'),
 		require('./tailwindcss/has-pointer.cjs'),
+		require('./tailwindcss/size.cjs'),
 		require('./tailwindcss/sidebar.cjs'),
 	],
 };
