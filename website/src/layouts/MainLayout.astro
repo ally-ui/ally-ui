@@ -58,12 +58,12 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 	<body class="grid w-full">
 		<Header currentPage={currentPage} />
 		<main
-			class="grid w-full grid-flow-col overflow-x-hidden md:overflow-x-auto lg:px-0 lg:mx-auto max-w-7xl"
+			class="grid w-full grid-flow-col overflow-x-hidden md:overflow-x-auto lg:px-0 lg:mx-auto max-w-7xl isolate"
 		>
 			<aside
 				id="grid-left"
 				title="Site Navigation"
-				class="sticky top-0 hidden h-[calc(100vh-theme(height.nav))] md:block sidebar:block -md:fixed -md:top-[theme(height.nav)] -md:w-80"
+				class="z-10 sticky top-0 hidden h-[calc(100vh-theme(height.nav))] md:block sidebar:block -md:fixed -md:top-[theme(height.nav)] -md:w-80"
 			>
 				<LeftSidebar currentPage={currentPage} />
 			</aside>
