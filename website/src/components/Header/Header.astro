@@ -16,91 +16,36 @@ const {currentPage} = Astro.props as Props;
 const lang = getLanguageFromURL(currentPage);
 ---
 
-<header>
+<header
+	class="sticky top-0 z-10 flex items-center justify-center w-full overflow-hidden h-nav bg-shade"
+>
 	<SkipToContent />
-	<nav class="nav-wrapper" title="Top Navigation">
+	<nav
+		class="flex items-center justify-end w-full gap-4 p-4 max-w-7xl"
+		title="Top Navigation"
+	>
 		<div class="menu-toggle">
 			<SidebarToggle client:idle />
 		</div>
-		<div class="flex logo">
-			<a href="/">
-				<AstroLogo size={40} />
-				<h1>{CONFIG.SITE.title ?? 'Documentation'}</h1>
-			</a>
-		</div>
-		<div style="flex-grow: 1;"></div>
-		<ThemeToggleButton client:idle />
-		<LanguageSelect lang={lang} client:idle />
-		<div class="search-item">
+		<a
+			href="/"
+			class="flex items-center transition-colors hover:text-accent focus:text-accent"
+		>
+			<AstroLogo size={40} />
+			<h1 class="text-2xl font-bold">{CONFIG.SITE.title ?? 'Documentation'}</h1>
+		</a>
+		<div class="flex-1"></div>
+		<div class="relative z-10 flex-[3]">
 			<Search client:idle />
 		</div>
+		<div class="flex-1"></div>
+		<ThemeToggleButton client:idle />
+		<LanguageSelect lang={lang} client:idle />
 	</nav>
 </header>
 
 <style lang="postcss">
-	header {
-		z-index: 11;
-		height: theme(height.nav);
-		width: 100%;
-		background-color: var(--theme-navbar-bg);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		overflow: hidden;
-		position: sticky;
-		top: 0;
-	}
-
-	.logo {
-		flex: 1;
-		display: flex;
-		overflow: hidden;
-		width: 30px;
-		font-size: 2rem;
-		flex-shrink: 0;
-		font-weight: 600;
-		line-height: 1;
-		color: hsla(var(--color-base-white), 100%, 1);
-		gap: 0.25em;
-		z-index: -1;
-	}
-
-	.logo a {
-		display: flex;
-		padding: 0.5em 0.25em;
-		margin: -0.5em -0.25em;
-		text-decoration: none;
-		font-weight: bold;
-	}
-
-	.logo a {
-		transition: color 100ms ease-out;
-		color: var(--theme-text);
-	}
-
-	.logo a:hover,
-	.logo a:focus {
-		color: var(--theme-text-accent);
-	}
-
-	.logo h1 {
-		display: none;
-		font: inherit;
-		color: inherit;
-		margin: 0;
-	}
-
-	.nav-wrapper {
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-		gap: 1em;
-		width: 100%;
-		max-width: 82em;
-		padding: 0 1rem;
-	}
-
-	@media (min-width: 50rem) {
+	@media screen(md) {
 		header {
 			position: static;
 			padding: 2rem 0rem;
@@ -118,28 +63,6 @@ const lang = getLanguageFromURL(currentPage);
 
 		.menu-toggle {
 			display: none;
-		}
-	}
-
-	/** Style Algolia */
-	:root {
-		--docsearch-primary-color: var(--theme-accent);
-		--docsearch-logo-color: var(--theme-text);
-	}
-
-	.search-item {
-		display: none;
-		position: relative;
-		z-index: 10;
-		flex-grow: 1;
-		padding-right: 0.7rem;
-		display: flex;
-		max-width: 200px;
-	}
-
-	@media (min-width: 50rem) {
-		.search-item {
-			max-width: 400px;
 		}
 	}
 </style>

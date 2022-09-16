@@ -26,9 +26,6 @@ module.exports = {
 			height: {
 				nav: '6rem',
 			},
-			width: {
-				main: 'var(--theme-w-main)',
-			},
 		},
 	},
 	plugins: [
