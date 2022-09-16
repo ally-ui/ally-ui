@@ -22,10 +22,7 @@ const sidebar = SIDEBAR[langCode];
 		{
 			Object.entries(sidebar).map(([header, children]) => (
 				<li>
-					<details
-						class="group"
-						open={children.some((child) => child.link === currentPageMatch)}
-					>
+					<details class="group" open>
 						<summary class="flex items-center justify-between p-2 pl-4 font-bold rounded-full hover:text-accent hover:bg-shade-100 ring-inset">
 							<span>{header}</span>
 							<span class="group-open:rotate-90">
