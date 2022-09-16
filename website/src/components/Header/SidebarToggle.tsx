@@ -1,25 +1,28 @@
 /** @jsxImportSource preact */
 import type {FunctionalComponent} from 'preact';
-import {useEffect, useState} from 'preact/hooks';
+import {useEffect, useRef, useState} from 'preact/hooks';
 
-const MenuToggle: FunctionalComponent = () => {
-	const [sidebarShown, setSidebarShown] = useState(false);
+const FOCUSABLE_SELECTOR =
+	'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+const SidebarToggle: FunctionalComponent = () => {
+	const [showSidebar, setShowSidebar] = useState(false);
 
 	useEffect(
 		function syncSidebar() {
 			const body = document.querySelector('body')!;
-			if (sidebarShown) {
+			if (showSidebar) {
 				body.classList.add('sidebar');
 			} else {
 				body.classList.remove('sidebar');
 			}
 		},
-		[sidebarShown],
+		[showSidebar],
 	);
 
 	useEffect(
 		function closeSidebarOnClickOutside() {
-			if (!sidebarShown) {
+			if (!showSidebar) {
 				return;
 			}
 			const sidebar = document.querySelector('#sidebar');
@@ -33,19 +36,19 @@ const MenuToggle: FunctionalComponent = () => {
 				if (sidebar.contains(ev.target)) {
 					return;
 				}
-				setSidebarShown(false);
+				setShowSidebar(false);
 			};
 			window.addEventListener('click', handleClick);
 			return () => {
 				window.removeEventListener('click', handleClick);
 			};
 		},
-		[sidebarShown],
+		[showSidebar],
 	);
 
 	useEffect(
 		function closeSidebarOnEscape() {
-			if (!sidebarShown) {
+			if (!showSidebar) {
 				return;
 			}
 			const sidebar = document.querySelector('#sidebar');
@@ -54,7 +57,7 @@ const MenuToggle: FunctionalComponent = () => {
 			}
 			const handleKeyDown = (ev: KeyboardEvent) => {
 				if (ev.key === 'Escape') {
-					setSidebarShown(false);
+					setShowSidebar(false);
 				}
 			};
 			window.addEventListener('keydown', handleKeyDown);
@@ -62,15 +65,45 @@ const MenuToggle: FunctionalComponent = () => {
 				window.removeEventListener('keydown', handleKeyDown);
 			};
 		},
-		[sidebarShown],
+		[showSidebar],
+	);
+
+	useEffect(
+		function focusSidebarOnOpen() {
+			if (!showSidebar) {
+				return;
+			}
+			const sidebar = document.querySelector('#sidebar');
+			const target = sidebar?.querySelector(FOCUSABLE_SELECTOR);
+			if (target === null) {
+				return;
+			}
+			if (!(target instanceof HTMLElement)) {
+				return;
+			}
+			target.focus();
+		},
+		[showSidebar],
+	);
+
+	const toggleRef = useRef<HTMLButtonElement>(null);
+	useEffect(
+		function focusToggleOnClose() {
+			if (showSidebar) {
+				return;
+			}
+			toggleRef.current?.focus();
+		},
+		[showSidebar],
 	);
 
 	return (
 		<button
+			ref={toggleRef}
 			type="button"
-			aria-pressed={sidebarShown ? 'true' : 'false'}
+			aria-pressed={showSidebar ? 'true' : 'false'}
 			id="sidebar-toggle"
-			onClick={() => setSidebarShown(!sidebarShown)}
+			onClick={() => setShowSidebar(!showSidebar)}
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -92,4 +125,4 @@ const MenuToggle: FunctionalComponent = () => {
 	);
 };
 
-export default MenuToggle;
+export default SidebarToggle;
