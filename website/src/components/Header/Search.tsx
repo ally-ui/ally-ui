@@ -8,10 +8,10 @@ import * as docSearchReact from '@docsearch/react';
 import {createPortal} from 'react-dom';
 
 const DocSearchModal =
-	docSearchReact.DocSearchModal ||
+	docSearchReact.DocSearchModal ??
 	(docSearchReact as any).default.DocSearchModal;
 const useDocSearchKeyboardEvents =
-	docSearchReact.useDocSearchKeyboardEvents ||
+	docSearchReact.useDocSearchKeyboardEvents ??
 	(docSearchReact as any).default.useDocSearchKeyboardEvents;
 
 export default function Search() {
@@ -49,24 +49,16 @@ export default function Search() {
 				type="button"
 				ref={searchButtonRef}
 				onClick={onOpen}
-				className="search-input"
+				className="relative flex w-full h-12 rounded-full bg-shade-100 flex-center text-shade-text"
 			>
-				<svg width="24" height="24" fill="none">
-					<path
-						d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-						stroke="currentColor"
-						strokeWidth="2"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-					/>
-				</svg>
-
 				<span>Search</span>
 
-				<span className="search-hint">
+				<span className="absolute inset-0 left-auto flex h-full right-2 aspect-square flex-center -md:hidden">
 					<span className="sr-only">Press </span>
 
-					<kbd>/</kbd>
+					<kbd className="flex text-sm border-2 border-current rounded-md text-shade-text/50 flex-center wh-6">
+						/
+					</kbd>
 
 					<span className="sr-only"> to search</span>
 				</span>
