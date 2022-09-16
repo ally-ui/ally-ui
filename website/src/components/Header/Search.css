@@ -50,7 +50,7 @@
 	justify-content: center;
 	letter-spacing: 0.125em;
 	font-size: 13px;
-	font-family: var(--font-mono);
+	font-family: theme(fontFamily.mono);
 	pointer-events: none;
 	border-color: var(--theme-text-lighter);
 	color: var(--theme-text-light);

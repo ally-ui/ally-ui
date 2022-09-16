@@ -14,34 +14,17 @@ const {frontmatter, headings, githubEditUrl} = Astro.props as Props;
 const title = frontmatter.title;
 ---
 
-<article id="article" class="content">
-	<section class="main-section">
-		<h1 class="content-title" id="overview">{title}</h1>
-		<nav class="block md:hidden">
+<article id="article" class="max-w-[75ch] w-full h-full flex flex-col p-0">
+	<section class="mb-16">
+		<h1 id="overview">{title}</h1>
+		<nav class="my-4 md:hidden">
 			<TableOfContents client:media="(max-width: 50em)" headings={headings} />
 		</nav>
-		<slot />
+		<div class="prose">
+			<slot />
+		</div>
 	</section>
-	<nav class="block md:hidden">
+	<nav class="md:hidden">
 		<MoreMenu editHref={githubEditUrl} />
 	</nav>
 </article>
-
-<style>
-	.content {
-		padding: 0;
-		max-width: 75ch;
-		width: 100%;
-		height: 100%;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.content > section {
-		margin-bottom: 4rem;
-	}
-
-	.block {
-		display: block;
-	}
-</style>

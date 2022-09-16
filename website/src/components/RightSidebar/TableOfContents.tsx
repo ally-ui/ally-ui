@@ -1,43 +1,23 @@
 import type {MarkdownHeading} from 'astro';
+import cx from 'classnames';
 import type {FunctionalComponent} from 'preact';
-import {useEffect, useRef, useState} from 'preact/hooks';
-
-type ItemOffsets = {
-	id: string;
-	topOffset: number;
-};
+import {useState} from 'preact/hooks';
 
 const TableOfContents: FunctionalComponent<{headings: MarkdownHeading[]}> = ({
 	headings = [],
 }) => {
-	const itemOffsets = useRef<ItemOffsets[]>([]);
-	// FIXME: Not sure what this state is doing. It was never set to anything truthy.
-	const [activeId] = useState<string>('');
-	useEffect(() => {
-		const getItemOffsets = () => {
-			const titles = document.querySelectorAll('article :is(h1, h2, h3, h4)');
-			itemOffsets.current = Array.from(titles).map((title) => ({
-				id: title.id,
-				topOffset: title.getBoundingClientRect().top + window.scrollY,
-			}));
-		};
-
-		getItemOffsets();
-		window.addEventListener('resize', getItemOffsets);
-
-		return () => {
-			window.removeEventListener('resize', getItemOffsets);
-		};
-	}, []);
-
+	const [activeId] = useState<string>('overview');
 	return (
 		<>
-			<h2 className="heading">On this page</h2>
+			<h2 className="mb-2 text-xl font-bold">On this page</h2>
 			<ul>
 				<li
-					className={`heading-link depth-2 ${
-						activeId === 'overview' ? 'active' : ''
-					}`.trim()}
+					className={cx(
+						'hover:text-accent focus:text-accent border-l-2 border-shade-200 py-1 px-2',
+						{
+							'text-accent border-accent': activeId === 'overview',
+						},
+					)}
 				>
 					<a href="#overview">Overview</a>
 				</li>
@@ -45,9 +25,9 @@ const TableOfContents: FunctionalComponent<{headings: MarkdownHeading[]}> = ({
 					.filter(({depth}) => depth > 1 && depth < 4)
 					.map((heading) => (
 						<li
-							className={`heading-link depth-${heading.depth} ${
-								activeId === heading.slug ? 'active' : ''
-							}`.trim()}
+							className={cx(
+								'hover:text-accent focus:text-accent border-l-2 border-shade-200 py-1 px-2',
+							)}
 						>
 							<a href={`#${heading.slug}`}>{heading.text}</a>
 						</li>
