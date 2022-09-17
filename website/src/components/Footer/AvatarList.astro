@@ -4,8 +4,7 @@ type Props = {
 	path: string;
 };
 const {path} = Astro.props as Props;
-const resolvedPath = `examples/docs/${path}`;
-// TODO Use Ally UI commit link.
+const resolvedPath = `website/${path}`;
 const url = `https://api.github.com/repos/ally-ui/ally-ui/commits?path=${resolvedPath}`;
 const commitsURL = `https://github.com/ally-ui/ally-ui/commits/main/${resolvedPath}`;
 
