@@ -22,7 +22,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Install, build, and upload your site
         uses: withastro/action@v0
-        working-directory: ./website
+        with:
+          path: ./website/
 
   deploy:
     needs: build
