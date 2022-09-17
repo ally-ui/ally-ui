@@ -25,7 +25,7 @@
 	"devDependencies": {
 		"@nrwl/nx-cloud": "latest",
 		"@rollup/plugin-typescript": "^8.3.4",
-		"@sveltejs/package": "https://gitpkg.now.sh/bryanmylee/kit/packages/package?package/copy-package-json",
+		"@sveltejs/package": "https://gitpkg.now.sh/bryanmylee/kit/packages/package?package/metadata",
 		"@sveltejs/vite-plugin-svelte": "^1.0.1",
 		"@testing-library/dom": "^8.16.1",
 		"@testing-library/jest-dom": "^5.16.5",
