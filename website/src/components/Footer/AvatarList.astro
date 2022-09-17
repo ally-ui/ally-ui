@@ -1,0 +1,132 @@
+---
+// Fetch all commits for just this page's path.
+type Props = {
+	path: string;
+};
+const {path} = Astro.props as Props;
+const resolvedPath = `examples/docs/${path}`;
+// TODO Use Ally UI commit link.
+const url = `https://api.github.com/repos/ally-ui/ally-ui/commits?path=${resolvedPath}`;
+const commitsURL = `https://github.com/ally-ui/ally-ui/commits/main/${resolvedPath}`;
+
+type Commit = {
+	author: {
+		id: string;
+		login: string;
+	};
+};
+
+async function getCommits(url: string) {
+	try {
+		const token = import.meta.env.SNOWPACK_PUBLIC_GITHUB_TOKEN ?? 'hello';
+		if (!token) {
+			throw new Error(
+				'Cannot find "SNOWPACK_PUBLIC_GITHUB_TOKEN" used for escaping rate-limiting.',
+			);
+		}
+
+		const auth = `Basic ${Buffer.from(token, 'binary').toString('base64')}`;
+
+		const res = await fetch(url, {
+			method: 'GET',
+			headers: {
+				Authorization: auth,
+				'User-Agent': 'astro-docs/1.0',
+			},
+		});
+
+		const data = await res.json();
+
+		if (!res.ok) {
+			throw new Error(
+				`Request to fetch commits failed. Reason: ${res.statusText}
+       Message: ${data.message}`,
+			);
+		}
+
+		return data as Commit[];
+	} catch (e) {
+		console.warn(`[error]  /src/components/AvatarList.astro 
+    ${(e as any)?.message ?? e}`);
+		return [] as Commit[];
+	}
+}
+
+function removeDups(arr: Commit[]) {
+	const map = new Map<string, Commit['author']>();
+
+	for (let item of arr) {
+		const author = item.author;
+		// Deduplicate based on author.id
+		map.set(author.id, {login: author.login, id: author.id});
+	}
+
+	return [...map.values()];
+}
+
+const data = await getCommits(url);
+const unique = removeDups(data);
+const recentContributors = unique.slice(0, 3); // only show avatars for the 3 most recent contributors
+const additionalContributors = unique.length - recentContributors.length; // list the rest of them as # of extra contributors
+---
+
+<div class="flex items-center gap-3">
+	<ul
+		class="grid gap-2 p-1 list-none grid-cols-avatar-list text-[length:var(--avatar-size)]"
+		style={`--avatar-count: ${recentContributors.length}; --avatar-size: 2.5rem`}
+	>
+		{
+			recentContributors.map((item) => (
+				<li class="has-pointer:w-[var(--avatar-size)] has-pointer:h-[var(--avatar-size)] peer has-pointer:peer-hover:translate-x-1/3 has-pointer:peer-focus-within:translate-x-1/3 transition-transform">
+					<a
+						href={`https://github.com/${item.login}`}
+						class="block object-cover bg-white rounded-full"
+					>
+						<img
+							alt={`Contributor ${item.login}`}
+							title={`Contributor ${item.login}`}
+							width="64"
+							height="64"
+							src={`https://avatars.githubusercontent.com/u/${item.id}`}
+							class="rounded-full wh-full"
+						/>
+					</a>
+				</li>
+			))
+		}
+	</ul>
+	{
+		additionalContributors > 0 && (
+			<span>
+				<a
+					href={commitsURL}
+				>{`and ${additionalContributors} additional contributor${
+					additionalContributors > 1 ? 's' : ''
+				}.`}</a>
+			</span>
+		)
+	}
+	{unique.length === 0 && <a href={commitsURL}>Contributors</a>}
+</div>
+
+<style lang="postcss">
+	.grid-cols-avatar-list {
+		/* Default to displaying most of the avatar to enable easier access on
+		 * touch devices, ensuring the WCAG touch target size is met or exceeded */
+		grid-template-columns: repeat(
+			var(--avatar-count),
+			max(44px, calc(var(--avatar-size) / 1.15))
+		);
+	}
+
+	@media (any-hover: hover) and (any-pointer: fine) {
+		.grid-cols-avatar-list {
+			/* We create 1 extra cell to enable the computed width to match the final
+			 * visual width */
+			grid-template-columns: repeat(
+				calc(var(--avatar-count) + 1),
+				calc(var(--avatar-size) / 1.75)
+			);
+		}
+	}
+</style>

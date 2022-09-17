@@ -1,0 +1,31 @@
+:root {
+	color-scheme: light;
+	--tw-accent: 0 133 255;
+	--tw-shade: 255 255 255;
+	--tw-shade-100: 240 248 255;
+	--tw-shade-200: 215 236 255;
+	--tw-shade-text: 36 77 115;
+	--tw-line: 234 238 242;
+	--tw-text: 0 0 0;
+}
+
+:root.dark {
+	color-scheme: dark;
+	--tw-accent: 107 184 255;
+	--tw-shade: 10 21 32;
+	--tw-shade-100: 21 38 54;
+	--tw-shade-200: 60 84 105;
+	--tw-shade-text: 203 227 250;
+	--tw-line: 35 52 68;
+	--tw-text: 255 255 255;
+}
+
+body {
+	background: theme(colors.shade.DEFAULT);
+	color: theme(colors.text.DEFAULT);
+}
+
+::selection {
+	color: theme(colors.accent.DEFAULT);
+	background-color: theme(colors.shade.100);
+}

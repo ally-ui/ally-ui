@@ -1,0 +1,48 @@
+/*-------------------*\
+  DocSearch (Algolia)
+\*-------------------*/
+
+:root {
+	--docsearch-primary-color: theme(colors.accent.DEFAULT);
+	--docsearch-logo-color: theme(colors.accent.DEFAULT);
+}
+
+.DocSearch-Modal {
+	@apply [@media(min-width:768px)]:rounded-[calc(theme(spacing.3)+theme(borderRadius.xl))] shadow bg-shade;
+}
+
+.DocSearch-SearchBar {
+	@apply p-3;
+}
+
+.DocSearch-Form {
+	@apply h-10 bg-shade-100 rounded-xl outline-none;
+}
+
+.DocSearch-Input {
+	@apply focus:ring-0 text-sm text-shade-text placeholder:text-shade-text/50;
+}
+
+.DocSearch-MagnifierLabel {
+	@apply hidden;
+}
+
+.DocSearch-NoResults {
+	@apply flex gap-4 flex-center;
+}
+
+.DocSearch-LoadingIndicator {
+	@apply text-shade-200;
+}
+
+.DocSearch-Screen-Icon {
+	@apply p-0 scale-75 text-accent;
+}
+
+.DocSearch-Footer {
+	@apply [@media(min-width:768px)]:rounded-b-[calc(theme(spacing.3)+theme(borderRadius.xl))] p-6 bg-shade-100 shadow-none;
+}
+
+.DocSearch-Commands-Key {
+	@apply bg-shade-200 shadow-none text-shade-text bg-none;
+}

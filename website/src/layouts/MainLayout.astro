@@ -1,0 +1,89 @@
+---
+import HeadCommon from '../components/HeadCommon.astro';
+import HeadSEO from '../components/HeadSEO.astro';
+import Header from '../components/Header/Header.astro';
+import PageContent from '../components/PageContent/PageContent.astro';
+import LeftSidebar from '../components/LeftSidebar/LeftSidebar.astro';
+import RightSidebar from '../components/RightSidebar/RightSidebar.astro';
+import * as CONFIG from '../config';
+import type {MarkdownHeading} from 'astro';
+import Footer from '../components/Footer/Footer.astro';
+
+type Props = {
+	frontmatter: CONFIG.Frontmatter;
+	headings: MarkdownHeading[];
+};
+
+const {frontmatter, headings} = Astro.props as Props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const currentPage = Astro.url.pathname;
+const currentFile = `src/pages${currentPage.replace(/\/$/, '')}.md`;
+const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
+---
+
+<html dir={frontmatter.dir ?? 'ltr'} lang={frontmatter.lang ?? 'en-us'}>
+	<head>
+		<HeadCommon />
+		<HeadSEO frontmatter={frontmatter} canonicalUrl={canonicalURL} />
+		<title>
+			{
+				frontmatter.title
+					? `${frontmatter.title} 🚀 ${CONFIG.SITE.title}`
+					: CONFIG.SITE.title
+			}
+		</title>
+		<style lang="postcss">
+			body {
+				grid-template-rows: theme(height.nav) 1fr;
+			}
+
+			main {
+				grid-template-columns: 1fr auto 1fr;
+			}
+
+			@media screen(md) {
+				main {
+					grid-template-columns: theme(width.80) auto;
+				}
+			}
+
+			@media screen(lg) {
+				main {
+					grid-template-columns: 1fr auto 1fr;
+				}
+			}
+		</style>
+	</head>
+
+	<body class="grid w-full">
+		<Header currentPage={currentPage} />
+		<main
+			class="grid w-full grid-flow-col overflow-x-hidden md:overflow-x-initial lg:px-0 lg:mx-auto max-w-7xl isolate"
+		>
+			<aside
+				id="grid-left"
+				title="Site Navigation"
+				class="z-10 sticky top-[theme(height.nav)] hidden h-[calc(100vh-theme(height.nav))] md:block sidebar:block -md:fixed -md:top-[theme(height.nav)] -md:w-80"
+			>
+				<LeftSidebar currentPage={currentPage} />
+			</aside>
+			<div id="grid-main" class="col-[2] flex flex-col h-full">
+				<PageContent
+					frontmatter={frontmatter}
+					headings={headings}
+					githubEditUrl={githubEditUrl}
+				>
+					<slot />
+				</PageContent>
+				<Footer path={currentFile} />
+			</div>
+			<aside
+				id="grid-right"
+				title="Table of Contents"
+				class="sticky top-[theme(height.nav)] hidden h-[calc(100vh-theme(height.nav))] lg:col-[3] lg:flex"
+			>
+				<RightSidebar headings={headings} githubEditUrl={githubEditUrl} />
+			</aside>
+		</main>
+	</body>
+</html>

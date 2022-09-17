@@ -81,18 +81,18 @@ const open = ref(true); // opt-in manual state management
 </script>
 
 <template>
-<main>
-  <DialogRoot v-model:open="open">
-    <DialogTrigger>Edit profile</DialogTrigger>
-    <DialogContent>
-      <DialogTitle>Edit profile</DialogTitle>
-      <DialogDescription>
-        Make changes to your profile here. Click save when you're done
-      </DialogDescription>
-      <DialogClose>Save changes</DialogClose>
-    </DialogContent>
-  </DialogRoot>
-</main>
+  <main>
+    <DialogRoot v-model:open="open">
+      <DialogTrigger>Edit profile</DialogTrigger>
+      <DialogContent>
+        <DialogTitle>Edit profile</DialogTitle>
+        <DialogDescription>
+          Make changes to your profile here. Click save when you're done
+        </DialogDescription>
+        <DialogClose>Save changes</DialogClose>
+      </DialogContent>
+    </DialogRoot>
+  </main>
 </template>
 ```
 

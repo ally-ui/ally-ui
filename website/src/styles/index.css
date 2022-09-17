@@ -1,0 +1,29 @@
+:root {
+	--user-font-scale: 1rem - 16px;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	max-width: 100vw;
+	font-size: 1rem;
+	font-size: clamp(0.9rem, 0.75rem + 0.375vw + var(--user-font-scale), 1rem);
+}
+
+* {
+	outline: none;
+}
+
+*:focus {
+	@apply ring-2 ring-accent;
+}
+
+details > summary {
+	list-style: none;
+}
+
+details > summary::-webkit-details-marker,
+details > summary::marker {
+	display: none;
+}

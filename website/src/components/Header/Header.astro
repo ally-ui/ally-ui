@@ -1,0 +1,41 @@
+---
+import {getLanguageFromURL} from '../../languages';
+import * as CONFIG from '../../config';
+import LanguageSelect from './LanguageSelect';
+import Search from './Search';
+import SidebarToggle from './SidebarToggle';
+import SkipToContent from './SkipToContent.astro';
+import ThemeToggleButton from './ThemeToggleButton';
+
+type Props = {
+	currentPage: string;
+};
+
+const {currentPage} = Astro.props as Props;
+const lang = getLanguageFromURL(currentPage);
+---
+
+<header
+	class="sticky top-0 z-10 flex w-full overflow-hidden border-b border-line flex-center h-nav bg-shade/70 backdrop-blur-md"
+>
+	<SkipToContent />
+	<nav
+		class="flex items-center justify-end w-full gap-4 p-4 max-w-7xl"
+		title="Top Navigation"
+	>
+		<div class="contents md:hidden"><SidebarToggle client:idle /></div>
+		<a
+			href="/"
+			class="flex items-center transition-colors hover:text-accent focus:text-accent"
+		>
+			<h1 class="text-2xl font-bold">{CONFIG.SITE.title ?? 'Documentation'}</h1>
+		</a>
+		<div class="flex-1"></div>
+		<div class="relative z-10 flex-[3]">
+			<Search client:idle />
+		</div>
+		<div class="flex-1"></div>
+		<ThemeToggleButton client:idle />
+		<LanguageSelect lang={lang} client:idle />
+	</nav>
+</header>
