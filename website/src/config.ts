@@ -5,6 +5,7 @@ export const SITE = {
 	defaultLanguage: 'en_US',
 };
 
+// TODO Use Ally UI Open Graph data.
 export const OPEN_GRAPH = {
 	image: {
 		src: 'https://github.com/withastro/astro/blob/main/assets/social/banner.jpg?raw=true',
@@ -12,7 +13,7 @@ export const OPEN_GRAPH = {
 			'astro logo on a starry expanse of space,' +
 			' with a purple saturn-like planet floating in the right foreground',
 	},
-	twitter: 'astrodotbuild',
+	twitter: 'ally_ui',
 };
 
 // This is the type of the frontmatter you put in the docs markdown files.
@@ -31,8 +32,9 @@ export const KNOWN_LANGUAGES = {
 } as const;
 export const KNOWN_LANGUAGE_CODES = Object.values(KNOWN_LANGUAGES);
 
-export const GITHUB_EDIT_URL = `https://github.com/withastro/astro/tree/main/examples/docs`;
+export const GITHUB_EDIT_URL = `https://github.com/ally-ui/ally-ui/tree/main/website`;
 
+// TODO Set up Ally UI community invite link.
 export const COMMUNITY_INVITE_URL = `https://astro.build/chat`;
 
 // See "Algolia" section of the README for more information.
