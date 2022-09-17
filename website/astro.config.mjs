@@ -18,5 +18,5 @@ export default defineConfig({
 		tailwind(),
 		vue(),
 	],
-	site: `http://astro.build`,
+	site: `https://ally-ui.com`,
 });
