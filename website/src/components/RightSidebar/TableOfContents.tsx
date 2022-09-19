@@ -5,6 +5,7 @@ import type {FunctionalComponent} from 'preact';
 import {useEffect, useRef, useState} from 'preact/hooks';
 
 const DEFAULT_ID = 'overview';
+const SCROLL_PADDING = 128;
 
 function getClosestId(headingOffsets: Record<string, number>) {
 	const {scrollTop} = document.documentElement;
@@ -14,7 +15,7 @@ function getClosestId(headingOffsets: Record<string, number>) {
 	for (let i = 0; i < offsetEntries.length; i++) {
 		const offset = offsetEntries[i]?.[1] ?? 0;
 		// 64px padding lets us check in advance before the intersection changes.
-		if (scrollTop + 64 <= offset) {
+		if (scrollTop + SCROLL_PADDING <= offset) {
 			return offsetEntries[i - 1]?.[0] ?? DEFAULT_ID;
 		}
 	}
@@ -87,8 +88,8 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 			};
 
 			const observer = new IntersectionObserver(updateActiveIndex, {
-				// 64px for the navbar + 64px to move the observer boundary lower.
-				rootMargin: `-${64 + 64}px 0px 0px`,
+				// 64px for the navbar
+				rootMargin: `-${64 + SCROLL_PADDING}px 0px 0px`,
 			});
 
 			const overviewElement = document.getElementById(DEFAULT_ID);
