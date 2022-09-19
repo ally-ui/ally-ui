@@ -9,8 +9,8 @@ const ICONS = [
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		class="icon icon-tabler icon-tabler-sun"
-		width="1.5rem"
-		height="1.5rem"
+		width="24"
+		height="24"
 		viewBox="0 0 24 24"
 		stroke-width="2"
 		stroke="currentColor"
@@ -25,8 +25,8 @@ const ICONS = [
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		class="icon icon-tabler icon-tabler-moon"
-		width="1.5rem"
-		height="1.5rem"
+		width="24"
+		height="24"
 		viewBox="0 0 24 24"
 		stroke-width="2"
 		stroke="currentColor"
