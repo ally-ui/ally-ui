@@ -49,7 +49,7 @@ export default function Search() {
 				type="button"
 				ref={searchButtonRef}
 				onClick={onOpen}
-				className="relative flex w-full h-10 rounded-full bg-shade-100 flex-center text-shade-text/50"
+				className="relative flex w-full h-10 rounded-full bg-shade-100 hover:bg-shade-100/50 flex-center text-shade-text/50"
 			>
 				<span>Search</span>
 

@@ -9,8 +9,8 @@ const ICONS = [
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		class="icon icon-tabler icon-tabler-sun"
-		width="1.5rem"
-		height="1.5rem"
+		width="24"
+		height="24"
 		viewBox="0 0 24 24"
 		stroke-width="2"
 		stroke="currentColor"
@@ -25,8 +25,8 @@ const ICONS = [
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		class="icon icon-tabler icon-tabler-moon"
-		width="1.5rem"
-		height="1.5rem"
+		width="24"
+		height="24"
 		viewBox="0 0 24 24"
 		stroke-width="2"
 		stroke="currentColor"
@@ -66,15 +66,18 @@ const ThemeToggle: FunctionalComponent = () => {
 	);
 
 	return (
-		<div class="inline-flex h-10 p-1 rounded-full flex-center bg-shade-100 text-shade-text focus-within:ring-2 ring-accent">
+		<div class="inline-flex h-10 p-1 rounded-full flex-center bg-shade-100 hover:bg-shade-100/50 text-shade-text focus-within:ring-2 ring-accent">
 			{THEMES.map((t, i) => {
 				const icon = ICONS[i];
 				const checked = t === theme;
 				return (
 					<label
-						class={cx('px-3 py-1 h-full flex items-center rounded-full', {
-							'bg-shade dark:bg-shade-200 text-accent': checked,
-						})}
+						class={cx(
+							'px-3 py-1 h-full flex items-center rounded-full',
+							checked
+								? 'bg-shade dark:bg-shade-200 text-accent'
+								: 'cursor-pointer',
+						)}
 					>
 						{icon}
 						<input
@@ -88,7 +91,7 @@ const ThemeToggle: FunctionalComponent = () => {
 								localStorage.setItem('theme', t);
 								setTheme(t);
 							}}
-							class="appearance-none focus:ring-0"
+							class="w-0 appearance-none focus:ring-0"
 						/>
 					</label>
 				);

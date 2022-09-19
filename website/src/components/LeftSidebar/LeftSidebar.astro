@@ -2,6 +2,8 @@
 import {getLanguageFromURL} from '../../languages';
 import {SIDEBAR} from '../../config';
 import cx from 'classnames';
+import ThemeSwitch from '../Header/ThemeSwitch';
+import LanguageSelect from '../Header/LanguageSelect';
 
 type Props = {
 	currentPage: string;
@@ -9,16 +11,16 @@ type Props = {
 
 const {currentPage} = Astro.props as Props;
 const currentPageMatch = currentPage.slice(1);
-const langCode = getLanguageFromURL(currentPage);
-const sidebar = SIDEBAR[langCode];
+const lang = getLanguageFromURL(currentPage);
+const sidebar = SIDEBAR[lang];
 ---
 
 <nav
 	aria-labelledby="grid-left"
 	id="sidebar"
-	class="px-4 py-8 wh-full bg-shade"
+	class="max-h-screen px-4 py-8 overflow-y-auto wh-full bg-shade"
 >
-	<ul class="h-full max-h-screen overflow-y-auto">
+	<ul>
 		{
 			Object.entries(sidebar).map(([header, children]) => (
 				<li>
@@ -72,4 +74,10 @@ const sidebar = SIDEBAR[langCode];
 			))
 		}
 	</ul>
+	<div
+		class="sticky flex gap-2 p-2 mx-auto mt-4 -mb-4 border rounded-full w-fit flex-center -bottom-4 md:hidden bg-shade border-line"
+	>
+		<ThemeSwitch client:visible />
+		<LanguageSelect lang={lang} alwaysShowLabel client:visible />
+	</div>
 </nav>
