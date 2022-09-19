@@ -88,7 +88,7 @@ const ThemeToggle: FunctionalComponent = () => {
 								localStorage.setItem('theme', t);
 								setTheme(t);
 							}}
-							class="appearance-none focus:ring-0"
+							class="w-0 appearance-none focus:ring-0"
 						/>
 					</label>
 				);
