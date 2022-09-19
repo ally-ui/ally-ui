@@ -2,7 +2,7 @@
 import {getLanguageFromURL} from '../../languages';
 import {SIDEBAR} from '../../config';
 import cx from 'classnames';
-import ThemeToggle from '../Header/ThemeToggleButton';
+import ThemeSwitch from '../Header/ThemeSwitch';
 import LanguageSelect from '../Header/LanguageSelect';
 
 type Props = {
@@ -77,7 +77,7 @@ const sidebar = SIDEBAR[lang];
 	<div
 		class="sticky flex gap-2 p-2 mx-auto mt-4 -mb-4 border rounded-full w-fit flex-center -bottom-4 md:hidden bg-shade border-line"
 	>
-		<ThemeToggle client:visible />
+		<ThemeSwitch client:visible />
 		<LanguageSelect lang={lang} alwaysShowLabel client:visible />
 	</div>
 </nav>

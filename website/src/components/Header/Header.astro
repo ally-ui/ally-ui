@@ -5,7 +5,7 @@ import LanguageSelect from './LanguageSelect';
 import Search from './Search';
 import SidebarToggle from './SidebarToggle';
 import SkipToContent from './SkipToContent.astro';
-import ThemeToggleButton from './ThemeToggleButton';
+import ThemeSwitch from './ThemeSwitch';
 
 type Props = {
 	currentPage: string;
@@ -35,7 +35,7 @@ const lang = getLanguageFromURL(currentPage);
 			<Search client:idle />
 		</div>
 		<div class="flex gap-4 -md:hidden">
-			<ThemeToggleButton client:idle />
+			<ThemeSwitch client:idle />
 			<LanguageSelect lang={lang} client:idle />
 		</div>
 	</nav>
