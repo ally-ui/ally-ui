@@ -13,7 +13,8 @@ function getClosestId(headingOffsets: Record<string, number>) {
 	);
 	for (let i = 0; i < offsetEntries.length; i++) {
 		const offset = offsetEntries[i]?.[1] ?? 0;
-		if (scrollTop <= offset) {
+		// 64px padding lets us check in advance before the intersection changes.
+		if (scrollTop + 64 <= offset) {
 			return offsetEntries[i - 1]?.[0] ?? DEFAULT_ID;
 		}
 	}
