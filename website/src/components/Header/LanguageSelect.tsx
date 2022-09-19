@@ -32,7 +32,7 @@ const LanguageSelect: FunctionComponent<LanguageSelectProps> = ({
 			</div>
 			<select
 				className={cx(
-					'flex items-center flex-grow px-8 pl-10 rounded-full appearance-none h-10 md:w-full bg-shade-100',
+					'flex items-center flex-grow px-10 rounded-full appearance-none h-10 md:w-full bg-shade-100 hover:bg-shade-100/50 cursor-pointer',
 					alwaysShowLabel ? 'w-full' : 'w-10',
 				)}
 				value={lang}
