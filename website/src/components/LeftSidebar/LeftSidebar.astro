@@ -16,9 +16,9 @@ const sidebar = SIDEBAR[langCode];
 <nav
 	aria-labelledby="grid-left"
 	id="sidebar"
-	class="px-4 py-8 wh-full bg-shade"
+	class="px-4 py-8 wh-full max-h-screen bg-shade overflow-y-auto"
 >
-	<ul class="h-full max-h-screen overflow-y-auto">
+	<ul>
 		{
 			Object.entries(sidebar).map(([header, children]) => (
 				<li>
