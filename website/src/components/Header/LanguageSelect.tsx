@@ -1,8 +1,17 @@
 /** @jsxImportSource react */
+import cx from 'classnames';
 import type {FunctionComponent} from 'react';
 import {KNOWN_LANGUAGES, langPathRegex} from '../../languages';
 
-const LanguageSelect: FunctionComponent<{lang: string}> = ({lang}) => {
+interface LanguageSelectProps {
+	lang: string;
+	alwaysShowLabel?: boolean;
+}
+
+const LanguageSelect: FunctionComponent<LanguageSelectProps> = ({
+	lang,
+	alwaysShowLabel = false,
+}) => {
 	return (
 		<div className="relative text-shade-text">
 			<div className="absolute top-0 bottom-0 right-auto flex pointer-events-none left-1 flex-center aspect-square">
@@ -22,7 +31,10 @@ const LanguageSelect: FunctionComponent<{lang: string}> = ({lang}) => {
 				</svg>
 			</div>
 			<select
-				className="flex items-center flex-grow px-8 pl-10 rounded-full wh-10 md:w-full bg-shade-100 appearance-none"
+				className={cx(
+					'flex items-center flex-grow px-8 pl-10 rounded-full appearance-none h-10 md:w-full bg-shade-100',
+					alwaysShowLabel ? 'w-full' : 'w-10',
+				)}
 				value={lang}
 				onChange={(e) => {
 					const newLang = e.target.value;
@@ -39,7 +51,7 @@ const LanguageSelect: FunctionComponent<{lang: string}> = ({lang}) => {
 					);
 				})}
 			</select>
-			<div className="absolute inset-0 left-auto flex flex-center aspect-square pointer-events-none">
+			<div className="absolute inset-0 left-auto flex pointer-events-none flex-center aspect-square">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					className="icon icon-tabler icon-tabler-chevron-down"

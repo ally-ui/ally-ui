@@ -20,22 +20,26 @@ const lang = getLanguageFromURL(currentPage);
 >
 	<SkipToContent />
 	<nav
-		class="flex items-center justify-end w-full gap-4 p-4 max-w-7xl"
+		class="flex items-center justify-end w-full gap-8 p-4 max-w-7xl"
 		title="Top Navigation"
 	>
-		<div class="contents md:hidden"><SidebarToggle client:idle /></div>
-		<a
-			href="/"
-			class="flex items-center transition-colors hover:text-accent focus:text-accent"
-		>
-			<h1 class="text-2xl font-bold">{CONFIG.SITE.title ?? 'Documentation'}</h1>
-		</a>
-		<div class="flex-1"></div>
-		<div class="relative z-10 flex-[3]">
+		<div class="flex gap-4">
+			<div class="contents md:hidden"><SidebarToggle client:idle /></div>
+			<a
+				href="/"
+				class="flex items-center transition-colors hover:text-accent focus:text-accent"
+			>
+				<h1 class="text-2xl font-bold">
+					{CONFIG.SITE.title ?? 'Documentation'}
+				</h1>
+			</a>
+		</div>
+		<div class="relative z-10 flex-[3] max-w-md ml-auto md:mx-auto">
 			<Search client:idle />
 		</div>
-		<div class="flex-1"></div>
-		<ThemeToggleButton client:idle />
-		<LanguageSelect lang={lang} client:idle />
+		<div class="flex gap-4 -md:hidden">
+			<ThemeToggleButton client:idle />
+			<LanguageSelect lang={lang} client:idle />
+		</div>
 	</nav>
 </header>
