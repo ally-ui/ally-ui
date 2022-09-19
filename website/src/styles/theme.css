@@ -29,3 +29,7 @@ body {
 	color: theme(colors.accent.DEFAULT);
 	background-color: theme(colors.shade.100);
 }
+
+#article :is(h1, h2, h3, h4, h5, h6) {
+	scroll-margin-top: calc(theme(height.nav) + theme(spacing.4));
+}
