@@ -1,7 +1,7 @@
 import userEvent from '@testing-library/user-event';
 import {createSignal} from 'solid-js';
 import {cleanup, render, screen} from 'solid-testing-library';
-import Dialog from '../lib/main';
+import * as Dialog from '../lib/main';
 
 interface ModalNonModalProps {
 	initialModal: boolean;

@@ -1,7 +1,7 @@
 import {DialogRootModel} from '@ally-ui/core-dialog';
 import {cleanup, render, screen} from '@testing-library/react';
 import React from 'react';
-import Dialog from '../../lib/main';
+import * as Dialog from '../../lib/main';
 
 function MissingTitle() {
 	return (

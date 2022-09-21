@@ -1,5 +1,5 @@
 import {createSignal, Show} from 'solid-js';
-import Dialog from '../lib/main';
+import * as Dialog from '../lib/main';
 
 export default function App() {
 	const [open, setOpen] = createSignal(true);

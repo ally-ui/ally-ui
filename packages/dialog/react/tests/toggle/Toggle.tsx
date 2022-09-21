@@ -1,5 +1,5 @@
 import React from 'react';
-import Dialog, {type DialogRootProps} from '../../lib/main';
+import * as Dialog, {type DialogRootProps} from '../../lib/main';
 
 export default function Toggle(options: DialogRootProps) {
 	return (

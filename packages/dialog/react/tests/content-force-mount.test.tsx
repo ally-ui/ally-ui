@@ -1,7 +1,7 @@
 import {cleanup, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import Dialog from '../lib/main';
+import * as Dialog from '../lib/main';
 
 function ContentForceMount() {
 	return (

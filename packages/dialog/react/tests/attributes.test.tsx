@@ -1,6 +1,6 @@
 import {cleanup, render, screen} from '@testing-library/react';
 import React from 'react';
-import Dialog, {DialogRootProps} from '../lib/main';
+import * as Dialog, {DialogRootProps} from '../lib/main';
 
 function Attributes(options: DialogRootProps) {
 	return (

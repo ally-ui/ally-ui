@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Dialog from '../../lib/main';
+import * as Dialog from '../../lib/main';
 
 const props = withDefaults(
 	defineProps<{

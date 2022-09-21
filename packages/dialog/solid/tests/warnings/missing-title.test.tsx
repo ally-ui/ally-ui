@@ -1,6 +1,6 @@
 import {DialogRootModel} from '@ally-ui/core-dialog';
 import {cleanup, render} from 'solid-testing-library';
-import Dialog from '../../lib/main';
+import * as Dialog from '../../lib/main';
 
 function MissingTitle() {
 	return (
