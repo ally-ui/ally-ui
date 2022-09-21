@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import {cleanup, render, screen} from 'solid-testing-library';
-import Dialog from '../lib/main';
+import * as Dialog from '../lib/main';
 
 function ContentForceMount() {
 	return (

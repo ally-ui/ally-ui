@@ -1,5 +1,5 @@
 import {cleanup, render, screen} from 'solid-testing-library';
-import Dialog, {DialogRootProps} from '../lib/main';
+import * as Dialog, {DialogRootProps} from '../lib/main';
 
 function Initialization(options: DialogRootProps) {
 	return (

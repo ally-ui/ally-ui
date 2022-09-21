@@ -1,22 +1,16 @@
 export * from '@ally-ui/core-dialog';
-export {default as DialogClose} from './DialogClose.svelte';
-export {default as DialogContent} from './DialogContent.svelte';
-export {default as DialogDescription} from './DialogDescription.svelte';
-export {default as DialogRoot} from './DialogRoot.svelte';
-export {default as DialogTitle} from './DialogTitle.svelte';
-export {default as DialogTrigger} from './DialogTrigger.svelte';
-
-import Close from './DialogClose.svelte';
-import Content from './DialogContent.svelte';
-import Description from './DialogDescription.svelte';
-import Root from './DialogRoot.svelte';
-import Title from './DialogTitle.svelte';
-import Trigger from './DialogTrigger.svelte';
-export default {
-	Close,
-	Content,
-	Description,
-	Root,
-	Title,
-	Trigger,
-};
+export {default as Close, default as DialogClose} from './DialogClose.svelte';
+export {
+	default as Content,
+	default as DialogContent,
+} from './DialogContent.svelte';
+export {
+	default as Description,
+	default as DialogDescription,
+} from './DialogDescription.svelte';
+export {default as DialogRoot, default as Root} from './DialogRoot.svelte';
+export {default as DialogTitle, default as Title} from './DialogTitle.svelte';
+export {
+	default as DialogTrigger,
+	default as Trigger,
+} from './DialogTrigger.svelte';

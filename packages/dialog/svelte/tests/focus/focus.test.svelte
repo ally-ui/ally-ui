@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Dialog from '../../lib/main';
+	import * as Dialog from '../../lib/main';
 
 	export let initialOpen: boolean | undefined = undefined;
 	export let open: boolean | undefined = undefined;

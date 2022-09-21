@@ -1,7 +1,7 @@
 import {screen} from '@testing-library/dom';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import Dialog from '../../lib/main';
+import * as Dialog from '../../lib/main';
 
 afterEach(() => {
 	document.body.innerHTML = '';

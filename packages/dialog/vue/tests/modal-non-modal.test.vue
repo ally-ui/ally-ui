@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ref} from 'vue';
-import Dialog from '../lib/main';
+import * as Dialog from '../lib/main';
 
 const modal = ref(false);
 </script>

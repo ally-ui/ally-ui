@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ref, watchEffect} from 'vue';
-import Dialog from '../lib/main';
+import * as Dialog from '../lib/main';
 
 const open = ref(true);
 const titleRef = ref<HTMLElement | null>(null);
