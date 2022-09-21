@@ -2,7 +2,13 @@
 import type {MarkdownHeading} from 'astro';
 import cx from 'classnames';
 import type {FunctionalComponent} from 'preact';
-import {useEffect, useRef, useState} from 'preact/hooks';
+import {
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+	type MutableRef,
+} from 'preact/hooks';
 
 const DEFAULT_ID = 'overview';
 const SCROLL_PADDING = 128;
@@ -22,6 +28,22 @@ function getClosestId(headingOffsets: Record<string, number>) {
 	return offsetEntries.at(-1)?.[0] ?? DEFAULT_ID;
 }
 
+type TemporaryTrue = MutableRef<boolean> & {setTrue: () => void};
+
+function useTemporaryTrue(ms: number): TemporaryTrue {
+	const value = useRef(false);
+	const valueTimeout = useRef<number | undefined>();
+	const setTrue = useCallback(() => {
+		value.current = true;
+		window.clearTimeout(valueTimeout.current);
+		window.setTimeout(() => {
+			value.current = false;
+		}, ms);
+	}, [ms]);
+	Object.assign(value, {setTrue});
+	return value as TemporaryTrue;
+}
+
 interface TableOfContentsProps {
 	headings: MarkdownHeading[];
 }
@@ -36,9 +58,14 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 		setActiveId(id);
 	}, []);
 
+	/**
+	 * Check if the scroll is caused by navigating the table of contents.
+	 */
+	const scrollSourceIsHashChange = useTemporaryTrue(100);
 	useEffect(function watchLocationChange() {
 		const handleHashChange = () => {
 			setActiveId(window.location.hash.replace('#', ''));
+			scrollSourceIsHashChange.setTrue();
 		};
 		window.addEventListener('hashchange', handleHashChange);
 		return () => window.removeEventListener('hashchange', handleHashChange);
@@ -82,6 +109,9 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 	useEffect(
 		function watchHeadingIntersections() {
 			const updateActiveIndex = () => {
+				if (scrollSourceIsHashChange.current) {
+					return;
+				}
 				const id = getClosestId(headingOffsets.current);
 				setActiveId(id);
 				window.history.replaceState(null, '', '#' + id);
@@ -127,18 +157,19 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 				</li>
 				{headings
 					.filter(({depth}) => depth > 1 && depth < 4)
-					.map((heading) => (
+					.map(({slug, depth, text}) => (
 						<li>
 							<a
-								href={`#${heading.slug}`}
+								href={`#${slug}`}
 								className={cx(
-									'block px-4 py-2 font-medium border-l-2 hover:text-accent focus:text-accent border-shade-200 ring-inset',
-									{
-										'text-accent border-accent': activeId === heading.slug,
-									},
+									'block px-4 py-2 border-l-2 hover:text-accent focus:text-accent border-shade-200 ring-inset',
+									activeId === slug && 'text-accent border-accent',
+									depth === 2 && 'pl-4 font-medium',
+									depth === 3 && 'pl-8',
+									depth === 4 && 'pl-12',
 								)}
 							>
-								{heading.text}
+								{text}
 							</a>
 						</li>
 					))}
