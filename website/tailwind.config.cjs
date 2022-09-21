@@ -44,7 +44,8 @@ module.exports = {
 		require('./tailwindcss/flex.cjs'),
 		require('./tailwindcss/has-pointer.cjs'),
 		require('./tailwindcss/overflow.cjs'),
-		require('./tailwindcss/size.cjs'),
 		require('./tailwindcss/sidebar.cjs'),
+		require('./tailwindcss/size.cjs'),
+		require('./tailwindcss/text-scale.cjs'),
 	],
 };
