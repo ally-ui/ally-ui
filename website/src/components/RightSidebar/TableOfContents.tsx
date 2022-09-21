@@ -141,7 +141,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 	return (
 		<>
 			<h2 className="mb-2 text-lg font-semibold">On this page</h2>
-			<ul>
+			<ul class="text-sm">
 				<li>
 					<a
 						href={`#${DEFAULT_ID}`}
