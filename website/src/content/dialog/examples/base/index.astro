@@ -1,0 +1,27 @@
+---
+import type {KNOWN_FRAMEWORK_CODES} from '../../../../config';
+import ReactApp from './react';
+// import SolidApp from './solid';
+import SvelteApp from './svelte.svelte';
+import VueApp from './vue.vue';
+
+type Props = {
+	framework: typeof KNOWN_FRAMEWORK_CODES[number];
+};
+
+const {framework} = Astro.props as Props;
+---
+
+{
+	framework === 'react' ? (
+		<ReactApp client:idle />
+	) : // ) : framework === 'solid' ? (
+	// 	<SolidApp client:idle />
+	framework === 'svelte' ? (
+		<SvelteApp client:idle />
+	) : framework === 'vue' ? (
+		<VueApp client:idle />
+	) : (
+		false
+	)
+}

@@ -1,0 +1,102 @@
+---
+import type {MDXInstance} from 'astro';
+import {Frontmatter, KNOWN_FRAMEWORK_CODES} from '../../../../../config';
+
+interface PathToken {
+	widget: string;
+	version: string;
+}
+
+type Version = [number, number, number];
+
+interface Params {
+	widget: string;
+	framework: string;
+	version?: string | undefined;
+}
+
+interface Props {
+	page: MDXInstance<Frontmatter>;
+	versions: string[];
+}
+
+interface StaticPaths {
+	params: Params;
+	props: Props;
+}
+
+export async function getStaticPaths(): Promise<StaticPaths[]> {
+	function parsePathToken(filepath: string): PathToken | undefined {
+		const tokens = filepath.match(/([\w-]+)\/(\d+\.\d+\.\d+)\.mdx$/);
+		if (tokens === null) return undefined;
+		if (tokens.length !== 3) return undefined;
+		return {
+			widget: tokens[1]!,
+			version: tokens[2]!,
+		};
+	}
+
+	function parseVersion(versionStr: string): Version {
+		return versionStr.split('.').map((token) => parseInt(token)) as Version;
+	}
+
+	function isNotUndefined<TValue>(
+		value: TValue,
+	): value is Exclude<TValue, undefined> {
+		return value !== undefined;
+	}
+
+	const content = await Astro.glob<Frontmatter>(
+		'../../../../../content/**/*.mdx',
+	);
+	const widgetToVersionPages: Record<
+		string,
+		[string | undefined, MDXInstance<Frontmatter>][]
+	> = {};
+
+	for (const page of content) {
+		const pathToken = parsePathToken(page.file);
+		if (pathToken === undefined) continue;
+		const pages = widgetToVersionPages[pathToken.widget] ?? [];
+		pages.push([pathToken.version, page]);
+		widgetToVersionPages[pathToken.widget] = pages;
+	}
+
+	for (const versionPages of Object.values(widgetToVersionPages)) {
+		versionPages.sort(([versionA], [versionB]) => {
+			if (versionA === undefined || versionB === undefined) {
+				return 0;
+			}
+			const [majorA, minorA, patchA] = parseVersion(versionA);
+			const [majorB, minorB, patchB] = parseVersion(versionB);
+			if (majorA !== majorB) return majorA - majorB;
+			if (minorA !== minorB) return minorA - minorB;
+			if (patchA !== patchB) return patchA - patchB;
+			return 0;
+		});
+		const latest = versionPages.at(-1)!;
+		versionPages.push([undefined, latest[1]]);
+	}
+
+	return Object.entries(widgetToVersionPages).flatMap(
+		([widget, versionPages]) =>
+			versionPages.flatMap(([version, page]) =>
+				KNOWN_FRAMEWORK_CODES.map((framework) => ({
+					params: {widget, framework, version},
+					props: {
+						page,
+						versions: versionPages
+							.map(([version]) => version)
+							.filter(isNotUndefined),
+					},
+				})),
+			),
+	);
+}
+
+const {framework} = Astro.params as unknown as Params;
+const {page, versions} = Astro.props as Props;
+const {Content} = page;
+---
+
+<Content framework={framework} versions={versions} />

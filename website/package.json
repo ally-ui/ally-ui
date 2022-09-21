@@ -13,6 +13,10 @@
 	},
 	"dependencies": {
 		"@algolia/client-search": "^4.13.1",
+		"@ally-ui/react-dialog": "*",
+		"@ally-ui/solid-dialog": "*",
+		"@ally-ui/svelte-dialog": "*",
+		"@ally-ui/vue-dialog": "*",
 		"@astrojs/mdx": "^0.11.1",
 		"@astrojs/preact": "^1.1.0",
 		"@astrojs/react": "^1.1.3",
