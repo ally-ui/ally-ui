@@ -1,7 +1,8 @@
 /** @jsxImportSource react */
 import cx from 'classnames';
 import type {FunctionComponent} from 'react';
-import {KNOWN_LANGUAGES, langPathRegex} from '../../languages';
+import {KNOWN_LANGUAGES} from '../../config';
+import {LANG_REGEX} from '../../paths';
 
 interface LanguageSelectProps {
 	lang: string;
@@ -38,15 +39,15 @@ const LanguageSelect: FunctionComponent<LanguageSelectProps> = ({
 				value={lang}
 				onChange={(e) => {
 					const newLang = e.target.value;
-					let actualDest = window.location.pathname.replace(langPathRegex, '/');
+					let actualDest = window.location.pathname.replace(LANG_REGEX, '/');
 					if (actualDest == '/') actualDest = `/introduction`;
 					window.location.pathname = '/' + newLang + actualDest;
 				}}
 			>
-				{Object.entries(KNOWN_LANGUAGES).map(([key, value]) => {
+				{Object.entries(KNOWN_LANGUAGES).map(([code, lang]) => {
 					return (
-						<option value={value} key={value}>
-							<span>{key}</span>
+						<option value={code} key={code}>
+							<span>{lang}</span>
 						</option>
 					);
 				})}

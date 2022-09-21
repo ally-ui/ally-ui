@@ -16,9 +16,12 @@ const {title, description, tableOfContentsMaxDepth} = frontmatter;
 
 <article id="article" class="max-w-[75ch] wh-full flex flex-col p-8 isolate">
 	<section class="mb-16">
-		<h1 id="overview" class="mb-2 text-3xl font-semibold tracking-wide">
-			{title}
-		</h1>
+		<div class="flex items-baseline justify-between">
+			<h1 id="overview" class="mb-2 text-3xl font-semibold tracking-wide">
+				{title}
+			</h1>
+			<slot name="heading-after" />
+		</div>
 		<sub class="text-lg font-light tracking-wide text-content-sub">
 			{description}
 		</sub>

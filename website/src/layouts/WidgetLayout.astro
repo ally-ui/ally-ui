@@ -1,0 +1,21 @@
+---
+import MainLayout from './MainLayout.astro';
+import type {Frontmatter} from '../config';
+import type {MarkdownHeading} from 'astro';
+import FrameworkSelect from '../components/PageContent/FrameworkSelect';
+import {getFrameworkFromURL} from '../paths';
+
+type Props = {
+	frontmatter: Frontmatter;
+	headings: MarkdownHeading[];
+};
+
+const {frontmatter, headings} = Astro.props as Props;
+const currentPage = Astro.url.pathname;
+const framework = getFrameworkFromURL(currentPage);
+---
+
+<MainLayout frontmatter={frontmatter} headings={headings}>
+	<FrameworkSelect client:idle framework={framework} slot="heading-after" />
+	<slot />
+</MainLayout>

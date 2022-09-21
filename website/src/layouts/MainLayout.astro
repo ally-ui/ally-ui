@@ -73,6 +73,7 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 					headings={headings}
 					githubEditUrl={githubEditUrl}
 				>
+					<slot name="heading-after" slot="heading-after" />
 					<slot />
 				</PageContent>
 				<Footer path={currentFile} />

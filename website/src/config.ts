@@ -29,9 +29,21 @@ export type Frontmatter = {
 };
 
 export const KNOWN_LANGUAGES = {
-	English: 'en',
+	en: 'English',
 } as const;
-export const KNOWN_LANGUAGE_CODES = Object.values(KNOWN_LANGUAGES);
+export const KNOWN_LANGUAGE_CODES = Object.keys(
+	KNOWN_LANGUAGES,
+) as (keyof typeof KNOWN_LANGUAGES)[];
+
+export const KNOWN_FRAMEWORKS = {
+	react: 'React',
+	svelte: 'Svelte',
+	vue: 'Vue',
+	solid: 'Solid',
+} as const;
+export const KNOWN_FRAMEWORK_CODES = Object.keys(
+	KNOWN_FRAMEWORKS,
+) as (keyof typeof KNOWN_FRAMEWORKS)[];
 
 export const GITHUB_EDIT_URL = `https://github.com/ally-ui/ally-ui/tree/main/website`;
 
@@ -44,9 +56,13 @@ export const ALGOLIA = {
 	apiKey: 'XXXXXXXXXX',
 };
 
-export type Sidebar = Record<
+interface SidebarItem {
+	text: string;
+	link: string;
+}
+type Sidebar = Record<
 	typeof KNOWN_LANGUAGE_CODES[number],
-	Record<string, {text: string; link: string}[]>
+	Record<string, SidebarItem[]>
 >;
 export const SIDEBAR: Sidebar = {
 	en: {
