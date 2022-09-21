@@ -1,0 +1,32 @@
+---
+export async function getStaticPaths() {
+	function parseWidget(filepath: string): string | undefined {
+		const tokens = filepath.match(/([\w-]+)\/\d+\.\d+\.\d+\.mdx$/);
+		if (tokens === null) return undefined;
+		if (tokens.length !== 2) return undefined;
+		return tokens[1]!;
+	}
+
+	const content = await Astro.glob('../../../../content/**/*.mdx');
+	const widgets = new Set<string>();
+	for (const page of content) {
+		const widget = parseWidget(page.file);
+		if (widget === undefined) continue;
+		widgets.add(widget);
+	}
+
+	return Array.from(widgets.values()).map((widget) => ({
+		params: {widget},
+	}));
+}
+---
+
+<script is:inline>
+	let framework = window.localStorage.getItem('framework');
+	if (framework === null) {
+		framework = 'react';
+		window.localStorage.setItem('framework', framework);
+	}
+	const widget = window.location.pathname.split('/').at(-1);
+	window.location.pathname = `/en/widgets/${widget}/${framework}`;
+</script>
