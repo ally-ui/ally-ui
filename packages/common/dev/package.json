@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/dev",
-	"version": "0.0.16",
+	"version": "0.0.17",
 	"private": true,
 	"scripts": {
 		"example": "vite",

@@ -1,7 +1,7 @@
 {
 	"name": "@ally-ui/website",
 	"type": "module",
-	"version": "0.0.1",
+	"version": "0.0.17",
 	"private": true,
 	"scripts": {
 		"dev": "astro dev",
