@@ -11,7 +11,7 @@ type Props = {
 };
 
 const {frontmatter, headings, githubEditUrl} = Astro.props as Props;
-const {title, description} = frontmatter;
+const {title, description, tableOfContentsMaxDepth} = frontmatter;
 ---
 
 <article id="article" class="max-w-[75ch] wh-full flex flex-col p-8 isolate">
@@ -19,11 +19,15 @@ const {title, description} = frontmatter;
 		<h1 id="overview" class="mb-2 text-3xl font-semibold tracking-wide">
 			{title}
 		</h1>
-		<sub class="text-lg font-light tracking-wide text-content-sub"
-			>{description}
+		<sub class="text-lg font-light tracking-wide text-content-sub">
+			{description}
 		</sub>
 		<nav class="my-8 md:hidden">
-			<TableOfContents client:media="(max-width: 50em)" headings={headings} />
+			<TableOfContents
+				client:media="(max-width: 50em)"
+				headings={headings}
+				maxDepth={tableOfContentsMaxDepth}
+			/>
 		</nav>
 		<div
 			class="mt-8 prose dark:prose-invert prose-headings:font-semibold prose-headings:tracking-wide prose-headings:mb-2 prose-h3:mt-6 text-scale"

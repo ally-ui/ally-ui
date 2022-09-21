@@ -2,6 +2,7 @@
 title: Introduction
 description: An open-source widget library for building high-quality, accessible web applications on all UI frameworks
 layout: ../../../layouts/MainLayout.astro
+tableOfContentsMaxDepth: 2
 ---
 
 Ally UI is a low-level component library that aims to create accessible patterns for all UI component frameworks while providing an amazing developer experience.

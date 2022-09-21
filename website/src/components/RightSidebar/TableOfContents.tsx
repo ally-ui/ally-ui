@@ -46,11 +46,16 @@ function useTemporaryTrue(ms: number): TemporaryTrue {
 
 interface TableOfContentsProps {
 	headings: MarkdownHeading[];
+	maxDepth?: number | undefined;
 }
 
 const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 	headings = [],
+	maxDepth = 3,
 }) => {
+	const filteredHeadings = headings.filter(
+		({depth}) => 2 <= depth && depth <= maxDepth,
+	);
 	const [activeId, setActiveId] = useState<string>('overview');
 	useEffect(function loadInitialHash() {
 		let id = window.location.hash.replace('#', '');
@@ -82,7 +87,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 					return;
 				}
 				const baseOffsetTop = overviewElement.offsetTop;
-				headings.forEach((heading) => {
+				filteredHeadings.forEach((heading) => {
 					const headingElement = document.getElementById(heading.slug);
 					if (headingElement === null) return;
 					headingOffsets.current[heading.slug] =
@@ -93,11 +98,11 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 			window.addEventListener('resize', updateOffsets);
 			return () => window.removeEventListener('resize', updateOffsets);
 		},
-		[headings],
+		[filteredHeadings],
 	);
 
 	useEffect(function annotateLastElementOfSections() {
-		headings.forEach(({slug}) => {
+		filteredHeadings.forEach(({slug}) => {
 			const headingElement = document.getElementById(slug);
 			const previousElement = headingElement?.previousElementSibling;
 			if (previousElement === null) return;
@@ -124,7 +129,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 
 			const overviewElement = document.getElementById(DEFAULT_ID);
 			if (overviewElement !== null) observer.observe(overviewElement);
-			headings.forEach(({slug}) => {
+			filteredHeadings.forEach(({slug}) => {
 				const headingElement = document.getElementById(slug);
 				if (headingElement !== null) observer.observe(headingElement);
 				const previousElement = headingElement?.previousElementSibling;
@@ -135,7 +140,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 				observer.disconnect();
 			};
 		},
-		[headings],
+		[filteredHeadings],
 	);
 
 	return (
@@ -155,24 +160,22 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 						Overview
 					</a>
 				</li>
-				{headings
-					.filter(({depth}) => depth > 1 && depth < 4)
-					.map(({slug, depth, text}) => (
-						<li>
-							<a
-								href={`#${slug}`}
-								className={cx(
-									'block px-4 py-2 border-l-2 hover:text-accent focus:text-accent border-shade-200 ring-inset',
-									activeId === slug && 'text-accent border-accent',
-									depth === 2 && 'pl-4 font-medium',
-									depth === 3 && 'pl-8',
-									depth === 4 && 'pl-12',
-								)}
-							>
-								{text}
-							</a>
-						</li>
-					))}
+				{filteredHeadings.map(({slug, depth, text}) => (
+					<li>
+						<a
+							href={`#${slug}`}
+							className={cx(
+								'block px-4 py-2 border-l-2 hover:text-accent focus:text-accent border-shade-200 ring-inset',
+								activeId === slug && 'text-accent border-accent',
+								depth === 2 && 'pl-4 font-medium',
+								depth === 3 && 'pl-6',
+								depth === 4 && 'pl-8',
+							)}
+						>
+							{text}
+						</a>
+					</li>
+				))}
 			</ul>
 		</>
 	);

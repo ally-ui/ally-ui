@@ -57,10 +57,8 @@ const sidebar = SIDEBAR[lang];
 											}
 											class={cx(
 												'flex px-4 py-2 pl-6 font-medium rounded-full hover:text-accent hover:bg-shade-100 ring-inset',
-												{
-													'text-accent bg-shade-100':
-														currentPageMatch === child.link,
-												},
+												currentPageMatch === child.link &&
+													'text-accent bg-shade-100',
 											)}
 										>
 											{child.text}
