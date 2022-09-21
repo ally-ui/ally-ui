@@ -110,7 +110,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 
 	return (
 		<>
-			<h2 className="mb-2 text-lg font-bold">On this page</h2>
+			<h2 className="mb-2 text-lg font-semibold">On this page</h2>
 			<ul>
 				<li>
 					<a

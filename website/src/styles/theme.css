@@ -6,7 +6,8 @@
 	--tw-shade-200: 215 236 255;
 	--tw-shade-text: 36 77 115;
 	--tw-line: 234 238 242;
-	--tw-text: 0 0 0;
+	--tw-content: 0 0 0;
+	--tw-content-sub: 107 114 128;
 }
 
 :root.dark {
@@ -17,12 +18,13 @@
 	--tw-shade-200: 60 84 105;
 	--tw-shade-text: 203 227 250;
 	--tw-line: 35 52 68;
-	--tw-text: 255 255 255;
+	--tw-content: 255 255 255;
+	--tw-content-sub: 156 163 175;
 }
 
 body {
 	background: theme(colors.shade.DEFAULT);
-	color: theme(colors.text.DEFAULT);
+	color: theme(colors.content.DEFAULT);
 }
 
 ::selection {
