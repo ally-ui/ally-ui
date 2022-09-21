@@ -34,8 +34,7 @@ export const KNOWN_LANGUAGE_CODES = Object.values(KNOWN_LANGUAGES);
 
 export const GITHUB_EDIT_URL = `https://github.com/ally-ui/ally-ui/tree/main/website`;
 
-// TODO Set up Ally UI community invite link.
-export const COMMUNITY_INVITE_URL = `https://astro.build/chat`;
+export const COMMUNITY_INVITE_URL = `https://discord.gg/VUgBbmQeMv`;
 
 // See "Algolia" section of the README for more information.
 export const ALGOLIA = {
@@ -50,11 +49,7 @@ export type Sidebar = Record<
 >;
 export const SIDEBAR: Sidebar = {
 	en: {
-		'Section Header': [
-			{text: 'Introduction', link: 'en/introduction'},
-			{text: 'Page 2', link: 'en/page-2'},
-			{text: 'Page 3', link: 'en/page-3'},
-		],
-		'Another Section': [{text: 'Page 4', link: 'en/page-4'}],
+		Overview: [{text: 'Introduction', link: 'en/overview/introduction'}],
+		Widgets: [{text: 'Dialog', link: 'en/widgets/dialog'}],
 	},
 };
