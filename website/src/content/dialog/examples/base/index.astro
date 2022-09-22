@@ -22,6 +22,6 @@ const {framework} = Astro.props as Props;
 	) : framework === 'vue' ? (
 		<VueApp client:idle />
 	) : (
-		false
+		<>Example not available</>
 	)
 }

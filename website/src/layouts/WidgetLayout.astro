@@ -1,14 +1,15 @@
 ---
 import MainLayout from './MainLayout.astro';
-import type {Frontmatter} from '../config';
+import type {Frontmatter, KNOWN_FRAMEWORK_CODES} from '../config';
 import type {MarkdownLayoutProps} from 'astro';
 import FrameworkSelect from '../components/PageContent/FrameworkSelect';
-import {getFrameworkFromURL} from '../paths';
 
 type Props = MarkdownLayoutProps<Frontmatter>;
+interface Params {
+	framework: typeof KNOWN_FRAMEWORK_CODES[number];
+}
 
-const currentPage = Astro.url.pathname;
-const framework = getFrameworkFromURL(currentPage);
+const {framework} = Astro.params as unknown as Params;
 ---
 
 <MainLayout {...Astro.props}>

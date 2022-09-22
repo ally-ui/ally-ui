@@ -1,6 +1,6 @@
-/** @jsxImportSource react */
+/** @jsxImportSource preact */
 import cx from 'classnames';
-import type {FunctionComponent} from 'react';
+import type {FunctionComponent} from 'preact';
 import {KNOWN_LANGUAGES} from '../../config';
 import {LANG_REGEX} from '../../paths';
 
@@ -15,7 +15,7 @@ const LanguageSelect: FunctionComponent<LanguageSelectProps> = ({
 }) => {
 	return (
 		<div className="relative text-shade-text">
-			<div className="absolute top-0 bottom-0 right-auto flex pointer-events-none left-1 flex-center aspect-square">
+			<div className="absolute top-0 bottom-0 flex pointer-events-none left-1 flex-center aspect-square">
 				<svg
 					width="30"
 					height="30"
@@ -33,24 +33,21 @@ const LanguageSelect: FunctionComponent<LanguageSelectProps> = ({
 			</div>
 			<select
 				className={cx(
-					'flex items-center flex-grow px-10 rounded-full appearance-none h-10 md:w-full bg-shade-100 hover:bg-shade-100/50 cursor-pointer',
+					'flex items-center flex-grow pl-10 pr-9 rounded-full appearance-none h-10 md:w-full bg-shade-100 hover:bg-shade-100/50 cursor-pointer',
 					alwaysShowLabel ? 'w-full' : 'w-10',
 				)}
 				value={lang}
-				onChange={(e) => {
-					const newLang = e.target.value;
+				onInput={(ev) => {
+					const newLang = ev.currentTarget.value;
 					let actualDest = window.location.pathname.replace(LANG_REGEX, '/');
-					if (actualDest == '/') actualDest = `/introduction`;
 					window.location.pathname = '/' + newLang + actualDest;
 				}}
 			>
-				{Object.entries(KNOWN_LANGUAGES).map(([code, lang]) => {
-					return (
-						<option value={code} key={code}>
-							<span>{lang}</span>
-						</option>
-					);
-				})}
+				{Object.entries(KNOWN_LANGUAGES).map(([code, lang]) => (
+					<option value={code} key={code}>
+						<span>{lang}</span>
+					</option>
+				))}
 			</select>
 			<div className="absolute inset-0 left-auto flex pointer-events-none flex-center aspect-square">
 				<svg
