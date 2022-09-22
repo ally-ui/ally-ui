@@ -1,5 +1,6 @@
 /** @jsxImportSource preact */
 import type {FunctionComponent} from 'preact';
+import {useEffect} from 'preact/hooks';
 import {KNOWN_FRAMEWORKS} from '../../config';
 import react from '../../icons/react.svg';
 import solid from '../../icons/solid.svg';
@@ -20,6 +21,12 @@ const ICONS: Record<keyof typeof KNOWN_FRAMEWORKS, string> = {
 const FrameworkSelect: FunctionComponent<FrameworkSelectProps> = ({
 	framework,
 }) => {
+	useEffect(
+		function updateLocalStorage() {
+			window.localStorage.setItem('framework', framework);
+		},
+		[framework],
+	);
 	return (
 		<div className="relative text-shade-text">
 			<div className="absolute top-0 bottom-0 left-1 flex pointer-events-none flex-center aspect-square">
@@ -30,7 +37,7 @@ const FrameworkSelect: FunctionComponent<FrameworkSelectProps> = ({
 				value={framework}
 				onInput={(ev) => {
 					const newFramework = ev.currentTarget.value;
-					// Replace the last occurrence of the current framework.
+					// Replace the last occurrence of the current framework in the path.
 					const pathTokens = window.location.pathname.split('/').reverse();
 					const tokenIdx = pathTokens.findIndex((path) => path === framework);
 					pathTokens[tokenIdx] = newFramework;
