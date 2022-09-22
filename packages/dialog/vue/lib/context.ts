@@ -7,3 +7,6 @@ export const DIALOG_ROOT_MODEL = Symbol(
 export const DIALOG_ROOT_STATE = Symbol('DIALOG_ROOT_STATE') as InjectionKey<
 	Ref<DialogRootModelState>
 >;
+export const DIALOG_PORTAL_FORCE_MOUNT = Symbol(
+	'DIALOG_PORTAL_FORCE_MOUNT',
+) as InjectionKey<boolean | undefined>;
