@@ -1,7 +1,7 @@
 import React from 'react';
-import * as Dialog, {type DialogRootProps} from '../../lib/main';
+import * as Dialog from '../../lib/main';
 
-export default function Focus(options: DialogRootProps) {
+export default function Focus(options: Dialog.DialogRootProps) {
 	return (
 		<React.StrictMode>
 			<Dialog.Root {...options}>
