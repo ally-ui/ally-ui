@@ -24,7 +24,7 @@ export default function App() {
 								type="text"
 								id="name"
 								placeholder="Bryan Lee"
-								className="w-3/4 rounded-lg border border-blue-400 p-2 text-sm placeholder:text-gray-400"
+								className="w-3/4 rounded-lg border border-blue-400 p-2 text-sm text-black placeholder:text-gray-400"
 							/>
 						</fieldset>
 						<fieldset className="mb-8 flex items-start justify-end gap-6">
@@ -34,7 +34,7 @@ export default function App() {
 							<textarea
 								id="feedback"
 								placeholder="Enter your feedback..."
-								className="w-3/4 rounded-lg border border-blue-400 p-2 text-sm placeholder:text-gray-400"
+								className="w-3/4 rounded-lg border border-blue-400 p-2 text-sm text-black placeholder:text-gray-400"
 							/>
 						</fieldset>
 						<Dialog.Close className="self-end rounded-xl bg-blue-400/25 px-4 py-2 font-medium text-blue-700 hover:opacity-80">

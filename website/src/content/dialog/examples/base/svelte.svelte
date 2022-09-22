@@ -27,7 +27,7 @@
 						type="text"
 						id="name"
 						placeholder="Bryan Lee"
-						class="w-3/4 rounded-lg border border-blue-400 p-2 text-sm placeholder:text-gray-400"
+						class="w-3/4 rounded-lg border border-blue-400 p-2 text-sm text-black placeholder:text-gray-400"
 					/>
 				</fieldset>
 				<fieldset class="mb-8 flex items-start justify-end gap-6">
@@ -37,7 +37,7 @@
 					<textarea
 						id="feedback"
 						placeholder="Enter your feedback..."
-						class="w-3/4 rounded-lg border border-blue-400 p-2 text-sm placeholder:text-gray-400"
+						class="w-3/4 rounded-lg border border-blue-400 p-2 text-sm text-black placeholder:text-gray-400"
 					/>
 				</fieldset>
 				<Dialog.Close
