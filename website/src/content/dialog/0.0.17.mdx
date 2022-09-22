@@ -4,12 +4,9 @@ description: A window overlaid on either the primary window or another dialog wi
 layout: ../../layouts/WidgetLayout.astro
 ---
 
-Dialog 0.0.17
-
-{JSON.stringify(props)}
-
----
-
+import ExampleContainer from '../../components/ExampleContainer.astro';
 import BaseExample from './examples/base/index.astro';
 
-<BaseExample framework={props.framework} />
+<ExampleContainer>
+	<BaseExample framework={props.framework} />
+</ExampleContainer>

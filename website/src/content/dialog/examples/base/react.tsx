@@ -4,7 +4,7 @@ import * as Dialog from '@ally-ui/react-dialog';
 export default function App() {
 	return (
 		<Dialog.Root>
-			<Dialog.Trigger>Send feedback</Dialog.Trigger>
+			<Dialog.Trigger className="primary">Send feedback</Dialog.Trigger>
 			<Dialog.Content>
 				<Dialog.Title>Feedback form</Dialog.Title>
 				<Dialog.Description>

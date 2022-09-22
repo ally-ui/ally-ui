@@ -1,0 +1,14 @@
+<section class="example">
+	<slot />
+</section>
+
+<style lang="postcss">
+	.example {
+		@apply text-white flex flex-center h-52 rounded-lg;
+		@apply bg-gradient-to-tr from-[#63d8ff] to-[#3a98f0];
+	}
+	.example :global(button.primary) {
+		@apply font-medium text-sm text-accent bg-white px-4 py-2 rounded-lg;
+		@apply focus:ring-2 ring-black;
+	}
+</style>

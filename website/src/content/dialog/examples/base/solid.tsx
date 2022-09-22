@@ -4,7 +4,7 @@ import * as Dialog from '@ally-ui/solid-dialog';
 export default function App() {
 	return (
 		<Dialog.Root>
-			<Dialog.Trigger>Send feedback</Dialog.Trigger>
+			<Dialog.Trigger class="primary">Send feedback</Dialog.Trigger>
 			<Dialog.Content>
 				<Dialog.Title>Feedback form</Dialog.Title>
 				<Dialog.Description>

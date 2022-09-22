@@ -4,7 +4,7 @@ import * as Dialog from '@ally-ui/vue-dialog';
 
 <template>
 	<Dialog.Root>
-		<Dialog.Trigger>Send feedback</Dialog.Trigger>
+		<Dialog.Trigger class="primary">Send feedback</Dialog.Trigger>
 		<Dialog.Content>
 			<Dialog.Title>Feedback form</Dialog.Title>
 			<Dialog.Description>
