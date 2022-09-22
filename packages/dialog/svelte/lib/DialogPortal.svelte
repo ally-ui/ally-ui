@@ -28,8 +28,8 @@
 	setDialogPortalForceMount(forceMount);
 </script>
 
-<Portal target={container}>
-	{#if $rootState.open}
+{#if $rootState.open}
+	<Portal target={container}>
 		<slot />
-	{/if}
-</Portal>
+	</Portal>
+{/if}
