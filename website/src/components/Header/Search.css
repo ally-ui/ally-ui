@@ -8,7 +8,7 @@
 }
 
 .DocSearch-Modal {
-	@apply [@media(min-width:768px)]:rounded-[calc(theme(spacing.3)+theme(borderRadius.xl))] shadow bg-shade;
+	@apply bg-shade shadow [@media(min-width:768px)]:rounded-[calc(theme(spacing.3)+theme(borderRadius.xl))];
 }
 
 .DocSearch-SearchBar {
@@ -16,11 +16,11 @@
 }
 
 .DocSearch-Form {
-	@apply h-10 bg-shade-100 rounded-xl outline-none;
+	@apply bg-shade-100 h-10 rounded-xl outline-none;
 }
 
 .DocSearch-Input {
-	@apply focus:ring-0 text-sm text-shade-text placeholder:text-shade-text/50;
+	@apply text-shade-text placeholder:text-shade-text/50 text-sm focus:ring-0;
 }
 
 .DocSearch-MagnifierLabel {
@@ -28,7 +28,7 @@
 }
 
 .DocSearch-NoResults {
-	@apply flex gap-4 flex-center;
+	@apply flex-center flex gap-4;
 }
 
 .DocSearch-LoadingIndicator {
@@ -36,13 +36,13 @@
 }
 
 .DocSearch-Screen-Icon {
-	@apply p-0 scale-75 text-accent;
+	@apply text-accent scale-75 p-0;
 }
 
 .DocSearch-Footer {
-	@apply [@media(min-width:768px)]:rounded-b-[calc(theme(spacing.3)+theme(borderRadius.xl))] p-6 bg-shade-100 shadow-none;
+	@apply bg-shade-100 p-6 shadow-none [@media(min-width:768px)]:rounded-b-[calc(theme(spacing.3)+theme(borderRadius.xl))];
 }
 
 .DocSearch-Commands-Key {
-	@apply bg-shade-200 shadow-none text-shade-text bg-none;
+	@apply bg-shade-200 text-shade-text bg-none shadow-none;
 }

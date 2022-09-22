@@ -76,10 +76,10 @@ const additionalContributors = unique.length - recentContributors.length; // lis
 	>
 		{
 			recentContributors.map((item) => (
-				<li class="has-pointer:w-[var(--avatar-size)] has-pointer:h-[var(--avatar-size)] peer has-pointer:peer-hover:translate-x-1/3 has-pointer:peer-focus-within:translate-x-1/3 transition-transform">
+				<li class="has-pointer:w-[var(--avatar-size)] has-pointer:h-[var(--avatar-size)] has-pointer:peer-hover:translate-x-1/3 has-pointer:peer-focus-within:translate-x-1/3 peer transition-transform">
 					<a
 						href={`https://github.com/${item.login}`}
-						class="block object-cover bg-white rounded-full"
+						class="block rounded-full bg-white object-cover"
 					>
 						<img
 							alt={`Contributor ${item.login}`}
@@ -87,7 +87,7 @@ const additionalContributors = unique.length - recentContributors.length; // lis
 							width="64"
 							height="64"
 							src={`https://avatars.githubusercontent.com/u/${item.id}`}
-							class="rounded-full wh-full"
+							class="wh-full rounded-full"
 						/>
 					</a>
 				</li>

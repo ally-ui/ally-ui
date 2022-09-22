@@ -14,8 +14,8 @@ const LanguageSelect: FunctionComponent<LanguageSelectProps> = ({
 	alwaysShowLabel = false,
 }) => {
 	return (
-		<div className="relative text-shade-text">
-			<div className="absolute top-0 bottom-0 flex pointer-events-none left-1 flex-center aspect-square">
+		<div className="text-shade-text relative">
+			<div className="flex-center pointer-events-none absolute top-0 bottom-0 left-1 flex aspect-square">
 				<svg
 					width="30"
 					height="30"
@@ -33,7 +33,7 @@ const LanguageSelect: FunctionComponent<LanguageSelectProps> = ({
 			</div>
 			<select
 				className={cx(
-					'flex items-center flex-grow pl-10 pr-9 rounded-full appearance-none h-10 md:w-full bg-shade-100 hover:bg-shade-100/50 cursor-pointer',
+					'bg-shade-100 hover:bg-shade-100/50 flex h-10 flex-grow cursor-pointer appearance-none items-center rounded-full pl-10 pr-9 md:w-full',
 					alwaysShowLabel ? 'w-full' : 'w-10',
 				)}
 				value={lang}
@@ -49,7 +49,7 @@ const LanguageSelect: FunctionComponent<LanguageSelectProps> = ({
 					</option>
 				))}
 			</select>
-			<div className="absolute inset-0 left-auto flex pointer-events-none flex-center aspect-square">
+			<div className="flex-center pointer-events-none absolute inset-0 left-auto flex aspect-square">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					className="icon icon-tabler icon-tabler-chevron-down"

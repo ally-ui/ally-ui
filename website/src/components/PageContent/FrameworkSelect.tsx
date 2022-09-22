@@ -28,12 +28,12 @@ const FrameworkSelect: FunctionComponent<FrameworkSelectProps> = ({
 		[framework],
 	);
 	return (
-		<div className="relative text-shade-text">
-			<div className="absolute top-0 bottom-0 left-1 flex pointer-events-none flex-center aspect-square">
+		<div className="text-shade-text relative">
+			<div className="flex-center pointer-events-none absolute top-0 bottom-0 left-1 flex aspect-square">
 				<img src={ICONS[framework]} alt={`${framework} icon`} class="wh-6" />
 			</div>
 			<select
-				class="flex items-center pl-11 pr-9 rounded-full appearance-none h-10 bg-shade-100 hover:bg-shade-100/50 cursor-pointer"
+				class="bg-shade-100 hover:bg-shade-100/50 flex h-10 cursor-pointer appearance-none items-center rounded-full pl-11 pr-9"
 				value={framework}
 				onInput={(ev) => {
 					const newFramework = ev.currentTarget.value;
@@ -50,7 +50,7 @@ const FrameworkSelect: FunctionComponent<FrameworkSelectProps> = ({
 					</option>
 				))}
 			</select>
-			<div className="absolute inset-0 left-auto flex pointer-events-none flex-center aspect-square">
+			<div className="flex-center pointer-events-none absolute inset-0 left-auto flex aspect-square">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					className="icon icon-tabler icon-tabler-chevron-down"

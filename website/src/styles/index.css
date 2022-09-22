@@ -28,7 +28,7 @@ body {
 }
 
 *:focus {
-	@apply ring-2 ring-accent;
+	@apply ring-accent ring-2;
 	:where(.reset) & {
 		@apply ring-blue-400;
 	}

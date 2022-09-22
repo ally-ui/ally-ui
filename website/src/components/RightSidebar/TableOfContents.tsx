@@ -151,7 +151,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 					<a
 						href={`#${DEFAULT_ID}`}
 						className={cx(
-							'block px-4 py-2 font-medium border-l-2 hover:text-accent focus:text-accent border-shade-200 ring-inset',
+							'hover:text-accent focus:text-accent border-shade-200 block border-l-2 px-4 py-2 font-medium ring-inset',
 							{
 								'text-accent border-accent': activeId === DEFAULT_ID,
 							},
@@ -165,7 +165,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 						<a
 							href={`#${slug}`}
 							className={cx(
-								'block px-4 py-2 border-l-2 hover:text-accent focus:text-accent border-shade-200 ring-inset',
+								'hover:text-accent focus:text-accent border-shade-200 block border-l-2 px-4 py-2 ring-inset',
 								activeId === slug && 'text-accent border-accent',
 								depth === 2 && 'pl-4 font-medium',
 								depth === 3 && 'pl-6',
