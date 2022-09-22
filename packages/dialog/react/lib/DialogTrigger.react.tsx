@@ -41,6 +41,7 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 				rootModel.mountComponent(id);
 				return () => {
 					rootModel.unmountComponent(id);
+					rootModel.deregisterComponent(id);
 				};
 			},
 			[rootModel],

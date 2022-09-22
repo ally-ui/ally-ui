@@ -37,6 +37,7 @@ const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 				rootModel.mountComponent(id);
 				return () => {
 					rootModel.unmountComponent(id);
+					rootModel.deregisterComponent(id);
 				};
 			},
 			[rootModel],

@@ -93,6 +93,7 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 				rootModel.mountComponent(id);
 				return () => {
 					rootModel.unmountComponent(id);
+					rootModel.deregisterComponent(id);
 				};
 			},
 			[rootModel],

@@ -39,6 +39,7 @@ const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 				rootModel.mountComponent(id);
 				return () => {
 					rootModel.unmountComponent(id);
+					rootModel.deregisterComponent(id);
 				};
 			},
 			[rootModel],
