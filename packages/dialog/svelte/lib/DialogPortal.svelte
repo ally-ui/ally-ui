@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
 	type DialogPortalProps = {
-		container?: HTMLElement;
+		container?: HTMLElement | string;
 		forceMount?: boolean;
 	};
 </script>
@@ -23,7 +23,7 @@
 
 	const rootState = getDialogRootState() ?? readable(rootModel.state);
 
-	export let container: HTMLElement | undefined = undefined;
+	export let container: HTMLElement | string | undefined = undefined;
 	export let forceMount: boolean | undefined = undefined;
 	setDialogPortalForceMount(forceMount);
 </script>
