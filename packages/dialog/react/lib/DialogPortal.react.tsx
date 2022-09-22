@@ -7,7 +7,7 @@ import {
 } from './context';
 
 export type DialogPortalProps = React.PropsWithChildren & {
-	container?: HTMLElement;
+	container?: HTMLElement | string;
 	forceMount?: boolean;
 };
 
@@ -16,10 +16,21 @@ export default function DialogPortal({
 	forceMount,
 	children,
 }: DialogPortalProps) {
+	const [node, setNode] = React.useState<Element>();
+	React.useEffect(
+		function findNode() {
+			if (typeof container === 'string') {
+				setNode(globalThis.document?.querySelector(container) ?? undefined);
+			} else {
+				setNode(container);
+			}
+		},
+		[container],
+	);
 	return (
 		<DialogPortalForceMountContext.Provider value={forceMount}>
 			<PortalWithState
-				node={container}
+				node={node}
 				defaultOpen={forceMount}
 				closeOnEsc={false}
 				closeOnOutsideClick={false}

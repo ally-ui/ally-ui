@@ -41,6 +41,9 @@
 		"@ally-ui/react": "^0.0.17",
 		"react-portal": "^4.2.2"
 	},
+	"devDependencies": {
+		"@types/react-portal": "^4.0.4"
+	},
 	"peerDependencies": {
 		"react": ">=16",
 		"react-dom": ">=16"
