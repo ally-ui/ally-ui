@@ -3,18 +3,3 @@
 >
 	<slot />
 </section>
-
-<style lang="postcss" is:global>
-	:where(.reset) {
-		all: initial;
-		@apply font-sans;
-
-		& ::selection {
-			@apply text-black bg-blue-200;
-		}
-
-		&:focus {
-			@apply ring-2 ring-black;
-		}
-	}
-</style>
