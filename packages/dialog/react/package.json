@@ -38,7 +38,8 @@
 	"sideEffects": false,
 	"dependencies": {
 		"@ally-ui/core-dialog": "^0.0.17",
-		"@ally-ui/react": "^0.0.17"
+		"@ally-ui/react": "^0.0.17",
+		"react-portal": "^4.2.2"
 	},
 	"peerDependencies": {
 		"react": ">=16",

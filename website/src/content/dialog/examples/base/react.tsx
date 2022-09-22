@@ -5,20 +5,22 @@ export default function App() {
 	return (
 		<Dialog.Root>
 			<Dialog.Trigger className="primary">Send feedback</Dialog.Trigger>
-			<Dialog.Content>
-				<Dialog.Title>Feedback form</Dialog.Title>
-				<Dialog.Description>
-					We would love to hear your thoughts
-				</Dialog.Description>
-				<label htmlFor="feedback">Describe your feedback</label>
-				<textarea id="feedback" />
-				<label htmlFor="name">Name</label>
-				<input type="text" id="name" />
-				<label htmlFor="email">E-mail</label>
-				<input type="text" id="email" />
-				<Dialog.Close>Send</Dialog.Close>
-				<Dialog.Close>Close</Dialog.Close>
-			</Dialog.Content>
+			<Dialog.Portal>
+				<Dialog.Content>
+					<Dialog.Title>Feedback form</Dialog.Title>
+					<Dialog.Description>
+						We would love to hear your thoughts
+					</Dialog.Description>
+					<label htmlFor="feedback">Describe your feedback</label>
+					<textarea id="feedback" />
+					<label htmlFor="name">Name</label>
+					<input type="text" id="name" />
+					<label htmlFor="email">E-mail</label>
+					<input type="text" id="email" />
+					<Dialog.Close>Send</Dialog.Close>
+					<Dialog.Close>Close</Dialog.Close>
+				</Dialog.Content>
+			</Dialog.Portal>
 		</Dialog.Root>
 	);
 }

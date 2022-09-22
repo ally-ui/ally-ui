@@ -11,7 +11,11 @@ import {
 	useSyncedOption,
 } from '@ally-ui/react';
 import React from 'react';
-import {useDialogRootModel, useDialogRootState} from './context';
+import {
+	useDialogPortalForceMount,
+	useDialogRootModel,
+	useDialogRootState,
+} from './context';
 
 export type DialogContentProps = SlottableProps<
 	DialogContentModelAttributes,
@@ -35,10 +39,11 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 		if (rootModel === undefined) {
 			throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 		}
+		const portalForceMount = useDialogPortalForceMount();
 		const component = useRunOnce(() =>
 			rootModel.registerComponent(
 				new DialogContentModel(rootModel, {
-					forceMount,
+					forceMount: portalForceMount ?? forceMount,
 					onOpenAutoFocus,
 					onCloseAutoFocus,
 					onEscapeKeyDown,
