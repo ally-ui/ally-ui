@@ -28,6 +28,7 @@ export default function DialogDescription(props: DialogDescriptionProps) {
 	});
 	onCleanup(() => {
 		rootModel.unmountComponent(id);
+		rootModel.deregisterComponent(id);
 	});
 
 	const bindRef = createBindRef((node) => {

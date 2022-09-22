@@ -38,6 +38,7 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 	});
 	onCleanup(() => {
 		rootModel.unmountComponent(id);
+		rootModel.deregisterComponent(id);
 	});
 
 	const bindRef = createBindRef((node) => {
