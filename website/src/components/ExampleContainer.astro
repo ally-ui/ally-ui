@@ -1,14 +1,20 @@
-<section class="example">
+<section
+	class="text-black flex flex-center h-52 rounded-xl bg-gradient-to-tr from-[#63d8ff] to-[#3a98f0]"
+>
 	<slot />
 </section>
 
-<style lang="postcss">
-	.example {
-		@apply text-white flex flex-center h-52 rounded-lg;
-		@apply bg-gradient-to-tr from-[#63d8ff] to-[#3a98f0];
-	}
-	.example :global(button.primary) {
-		@apply font-medium text-sm text-accent bg-white px-4 py-2 rounded-lg;
-		@apply focus:ring-2 ring-black;
+<style lang="postcss" is:global>
+	:where(.reset) {
+		all: initial;
+		@apply font-sans;
+
+		& ::selection {
+			@apply text-black bg-blue-200;
+		}
+
+		&:focus {
+			@apply ring-2 ring-black;
+		}
 	}
 </style>
