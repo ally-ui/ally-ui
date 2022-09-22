@@ -1,4 +1,5 @@
 ---
+import ExampleContainer from '../../../../components/ExampleContainer.astro';
 import type {KNOWN_FRAMEWORK_CODES} from '../../../../config';
 import ReactApp from './react';
 // import SolidApp from './solid';
@@ -12,16 +13,18 @@ type Props = {
 const {framework} = Astro.props as Props;
 ---
 
-{
-	framework === 'react' ? (
-		<ReactApp client:idle />
-	) : // ) : framework === 'solid' ? (
-	// 	<SolidApp client:idle />
-	framework === 'svelte' ? (
-		<SvelteApp client:idle />
-	) : framework === 'vue' ? (
-		<VueApp client:idle />
-	) : (
-		<>Example not available</>
-	)
-}
+<ExampleContainer>
+	{
+		framework === 'react' ? (
+			<ReactApp client:idle />
+		) : // ) : framework === 'solid' ? (
+		// 	<SolidApp client:idle />
+		framework === 'svelte' ? (
+			<SvelteApp client:idle />
+		) : framework === 'vue' ? (
+			<VueApp client:idle />
+		) : (
+			<>Example not available</>
+		)
+	}
+</ExampleContainer>

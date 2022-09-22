@@ -4,7 +4,7 @@ import * as Dialog from '@ally-ui/react-dialog';
 export default function App() {
 	return (
 		<Dialog.Root>
-			<Dialog.Trigger className="px-4 py-2 font-medium text-blue-400 bg-white reset rounded-xl hover:bg-white/80 focus:ring-black">
+			<Dialog.Trigger className="px-4 py-2 font-medium text-blue-400 bg-white reset rounded-xl hover:opacity-80 focus:ring-black">
 				Send feedback
 			</Dialog.Trigger>
 			<Dialog.Portal>
@@ -37,7 +37,7 @@ export default function App() {
 								className="w-3/4 p-2 text-sm border border-blue-400 rounded-lg placeholder:text-gray-400"
 							/>
 						</fieldset>
-						<Dialog.Close className="self-end px-4 py-2 font-medium text-blue-700 rounded-xl bg-blue-400/25">
+						<Dialog.Close className="self-end px-4 py-2 font-medium text-blue-700 rounded-xl bg-blue-400/25 hover:opacity-80">
 							Send feedback
 						</Dialog.Close>
 					</Dialog.Content>
