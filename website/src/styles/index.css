@@ -3,12 +3,18 @@
 }
 
 body {
+	background: theme(colors.shade.DEFAULT);
+	color: theme(colors.content.DEFAULT);
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
 	max-width: 100vw;
 	font-size: 1rem;
 	font-size: clamp(0.9rem, 0.75rem + 0.375vw + var(--user-font-scale), 1rem);
+}
+
+#article :is(h1, h2, h3, h4, h5, h6) {
+	scroll-margin-top: calc(theme(height.nav) + theme(spacing.4));
 }
 
 * {
@@ -26,4 +32,9 @@ details > summary {
 details > summary::-webkit-details-marker,
 details > summary::marker {
 	display: none;
+}
+
+::selection {
+	color: theme(colors.accent.DEFAULT);
+	background-color: theme(colors.shade.100);
 }

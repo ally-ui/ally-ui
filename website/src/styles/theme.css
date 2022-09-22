@@ -21,17 +21,3 @@
 	--tw-content: 255 255 255;
 	--tw-content-sub: 156 163 175;
 }
-
-body {
-	background: theme(colors.shade.DEFAULT);
-	color: theme(colors.content.DEFAULT);
-}
-
-::selection {
-	color: theme(colors.accent.DEFAULT);
-	background-color: theme(colors.shade.100);
-}
-
-#article :is(h1, h2, h3, h4, h5, h6) {
-	scroll-margin-top: calc(theme(height.nav) + theme(spacing.4));
-}
