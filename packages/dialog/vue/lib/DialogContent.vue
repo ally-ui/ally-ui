@@ -41,7 +41,10 @@ const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.state);
 const derivedState = computed(() => component.deriveState(rootState.value));
 
 onMounted(() => rootModel.mountComponent(id));
-onUnmounted(() => rootModel.unmountComponent(id));
+onUnmounted(() => {
+	rootModel.unmountComponent(id);
+	rootModel.deregisterComponent(id);
+});
 
 const node = ref<HTMLDivElement | null>(null);
 const setRef = (nodeValue: HTMLDivElement | null) => {
