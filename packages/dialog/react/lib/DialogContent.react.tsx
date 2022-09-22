@@ -43,7 +43,7 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 		const component = useRunOnce(() =>
 			rootModel.registerComponent(
 				new DialogContentModel(rootModel, {
-					forceMount: portalForceMount ?? forceMount,
+					forceMount: forceMount ?? portalForceMount,
 					onOpenAutoFocus,
 					onCloseAutoFocus,
 					onEscapeKeyDown,

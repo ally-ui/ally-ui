@@ -51,7 +51,7 @@
 	export let forceMount: boolean | undefined = undefined;
 	const component = rootModel.registerComponent(
 		new DialogContentModel(rootModel, {
-			forceMount: getDialogPortalForceMount() ?? forceMount,
+			forceMount: forceMount ?? getDialogPortalForceMount(),
 			onOpenAutoFocus: (ev) => dispatch('openAutoFocus', ev),
 			onCloseAutoFocus: (ev) => dispatch('closeAutoFocus', ev),
 			onEscapeKeyDown: (ev) => dispatch('escapeKeyDown', ev),
