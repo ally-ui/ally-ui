@@ -13,7 +13,7 @@
 	<slot />
 	<button
 		on:click={() => (showCode = !showCode)}
-		class="reset absolute right-2 bottom-2 rounded-lg px-3 py-2 text-xs hover:bg-white/25 focus:ring-black"
+		class="reset absolute right-2 bottom-2 rounded-lg px-3 py-2 text-xs hover:bg-white/25 focus:ring-white"
 	>
 		Show code
 	</button>
