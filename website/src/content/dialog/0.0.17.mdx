@@ -2,6 +2,12 @@
 title: Dialog
 description: A window overlaid on either the primary window or another dialog window, rendering the content underneath inert
 layout: ../../layouts/WidgetLayout.astro
+features:
+  - Supports modal and non-modal modes
+  - Focus is automatically trapped when modal
+  - Can be controlled or uncontrolled
+  - Manages screen reader announcements with <code>Title</code> and <code>Description</code> components
+  - Esc closes the component automatically
 ---
 
 import BaseExample from './examples/base/index.astro';
