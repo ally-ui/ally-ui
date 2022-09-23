@@ -1,6 +1,8 @@
 {
-	"packages": ["packages/**/*"],
-	"version": "0.0.17",
+	"packages": [
+		"packages/**/*"
+	],
+	"version": "0.0.18",
 	"npmClient": "npm",
 	"useWorkspaces": true,
 	"useNx": true
