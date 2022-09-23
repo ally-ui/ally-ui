@@ -22,7 +22,9 @@ const LanguageSelect: FunctionComponent<VersionSelectProps> = ({
 				value={currentVersion ?? latestVersion}
 				onInput={(ev) => {
 					const newVersion = ev.currentTarget.value;
-					const pathTokens = window.location.pathname.split('/');
+					const pathTokens = window.location.pathname
+						.split('/')
+						.filter((token) => token !== '');
 					const tokenIdx = pathTokens.findIndex(
 						(token) => token === currentVersion,
 					);
