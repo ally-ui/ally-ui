@@ -15,11 +15,12 @@ interface Props {
 }
 
 interface Params {
+	widget: string;
 	framework: typeof KNOWN_FRAMEWORK_CODES[number];
 	version?: string;
 }
 
-const {framework, version} = Astro.params as unknown as Params;
+const {widget, framework, version} = Astro.params as unknown as Params;
 const {file, frontmatter, versions} = Astro.props;
 const {features, mainExample} = frontmatter;
 const mainExampleFile =
@@ -27,6 +28,17 @@ const mainExampleFile =
 const examples = await Astro.glob('../content/**/examples/**/*.astro');
 const MainExample = examples.filter(({file}) => file === mainExampleFile)[0]
 	?.default;
+
+const links = [
+	{
+		href: `https://github.com/ally-ui/ally-ui/tree/main/packages/${widget}/${framework}`,
+		label: 'View source',
+	},
+	{
+		href: `https://www.npmjs.com/package/@ally-ui/${framework}-${widget}`,
+		label: 'View on npm',
+	},
+];
 ---
 
 <MainLayout {...Astro.props}>
@@ -37,8 +49,40 @@ const MainExample = examples.filter(({file}) => file === mainExampleFile)[0]
 			<h3>Features</h3>
 			{features !== undefined && <Features features={features} />}
 		</section>
-		<section class="pt-7">
+		<section class="pt-7 text-sm not-prose flex flex-col gap-1">
 			<VersionSelect client:idle currentVersion={version} versions={versions} />
+			<ul class="contents">
+				{
+					links.map(({href, label}) => (
+						<li>
+							<a
+								href={href}
+								target="_blank"
+								rel="noreferrer noopener"
+								class="flex w-fit items-center gap-1 rounded-md px-1 py-0.5 font-normal no-underline"
+							>
+								<span class="text-accent">{label}</span>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="icon icon-tabler icon-tabler-arrow-up-right"
+									width="18"
+									height="18"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									fill="none"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+									<line x1="17" y1="7" x2="7" y2="17" />
+									<polyline points="8 7 17 7 17 16" />
+								</svg>
+							</a>
+						</li>
+					))
+				}
+			</ul>
 		</section>
 	</div>
 	<slot />

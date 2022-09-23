@@ -39,7 +39,7 @@ const LanguageSelect: FunctionComponent<VersionSelectProps> = ({
 					}
 					window.location.pathname = pathTokens.join('/');
 				}}
-				class="appearance-none rounded-md bg-transparent py-1 pl-2 pr-6 text-xs tabular-nums"
+				class="appearance-none rounded-md bg-transparent py-0.5 pl-1 pr-5 tabular-nums"
 			>
 				{versions.map((version) => (
 					<option value={version}>
@@ -48,7 +48,7 @@ const LanguageSelect: FunctionComponent<VersionSelectProps> = ({
 					</option>
 				))}
 			</select>
-			<div class="flex-center pointer-events-none absolute inset-0 top-0.5 left-auto flex aspect-square">
+			<div class="flex-center pointer-events-none absolute inset-0 top-0.5 left-auto flex">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					className="icon icon-tabler icon-tabler-chevron-down"
