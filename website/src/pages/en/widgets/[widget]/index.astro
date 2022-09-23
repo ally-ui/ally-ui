@@ -7,7 +7,7 @@ export async function getStaticPaths() {
 		return tokens[1]!;
 	}
 
-	const content = await Astro.glob('../../../../content/**/en.mdx');
+	const content = await Astro.glob('../../../../content/widgets/**/en.mdx');
 	const widgets = new Set<string>();
 	for (const page of content) {
 		const widget = parseWidget(page.file);

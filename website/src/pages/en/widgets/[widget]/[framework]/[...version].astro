@@ -43,7 +43,7 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 	}
 
 	const content = await Astro.glob<Frontmatter>(
-		'../../../../../content/**/en.mdx',
+		'../../../../../content/widgets/**/en.mdx',
 	);
 	const widgetToVersionPages: Record<
 		string,

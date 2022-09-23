@@ -25,8 +25,8 @@ interface Params {
 const {widget, framework, version} = Astro.params as unknown as Params;
 const {file, frontmatter, versions} = Astro.props;
 const {features, mainExample, anatomy} = frontmatter;
-const examples = await Astro.glob('../content/**/examples/**/*.astro');
-const anatomies = await Astro.glob('../content/**/anatomy/**/*.astro');
+const examples = await Astro.glob('../content/widgets/**/examples/**/*.astro');
+const anatomies = await Astro.glob('../content/widgets/**/anatomy/**/*.astro');
 ---
 
 <MainLayout {...Astro.props}>
