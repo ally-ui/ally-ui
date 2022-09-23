@@ -1,8 +1,8 @@
 ---
 import {Prism} from '@astrojs/prism';
-import type {KNOWN_FRAMEWORKS} from '../../../config';
-import {getCode} from '../../../utils/code';
-import {language} from '../../../utils/highlight';
+import type {KNOWN_FRAMEWORKS} from '../../../../config';
+import {getCode} from '../../../../utils/code';
+import {language} from '../../../../utils/highlight';
 
 interface Props {
 	framework: keyof typeof KNOWN_FRAMEWORKS;
