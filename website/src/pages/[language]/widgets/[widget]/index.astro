@@ -1,4 +1,6 @@
 ---
+import {KNOWN_LANGUAGE_CODES} from '../../../../config';
+
 export async function getStaticPaths() {
 	function parseWidget(filepath: string): string | undefined {
 		const tokens = filepath.match(/([\w-]+)\/\d+\.\d+\.\d+\/[\w-]+\.mdx$/);
@@ -15,9 +17,11 @@ export async function getStaticPaths() {
 		widgets.add(widget);
 	}
 
-	return Array.from(widgets.values()).map((widget) => ({
-		params: {widget},
-	}));
+	return KNOWN_LANGUAGE_CODES.flatMap((language) =>
+		Array.from(widgets.values()).map((widget) => ({
+			params: {language, widget},
+		})),
+	);
 }
 ---
 

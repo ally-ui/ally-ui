@@ -1,6 +1,10 @@
 ---
 import type {MDXInstance} from 'astro';
-import {Frontmatter, KNOWN_FRAMEWORK_CODES} from '../../../../../config';
+import {
+	Frontmatter,
+	KNOWN_FRAMEWORK_CODES,
+	KNOWN_LANGUAGE_CODES,
+} from '../../../../../config';
 import WidgetLayout from '../../../../../layouts/WidgetLayout.astro';
 import {compareVersionStr} from '../../../../../utils/version';
 
@@ -64,11 +68,11 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 		versionPages.push([undefined, latestPage]);
 	}
 
-	return Object.entries(widgetToVersionPages).flatMap(
-		([widget, versionPages]) =>
-			versionPages.flatMap(([version, page]) =>
-				KNOWN_FRAMEWORK_CODES.map((framework) => ({
-					params: {widget, framework, version},
+	return KNOWN_LANGUAGE_CODES.flatMap((language) =>
+		Object.entries(widgetToVersionPages).flatMap(([widget, versionPages]) =>
+			KNOWN_FRAMEWORK_CODES.flatMap((framework) =>
+				versionPages.map(([version, page]) => ({
+					params: {language, widget, framework, version},
 					props: {
 						page,
 						versions: versionPages
@@ -77,6 +81,7 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 					},
 				})),
 			),
+		),
 	);
 }
 
