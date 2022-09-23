@@ -28,6 +28,7 @@ let code = await sources[filename]?.();
 if (code === undefined) {
 	code = '';
 }
+code = code.replace(/^\/\*\* @jsxImportSource [\w-]+ \*\/\n/, '');
 code = code.replaceAll('\t', '  ');
 
 const [language, codeHTML] = highlight(code, framework);
