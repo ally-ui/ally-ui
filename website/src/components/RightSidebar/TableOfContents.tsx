@@ -101,16 +101,6 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 		[filteredHeadings],
 	);
 
-	useEffect(function annotateLastElementOfSections() {
-		filteredHeadings.forEach(({slug}) => {
-			const headingElement = document.getElementById(slug);
-			const previousElement = headingElement?.previousElementSibling;
-			if (previousElement === null) return;
-			if (!(previousElement instanceof HTMLElement)) return;
-			previousElement.dataset.before = slug;
-		});
-	}, []);
-
 	useEffect(
 		function watchHeadingIntersections() {
 			const updateActiveIndex = () => {
