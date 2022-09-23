@@ -1,7 +1,7 @@
 export const SITE = {
 	title: 'Ally UI',
 	description:
-		'An agnostic and accessible component library for all UI frameworks',
+		'An open-source widget library for building high-quality, accessible web applications on all UI frameworks',
 	defaultLanguage: 'en_US',
 };
 
