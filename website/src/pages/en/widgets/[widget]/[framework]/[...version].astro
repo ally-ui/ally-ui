@@ -1,13 +1,13 @@
 ---
 import type {MDXInstance} from 'astro';
 import {Frontmatter, KNOWN_FRAMEWORK_CODES} from '../../../../../config';
+import WidgetLayout from '../../../../../layouts/WidgetLayout.astro';
+import {compareVersionStrings} from '../../../../../utils/version';
 
 interface PathToken {
 	widget: string;
 	version: string;
 }
-
-type Version = [number, number, number];
 
 interface Params {
 	widget: string;
@@ -36,10 +36,6 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 		};
 	}
 
-	function parseVersion(versionStr: string): Version {
-		return versionStr.split('.').map((token) => parseInt(token)) as Version;
-	}
-
 	function isNotUndefined<TValue>(
 		value: TValue,
 	): value is Exclude<TValue, undefined> {
@@ -63,19 +59,9 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 	}
 
 	for (const versionPages of Object.values(widgetToVersionPages)) {
-		versionPages.sort(([versionA], [versionB]) => {
-			if (versionA === undefined || versionB === undefined) {
-				return 0;
-			}
-			const [majorA, minorA, patchA] = parseVersion(versionA);
-			const [majorB, minorB, patchB] = parseVersion(versionB);
-			if (majorA !== majorB) return majorA - majorB;
-			if (minorA !== minorB) return minorA - minorB;
-			if (patchA !== patchB) return patchA - patchB;
-			return 0;
-		});
-		const latest = versionPages.at(-1)!;
-		versionPages.push([undefined, latest[1]]);
+		versionPages.sort(([a], [b]) => compareVersionStrings(a, b));
+		const [, latestPage] = versionPages.at(-1)!;
+		versionPages.push([undefined, latestPage]);
 	}
 
 	return Object.entries(widgetToVersionPages).flatMap(
@@ -96,7 +82,14 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 
 const {framework} = Astro.params as unknown as Params;
 const {page, versions} = Astro.props as Props;
-const {Content} = page;
+const {file, frontmatter, getHeadings, Content} = page;
 ---
 
-<Content framework={framework} versions={versions} />
+<WidgetLayout
+	file={file}
+	frontmatter={frontmatter}
+	headings={getHeadings()}
+	versions={versions}
+>
+	<Content framework={framework} versions={versions} />
+</WidgetLayout>

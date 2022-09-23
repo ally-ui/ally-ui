@@ -39,7 +39,7 @@ const FrameworkSelect: FunctionComponent<FrameworkSelectProps> = ({
 					const newFramework = ev.currentTarget.value;
 					// Replace the last occurrence of the current framework in the path.
 					const pathTokens = window.location.pathname.split('/').reverse();
-					const tokenIdx = pathTokens.findIndex((path) => path === framework);
+					const tokenIdx = pathTokens.findIndex((token) => token === framework);
 					pathTokens[tokenIdx] = newFramework;
 					window.location.pathname = pathTokens.reverse().join('/');
 				}}

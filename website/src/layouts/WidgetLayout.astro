@@ -1,19 +1,26 @@
 ---
 import Features from '../components/Features.astro';
 import FrameworkSelect from '../components/PageContent/FrameworkSelect';
+import VersionSelect from '../components/PageContent/VersionSelect';
 import MainLayout from './MainLayout.astro';
 import path from 'path';
 import type {Frontmatter, KNOWN_FRAMEWORK_CODES} from '../config';
-import type {MarkdownLayoutProps} from 'astro';
+import type {MarkdownHeading} from 'astro';
 
-type Props = MarkdownLayoutProps<Frontmatter>;
+interface Props {
+	frontmatter: Frontmatter;
+	headings: MarkdownHeading[];
+	file: string;
+	versions: string[];
+}
 
 interface Params {
 	framework: typeof KNOWN_FRAMEWORK_CODES[number];
+	version?: string;
 }
 
-const {framework} = Astro.params as unknown as Params;
-const {file, frontmatter} = Astro.props;
+const {framework, version} = Astro.params as unknown as Params;
+const {file, frontmatter, versions} = Astro.props;
 const {features, mainExample} = frontmatter;
 const mainExampleFile =
 	mainExample !== undefined ? path.resolve(file, '..', mainExample) : undefined;
@@ -30,7 +37,9 @@ const MainExample = examples.filter(({file}) => file === mainExampleFile)[0]
 			<h3>Features</h3>
 			{features !== undefined && <Features features={features} />}
 		</section>
-		<section></section>
+		<section>
+			<VersionSelect client:idle currentVersion={version} versions={versions} />
+		</section>
 	</div>
 	<slot />
 </MainLayout>
