@@ -1,24 +1,33 @@
 ---
+import Features from '../components/Features.astro';
+import FrameworkSelect from '../components/PageContent/FrameworkSelect';
 import MainLayout from './MainLayout.astro';
+import path from 'path';
 import type {Frontmatter, KNOWN_FRAMEWORK_CODES} from '../config';
 import type {MarkdownLayoutProps} from 'astro';
-import FrameworkSelect from '../components/PageContent/FrameworkSelect';
-import Features from '../components/Features.astro';
 
 type Props = MarkdownLayoutProps<Frontmatter>;
+
 interface Params {
 	framework: typeof KNOWN_FRAMEWORK_CODES[number];
 }
 
 const {framework} = Astro.params as unknown as Params;
-const {features} = Astro.props.frontmatter;
+const {file, frontmatter} = Astro.props;
+const {features, mainExample} = frontmatter;
+const mainExampleFile =
+	mainExample !== undefined ? path.resolve(file, '..', mainExample) : undefined;
+const examples = await Astro.glob('../content/**/examples/**/*.astro');
+const MainExample = examples.filter(({file}) => file === mainExampleFile)[0]
+	?.default;
 ---
 
 <MainLayout {...Astro.props}>
 	<FrameworkSelect client:idle framework={framework} slot="heading-after" />
+	{MainExample !== undefined && <MainExample framework={framework} />}
 	<div class="grid grid-cols-[2fr_1fr]">
 		<section>
-			<h3 class="!mt-0">Features</h3>
+			<h3>Features</h3>
 			{features !== undefined && <Features features={features} />}
 		</section>
 		<section></section>

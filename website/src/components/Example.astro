@@ -40,17 +40,20 @@ function getHighlightedCodeHTML(
 	switch (framework) {
 		case 'react':
 		case 'solid':
-			return ['jsx', Prism.highlight(code, Prism.languages.jsx!, 'jsx')];
+			// return ['jsx', Prism.highlight(code, Prism.languages.jsx!, 'jsx')];
+			return ['jsx', ''];
 		case 'svelte':
-			return [
-				'svelte',
-				Prism.highlight(code, Prism.languages.svelte!, 'svelte'),
-			];
+			// return [
+			// 	'svelte',
+			// 	Prism.highlight(code, Prism.languages.svelte!, 'svelte'),
+			// ];
+			return ['svelte', ''];
 		case 'vue':
-			return [
-				'markup',
-				Prism.highlight(code, Prism.languages.markup!, 'markup'),
-			];
+			// return [
+			// 	'markup',
+			// 	Prism.highlight(code, Prism.languages.markup!, 'markup'),
+			// ];
+			return ['vue', ''];
 	}
 }
 const [language, codeHTML] = getHighlightedCodeHTML(code, framework);
