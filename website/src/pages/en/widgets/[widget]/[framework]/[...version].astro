@@ -27,7 +27,7 @@ interface StaticPaths {
 
 export async function getStaticPaths(): Promise<StaticPaths[]> {
 	function parsePathToken(filepath: string): PathToken | undefined {
-		const tokens = filepath.match(/([\w-]+)\/(\d+\.\d+\.\d+)\.mdx$/);
+		const tokens = filepath.match(/([\w-]+)\/(\d+\.\d+\.\d+)\/[\w-]+\.mdx$/);
 		if (tokens === null) return undefined;
 		if (tokens.length !== 3) return undefined;
 		return {
@@ -43,7 +43,7 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 	}
 
 	const content = await Astro.glob<Frontmatter>(
-		'../../../../../content/**/*.mdx',
+		'../../../../../content/**/en.mdx',
 	);
 	const widgetToVersionPages: Record<
 		string,
