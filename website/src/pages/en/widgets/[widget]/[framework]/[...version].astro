@@ -2,7 +2,7 @@
 import type {MDXInstance} from 'astro';
 import {Frontmatter, KNOWN_FRAMEWORK_CODES} from '../../../../../config';
 import WidgetLayout from '../../../../../layouts/WidgetLayout.astro';
-import {compareVersionStrings} from '../../../../../utils/version';
+import {compareVersionStr} from '../../../../../utils/version';
 
 interface PathToken {
 	widget: string;
@@ -59,7 +59,7 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 	}
 
 	for (const versionPages of Object.values(widgetToVersionPages)) {
-		versionPages.sort(([a], [b]) => compareVersionStrings(a, b));
+		versionPages.sort(([a], [b]) => compareVersionStr(a, b));
 		const [, latestPage] = versionPages.at(-1)!;
 		versionPages.push([undefined, latestPage]);
 	}

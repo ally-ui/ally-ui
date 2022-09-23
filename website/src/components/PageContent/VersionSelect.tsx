@@ -1,7 +1,7 @@
 /** @jsxImportSource preact */
 import type {FunctionComponent} from 'preact';
 import {useMemo} from 'preact/hooks';
-import {compareVersionStrings} from '../../utils/version';
+import {compareVersionStr} from '../../utils/version';
 
 interface VersionSelectProps {
 	currentVersion?: string | undefined;
@@ -13,7 +13,7 @@ const LanguageSelect: FunctionComponent<VersionSelectProps> = ({
 	versions,
 }) => {
 	const latestVersion = useMemo(
-		() => versions.sort(compareVersionStrings).at(-1)!,
+		() => versions.sort(compareVersionStr).at(-1)!,
 		[versions],
 	);
 	return (
