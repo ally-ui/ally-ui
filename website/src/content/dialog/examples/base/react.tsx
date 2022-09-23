@@ -8,7 +8,7 @@ export default function App() {
 				Send feedback
 			</Dialog.Trigger>
 			<Dialog.Portal>
-				<div className="reset flex-center bg-shade/50 fixed inset-0 flex cursor-default backdrop-blur-sm">
+				<div className="reset flex-center fixed inset-0 z-10 flex cursor-default bg-gray-800/50 backdrop-blur-sm">
 					<Dialog.Content className="relative mx-8 flex w-[65ch] max-w-lg flex-col rounded-xl bg-white p-8">
 						<Dialog.Title className="mb-2 text-lg font-semibold text-black">
 							Feedback form
