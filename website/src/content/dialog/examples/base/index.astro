@@ -1,19 +1,39 @@
 ---
-import ExampleContainer from '../../../../components/ExampleContainer.astro';
-import type {KNOWN_FRAMEWORK_CODES} from '../../../../config';
+import ExampleContainer from '../../../../components/ExampleContainer.svelte';
+import type {KNOWN_FRAMEWORKS} from '../../../../config';
 import ReactApp from './react';
 import SolidApp from './solid';
 import SvelteApp from './svelte.svelte';
 import VueApp from './vue.vue';
 
 type Props = {
-	framework: typeof KNOWN_FRAMEWORK_CODES[number];
+	framework: keyof typeof KNOWN_FRAMEWORKS;
 };
 
 const {framework} = Astro.props as Props;
+const sources = import.meta.glob('./*', {as: 'raw'});
+
+function getFilename(framework: keyof typeof KNOWN_FRAMEWORKS) {
+	switch (framework) {
+		case 'react':
+			return './react.tsx';
+		case 'solid':
+			return './solid.tsx';
+		case 'svelte':
+			return './svelte.svelte';
+		case 'vue':
+			return './vue.vue';
+	}
+}
+
+const filename = getFilename(framework);
+const source = await sources[filename]?.();
+if (source === undefined) {
+	console.warn(`Missing source for ${framework}`);
+}
 ---
 
-<ExampleContainer>
+<ExampleContainer client:idle code={source ?? ''}>
 	{
 		framework === 'react' ? (
 			<ReactApp client:idle />
