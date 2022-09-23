@@ -1,6 +1,6 @@
 ---
 import type {MarkdownInstance} from 'astro';
-import type {Frontmatter} from '../../../config';
+import type {Frontmatter} from '../../config';
 
 interface PathToken {
 	language: string;
@@ -22,7 +22,7 @@ interface StaticPaths {
 
 export async function getStaticPaths(): Promise<StaticPaths[]> {
 	function parsePathToken(filepath: string): PathToken | undefined {
-		const tokens = filepath.match(/content\/overview\/([\w-]+)\/([\w-]+)\.md$/);
+		const tokens = filepath.match(/content\/([\w-\/]+)\/([\w-]+)\.md$/);
 		if (tokens === null) return undefined;
 		if (tokens.length !== 3) return undefined;
 		return {
@@ -31,9 +31,7 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 		};
 	}
 
-	const content = await Astro.glob<Frontmatter>(
-		'../../../content/overview/**/*.md',
-	);
+	const content = await Astro.glob<Frontmatter>('../../content/**/*.md');
 
 	const languageToSlugPages: Record<
 		string,
