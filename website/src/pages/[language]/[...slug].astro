@@ -46,8 +46,6 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 		languageToSlugPages[pathToken.language] = pages;
 	}
 
-	console.log(languageToSlugPages);
-
 	return Object.entries(languageToSlugPages).flatMap(([language, slugPages]) =>
 		slugPages.map(([slug, page]) => ({
 			params: {language, slug},

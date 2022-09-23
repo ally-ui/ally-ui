@@ -1,14 +1,11 @@
 ---
 import type {MDXInstance} from 'astro';
-import {
-	Frontmatter,
-	KNOWN_FRAMEWORK_CODES,
-	KNOWN_LANGUAGE_CODES,
-} from '../../../../../config';
+import {Frontmatter, KNOWN_FRAMEWORK_CODES} from '../../../../../config';
 import WidgetLayout from '../../../../../layouts/WidgetLayout.astro';
 import {compareVersionStr} from '../../../../../utils/version';
 
 interface PathToken {
+	language: string;
 	widget: string;
 	version: string;
 }
@@ -31,12 +28,13 @@ interface StaticPaths {
 
 export async function getStaticPaths(): Promise<StaticPaths[]> {
 	function parsePathToken(filepath: string): PathToken | undefined {
-		const tokens = filepath.match(/([\w-]+)\/(\d+\.\d+\.\d+)\/[\w-]+\.mdx$/);
+		const tokens = filepath.match(/([\w-]+)\/(\d+\.\d+\.\d+)\/([\w-]+)\.mdx$/);
 		if (tokens === null) return undefined;
-		if (tokens.length !== 3) return undefined;
+		if (tokens.length !== 4) return undefined;
 		return {
 			widget: tokens[1]!,
 			version: tokens[2]!,
+			language: tokens[3]!,
 		};
 	}
 
@@ -49,39 +47,47 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 	const content = await Astro.glob<Frontmatter>(
 		'../../../../../content/widgets/**/*.mdx',
 	);
-	const widgetToVersionPages: Record<
+	const languageToWidgetToVersionPages: Record<
 		string,
-		[string | undefined, MDXInstance<Frontmatter>][]
+		Record<string, [string | undefined, MDXInstance<Frontmatter>][]>
 	> = {};
 
 	for (const page of content) {
 		const pathToken = parsePathToken(page.file);
 		if (pathToken === undefined) continue;
-		const pages = widgetToVersionPages[pathToken.widget] ?? [];
-		pages.push([pathToken.version, page]);
-		widgetToVersionPages[pathToken.widget] = pages;
+		const {language, widget, version} = pathToken;
+		const widgetToVersionPages = languageToWidgetToVersionPages[language] ?? {};
+		const pages = widgetToVersionPages[widget] ?? [];
+		pages.push([version, page]);
+		widgetToVersionPages[widget] = pages;
+		languageToWidgetToVersionPages[language] = widgetToVersionPages;
 	}
 
-	for (const versionPages of Object.values(widgetToVersionPages)) {
-		versionPages.sort(([a], [b]) => compareVersionStr(a, b));
-		const [, latestPage] = versionPages.at(-1)!;
-		versionPages.push([undefined, latestPage]);
+	for (const widgetToVersionPages of Object.values(
+		languageToWidgetToVersionPages,
+	)) {
+		for (const versionPages of Object.values(widgetToVersionPages)) {
+			versionPages.sort(([a], [b]) => compareVersionStr(a, b));
+			const [, latestPage] = versionPages.at(-1)!;
+			versionPages.push([undefined, latestPage]);
+		}
 	}
 
-	return KNOWN_LANGUAGE_CODES.flatMap((language) =>
-		Object.entries(widgetToVersionPages).flatMap(([widget, versionPages]) =>
-			KNOWN_FRAMEWORK_CODES.flatMap((framework) =>
-				versionPages.map(([version, page]) => ({
-					params: {language, widget, framework, version},
-					props: {
-						page,
-						versions: versionPages
-							.map(([version]) => version)
-							.filter(isNotUndefined),
-					},
-				})),
+	return Object.entries(languageToWidgetToVersionPages).flatMap(
+		([language, widgetToVersionPages]) =>
+			Object.entries(widgetToVersionPages).flatMap(([widget, versionPages]) =>
+				KNOWN_FRAMEWORK_CODES.flatMap((framework) =>
+					versionPages.map(([version, page]) => ({
+						params: {language, widget, framework, version},
+						props: {
+							page,
+							versions: versionPages
+								.map(([version]) => version)
+								.filter(isNotUndefined),
+						},
+					})),
+				),
 			),
-		),
 	);
 }
 
