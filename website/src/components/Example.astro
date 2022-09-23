@@ -28,7 +28,7 @@ if (source === undefined) {
 	console.warn(`Missing source for ${framework}`);
 	source = '';
 }
-source.replaceAll('\t', '  ');
+source = source.replaceAll('\t', '  ');
 ---
 
 <ExampleContainer client:idle code={source}>
