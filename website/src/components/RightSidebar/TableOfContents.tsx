@@ -59,7 +59,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 		({depth}) => 2 <= depth && depth <= (maxDepth ?? 3),
 	);
 	const [activeId, setActiveId] = useState<string>('overview');
-	useEffect(function loadInitialHash() {
+	useEffect(function setActiveIdToInitialHash() {
 		let id = window.location.hash.replace('#', '');
 		if (id === '') id = DEFAULT_ID;
 		setActiveId(id);
@@ -69,7 +69,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 	 * Check if the scroll is caused by navigating the table of contents.
 	 */
 	const scrollSourceIsHashChange = useTemporaryTrue(100);
-	useEffect(function watchLocationChange() {
+	useEffect(function setActiveIdOnHashChange() {
 		const handleHashChange = () => {
 			setActiveId(window.location.hash.replace('#', ''));
 			scrollSourceIsHashChange.setTrue();
@@ -104,14 +104,13 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 	);
 
 	useEffect(
-		function watchHeadingIntersections() {
+		function setActiveIdOnScroll() {
 			const updateActiveIndex = () => {
 				if (scrollSourceIsHashChange.current) {
 					return;
 				}
 				const id = getClosestId(headingOffsets.current);
 				setActiveId(id);
-				window.history.replaceState(null, '', '#' + id);
 			};
 
 			const observer = new IntersectionObserver(updateActiveIndex, {
