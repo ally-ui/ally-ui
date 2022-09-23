@@ -6,6 +6,18 @@ import type {KNOWN_FRAMEWORKS} from '../config';
 
 type Language = 'jsx' | 'svelte' | 'markup';
 
+export function language(framework: keyof typeof KNOWN_FRAMEWORKS): Language {
+	switch (framework) {
+		case 'react':
+		case 'solid':
+			return 'jsx';
+		case 'svelte':
+			return 'svelte';
+		case 'vue':
+			return 'markup';
+	}
+}
+
 export function highlight(
 	code: string,
 	framework: keyof typeof KNOWN_FRAMEWORKS,

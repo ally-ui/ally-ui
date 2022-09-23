@@ -80,7 +80,7 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 	);
 }
 
-const {framework} = Astro.params as unknown as Params;
+const {widget, framework} = Astro.params as unknown as Params;
 const {page, versions} = Astro.props as Props;
 const {file, frontmatter, getHeadings, Content} = page;
 ---
@@ -91,5 +91,5 @@ const {file, frontmatter, getHeadings, Content} = page;
 	headings={getHeadings()}
 	versions={versions}
 >
-	<Content framework={framework} versions={versions} />
+	<Content widget={widget} framework={framework} versions={versions} />
 </WidgetLayout>

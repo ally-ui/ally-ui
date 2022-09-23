@@ -2,6 +2,7 @@
 import ExampleContainer from './ExampleContainer.svelte';
 import type {KNOWN_FRAMEWORKS} from '../config';
 import {highlight} from '../utils/highlight';
+import {getCode} from '../utils/code';
 
 type Props = {
 	sources: Record<string, () => Promise<string>>;
@@ -9,28 +10,7 @@ type Props = {
 };
 
 const {sources, framework} = Astro.props as Props;
-
-function getFilename(framework: keyof typeof KNOWN_FRAMEWORKS) {
-	switch (framework) {
-		case 'react':
-			return './react.tsx';
-		case 'solid':
-			return './solid.tsx';
-		case 'svelte':
-			return './svelte.svelte';
-		case 'vue':
-			return './vue.vue';
-	}
-}
-
-const filename = getFilename(framework);
-let code = await sources[filename]?.();
-if (code === undefined) {
-	code = '';
-}
-code = code.replace(/^\/\*\* @jsxImportSource [\w-]+ \*\/\n/, '');
-code = code.replaceAll('\t', '  ');
-
+const code = await getCode(sources, framework);
 const [language, codeHTML] = highlight(code, framework);
 ---
 

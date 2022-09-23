@@ -3,10 +3,11 @@ import Features from '../components/Features.astro';
 import FrameworkSelect from '../components/PageContent/FrameworkSelect';
 import VersionSelect from '../components/PageContent/VersionSelect';
 import MainLayout from './MainLayout.astro';
-import path from 'path';
 import type {Frontmatter, KNOWN_FRAMEWORK_CODES} from '../config';
+import {Prism} from '@astrojs/prism';
 import type {MarkdownHeading} from 'astro';
 import AdditionalLinks from '../components/PageContent/AdditionalLinks.astro';
+import FrontmatterAstroLoader from '../components/FrontmatterAstroLoader.astro';
 
 interface Props {
 	frontmatter: Frontmatter;
@@ -24,16 +25,17 @@ interface Params {
 const {widget, framework, version} = Astro.params as unknown as Params;
 const {file, frontmatter, versions} = Astro.props;
 const {features, mainExample} = frontmatter;
-const mainExampleFile =
-	mainExample !== undefined ? path.resolve(file, '..', mainExample) : undefined;
 const examples = await Astro.glob('../content/**/examples/**/*.astro');
-const MainExample = examples.filter(({file}) => file === mainExampleFile)[0]
-	?.default;
 ---
 
 <MainLayout {...Astro.props}>
 	<FrameworkSelect client:idle framework={framework} slot="heading-after" />
-	{MainExample !== undefined && <MainExample framework={framework} />}
+	<FrontmatterAstroLoader
+		file={file}
+		target={mainExample}
+		instances={examples}
+		framework={framework}
+	/>
 	<div class="grid grid-cols-[3fr_1fr]">
 		<section>
 			<h3>Features</h3>
@@ -44,5 +46,11 @@ const MainExample = examples.filter(({file}) => file === mainExampleFile)[0]
 			<AdditionalLinks widget={widget} framework={framework} />
 		</section>
 	</div>
+	<h2>Installation</h2>
+	<Prism
+		lang="bash"
+		code={`npm install @ally-ui/${framework}-${widget}`}
+		class="mt-4"
+	/>
 	<slot />
 </MainLayout>

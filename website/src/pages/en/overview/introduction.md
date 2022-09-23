@@ -48,7 +48,7 @@ We aim to make accessibility easy and fun for developers. This starts with an AP
 
 Each widget can be installed individually so you can adopt them incrementally.
 
-```
+```bash
 npm install @ally-ui/react-dialog
 ```
 
