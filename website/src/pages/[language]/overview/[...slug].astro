@@ -1,0 +1,65 @@
+---
+import type {MarkdownInstance} from 'astro';
+import type {Frontmatter} from '../../../config';
+
+interface PathToken {
+	language: string;
+	slug: string;
+}
+
+interface Params {
+	slug: string;
+}
+
+interface Props {
+	page: MarkdownInstance<Frontmatter>;
+}
+
+interface StaticPaths {
+	params: Params;
+	props: Props;
+}
+
+export async function getStaticPaths(): Promise<StaticPaths[]> {
+	function parsePathToken(filepath: string): PathToken | undefined {
+		const tokens = filepath.match(/content\/overview\/([\w-]+)\/([\w-]+)\.md$/);
+		if (tokens === null) return undefined;
+		if (tokens.length !== 3) return undefined;
+		return {
+			slug: tokens[1]!,
+			language: tokens[2]!,
+		};
+	}
+
+	const content = await Astro.glob<Frontmatter>(
+		'../../../content/overview/**/*.md',
+	);
+
+	const languageToSlugPages: Record<
+		string,
+		[string, MarkdownInstance<Frontmatter>][]
+	> = {};
+
+	for (const page of content) {
+		const pathToken = parsePathToken(page.file);
+		if (pathToken === undefined) continue;
+		const pages = languageToSlugPages[pathToken.language] ?? [];
+		pages.push([pathToken.slug, page]);
+		languageToSlugPages[pathToken.language] = pages;
+	}
+
+	console.log(languageToSlugPages);
+
+	return Object.entries(languageToSlugPages).flatMap(([language, slugPages]) =>
+		slugPages.map(([slug, page]) => ({
+			params: {language, slug},
+			props: {page},
+		})),
+	);
+}
+
+const {page} = Astro.props as Props;
+const {Content} = page;
+---
+
+<Content />
