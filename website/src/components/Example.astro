@@ -1,10 +1,7 @@
 ---
-import Prism from 'prismjs';
-import 'prism-svelte';
-import 'prismjs/components/prism-jsx';
-import 'prismjs/components/prism-markup';
 import ExampleContainer from './ExampleContainer.svelte';
 import type {KNOWN_FRAMEWORKS} from '../config';
+import {highlight} from '../utils/highlight';
 
 type Props = {
 	sources: Record<string, () => Promise<string>>;
@@ -33,30 +30,7 @@ if (code === undefined) {
 }
 code = code.replaceAll('\t', '  ');
 
-function getHighlightedCodeHTML(
-	code: string,
-	framework: keyof typeof KNOWN_FRAMEWORKS,
-): [string, string] {
-	switch (framework) {
-		case 'react':
-		case 'solid':
-			// return ['jsx', Prism.highlight(code, Prism.languages.jsx!, 'jsx')];
-			return ['jsx', ''];
-		case 'svelte':
-			// return [
-			// 	'svelte',
-			// 	Prism.highlight(code, Prism.languages.svelte!, 'svelte'),
-			// ];
-			return ['svelte', ''];
-		case 'vue':
-			// return [
-			// 	'markup',
-			// 	Prism.highlight(code, Prism.languages.markup!, 'markup'),
-			// ];
-			return ['vue', ''];
-	}
-}
-const [language, codeHTML] = getHighlightedCodeHTML(code, framework);
+const [language, codeHTML] = highlight(code, framework);
 ---
 
 <ExampleContainer client:idle language={language} codeHTML={codeHTML}>
