@@ -17,32 +17,55 @@ const LanguageSelect: FunctionComponent<VersionSelectProps> = ({
 		[versions],
 	);
 	return (
-		<select
-			value={currentVersion ?? latestVersion}
-			onInput={(ev) => {
-				const newVersion = ev.currentTarget.value;
-				const pathTokens = window.location.pathname.split('/');
-				const tokenIdx = pathTokens.findIndex(
-					(token) => token === currentVersion,
-				);
-				// On the latest version already.
-				if (tokenIdx === -1) {
-					if (newVersion === latestVersion) return;
-					pathTokens.push(newVersion);
-				} else {
-					if (newVersion === latestVersion) {
-						pathTokens.pop();
+		<div class="relative w-fit">
+			<select
+				value={currentVersion ?? latestVersion}
+				onInput={(ev) => {
+					const newVersion = ev.currentTarget.value;
+					const pathTokens = window.location.pathname.split('/');
+					const tokenIdx = pathTokens.findIndex(
+						(token) => token === currentVersion,
+					);
+					// On the latest version already.
+					if (tokenIdx === -1) {
+						if (newVersion === latestVersion) return;
+						pathTokens.push(newVersion);
 					} else {
-						pathTokens[tokenIdx] = newVersion;
+						if (newVersion === latestVersion) {
+							pathTokens.pop();
+						} else {
+							pathTokens[tokenIdx] = newVersion;
+						}
 					}
-				}
-				window.location.pathname = pathTokens.join('/');
-			}}
-		>
-			{versions.map((version) => (
-				<option value={version}>{version}</option>
-			))}
-		</select>
+					window.location.pathname = pathTokens.join('/');
+				}}
+				class="appearance-none rounded-md bg-transparent py-1 pl-2 pr-6 text-xs tabular-nums"
+			>
+				{versions.map((version) => (
+					<option value={version}>
+						{version}
+						{version === latestVersion && ' (latest)'}
+					</option>
+				))}
+			</select>
+			<div class="flex-center pointer-events-none absolute inset-0 top-0.5 left-auto flex aspect-square">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					className="icon icon-tabler icon-tabler-chevron-down"
+					width="18"
+					height="18"
+					viewBox="0 0 24 24"
+					stroke-width="2"
+					stroke="currentColor"
+					fill="none"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+					<polyline points="6 9 12 15 18 9" />
+				</svg>
+			</div>
+		</div>
 	);
 };
 

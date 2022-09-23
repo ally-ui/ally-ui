@@ -32,12 +32,12 @@ const MainExample = examples.filter(({file}) => file === mainExampleFile)[0]
 <MainLayout {...Astro.props}>
 	<FrameworkSelect client:idle framework={framework} slot="heading-after" />
 	{MainExample !== undefined && <MainExample framework={framework} />}
-	<div class="grid grid-cols-[2fr_1fr]">
+	<div class="grid grid-cols-[3fr_1fr]">
 		<section>
 			<h3>Features</h3>
 			{features !== undefined && <Features features={features} />}
 		</section>
-		<section>
+		<section class="pt-7">
 			<VersionSelect client:idle currentVersion={version} versions={versions} />
 		</section>
 	</div>
