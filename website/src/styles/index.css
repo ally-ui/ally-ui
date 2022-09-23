@@ -46,7 +46,8 @@ details > summary {
 	color: theme(colors.accent.DEFAULT);
 	background-color: theme(colors.shade.100);
 
-	.reset & {
+	.reset &,
+	.reset& {
 		color: theme(colors.black);
 		background-color: theme(colors.blue.200);
 	}
