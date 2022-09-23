@@ -24,8 +24,9 @@ interface Params {
 
 const {widget, framework, version} = Astro.params as unknown as Params;
 const {file, frontmatter, versions} = Astro.props;
-const {features, mainExample} = frontmatter;
+const {features, mainExample, anatomy} = frontmatter;
 const examples = await Astro.glob('../content/**/examples/**/*.astro');
+const anatomies = await Astro.glob('../content/**/anatomy/**/*.astro');
 ---
 
 <MainLayout {...Astro.props}>
@@ -47,10 +48,15 @@ const examples = await Astro.glob('../content/**/examples/**/*.astro');
 		</section>
 	</div>
 	<h2>Installation</h2>
-	<Prism
-		lang="bash"
-		code={`npm install @ally-ui/${framework}-${widget}`}
-		class="mt-4"
+	<p>Use your favorite package manager.</p>
+	<Prism lang="bash" code={`npm install @ally-ui/${framework}-${widget}`} />
+	<h2>Anatomy</h2>
+	<p>Construct the widget from component parts.</p>
+	<FrontmatterAstroLoader
+		file={file}
+		target={anatomy}
+		instances={anatomies}
+		framework={framework}
 	/>
 	<slot />
 </MainLayout>

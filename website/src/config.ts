@@ -22,6 +22,7 @@ export type Frontmatter = {
 	description: string;
 	layout: string;
 	mainExample?: string;
+	anatomy?: string;
 	features?: string[];
 	tableOfContentsMaxDepth?: number;
 	image?: {src: string; alt: string};

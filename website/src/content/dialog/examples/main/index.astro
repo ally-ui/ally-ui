@@ -6,9 +6,9 @@ import SolidApp from './solid';
 import SvelteApp from './svelte.svelte';
 import VueApp from './vue.vue';
 
-type Props = {
+interface Props {
 	framework: keyof typeof KNOWN_FRAMEWORKS;
-};
+}
 
 const {framework} = Astro.props as Props;
 const sources = import.meta.glob('./*', {as: 'raw'});
