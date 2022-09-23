@@ -54,7 +54,9 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 	maxDepth = 3,
 }) => {
 	const filteredHeadings = headings.filter(
-		({depth}) => 2 <= depth && depth <= maxDepth,
+		// Not sure why `maxDepth` is sometimes `null` despite default value, so
+		// re-specify just in case.
+		({depth}) => 2 <= depth && depth <= (maxDepth ?? 3),
 	);
 	const [activeId, setActiveId] = useState<string>('overview');
 	useEffect(function loadInitialHash() {
