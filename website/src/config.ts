@@ -33,6 +33,7 @@ export type Frontmatter = {
 
 export const KNOWN_LANGUAGES = {
 	en: 'English',
+	fr: 'Français',
 } as const;
 export const KNOWN_LANGUAGE_CODES = Object.keys(
 	KNOWN_LANGUAGES,
@@ -71,5 +72,9 @@ export const SIDEBAR: Sidebar = {
 	en: {
 		Overview: [{text: 'Introduction', link: 'en/overview/introduction'}],
 		Widgets: [{text: 'Dialog', link: 'en/widgets/dialog'}],
+	},
+	fr: {
+		Overview: [{text: 'Introduction', link: 'fr/overview/introduction'}],
+		Widgets: [{text: 'Dialog', link: 'fr/widgets/dialog'}],
 	},
 };
