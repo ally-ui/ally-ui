@@ -1,4 +1,8 @@
 ---
+import Prism from 'prismjs';
+import 'prism-svelte';
+import 'prismjs/components/prism-jsx';
+import 'prismjs/components/prism-markup';
 import ExampleContainer from './ExampleContainer.svelte';
 import type {KNOWN_FRAMEWORKS} from '../config';
 
@@ -23,15 +27,36 @@ function getFilename(framework: keyof typeof KNOWN_FRAMEWORKS) {
 }
 
 const filename = getFilename(framework);
-let source = await sources[filename]?.();
-if (source === undefined) {
-	console.warn(`Missing source for ${framework}`);
-	source = '';
+let code = await sources[filename]?.();
+if (code === undefined) {
+	code = '';
 }
-source = source.replaceAll('\t', '  ');
+code = code.replaceAll('\t', '  ');
+
+function getHighlightedCodeHTML(
+	code: string,
+	framework: keyof typeof KNOWN_FRAMEWORKS,
+): [string, string] {
+	switch (framework) {
+		case 'react':
+		case 'solid':
+			return ['jsx', Prism.highlight(code, Prism.languages.jsx!, 'jsx')];
+		case 'svelte':
+			return [
+				'svelte',
+				Prism.highlight(code, Prism.languages.svelte!, 'svelte'),
+			];
+		case 'vue':
+			return [
+				'markup',
+				Prism.highlight(code, Prism.languages.markup!, 'markup'),
+			];
+	}
+}
+const [language, codeHTML] = getHighlightedCodeHTML(code, framework);
 ---
 
-<ExampleContainer client:idle code={source}>
+<ExampleContainer client:idle language={language} codeHTML={codeHTML}>
 	{
 		framework === 'react' ? (
 			<slot name="react" />

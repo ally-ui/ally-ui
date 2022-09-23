@@ -8,6 +8,10 @@
 	--tw-line: 234 238 242;
 	--tw-content: 0 0 0;
 	--tw-content-sub: 107 114 128;
+
+	--code-keyword: hsl(180, 90%, 30%);
+	--code-string: hsl(80, 90%, 35%);
+	--code-comment: hsl(210, 20%, 75%);
 }
 
 :root.dark {
@@ -20,4 +24,8 @@
 	--tw-line: 35 52 68;
 	--tw-content: 255 255 255;
 	--tw-content-sub: 156 163 175;
+
+	--code-keyword: hsl(180, 55%, 50%);
+	--code-string: hsl(80, 70%, 60%);
+	--code-comment: hsl(210, 20%, 50%);
 }

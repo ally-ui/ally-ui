@@ -3,7 +3,8 @@
 
 	let showCode = false;
 
-	export let code = '';
+	export let language = '';
+	export let codeHTML = '';
 </script>
 
 <section
@@ -12,11 +13,13 @@
 	<slot />
 	<button
 		on:click={() => (showCode = !showCode)}
-		class="absolute right-2 bottom-2 rounded-lg px-3 py-2 text-xs hover:bg-white/25 focus:ring-black"
+		class="reset absolute right-2 bottom-2 rounded-lg px-3 py-2 text-xs hover:bg-white/25 focus:ring-black"
 	>
 		Show code
 	</button>
 </section>
 {#if showCode}
-	<pre transition:slide class="max-h-96"><code>{code}</code></pre>
+	<!-- prettier-ignore -->
+	<pre transition:slide class="language-{language} max-h-96"
+		><code>{@html codeHTML}</code></pre>
 {/if}
