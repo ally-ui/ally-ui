@@ -9,7 +9,7 @@ export async function getStaticPaths() {
 		return tokens[1]!;
 	}
 
-	const content = await Astro.glob('../../../../content/widgets/**/en.mdx');
+	const content = await Astro.glob('../../../../content/widgets/**/*.mdx');
 	const widgets = new Set<string>();
 	for (const page of content) {
 		const widget = parseWidget(page.file);
@@ -34,6 +34,7 @@ export async function getStaticPaths() {
 	const pathTokens = window.location.pathname
 		.split('/')
 		.filter((token) => token !== '');
+	const language = pathTokens[0];
 	const widget = pathTokens.at(-1);
-	window.location.pathname = `/en/widgets/${widget}/${framework}`;
+	window.location.pathname = `/${language}/widgets/${widget}/${framework}`;
 </script>
