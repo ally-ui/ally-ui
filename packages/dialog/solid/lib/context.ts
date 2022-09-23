@@ -10,3 +10,10 @@ export const DialogRootStateContext = createContext<DialogRootModelState>();
 export function useDialogRootState() {
 	return useContext(DialogRootStateContext);
 }
+
+export const DialogPortalForceMountContext = createContext<boolean | undefined>(
+	undefined,
+);
+export function useDialogPortalForceMount() {
+	return useContext(DialogPortalForceMountContext);
+}

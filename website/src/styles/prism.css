@@ -1,0 +1,45 @@
+pre[class*='language-'],
+code[class*='language-'] {
+	::selection {
+		background-color: theme(colors.shade.200);
+	}
+
+	color: theme(colors.shade.text);
+	background-color: theme(colors.shade.100);
+
+	.tag {
+		color: theme(colors.accent.DEFAULT);
+
+		.attr-name {
+			color: var(--code-keyword);
+		}
+
+		.attr-equals {
+			color: theme(colors.shade.text);
+		}
+
+		.attr-value {
+			color: var(--code-string);
+		}
+	}
+
+	.function {
+		color: theme(colors.accent.DEFAULT);
+	}
+
+	.keyword {
+		color: var(--code-keyword);
+	}
+
+	.operator {
+		color: theme(colors.shade.text);
+	}
+
+	.string {
+		color: var(--code-string);
+	}
+
+	.comment {
+		color: var(--code-comment);
+	}
+}

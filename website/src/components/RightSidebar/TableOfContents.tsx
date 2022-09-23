@@ -46,13 +46,20 @@ function useTemporaryTrue(ms: number): TemporaryTrue {
 
 interface TableOfContentsProps {
 	headings: MarkdownHeading[];
+	maxDepth?: number | undefined;
 }
 
 const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 	headings = [],
+	maxDepth = 3,
 }) => {
+	const filteredHeadings = headings.filter(
+		// Not sure why `maxDepth` is sometimes `null` despite default value, so
+		// re-specify just in case.
+		({depth}) => 2 <= depth && depth <= (maxDepth ?? 3),
+	);
 	const [activeId, setActiveId] = useState<string>('overview');
-	useEffect(function loadInitialHash() {
+	useEffect(function setActiveIdToInitialHash() {
 		let id = window.location.hash.replace('#', '');
 		if (id === '') id = DEFAULT_ID;
 		setActiveId(id);
@@ -62,7 +69,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 	 * Check if the scroll is caused by navigating the table of contents.
 	 */
 	const scrollSourceIsHashChange = useTemporaryTrue(100);
-	useEffect(function watchLocationChange() {
+	useEffect(function setActiveIdOnHashChange() {
 		const handleHashChange = () => {
 			setActiveId(window.location.hash.replace('#', ''));
 			scrollSourceIsHashChange.setTrue();
@@ -82,7 +89,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 					return;
 				}
 				const baseOffsetTop = overviewElement.offsetTop;
-				headings.forEach((heading) => {
+				filteredHeadings.forEach((heading) => {
 					const headingElement = document.getElementById(heading.slug);
 					if (headingElement === null) return;
 					headingOffsets.current[heading.slug] =
@@ -93,28 +100,17 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 			window.addEventListener('resize', updateOffsets);
 			return () => window.removeEventListener('resize', updateOffsets);
 		},
-		[headings],
+		[filteredHeadings],
 	);
 
-	useEffect(function annotateLastElementOfSections() {
-		headings.forEach(({slug}) => {
-			const headingElement = document.getElementById(slug);
-			const previousElement = headingElement?.previousElementSibling;
-			if (previousElement === null) return;
-			if (!(previousElement instanceof HTMLElement)) return;
-			previousElement.dataset.before = slug;
-		});
-	}, []);
-
 	useEffect(
-		function watchHeadingIntersections() {
+		function setActiveIdOnScroll() {
 			const updateActiveIndex = () => {
 				if (scrollSourceIsHashChange.current) {
 					return;
 				}
 				const id = getClosestId(headingOffsets.current);
 				setActiveId(id);
-				window.history.replaceState(null, '', '#' + id);
 			};
 
 			const observer = new IntersectionObserver(updateActiveIndex, {
@@ -124,7 +120,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 
 			const overviewElement = document.getElementById(DEFAULT_ID);
 			if (overviewElement !== null) observer.observe(overviewElement);
-			headings.forEach(({slug}) => {
+			filteredHeadings.forEach(({slug}) => {
 				const headingElement = document.getElementById(slug);
 				if (headingElement !== null) observer.observe(headingElement);
 				const previousElement = headingElement?.previousElementSibling;
@@ -135,7 +131,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 				observer.disconnect();
 			};
 		},
-		[headings],
+		[filteredHeadings],
 	);
 
 	return (
@@ -146,7 +142,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 					<a
 						href={`#${DEFAULT_ID}`}
 						className={cx(
-							'block px-4 py-2 font-medium border-l-2 hover:text-accent focus:text-accent border-shade-200 ring-inset',
+							'hover:text-accent focus:text-accent border-shade-200 block border-l-2 px-4 py-2 font-medium ring-inset',
 							{
 								'text-accent border-accent': activeId === DEFAULT_ID,
 							},
@@ -155,24 +151,22 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 						Overview
 					</a>
 				</li>
-				{headings
-					.filter(({depth}) => depth > 1 && depth < 4)
-					.map(({slug, depth, text}) => (
-						<li>
-							<a
-								href={`#${slug}`}
-								className={cx(
-									'block px-4 py-2 border-l-2 hover:text-accent focus:text-accent border-shade-200 ring-inset',
-									activeId === slug && 'text-accent border-accent',
-									depth === 2 && 'pl-4 font-medium',
-									depth === 3 && 'pl-8',
-									depth === 4 && 'pl-12',
-								)}
-							>
-								{text}
-							</a>
-						</li>
-					))}
+				{filteredHeadings.map(({slug, depth, text}) => (
+					<li>
+						<a
+							href={`#${slug}`}
+							className={cx(
+								'hover:text-accent focus:text-accent border-shade-200 block border-l-2 px-4 py-2 ring-inset',
+								activeId === slug && 'text-accent border-accent',
+								depth === 2 && 'pl-4 font-medium',
+								depth === 3 && 'pl-6',
+								depth === 4 && 'pl-8',
+							)}
+						>
+							{text}
+						</a>
+					</li>
+				))}
 			</ul>
 		</>
 	);

@@ -1,0 +1,17 @@
+---
+import type {AstroInstance} from 'astro';
+import path from 'path';
+
+type Props = {
+	file: string;
+	target?: string | undefined;
+	instances: AstroInstance[];
+} & Record<string, any>;
+
+const {file, target, instances, ...restProps} = Astro.props;
+const resolvedFile =
+	target !== undefined ? path.resolve(file, '..', target) : undefined;
+const Loaded = instances.filter(({file}) => file === resolvedFile)[0]?.default;
+---
+
+{Loaded !== undefined && <Loaded {...restProps} />}

@@ -2,6 +2,7 @@
 title: Introduction
 description: An open-source widget library for building high-quality, accessible web applications on all UI frameworks
 layout: ../../../layouts/MainLayout.astro
+tableOfContentsMaxDepth: 2
 ---
 
 Ally UI is a low-level component library that aims to create accessible patterns for all UI component frameworks while providing an amazing developer experience.
@@ -16,8 +17,8 @@ So, developers are responsible for the incredibly difficult task of building com
 
 Developers have built and open-sourced component libraries to address these issues before, but we were unsatisfied with the existing solutions:
 
-* Many libraries are opinionated and attached to existing design systems. While these are great for early development, it usually becomes a challenge to customize and style the components to suit our needs.
-* Because we love developer flexibility, we encourage the use of different UI frameworks on different projects. However, existing component libraries are often built for specific UI frameworks. This meant using different tools for different projects
+- Many libraries are opinionated and attached to existing design systems. While these are great for early development, it usually becomes a challenge to customize and style the components to suit our needs.
+- Because we love developer flexibility, we encourage the use of different UI frameworks on different projects. However, existing component libraries are often built for specific UI frameworks. This meant using different tools for different projects
 
 Our goal is to create a open-source component library that you can use and improve on to build accessible web applications.
 
@@ -25,7 +26,7 @@ Our goal is to create a open-source component library that you can use and impro
 
 ### Accessible
 
-Widgets adhere to the [WAI-ARIA design patterns](https://www.w3.org/WAI/ARIA/apg/patterns/) where possible. Ally UI handles all of the difficult implementation details related to accessibility -- aria and role attributes, focus management, and keyboard navigation. 
+Widgets adhere to the [WAI-ARIA design patterns](https://www.w3.org/WAI/ARIA/apg/patterns/) where possible. Ally UI handles all of the difficult implementation details related to accessibility -- aria and role attributes, focus management, and keyboard navigation.
 
 ### Composable
 
@@ -47,7 +48,7 @@ We aim to make accessibility easy and fun for developers. This starts with an AP
 
 Each widget can be installed individually so you can adopt them incrementally.
 
-```
+```bash
 npm install @ally-ui/react-dialog
 ```
 

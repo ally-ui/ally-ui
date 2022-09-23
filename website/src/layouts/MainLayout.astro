@@ -9,10 +9,10 @@ import * as CONFIG from '../config';
 import type {MarkdownHeading} from 'astro';
 import Footer from '../components/Footer/Footer.astro';
 
-type Props = {
+interface Props {
 	frontmatter: CONFIG.Frontmatter;
 	headings: MarkdownHeading[];
-};
+}
 
 const {frontmatter, headings} = Astro.props as Props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -34,7 +34,7 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 		</title>
 		<style lang="postcss">
 			body {
-				grid-template-rows: theme(height.nav) auto;
+				grid-template-rows: theme(height.nav) 1fr;
 			}
 
 			main {
@@ -73,6 +73,7 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 					headings={headings}
 					githubEditUrl={githubEditUrl}
 				>
+					<slot name="heading-after" slot="heading-after" />
 					<slot />
 				</PageContent>
 				<Footer path={currentFile} />
@@ -82,7 +83,11 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 				title="Table of Contents"
 				class="sticky top-[theme(height.nav)] hidden h-[calc(100vh-theme(height.nav))] lg:col-[3] lg:flex"
 			>
-				<RightSidebar headings={headings} githubEditUrl={githubEditUrl} />
+				<RightSidebar
+					headings={headings}
+					githubEditUrl={githubEditUrl}
+					frontmatter={frontmatter}
+				/>
 			</aside>
 		</main>
 	</body>

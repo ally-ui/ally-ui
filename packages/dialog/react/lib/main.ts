@@ -15,6 +15,11 @@ export {
 	type DialogDescriptionProps,
 } from './DialogDescription.react';
 export {
+	default as DialogPortal,
+	default as Portal,
+	type DialogPortalProps,
+} from './DialogPortal.react';
+export {
 	default as DialogRoot,
 	default as Root,
 	type DialogRootProps,

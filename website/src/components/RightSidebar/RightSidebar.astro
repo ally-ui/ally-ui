@@ -2,18 +2,25 @@
 import TableOfContents from './TableOfContents';
 import MoreMenu from './MoreMenu.astro';
 import type {MarkdownHeading} from 'astro';
+import type {Frontmatter} from '../../config';
 
 type Props = {
+	frontmatter: Frontmatter;
 	headings: MarkdownHeading[];
 	githubEditUrl: string;
 };
 
-const {headings, githubEditUrl} = Astro.props as Props;
+const {frontmatter, headings, githubEditUrl} = Astro.props as Props;
+const {tableOfContentsMaxDepth} = frontmatter;
 ---
 
-<nav aria-labelledby="grid-right" class="px-4 py-8 wh-full overflow-y-auto">
+<nav aria-labelledby="grid-right" class="px-4 py-8 overflow-y-auto wh-full">
 	<div class="space-y-4">
-		<TableOfContents client:media="(min-width: 50em)" headings={headings} />
+		<TableOfContents
+			client:media="(min-width: 50em)"
+			headings={headings}
+			maxDepth={tableOfContentsMaxDepth}
+		/>
 		<MoreMenu editHref={githubEditUrl} />
 	</div>
 </nav>

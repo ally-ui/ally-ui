@@ -1,6 +1,6 @@
-import * as Dialog, {type DialogRootProps} from '../../lib/main';
+import * as Dialog from '../../lib/main';
 
-export default function Toggle(options: DialogRootProps) {
+export default function Toggle(options: Dialog.DialogRootProps) {
 	return (
 		<Dialog.Root {...options}>
 			<Dialog.Trigger data-testid="trigger">open dialog</Dialog.Trigger>

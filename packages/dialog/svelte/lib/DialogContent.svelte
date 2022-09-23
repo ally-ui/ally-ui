@@ -31,7 +31,11 @@
 	} from '@ally-ui/svelte';
 	import {onMount} from 'svelte/internal';
 	import {readable} from 'svelte/store';
-	import {getDialogRootModel, getDialogRootState} from './context';
+	import {
+		getDialogPortalForceMount,
+		getDialogRootModel,
+		getDialogRootState,
+	} from './context';
 
 	type TAsChild = $$Generic<true | undefined>;
 	type $$Props = DialogContentProps<TAsChild>;
@@ -47,7 +51,7 @@
 	export let forceMount: boolean | undefined = undefined;
 	const component = rootModel.registerComponent(
 		new DialogContentModel(rootModel, {
-			forceMount,
+			forceMount: forceMount ?? getDialogPortalForceMount(),
 			onOpenAutoFocus: (ev) => dispatch('openAutoFocus', ev),
 			onCloseAutoFocus: (ev) => dispatch('closeAutoFocus', ev),
 			onEscapeKeyDown: (ev) => dispatch('escapeKeyDown', ev),
@@ -63,6 +67,7 @@
 		rootModel.mountComponent(id);
 		return () => {
 			rootModel.unmountComponent(id);
+			rootModel.deregisterComponent(id);
 		};
 	});
 

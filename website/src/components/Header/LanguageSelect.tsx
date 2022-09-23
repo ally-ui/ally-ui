@@ -1,7 +1,8 @@
-/** @jsxImportSource react */
+/** @jsxImportSource preact */
 import cx from 'classnames';
-import type {FunctionComponent} from 'react';
-import {KNOWN_LANGUAGES, langPathRegex} from '../../languages';
+import type {FunctionComponent} from 'preact';
+import {KNOWN_LANGUAGES} from '../../config';
+import {LANG_REGEX} from '../../paths';
 
 interface LanguageSelectProps {
 	lang: string;
@@ -13,8 +14,8 @@ const LanguageSelect: FunctionComponent<LanguageSelectProps> = ({
 	alwaysShowLabel = false,
 }) => {
 	return (
-		<div className="relative text-shade-text">
-			<div className="absolute top-0 bottom-0 right-auto flex pointer-events-none left-1 flex-center aspect-square">
+		<div className="text-shade-text relative">
+			<div className="flex-center pointer-events-none absolute top-0 bottom-0 left-1 flex aspect-square">
 				<svg
 					width="30"
 					height="30"
@@ -32,26 +33,23 @@ const LanguageSelect: FunctionComponent<LanguageSelectProps> = ({
 			</div>
 			<select
 				className={cx(
-					'flex items-center flex-grow px-10 rounded-full appearance-none h-10 md:w-full bg-shade-100 hover:bg-shade-100/50 cursor-pointer',
+					'bg-shade-100 hover:bg-shade-100/50 flex h-10 flex-grow cursor-pointer appearance-none items-center rounded-full pl-10 pr-9 md:w-full',
 					alwaysShowLabel ? 'w-full' : 'w-10',
 				)}
 				value={lang}
-				onChange={(e) => {
-					const newLang = e.target.value;
-					let actualDest = window.location.pathname.replace(langPathRegex, '/');
-					if (actualDest == '/') actualDest = `/introduction`;
+				onInput={(ev) => {
+					const newLang = ev.currentTarget.value;
+					let actualDest = window.location.pathname.replace(LANG_REGEX, '/');
 					window.location.pathname = '/' + newLang + actualDest;
 				}}
 			>
-				{Object.entries(KNOWN_LANGUAGES).map(([key, value]) => {
-					return (
-						<option value={value} key={value}>
-							<span>{key}</span>
-						</option>
-					);
-				})}
+				{Object.entries(KNOWN_LANGUAGES).map(([code, lang]) => (
+					<option value={code} key={code}>
+						<span>{lang}</span>
+					</option>
+				))}
 			</select>
-			<div className="absolute inset-0 left-auto flex pointer-events-none flex-center aspect-square">
+			<div className="flex-center pointer-events-none absolute inset-0 left-auto flex aspect-square">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					className="icon icon-tabler icon-tabler-chevron-down"

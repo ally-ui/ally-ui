@@ -1,0 +1,95 @@
+---
+import type {MDXInstance} from 'astro';
+import {Frontmatter, KNOWN_FRAMEWORK_CODES} from '../../../../../config';
+import WidgetLayout from '../../../../../layouts/WidgetLayout.astro';
+import {compareVersionStr} from '../../../../../utils/version';
+
+interface PathToken {
+	widget: string;
+	version: string;
+}
+
+interface Params {
+	widget: string;
+	framework: string;
+	version?: string | undefined;
+}
+
+interface Props {
+	page: MDXInstance<Frontmatter>;
+	versions: string[];
+}
+
+interface StaticPaths {
+	params: Params;
+	props: Props;
+}
+
+export async function getStaticPaths(): Promise<StaticPaths[]> {
+	function parsePathToken(filepath: string): PathToken | undefined {
+		const tokens = filepath.match(/([\w-]+)\/(\d+\.\d+\.\d+)\.mdx$/);
+		if (tokens === null) return undefined;
+		if (tokens.length !== 3) return undefined;
+		return {
+			widget: tokens[1]!,
+			version: tokens[2]!,
+		};
+	}
+
+	function isNotUndefined<TValue>(
+		value: TValue,
+	): value is Exclude<TValue, undefined> {
+		return value !== undefined;
+	}
+
+	const content = await Astro.glob<Frontmatter>(
+		'../../../../../content/**/*.mdx',
+	);
+	const widgetToVersionPages: Record<
+		string,
+		[string | undefined, MDXInstance<Frontmatter>][]
+	> = {};
+
+	for (const page of content) {
+		const pathToken = parsePathToken(page.file);
+		if (pathToken === undefined) continue;
+		const pages = widgetToVersionPages[pathToken.widget] ?? [];
+		pages.push([pathToken.version, page]);
+		widgetToVersionPages[pathToken.widget] = pages;
+	}
+
+	for (const versionPages of Object.values(widgetToVersionPages)) {
+		versionPages.sort(([a], [b]) => compareVersionStr(a, b));
+		const [, latestPage] = versionPages.at(-1)!;
+		versionPages.push([undefined, latestPage]);
+	}
+
+	return Object.entries(widgetToVersionPages).flatMap(
+		([widget, versionPages]) =>
+			versionPages.flatMap(([version, page]) =>
+				KNOWN_FRAMEWORK_CODES.map((framework) => ({
+					params: {widget, framework, version},
+					props: {
+						page,
+						versions: versionPages
+							.map(([version]) => version)
+							.filter(isNotUndefined),
+					},
+				})),
+			),
+	);
+}
+
+const {widget, framework} = Astro.params as unknown as Params;
+const {page, versions} = Astro.props as Props;
+const {file, frontmatter, getHeadings, Content} = page;
+---
+
+<WidgetLayout
+	file={file}
+	frontmatter={frontmatter}
+	headings={getHeadings()}
+	versions={versions}
+>
+	<Content widget={widget} framework={framework} versions={versions} />
+</WidgetLayout>

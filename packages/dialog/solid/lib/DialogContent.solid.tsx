@@ -70,6 +70,7 @@ export default function DialogContent(props: DialogContentProps) {
 	});
 	onCleanup(() => {
 		rootModel.unmountComponent(id);
+		rootModel.deregisterComponent(id);
 	});
 
 	const bindRef = createDelayedBindRef(

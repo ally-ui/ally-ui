@@ -21,7 +21,10 @@ const component = rootModel.registerComponent(
 const id = component.getId();
 
 onMounted(() => rootModel.mountComponent(id));
-onUnmounted(() => rootModel.unmountComponent(id));
+onUnmounted(() => {
+	rootModel.unmountComponent(id);
+	rootModel.deregisterComponent(id);
+});
 
 const node = ref<HTMLButtonElement | null>(null);
 const setRef = (nodeValue: HTMLButtonElement | null) => {

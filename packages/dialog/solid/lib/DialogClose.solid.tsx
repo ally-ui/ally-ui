@@ -36,6 +36,7 @@ export default function DialogClose(props: DialogCloseProps) {
 	});
 	onCleanup(() => {
 		rootModel.unmountComponent(id);
+		rootModel.deregisterComponent(id);
 	});
 
 	const bindRef = createBindRef((node) => {

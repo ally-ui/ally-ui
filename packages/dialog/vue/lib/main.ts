@@ -14,6 +14,14 @@ export {
 	default as DialogDescription,
 } from './DialogDescription.vue';
 export {
+	default as DialogPortal,
+	default as Portal,
+	default as DialogTeleport,
+	default as Teleport,
+	type DialogPortalProps,
+	type DialogPortalProps as DialogTeleportProps,
+} from './DialogPortal.vue';
+export {
 	default as DialogRoot,
 	default as Root,
 	type DialogRootProps,

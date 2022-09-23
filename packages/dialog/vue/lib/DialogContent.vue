@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import {DialogContentModel} from '@ally-ui/core-dialog';
 import {computed, inject, onMounted, onUnmounted, ref, watchEffect} from 'vue';
-import {DIALOG_ROOT_MODEL, DIALOG_ROOT_STATE} from './context';
+import {
+	DIALOG_PORTAL_FORCE_MOUNT,
+	DIALOG_ROOT_MODEL,
+	DIALOG_ROOT_STATE,
+} from './context';
 
 /**
  * @type {import('@ally-ui/core-dialog').DialogContentModelOptions}
@@ -26,9 +30,10 @@ const rootModel = inject(DIALOG_ROOT_MODEL);
 if (rootModel === undefined) {
 	throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 }
+const portalForceMount = inject(DIALOG_PORTAL_FORCE_MOUNT);
 const component = rootModel.registerComponent(
 	new DialogContentModel(rootModel, {
-		forceMount: props.forceMount,
+		forceMount: props.forceMount ?? portalForceMount,
 		onOpenAutoFocus: (ev) => emit('openAutoFocus', ev),
 		onCloseAutoFocus: (ev) => emit('closeAutoFocus', ev),
 		onEscapeKeyDown: (ev) => emit('escapeKeyDown', ev),
@@ -41,7 +46,10 @@ const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.state);
 const derivedState = computed(() => component.deriveState(rootState.value));
 
 onMounted(() => rootModel.mountComponent(id));
-onUnmounted(() => rootModel.unmountComponent(id));
+onUnmounted(() => {
+	rootModel.unmountComponent(id);
+	rootModel.deregisterComponent(id);
+});
 
 const node = ref<HTMLDivElement | null>(null);
 const setRef = (nodeValue: HTMLDivElement | null) => {

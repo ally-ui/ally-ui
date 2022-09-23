@@ -14,3 +14,10 @@ export const DialogRootStateContext = React.createContext<
 export function useDialogRootState() {
 	return React.useContext(DialogRootStateContext);
 }
+
+export const DialogPortalForceMountContext = React.createContext<
+	boolean | undefined
+>(undefined);
+export function useDialogPortalForceMount() {
+	return React.useContext(DialogPortalForceMountContext);
+}

@@ -66,14 +66,14 @@ const ThemeToggle: FunctionalComponent = () => {
 	);
 
 	return (
-		<div class="inline-flex h-10 p-1 rounded-full flex-center bg-shade-100 hover:bg-shade-100/50 text-shade-text focus-within:ring-2 ring-accent">
+		<div class="flex-center bg-shade-100 hover:bg-shade-100/50 text-shade-text ring-accent inline-flex h-10 rounded-full p-1 focus-within:ring-2">
 			{THEMES.map((t, i) => {
 				const icon = ICONS[i];
 				const checked = t === theme;
 				return (
 					<label
 						class={cx(
-							'px-3 py-1 h-full flex items-center rounded-full',
+							'flex h-full items-center rounded-full px-3 py-1',
 							checked
 								? 'bg-shade dark:bg-shade-200 text-accent'
 								: 'cursor-pointer',

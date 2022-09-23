@@ -1,8 +1,8 @@
 import {cleanup, render, screen} from '@testing-library/react';
 import React from 'react';
-import * as Dialog, {DialogRootProps} from '../lib/main';
+import * as Dialog from '../lib/main';
 
-function Initialization(options: DialogRootProps) {
+function Initialization(options: Dialog.DialogRootProps) {
 	return (
 		<React.StrictMode>
 			<Dialog.Root {...options}>

@@ -1,0 +1,33 @@
+---
+interface Props {
+	features: string[];
+}
+const {features} = Astro.props as Props;
+---
+
+<ul class="list-none pl-0">
+	{
+		features.map((feature) => (
+			<li class="not-prose mb-2 flex gap-4">
+				<svg
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+					class="flex-shrink-0"
+				>
+					<circle opacity="0.1" cx="12" cy="12" r="12" fill="#17A400" />
+					<path
+						d="M8.19511 12.5854L10.7317 15.8049L15.8049 9.36584"
+						stroke="#17A400"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+				</svg>
+				<span set:html={feature} />
+			</li>
+		))
+	}
+</ul>

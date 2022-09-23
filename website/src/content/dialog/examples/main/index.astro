@@ -1,0 +1,22 @@
+---
+import Example from '../../../../components/Example.astro';
+import type {KNOWN_FRAMEWORKS} from '../../../../config';
+import ReactApp from './react';
+import SolidApp from './solid';
+import SvelteApp from './svelte.svelte';
+import VueApp from './vue.vue';
+
+interface Props {
+	framework: keyof typeof KNOWN_FRAMEWORKS;
+}
+
+const {framework} = Astro.props as Props;
+const sources = import.meta.glob('./*', {as: 'raw'});
+---
+
+<Example sources={sources} framework={framework}>
+	<ReactApp slot="react" client:idle />
+	<SolidApp slot="solid" client:only="solid-js" />
+	<SvelteApp slot="svelte" client:idle />
+	<VueApp slot="vue" client:idle />
+</Example>
