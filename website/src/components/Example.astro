@@ -1,0 +1,48 @@
+---
+import ExampleContainer from './ExampleContainer.svelte';
+import type {KNOWN_FRAMEWORKS} from '../config';
+
+type Props = {
+	sources: Record<string, () => Promise<string>>;
+	framework: keyof typeof KNOWN_FRAMEWORKS;
+};
+
+const {sources, framework} = Astro.props as Props;
+
+function getFilename(framework: keyof typeof KNOWN_FRAMEWORKS) {
+	switch (framework) {
+		case 'react':
+			return './react.tsx';
+		case 'solid':
+			return './solid.tsx';
+		case 'svelte':
+			return './svelte.svelte';
+		case 'vue':
+			return './vue.vue';
+	}
+}
+
+const filename = getFilename(framework);
+let source = await sources[filename]?.();
+if (source === undefined) {
+	console.warn(`Missing source for ${framework}`);
+	source = '';
+}
+source.replaceAll('\t', '  ');
+---
+
+<ExampleContainer client:idle code={source}>
+	{
+		framework === 'react' ? (
+			<slot name="react" />
+		) : framework === 'solid' ? (
+			<slot name="solid" />
+		) : framework === 'svelte' ? (
+			<slot name="svelte" />
+		) : framework === 'vue' ? (
+			<slot name="vue" />
+		) : (
+			<>Example not available</>
+		)
+	}
+</ExampleContainer>

@@ -1,5 +1,5 @@
 ---
-import ExampleContainer from '../../../../components/ExampleContainer.svelte';
+import Example from '../../../../components/Example.astro';
 import type {KNOWN_FRAMEWORKS} from '../../../../config';
 import ReactApp from './react';
 import SolidApp from './solid';
@@ -12,39 +12,11 @@ type Props = {
 
 const {framework} = Astro.props as Props;
 const sources = import.meta.glob('./*', {as: 'raw'});
-
-function getFilename(framework: keyof typeof KNOWN_FRAMEWORKS) {
-	switch (framework) {
-		case 'react':
-			return './react.tsx';
-		case 'solid':
-			return './solid.tsx';
-		case 'svelte':
-			return './svelte.svelte';
-		case 'vue':
-			return './vue.vue';
-	}
-}
-
-const filename = getFilename(framework);
-const source = await sources[filename]?.();
-if (source === undefined) {
-	console.warn(`Missing source for ${framework}`);
-}
 ---
 
-<ExampleContainer client:idle code={source ?? ''}>
-	{
-		framework === 'react' ? (
-			<ReactApp client:idle />
-		) : framework === 'solid' ? (
-			<SolidApp client:only="solid-js" />
-		) : framework === 'svelte' ? (
-			<SvelteApp client:idle />
-		) : framework === 'vue' ? (
-			<VueApp client:idle />
-		) : (
-			<>Example not available</>
-		)
-	}
-</ExampleContainer>
+<Example sources={sources} framework={framework}>
+	<ReactApp slot="react" client:idle />
+	<SolidApp slot="solid" client:only="solid-js" />
+	<SvelteApp slot="svelte" client:idle />
+	<VueApp slot="vue" client:idle />
+</Example>

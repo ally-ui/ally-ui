@@ -4,7 +4,6 @@
 	let showCode = false;
 
 	export let code = '';
-	$: codeWithoutTabs = code.replaceAll('\t', '  ');
 </script>
 
 <section
@@ -19,5 +18,5 @@
 	</button>
 </section>
 {#if showCode}
-	<pre transition:slide class="max-h-96"><code>{codeWithoutTabs}</code></pre>
+	<pre transition:slide class="max-h-96"><code>{code}</code></pre>
 {/if}
