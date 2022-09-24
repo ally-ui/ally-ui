@@ -1,14 +1,15 @@
 ---
 import type {MDXInstance} from 'astro';
-import {Frontmatter, KNOWN_FRAMEWORK_CODES} from '../../../../../config';
-import {parseWidgetFile} from '../../../../../file';
-import WidgetLayout from '../../../../../layouts/WidgetLayout.astro';
-import {compareVersionStr} from '../../../../../utils/version';
+import {Frontmatter, KNOWN_FRAMEWORK_CODES} from '../../../config';
+import {parseWidgetFile} from '../../../file';
+import WidgetLayout from '../../../layouts/WidgetLayout.astro';
+import { isNotUndefined } from '../../../utils/filter';
+import { isFramework } from '../../../utils/isFramework';
+import {compareVersionStr} from '../../../utils/version';
 
 interface Params {
-	widget: string;
-	framework: string;
-	version?: string | undefined;
+	language: string;
+	slug: string;
 }
 
 interface Props {
@@ -22,14 +23,8 @@ interface StaticPaths {
 }
 
 export async function getStaticPaths(): Promise<StaticPaths[]> {
-	function isNotUndefined<TValue>(
-		value: TValue,
-	): value is Exclude<TValue, undefined> {
-		return value !== undefined;
-	}
-
 	const content = await Astro.glob<Frontmatter>(
-		'../../../../../content/widgets/**/*.mdx',
+		'../../../content/widgets/**/*.mdx',
 	);
 	const languageToWidgetToVersionPages: Record<
 		string,
@@ -60,9 +55,14 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 	return Object.entries(languageToWidgetToVersionPages).flatMap(
 		([language, widgetToVersionPages]) =>
 			Object.entries(widgetToVersionPages).flatMap(([widget, versionPages]) =>
-				KNOWN_FRAMEWORK_CODES.flatMap((framework) =>
+				[undefined, ...KNOWN_FRAMEWORK_CODES].flatMap((framework) =>
 					versionPages.map(([version, page]) => ({
-						params: {language, widget, framework, version},
+						params: {
+							language,
+							slug: [widget, framework, version]
+								.filter(isNotUndefined)
+								.join('/'),
+						},
 						props: {
 							page,
 							versions: versionPages
@@ -75,16 +75,33 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 	);
 }
 
-const {widget, framework} = Astro.params as unknown as Params;
+const {slug} = Astro.params as unknown as Params;
+const [widget, framework, currentVersion] = slug.split('/');
 const {page, versions} = Astro.props as Props;
 const {file, frontmatter, getHeadings, Content} = page;
 ---
 
-<WidgetLayout
-	file={file}
-	frontmatter={frontmatter}
-	headings={getHeadings()}
-	versions={versions}
->
-	<Content widget={widget} framework={framework} versions={versions} />
-</WidgetLayout>
+{
+	widget !== undefined && isFramework(framework) ? (
+		<WidgetLayout
+			file={file}
+			frontmatter={frontmatter}
+			headings={getHeadings()}
+			widget={widget}
+			framework={framework}
+			currentVersion={currentVersion}
+			versions={versions}
+		>
+			<Content widget={widget} framework={framework} versions={versions} />
+		</WidgetLayout>
+	) : (
+		<script is:inline>
+			let framework = window.localStorage.getItem('framework');
+			if (framework === null) {
+				framework = 'react';
+				window.localStorage.setItem('framework', framework);
+			}
+			window.location.pathname = window.location.pathname + '/' + framework;
+		</script>
+	)
+}

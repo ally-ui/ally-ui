@@ -3,7 +3,7 @@ import Features from '../components/Features.astro';
 import FrameworkSelect from '../components/PageContent/FrameworkSelect';
 import VersionSelect from '../components/PageContent/VersionSelect';
 import MainLayout from './MainLayout.astro';
-import type {Frontmatter, KNOWN_FRAMEWORK_CODES} from '../config';
+import type {Frontmatter, KNOWN_FRAMEWORKS} from '../config';
 import {Prism} from '@astrojs/prism';
 import type {MarkdownHeading} from 'astro';
 import AdditionalLinks from '../components/PageContent/AdditionalLinks.astro';
@@ -13,17 +13,14 @@ interface Props {
 	frontmatter: Frontmatter;
 	headings: MarkdownHeading[];
 	file: string;
+	widget: string;
+	framework: keyof typeof KNOWN_FRAMEWORKS;
+	currentVersion?: string | undefined;
 	versions: string[];
 }
 
-interface Params {
-	widget: string;
-	framework: typeof KNOWN_FRAMEWORK_CODES[number];
-	version?: string;
-}
-
-const {widget, framework, version} = Astro.params as unknown as Params;
-const {file, frontmatter, versions} = Astro.props;
+const {file, frontmatter, widget, framework, currentVersion, versions} =
+	Astro.props;
 const {features, mainExample, anatomy} = frontmatter;
 const examples = await Astro.glob('../content/widgets/**/examples/**/*.astro');
 const anatomies = await Astro.glob('../content/widgets/**/anatomy/**/*.astro');
@@ -43,7 +40,11 @@ const anatomies = await Astro.glob('../content/widgets/**/anatomy/**/*.astro');
 			{features !== undefined && <Features features={features} />}
 		</section>
 		<section class="pt-7 text-sm not-prose flex flex-col gap-1">
-			<VersionSelect client:idle currentVersion={version} versions={versions} />
+			<VersionSelect
+				client:idle
+				currentVersion={currentVersion}
+				versions={versions}
+			/>
 			<AdditionalLinks widget={widget} framework={framework} />
 		</section>
 	</div>

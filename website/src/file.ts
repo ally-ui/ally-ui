@@ -5,7 +5,6 @@ export interface ContentFile {
 
 export function parseContentFile(filepath: string): ContentFile | undefined {
 	const tokens = filepath.match(/content\/([\w-\/]+)\/([\w-]+)\.(md|mdx)$/);
-	console.log(tokens);
 	if (tokens === null) return undefined;
 	if (tokens.length !== 4) return undefined;
 	return {
