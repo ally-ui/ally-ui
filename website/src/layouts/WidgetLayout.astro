@@ -37,7 +37,7 @@ const anatomies = await Astro.glob('../content/widgets/**/anatomy/**/*.astro');
 		instances={examples}
 		framework={framework}
 	/>
-	<div class="grid grid-cols-[3fr_1fr]">
+	<div class="grid grid-cols-[3fr_1fr] gap-4">
 		<section>
 			<h3>Features</h3>
 			{features !== undefined && <Features features={features} />}
