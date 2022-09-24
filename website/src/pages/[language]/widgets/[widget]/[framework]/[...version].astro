@@ -1,14 +1,9 @@
 ---
 import type {MDXInstance} from 'astro';
 import {Frontmatter, KNOWN_FRAMEWORK_CODES} from '../../../../../config';
+import {parseWidgetFile} from '../../../../../file';
 import WidgetLayout from '../../../../../layouts/WidgetLayout.astro';
 import {compareVersionStr} from '../../../../../utils/version';
-
-interface PathToken {
-	language: string;
-	widget: string;
-	version: string;
-}
 
 interface Params {
 	widget: string;
@@ -27,17 +22,6 @@ interface StaticPaths {
 }
 
 export async function getStaticPaths(): Promise<StaticPaths[]> {
-	function parsePathToken(filepath: string): PathToken | undefined {
-		const tokens = filepath.match(/([\w-]+)\/(\d+\.\d+\.\d+)\/([\w-]+)\.mdx$/);
-		if (tokens === null) return undefined;
-		if (tokens.length !== 4) return undefined;
-		return {
-			widget: tokens[1]!,
-			version: tokens[2]!,
-			language: tokens[3]!,
-		};
-	}
-
 	function isNotUndefined<TValue>(
 		value: TValue,
 	): value is Exclude<TValue, undefined> {
@@ -53,9 +37,9 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 	> = {};
 
 	for (const page of content) {
-		const pathToken = parsePathToken(page.file);
-		if (pathToken === undefined) continue;
-		const {language, widget, version} = pathToken;
+		const widgetFile = parseWidgetFile(page.file);
+		if (widgetFile === undefined) continue;
+		const {language, widget, version} = widgetFile;
 		const widgetToVersionPages = languageToWidgetToVersionPages[language] ?? {};
 		const pages = widgetToVersionPages[widget] ?? [];
 		pages.push([version, page]);

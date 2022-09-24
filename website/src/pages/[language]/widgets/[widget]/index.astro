@@ -1,20 +1,14 @@
 ---
 import {KNOWN_LANGUAGE_CODES} from '../../../../config';
+import {parseWidgetFile} from '../../../../file';
 
 export async function getStaticPaths() {
-	function parseWidget(filepath: string): string | undefined {
-		const tokens = filepath.match(/([\w-]+)\/\d+\.\d+\.\d+\/[\w-]+\.mdx$/);
-		if (tokens === null) return undefined;
-		if (tokens.length !== 2) return undefined;
-		return tokens[1]!;
-	}
-
 	const content = await Astro.glob('../../../../content/widgets/**/*.mdx');
 	const widgets = new Set<string>();
 	for (const page of content) {
-		const widget = parseWidget(page.file);
-		if (widget === undefined) continue;
-		widgets.add(widget);
+		const widgetFile = parseWidgetFile(page.file);
+		if (widgetFile === undefined) continue;
+		widgets.add(widgetFile.widget);
 	}
 
 	return KNOWN_LANGUAGE_CODES.flatMap((language) =>
