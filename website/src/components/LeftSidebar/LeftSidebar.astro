@@ -1,5 +1,5 @@
 ---
-import {getLanguageFromURL} from '../../paths';
+import {parseLanguage} from '../../url';
 import {SIDEBAR} from '../../config';
 import cx from 'classnames';
 import ThemeSwitch from '../Header/ThemeSwitch';
@@ -11,7 +11,7 @@ type Props = {
 
 const {currentPage} = Astro.props as Props;
 const currentPageMatch = currentPage.slice(1);
-const lang = getLanguageFromURL(currentPage);
+const lang = parseLanguage(currentPage);
 const sidebar = SIDEBAR[lang];
 ---
 

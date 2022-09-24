@@ -2,7 +2,7 @@
 import cx from 'classnames';
 import type {FunctionComponent} from 'preact';
 import {KNOWN_LANGUAGES} from '../../config';
-import {LANG_REGEX} from '../../paths';
+import {LANG_REGEX} from '../../url';
 
 interface LanguageSelectProps {
 	lang: string;
