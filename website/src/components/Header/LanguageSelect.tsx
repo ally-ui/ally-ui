@@ -5,12 +5,12 @@ import {KNOWN_LANGUAGES} from '../../config';
 import {withLanguage} from '../../utils/location';
 
 interface LanguageSelectProps {
-	lang: string;
+	language: string;
 	alwaysShowLabel?: boolean;
 }
 
 const LanguageSelect: FunctionComponent<LanguageSelectProps> = ({
-	lang,
+	language,
 	alwaysShowLabel = false,
 }) => {
 	return (
@@ -36,7 +36,7 @@ const LanguageSelect: FunctionComponent<LanguageSelectProps> = ({
 					'bg-shade-100 hover:bg-shade-100/50 flex h-10 flex-grow cursor-pointer appearance-none items-center rounded-full pl-10 pr-9 md:w-full',
 					alwaysShowLabel ? 'w-full' : 'w-10',
 				)}
-				value={lang}
+				value={language}
 				onInput={(ev) => {
 					window.location.pathname = withLanguage(
 						window.location.pathname,

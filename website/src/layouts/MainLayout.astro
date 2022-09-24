@@ -16,8 +16,8 @@ interface Props {
 
 const {frontmatter, headings} = Astro.props as Props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const currentPage = Astro.url.pathname;
-const currentFile = `src/pages${currentPage.replace(/\/$/, '')}.md`;
+const location = Astro.url.pathname;
+const currentFile = `src/pages${location.replace(/\/$/, '')}.md`;
 const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 ---
 
@@ -56,7 +56,7 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 	</head>
 
 	<body class="grid w-full">
-		<Header currentPage={currentPage} />
+		<Header location={location} />
 		<main
 			class="grid w-full grid-flow-col overflow-x-hidden md:overflow-x-initial lg:px-0 lg:mx-auto max-w-7xl isolate"
 		>
@@ -65,7 +65,7 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 				title="Site Navigation"
 				class="z-10 sticky top-[theme(height.nav)] hidden h-[calc(100vh-theme(height.nav))] md:block sidebar:block -md:fixed -md:top-[theme(height.nav)] -md:w-80"
 			>
-				<LeftSidebar currentPage={currentPage} />
+				<LeftSidebar location={location} />
 			</aside>
 			<div id="grid-main" class="col-[2] flex flex-col h-full">
 				<PageContent

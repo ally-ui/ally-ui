@@ -6,14 +6,13 @@ import ThemeSwitch from '../Header/ThemeSwitch';
 import LanguageSelect from '../Header/LanguageSelect';
 
 type Props = {
-	currentPage: string;
+	location: string;
 };
 
-const {currentPage} = Astro.props as Props;
-const currentPageMatch = currentPage.slice(1);
-console.log(currentPageMatch);
-const lang = parseLanguage(currentPage);
-const sidebar = SIDEBAR[lang];
+const {location} = Astro.props as Props;
+const locationMatch = location.slice(1);
+const language = parseLanguage(location);
+const sidebar = SIDEBAR[language];
 ---
 
 <nav
@@ -54,11 +53,11 @@ const sidebar = SIDEBAR[lang];
 										<a
 											href={url}
 											aria-current={
-												currentPageMatch === child.link ? 'page' : false
+												locationMatch === child.link ? 'page' : false
 											}
 											class={cx(
 												'hover:text-accent hover:bg-shade-100 flex rounded-full px-4 py-2 pl-6 ring-inset',
-												currentPageMatch === child.link &&
+												locationMatch === child.link &&
 													'text-accent bg-shade-100',
 											)}
 										>
@@ -77,6 +76,6 @@ const sidebar = SIDEBAR[lang];
 		class="sticky flex gap-2 p-2 mx-auto mt-4 -mb-4 border rounded-full w-fit flex-center -bottom-4 md:hidden bg-shade border-line"
 	>
 		<ThemeSwitch client:visible />
-		<LanguageSelect lang={lang} alwaysShowLabel client:visible />
+		<LanguageSelect language={language} alwaysShowLabel client:visible />
 	</div>
 </nav>
