@@ -1,9 +1,9 @@
 ---
 import * as CONFIG from '../../config';
 
-type Props = {
+interface Props {
 	editHref: string;
-};
+}
 
 const {editHref} = Astro.props as Props;
 const showMoreSection = CONFIG.COMMUNITY_INVITE_URL;

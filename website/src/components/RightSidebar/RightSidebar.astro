@@ -4,11 +4,11 @@ import MoreMenu from './MoreMenu.astro';
 import type {MarkdownHeading} from 'astro';
 import type {Frontmatter} from '../../config';
 
-type Props = {
+interface Props {
 	frontmatter: Frontmatter;
 	headings: MarkdownHeading[];
 	githubEditUrl: string;
-};
+}
 
 const {frontmatter, headings, githubEditUrl} = Astro.props as Props;
 const {tableOfContentsMaxDepth} = frontmatter;

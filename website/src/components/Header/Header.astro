@@ -7,9 +7,9 @@ import SidebarToggle from './SidebarToggle';
 import SkipToContent from './SkipToContent.astro';
 import ThemeSwitch from './ThemeSwitch';
 
-type Props = {
+interface Props {
 	location: string;
-};
+}
 
 const {location} = Astro.props as Props;
 const language = parseLanguage(location);

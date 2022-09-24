@@ -4,10 +4,10 @@ import type {KNOWN_FRAMEWORKS} from '../config';
 import {getHighlighted} from '../utils/code';
 import {getCode} from '../utils/code';
 
-type Props = {
+interface Props {
 	sources: Record<string, () => Promise<string>>;
 	framework: keyof typeof KNOWN_FRAMEWORKS;
-};
+}
 
 const {sources, framework} = Astro.props as Props;
 const code = await getCode(sources, framework);

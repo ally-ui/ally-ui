@@ -5,9 +5,9 @@ import cx from 'classnames';
 import ThemeSwitch from '../Header/ThemeSwitch';
 import LanguageSelect from '../Header/LanguageSelect';
 
-type Props = {
+interface Props {
 	location: string;
-};
+}
 
 const {location} = Astro.props as Props;
 const locationMatch = location.slice(1);

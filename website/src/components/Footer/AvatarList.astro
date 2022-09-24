@@ -1,8 +1,9 @@
 ---
 // Fetch all commits for just this page's path.
-type Props = {
+interface Props {
 	path: string;
-};
+}
+
 const {path} = Astro.props as Props;
 const resolvedPath = `website/${path}`;
 const url = `https://api.github.com/repos/ally-ui/ally-ui/commits?path=${resolvedPath}`;
