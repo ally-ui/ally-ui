@@ -1,16 +1,48 @@
+import Prism from 'prismjs';
+import 'prism-svelte';
+import 'prismjs/components/prism-jsx';
+import 'prismjs/components/prism-markup';
 import type {KNOWN_FRAMEWORKS} from '../config';
 
-export function getFilename(framework: keyof typeof KNOWN_FRAMEWORKS) {
+type Language = 'jsx' | 'svelte' | 'markup';
+
+export function getLanguage(
+	framework: keyof typeof KNOWN_FRAMEWORKS,
+): Language {
 	switch (framework) {
 		case 'react':
-			return './react.tsx';
 		case 'solid':
-			return './solid.tsx';
+			return 'jsx';
 		case 'svelte':
-			return './svelte.svelte';
+			return 'svelte';
 		case 'vue':
-			return './vue.vue';
+			return 'markup';
 	}
+}
+
+export function getHighlighted(
+	code: string,
+	framework: keyof typeof KNOWN_FRAMEWORKS,
+): [Language, string] {
+	switch (framework) {
+		case 'react':
+		case 'solid':
+			return ['jsx', Prism.highlight(code, Prism.languages.jsx!, 'jsx')];
+		case 'svelte':
+			return [
+				'svelte',
+				Prism.highlight(code, Prism.languages.svelte!, 'svelte'),
+			];
+		case 'vue':
+			return [
+				'markup',
+				Prism.highlight(code, Prism.languages.markup!, 'markup'),
+			];
+	}
+}
+
+export function getFilename(framework: keyof typeof KNOWN_FRAMEWORKS) {
+	return `./${framework}.${getLanguage(framework)}`;
 }
 
 export async function getCode(

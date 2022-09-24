@@ -1,8 +1,7 @@
 ---
 import {Prism} from '@astrojs/prism';
 import type {KNOWN_FRAMEWORKS} from '../../../../config';
-import {getCode} from '../../../../utils/code';
-import {language} from '../../../../utils/highlight';
+import {getCode, getLanguage} from '../../../../utils/code';
 
 interface Props {
 	framework: keyof typeof KNOWN_FRAMEWORKS;
@@ -13,4 +12,4 @@ const sources = import.meta.glob('./*', {as: 'raw'});
 const code = await getCode(sources, framework);
 ---
 
-<Prism lang={language(framework)} code={code} />
+<Prism lang={getLanguage(framework)} code={code} />
