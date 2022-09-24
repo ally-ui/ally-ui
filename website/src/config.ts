@@ -74,7 +74,7 @@ export const SIDEBAR: Sidebar = {
 		Widgets: [{text: 'Dialog', link: 'en/widgets/dialog'}],
 	},
 	fr: {
-		Overview: [{text: 'Introduction', link: 'fr/overview/introduction'}],
-		Widgets: [{text: 'Dialog', link: 'fr/widgets/dialog'}],
+		Aperçu: [{text: 'Introduction', link: 'fr/overview/introduction'}],
+		Widgets: [{text: 'Dialogue (Dialog)', link: 'fr/widgets/dialog'}],
 	},
 };
