@@ -2,7 +2,7 @@
 import cx from 'classnames';
 import type {FunctionComponent} from 'preact';
 import {KNOWN_LANGUAGES} from '../../config';
-import {LANG_REGEX} from '../../utils/url';
+import {withLanguage} from '../../utils/location';
 
 interface LanguageSelectProps {
 	lang: string;
@@ -38,9 +38,10 @@ const LanguageSelect: FunctionComponent<LanguageSelectProps> = ({
 				)}
 				value={lang}
 				onInput={(ev) => {
-					const newLang = ev.currentTarget.value;
-					let actualDest = window.location.pathname.replace(LANG_REGEX, '/');
-					window.location.pathname = '/' + newLang + actualDest;
+					window.location.pathname = withLanguage(
+						window.location.pathname,
+						ev.currentTarget.value,
+					);
 				}}
 			>
 				{Object.entries(KNOWN_LANGUAGES).map(([code, lang]) => (

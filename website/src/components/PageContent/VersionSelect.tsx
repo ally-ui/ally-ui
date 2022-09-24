@@ -1,6 +1,7 @@
 /** @jsxImportSource preact */
 import type {FunctionComponent} from 'preact';
 import {useMemo} from 'preact/hooks';
+import {withVersion} from '../../utils/location';
 import {compareVersionStr} from '../../utils/version';
 
 interface VersionSelectProps {
@@ -21,25 +22,12 @@ const LanguageSelect: FunctionComponent<VersionSelectProps> = ({
 			<select
 				value={currentVersion ?? latestVersion}
 				onInput={(ev) => {
-					const newVersion = ev.currentTarget.value;
-					const pathTokens = window.location.pathname
-						.split('/')
-						.filter((token) => token !== '');
-					const tokenIdx = pathTokens.findIndex(
-						(token) => token === currentVersion,
+					window.location.pathname = withVersion(
+						window.location.pathname,
+						currentVersion,
+						ev.currentTarget.value,
+						latestVersion,
 					);
-					// On the latest version already.
-					if (tokenIdx === -1) {
-						if (newVersion === latestVersion) return;
-						pathTokens.push(newVersion);
-					} else {
-						if (newVersion === latestVersion) {
-							pathTokens.pop();
-						} else {
-							pathTokens[tokenIdx] = newVersion;
-						}
-					}
-					window.location.pathname = pathTokens.join('/');
 				}}
 				class="appearance-none rounded-md bg-transparent py-0.5 pl-1 pr-5 tabular-nums"
 			>

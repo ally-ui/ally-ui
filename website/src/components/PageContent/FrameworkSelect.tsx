@@ -6,6 +6,7 @@ import react from '../../icons/react.svg';
 import solid from '../../icons/solid.svg';
 import svelte from '../../icons/svelte.svg';
 import vue from '../../icons/vue.svg';
+import {withFramework} from '../../utils/location';
 
 interface FrameworkSelectProps {
 	framework: keyof typeof KNOWN_FRAMEWORKS;
@@ -36,15 +37,11 @@ const FrameworkSelect: FunctionComponent<FrameworkSelectProps> = ({
 				class="bg-shade-100 hover:bg-shade-100/50 flex h-10 cursor-pointer appearance-none items-center rounded-full pl-11 pr-9"
 				value={framework}
 				onInput={(ev) => {
-					const newFramework = ev.currentTarget.value;
-					// Replace the last occurrence of the current framework in the path.
-					const pathTokens = window.location.pathname
-						.split('/')
-						.reverse()
-						.filter((token) => token !== '');
-					const tokenIdx = pathTokens.findIndex((token) => token === framework);
-					pathTokens[tokenIdx] = newFramework;
-					window.location.pathname = pathTokens.reverse().join('/');
+					window.location.pathname = withFramework(
+						window.location.pathname,
+						framework,
+						ev.currentTarget.value,
+					);
 				}}
 			>
 				{Object.entries(KNOWN_FRAMEWORKS).map(([code, framework]) => (
