@@ -1,4 +1,4 @@
-import type {KNOWN_LANGUAGE_CODES} from './config';
+import type {KNOWN_LANGUAGE_CODES} from '../config';
 
 export const LANG_REGEX = /\/([a-z]{2}-?[A-Z]{0,2})\//;
 
