@@ -1,9 +1,12 @@
 ---
 import {parseLanguage} from '../../utils/location';
-import {SIDEBAR} from '../../config';
+import {SECTION_LABELS, SIDEBAR_ORDER} from '../../sidebar';
 import cx from 'classnames';
 import ThemeSwitch from '../Header/ThemeSwitch';
 import LanguageSelect from '../Header/LanguageSelect';
+import type {MarkdownInstance} from 'astro';
+import type {Frontmatter} from '../../config';
+import {parseContentFile, parseWidgetFile} from '../../utils/file';
 
 interface Props {
 	location: string;
@@ -11,7 +14,38 @@ interface Props {
 
 const {location} = Astro.props as Props;
 const language = parseLanguage(location);
-const sidebar = SIDEBAR[language];
+const content = await Astro.glob<MarkdownInstance<Frontmatter>>(
+	'../../content/**/*.{md,mdx}',
+);
+
+const languageToSlugToPage: Record<
+	string,
+	Record<string, MarkdownInstance<Frontmatter>>
+> = {};
+for (const page of content) {
+	const contentFile = parseContentFile(page.file) ?? parseWidgetFile(page.file);
+	if (contentFile === undefined) continue;
+	const slugToPage = languageToSlugToPage[contentFile.language] ?? {};
+	slugToPage[contentFile.slug] = page;
+	languageToSlugToPage[contentFile.language] = slugToPage;
+}
+
+const slugToPage = languageToSlugToPage[language]!;
+
+interface SidebarItem {
+	link: string;
+	label: string;
+}
+
+const sidebar: Record<string, SidebarItem[]> = {};
+for (const [section, slugs] of Object.entries(SIDEBAR_ORDER)) {
+	const sectionName = SECTION_LABELS[section]![language];
+	const items: SidebarItem[] = slugs.map((slug) => ({
+		link: `${language}/${slug}`,
+		label: slugToPage[slug]!.frontmatter.title,
+	}));
+	sidebar[sectionName] = items;
+}
 ---
 
 <nav
@@ -21,11 +55,11 @@ const sidebar = SIDEBAR[language];
 >
 	<ul class="text-sm">
 		{
-			Object.entries(sidebar).map(([header, children]) => (
+			Object.entries(sidebar).map(([section, items]) => (
 				<li>
 					<details class="group" open>
 						<summary class="hover:text-accent hover:bg-shade-100 flex items-center justify-between rounded-full p-2 pl-4 font-medium ring-inset">
-							<span>{header}</span>
+							<span>{section}</span>
 							<span class="group-open:rotate-90">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
@@ -45,22 +79,21 @@ const sidebar = SIDEBAR[language];
 							</span>
 						</summary>
 						<ul>
-							{children.map((child) => {
-								const url = Astro.site?.pathname + child.link;
+							{items.map((item) => {
 								return (
 									<li>
 										<a
-											href={url}
+											href={Astro.site?.pathname + item.link}
 											aria-current={
-												location.startsWith('/' + child.link) ? 'page' : false
+												location.startsWith('/' + item.link) ? 'page' : false
 											}
 											class={cx(
 												'hover:text-accent hover:bg-shade-100 flex rounded-full px-4 py-2 pl-6 ring-inset',
-												location.startsWith('/' + child.link) &&
+												location.startsWith('/' + item.link) &&
 													'text-accent bg-shade-100',
 											)}
 										>
-											{child.text}
+											{item.label}
 										</a>
 									</li>
 								);
