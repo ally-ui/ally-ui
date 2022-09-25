@@ -21,17 +21,30 @@ interface Props {
 	versions: string[];
 }
 
-const {file, frontmatter, widget, framework, currentVersion, versions} =
-	Astro.props;
+const {
+	frontmatter,
+	headings,
+	file,
+	widget,
+	framework,
+	currentVersion,
+	versions,
+} = Astro.props;
 const {features, mainExample, anatomy} = frontmatter;
 const examples = await Astro.glob('../content/widgets/**/examples/**/*.astro');
 const anatomies = await Astro.glob('../content/widgets/**/anatomy/**/*.astro');
 
 const language = parseLanguage(Astro.url.pathname);
 const translations = WIDGETS[language];
+
+const widgetHeadings = [
+	{depth: 2, slug: 'installation', text: translations.installation},
+	{depth: 2, slug: 'anatomy', text: translations.anatomy},
+	...headings,
+];
 ---
 
-<MainLayout {...Astro.props}>
+<MainLayout {...Astro.props} headings={widgetHeadings}>
 	<FrameworkSelect client:idle framework={framework} slot="heading-after" />
 
 	<FrontmatterAstroLoader
@@ -62,11 +75,11 @@ const translations = WIDGETS[language];
 		</section>
 	</div>
 
-	<h2>{translations.installation}</h2>
+	<h2 id="installation">{translations.installation}</h2>
 	<p>{translations.installation_sub}</p>
 	<Prism lang="bash" code={`npm install @ally-ui/${framework}-${widget}`} />
 
-	<h2>{translations.anatomy}</h2>
+	<h2 id="anatomy">{translations.anatomy}</h2>
 	<p>{translations.anatomy_sub}</p>
 	<FrontmatterAstroLoader
 		file={file}
