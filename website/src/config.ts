@@ -59,22 +59,3 @@ export const ALGOLIA = {
 	appId: 'XXXXXXXXXX',
 	apiKey: 'XXXXXXXXXX',
 };
-
-interface SidebarItem {
-	text: string;
-	link: string;
-}
-type Sidebar = Record<
-	typeof KNOWN_LANGUAGE_CODES[number],
-	Record<string, SidebarItem[]>
->;
-export const SIDEBAR: Sidebar = {
-	en: {
-		Overview: [{text: 'Introduction', link: 'en/overview/introduction'}],
-		Widgets: [{text: 'Dialog', link: 'en/widgets/dialog'}],
-	},
-	fr: {
-		Aperçu: [{text: 'Introduction', link: 'fr/overview/introduction'}],
-		Widgets: [{text: 'Dialogue (Dialog)', link: 'fr/widgets/dialog'}],
-	},
-};
