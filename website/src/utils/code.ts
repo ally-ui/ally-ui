@@ -1,10 +1,10 @@
 import Prism from 'prismjs';
 import 'prism-svelte';
-import 'prismjs/components/prism-jsx';
+import 'prismjs/components/prism-tsx';
 import 'prismjs/components/prism-markup';
 import type {KNOWN_FRAMEWORKS} from '../config';
 
-type Language = 'jsx' | 'svelte' | 'markup';
+type Language = 'tsx' | 'svelte' | 'markup';
 
 export function getLanguage(
 	framework: keyof typeof KNOWN_FRAMEWORKS,
@@ -12,7 +12,7 @@ export function getLanguage(
 	switch (framework) {
 		case 'react':
 		case 'solid':
-			return 'jsx';
+			return 'tsx';
 		case 'svelte':
 			return 'svelte';
 		case 'vue':
@@ -27,7 +27,7 @@ export function getHighlighted(
 	switch (framework) {
 		case 'react':
 		case 'solid':
-			return ['jsx', Prism.highlight(code, Prism.languages.jsx!, 'jsx')];
+			return ['tsx', Prism.highlight(code, Prism.languages.tsx!, 'tsx')];
 		case 'svelte':
 			return [
 				'svelte',
@@ -51,6 +51,7 @@ export async function getCode(
 ) {
 	const filename = getFilename(framework);
 	let code = await sources[filename]?.();
+	console.log(sources, filename);
 	if (code === undefined) {
 		code = '';
 	}
