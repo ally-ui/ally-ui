@@ -2,18 +2,20 @@
 interface Props {
 	widget: string;
 	framework: string;
+	viewSourceLabel: string;
+	viewOnNpmLabel: string;
 }
 
-const {widget, framework} = Astro.props;
+const {widget, framework, viewSourceLabel, viewOnNpmLabel} = Astro.props;
 
 const links = [
 	{
 		href: `https://github.com/ally-ui/ally-ui/tree/main/packages/${widget}/${framework}`,
-		label: 'View source',
+		label: viewSourceLabel,
 	},
 	{
 		href: `https://www.npmjs.com/package/@ally-ui/${framework}-${widget}`,
-		label: 'View on npm',
+		label: viewOnNpmLabel,
 	},
 ];
 ---

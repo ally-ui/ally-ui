@@ -7,11 +7,13 @@ import {compareVersionStr} from '../../utils/version';
 interface VersionSelectProps {
 	currentVersion?: string | undefined;
 	versions: string[];
+	latestLabel: string;
 }
 
-const LanguageSelect: FunctionComponent<VersionSelectProps> = ({
+const VersionSelect: FunctionComponent<VersionSelectProps> = ({
 	currentVersion,
 	versions,
+	latestLabel,
 }) => {
 	const latestVersion = useMemo(
 		() => versions.sort(compareVersionStr).at(-1)!,
@@ -34,7 +36,7 @@ const LanguageSelect: FunctionComponent<VersionSelectProps> = ({
 				{versions.map((version) => (
 					<option value={version}>
 						{version}
-						{version === latestVersion && ' (latest)'}
+						{version === latestVersion && ` (${latestLabel})`}
 					</option>
 				))}
 			</select>
@@ -59,4 +61,4 @@ const LanguageSelect: FunctionComponent<VersionSelectProps> = ({
 	);
 };
 
-export default LanguageSelect;
+export default VersionSelect;

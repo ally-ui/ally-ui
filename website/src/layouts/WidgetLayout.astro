@@ -8,6 +8,8 @@ import {Prism} from '@astrojs/prism';
 import type {MarkdownHeading} from 'astro';
 import AdditionalLinks from '../components/PageContent/AdditionalLinks.astro';
 import FrontmatterAstroLoader from '../components/FrontmatterAstroLoader.astro';
+import {WIDGETS} from '../translations';
+import {parseLanguage} from '../utils/location';
 
 interface Props {
 	frontmatter: Frontmatter;
@@ -24,19 +26,24 @@ const {file, frontmatter, widget, framework, currentVersion, versions} =
 const {features, mainExample, anatomy} = frontmatter;
 const examples = await Astro.glob('../content/widgets/**/examples/**/*.astro');
 const anatomies = await Astro.glob('../content/widgets/**/anatomy/**/*.astro');
+
+const language = parseLanguage(Astro.url.pathname);
+const translations = WIDGETS[language];
 ---
 
 <MainLayout {...Astro.props}>
 	<FrameworkSelect client:idle framework={framework} slot="heading-after" />
+
 	<FrontmatterAstroLoader
 		file={file}
 		target={mainExample}
 		instances={examples}
 		framework={framework}
 	/>
+
 	<div class="grid grid-cols-[3fr_1fr] gap-4">
 		<section>
-			<h3>Features</h3>
+			<h3>{translations.features}</h3>
 			{features !== undefined && <Features features={features} />}
 		</section>
 		<section class="pt-7 text-sm not-prose flex flex-col gap-1">
@@ -44,20 +51,29 @@ const anatomies = await Astro.glob('../content/widgets/**/anatomy/**/*.astro');
 				client:idle
 				currentVersion={currentVersion}
 				versions={versions}
+				latestLabel={translations.version_latest}
 			/>
-			<AdditionalLinks widget={widget} framework={framework} />
+			<AdditionalLinks
+				widget={widget}
+				framework={framework}
+				viewSourceLabel={translations.view_source}
+				viewOnNpmLabel={translations.view_on_npm}
+			/>
 		</section>
 	</div>
-	<h2>Installation</h2>
-	<p>Use your favorite package manager.</p>
+
+	<h2>{translations.installation}</h2>
+	<p>{translations.installation_sub}</p>
 	<Prism lang="bash" code={`npm install @ally-ui/${framework}-${widget}`} />
-	<h2>Anatomy</h2>
-	<p>Construct the widget from component parts.</p>
+
+	<h2>{translations.anatomy}</h2>
+	<p>{translations.anatomy_sub}</p>
 	<FrontmatterAstroLoader
 		file={file}
 		target={anatomy}
 		instances={anatomies}
 		framework={framework}
 	/>
+
 	<slot />
 </MainLayout>
