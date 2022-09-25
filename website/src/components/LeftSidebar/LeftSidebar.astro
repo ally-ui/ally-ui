@@ -10,7 +10,6 @@ interface Props {
 }
 
 const {location} = Astro.props as Props;
-const locationMatch = location.slice(1);
 const language = parseLanguage(location);
 const sidebar = SIDEBAR[language];
 ---
@@ -53,11 +52,11 @@ const sidebar = SIDEBAR[language];
 										<a
 											href={url}
 											aria-current={
-												locationMatch === child.link ? 'page' : false
+												location.startsWith('/' + child.link) ? 'page' : false
 											}
 											class={cx(
 												'hover:text-accent hover:bg-shade-100 flex rounded-full px-4 py-2 pl-6 ring-inset',
-												locationMatch === child.link &&
+												location.startsWith('/' + child.link) &&
 													'text-accent bg-shade-100',
 											)}
 										>
