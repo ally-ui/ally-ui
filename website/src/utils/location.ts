@@ -1,11 +1,10 @@
 import type {KNOWN_LANGUAGES} from '../config';
 
-export const LANG_REGEX = /\/([a-z]{2}-?[A-Z]{0,2})\//;
+export const LANG_REGEX = /\/(?<language>[a-z]{2}-?[A-Z]{0,2})\//;
 
 export function parseLanguage(location: string) {
 	const tokens = location.match(LANG_REGEX);
-	const language = tokens ? tokens[1]! : 'en';
-	return language as keyof typeof KNOWN_LANGUAGES;
+	return (tokens?.groups?.language ?? 'en') as keyof typeof KNOWN_LANGUAGES;
 }
 
 export function withLanguage(location: string, newLanguage: string): string {
