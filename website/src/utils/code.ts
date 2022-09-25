@@ -41,8 +41,20 @@ export function getHighlighted(
 	}
 }
 
+export function getFileExtension(framework: keyof typeof KNOWN_FRAMEWORKS) {
+	switch (framework) {
+		case 'react':
+		case 'solid':
+			return 'tsx';
+		case 'svelte':
+			return 'svelte';
+		case 'vue':
+			return 'vue';
+	}
+}
+
 export function getFilename(framework: keyof typeof KNOWN_FRAMEWORKS) {
-	return `./${framework}.${getLanguage(framework)}`;
+	return `./${framework}.${getFileExtension(framework)}`;
 }
 
 export async function getCode(
