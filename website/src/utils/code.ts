@@ -63,7 +63,6 @@ export async function getCode(
 ) {
 	const filename = getFilename(framework);
 	let code = await sources[filename]?.();
-	console.log(sources, filename);
 	if (code === undefined) {
 		code = '';
 	}
