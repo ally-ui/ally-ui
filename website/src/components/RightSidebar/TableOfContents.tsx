@@ -47,11 +47,13 @@ function useTemporaryTrue(ms: number): TemporaryTrue {
 interface TableOfContentsProps {
 	headings: MarkdownHeading[];
 	maxDepth?: number | undefined;
+	onThisPageLabel: string;
 }
 
 const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 	headings = [],
 	maxDepth = 3,
+	onThisPageLabel,
 }) => {
 	const filteredHeadings = headings.filter(
 		// Not sure why `maxDepth` is sometimes `null` despite default value, so
@@ -136,7 +138,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 
 	return (
 		<>
-			<h2 className="mb-2 text-lg font-semibold">On this page</h2>
+			<h2 className="mb-2 text-lg font-semibold">{onThisPageLabel}</h2>
 			<ul class="text-sm">
 				<li>
 					<a

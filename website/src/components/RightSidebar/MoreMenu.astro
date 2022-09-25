@@ -1,5 +1,7 @@
 ---
 import * as CONFIG from '../../config';
+import {MORE_MENU} from '../../translations';
+import {parseLanguage} from '../../utils/location';
 
 interface Props {
 	editHref: string;
@@ -7,9 +9,16 @@ interface Props {
 
 const {editHref} = Astro.props as Props;
 const showMoreSection = CONFIG.COMMUNITY_INVITE_URL;
+
+const language = parseLanguage(Astro.url.pathname);
+const translations = MORE_MENU[language];
 ---
 
-{showMoreSection && <h2 class="mb-2 text-lg font-semibold">More</h2>}
+{
+	showMoreSection && (
+		<h2 class="mb-2 text-lg font-semibold">{translations.more}</h2>
+	)
+}
 <ul class="text-sm">
 	{
 		editHref && (
@@ -19,7 +28,7 @@ const showMoreSection = CONFIG.COMMUNITY_INVITE_URL;
 					target="_blank"
 					class="hover:text-accent focus:text-accent border-shade-200 block border-l-2 px-4 py-2 font-medium ring-inset"
 				>
-					Edit this page
+					{translations.edit_page}
 				</a>
 			</li>
 		)
@@ -32,7 +41,7 @@ const showMoreSection = CONFIG.COMMUNITY_INVITE_URL;
 					target="_blank"
 					class="hover:text-accent focus:text-accent border-shade-200 block border-l-2 px-4 py-2 font-medium ring-inset"
 				>
-					Join our community
+					{translations.join_community}
 				</a>
 			</li>
 		)

@@ -3,6 +3,8 @@ import type {Frontmatter} from '../../config';
 import MoreMenu from '../RightSidebar/MoreMenu.astro';
 import TableOfContents from '../RightSidebar/TableOfContents';
 import type {MarkdownHeading} from 'astro';
+import {TOC} from '../../translations';
+import {parseLanguage} from '../../utils/location';
 
 interface Props {
 	frontmatter: Frontmatter;
@@ -12,6 +14,9 @@ interface Props {
 
 const {frontmatter, headings, githubEditUrl} = Astro.props as Props;
 const {title, description, tableOfContentsMaxDepth} = frontmatter;
+
+const language = parseLanguage(Astro.url.pathname);
+const tocTranslations = TOC[language];
 ---
 
 <article
@@ -33,6 +38,7 @@ const {title, description, tableOfContentsMaxDepth} = frontmatter;
 				client:media="(max-width: 50em)"
 				headings={headings}
 				maxDepth={tableOfContentsMaxDepth}
+				onThisPageLabel={tocTranslations.on_this_page}
 			/>
 		</nav>
 		<div

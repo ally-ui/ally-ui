@@ -1,5 +1,43 @@
 import type {KNOWN_LANGUAGES} from './config';
 
+interface TableOfContentsTranslations {
+	on_this_page: string;
+}
+
+export const TOC: Record<
+	keyof typeof KNOWN_LANGUAGES,
+	TableOfContentsTranslations
+> = {
+	en: {
+		on_this_page: 'On this page',
+	},
+	fr: {
+		on_this_page: 'Sur cette page',
+	},
+};
+
+interface MoreMenuTranslations {
+	more: string;
+	edit_page: string;
+	join_community: string;
+}
+
+export const MORE_MENU: Record<
+	keyof typeof KNOWN_LANGUAGES,
+	MoreMenuTranslations
+> = {
+	en: {
+		more: 'More',
+		edit_page: 'Edit this page',
+		join_community: 'Join our community',
+	},
+	fr: {
+		more: 'Encore',
+		edit_page: 'Modifiez cette page',
+		join_community: 'Rejoignez notre communauté',
+	},
+};
+
 interface WidgetsTranslations {
 	features: string;
 	installation: string;

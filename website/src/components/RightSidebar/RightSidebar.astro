@@ -3,6 +3,8 @@ import TableOfContents from './TableOfContents';
 import MoreMenu from './MoreMenu.astro';
 import type {MarkdownHeading} from 'astro';
 import type {Frontmatter} from '../../config';
+import {parseLanguage} from '../../utils/location';
+import {TOC} from '../../translations';
 
 interface Props {
 	frontmatter: Frontmatter;
@@ -12,6 +14,9 @@ interface Props {
 
 const {frontmatter, headings, githubEditUrl} = Astro.props as Props;
 const {tableOfContentsMaxDepth} = frontmatter;
+
+const language = parseLanguage(Astro.url.pathname);
+const tocTranslations = TOC[language];
 ---
 
 <nav aria-labelledby="grid-right" class="px-4 py-8 overflow-y-auto wh-full">
@@ -20,6 +25,7 @@ const {tableOfContentsMaxDepth} = frontmatter;
 			client:media="(min-width: 50em)"
 			headings={headings}
 			maxDepth={tableOfContentsMaxDepth}
+			onThisPageLabel={tocTranslations.on_this_page}
 		/>
 		<MoreMenu editHref={githubEditUrl} />
 	</div>
