@@ -36,3 +36,22 @@ export const WIDGETS: Record<
 		view_on_npm: 'Voyez sur npm',
 	},
 };
+
+interface ExampleTranslations {
+	example_not_available: string;
+	show_code: string;
+}
+
+export const EXAMPLE: Record<
+	keyof typeof KNOWN_LANGUAGES,
+	ExampleTranslations
+> = {
+	en: {
+		example_not_available: 'Example not available',
+		show_code: 'Show code',
+	},
+	fr: {
+		example_not_available: 'Exemple non disponible',
+		show_code: 'Afficher le code',
+	},
+};

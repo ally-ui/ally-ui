@@ -3,6 +3,8 @@ import ExampleContainer from './ExampleContainer.svelte';
 import type {KNOWN_FRAMEWORKS} from '../config';
 import {getHighlighted} from '../utils/code';
 import {getCode} from '../utils/code';
+import {parseLanguage} from '../utils/location';
+import {EXAMPLE} from '../translations';
 
 interface Props {
 	sources: Record<string, () => Promise<string>>;
@@ -11,10 +13,18 @@ interface Props {
 
 const {sources, framework} = Astro.props as Props;
 const code = await getCode(sources, framework);
-const [language, codeHTML] = getHighlighted(code, framework);
+const [codeLanguage, codeHTML] = getHighlighted(code, framework);
+
+const language = parseLanguage(Astro.url.pathname);
+const translations = EXAMPLE[language];
 ---
 
-<ExampleContainer client:idle language={language} codeHTML={codeHTML}>
+<ExampleContainer
+	client:idle
+	codeLanguage={codeLanguage}
+	codeHTML={codeHTML}
+	showCodeLabel={translations.show_code}
+>
 	{
 		framework === 'react' ? (
 			<slot name="react" />
@@ -25,7 +35,7 @@ const [language, codeHTML] = getHighlighted(code, framework);
 		) : framework === 'vue' ? (
 			<slot name="vue" />
 		) : (
-			<>Example not available</>
+			<>{translations.example_not_available}</>
 		)
 	}
 </ExampleContainer>
