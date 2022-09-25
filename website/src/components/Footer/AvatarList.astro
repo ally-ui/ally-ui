@@ -1,4 +1,7 @@
 ---
+import {AVATAR_LIST} from '../../translations';
+import {parseLanguage} from '../../utils/location';
+
 // Fetch all commits for just this page's path.
 interface Props {
 	path: string;
@@ -9,12 +12,12 @@ const resolvedPath = `website/${path}`;
 const url = `https://api.github.com/repos/ally-ui/ally-ui/commits?path=${resolvedPath}`;
 const commitsURL = `https://github.com/ally-ui/ally-ui/commits/main/${resolvedPath}`;
 
-type Commit = {
+interface Commit {
 	author: {
 		id: string;
 		login: string;
 	};
-};
+}
 
 async function getCommits(url: string) {
 	try {
@@ -66,8 +69,11 @@ function removeDups(arr: Commit[]) {
 
 const data = await getCommits(url);
 const unique = removeDups(data);
-const recentContributors = unique.slice(0, 3); // only show avatars for the 3 most recent contributors
-const additionalContributors = unique.length - recentContributors.length; // list the rest of them as # of extra contributors
+const recentContributors = unique.slice(0, 3); // Only show avatars for the 3 most recent contributors.
+const additionalContributors = unique.length - recentContributors.length; // List the rest of them as # of extra contributors.
+
+const language = parseLanguage(Astro.url.pathname);
+const translations = AVATAR_LIST[language];
 ---
 
 <div class="flex items-center gap-3">
@@ -106,7 +112,7 @@ const additionalContributors = unique.length - recentContributors.length; // lis
 			</span>
 		)
 	}
-	{unique.length === 0 && <a href={commitsURL}>Contributors</a>}
+	{unique.length === 0 && <a href={commitsURL}>{translations.contributors}</a>}
 </div>
 
 <style lang="postcss">

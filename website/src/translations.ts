@@ -38,6 +38,22 @@ export const MORE_MENU: Record<
 	},
 };
 
+interface AvatarListTranslations {
+	contributors: string;
+}
+
+export const AVATAR_LIST: Record<
+	keyof typeof KNOWN_LANGUAGES,
+	AvatarListTranslations
+> = {
+	en: {
+		contributors: 'Contributors',
+	},
+	fr: {
+		contributors: 'Contributeurs',
+	},
+};
+
 interface WidgetsTranslations {
 	features: string;
 	installation: string;
