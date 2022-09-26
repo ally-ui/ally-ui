@@ -1,6 +1,7 @@
 import type {KNOWN_LANGUAGES} from './config';
 
 interface TableOfContentsTranslations {
+	overview: string;
 	on_this_page: string;
 }
 
@@ -9,9 +10,11 @@ export const TOC: Record<
 	TableOfContentsTranslations
 > = {
 	en: {
+		overview: 'Overview',
 		on_this_page: 'On this page',
 	},
 	fr: {
+		overview: 'Aperçu',
 		on_this_page: 'Sur cette page',
 	},
 };

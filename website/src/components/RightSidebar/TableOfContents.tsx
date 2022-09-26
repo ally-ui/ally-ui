@@ -47,12 +47,14 @@ function useTemporaryTrue(ms: number): TemporaryTrue {
 interface TableOfContentsProps {
 	headings: MarkdownHeading[];
 	maxDepth?: number | undefined;
+	overviewLabel: string;
 	onThisPageLabel: string;
 }
 
 const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 	headings = [],
 	maxDepth = 3,
+	overviewLabel,
 	onThisPageLabel,
 }) => {
 	const filteredHeadings = headings.filter(
@@ -150,7 +152,7 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 							},
 						)}
 					>
-						Overview
+						{overviewLabel}
 					</a>
 				</li>
 				{filteredHeadings.map(({slug, depth, text}) => (
