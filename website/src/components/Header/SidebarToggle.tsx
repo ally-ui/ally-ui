@@ -22,25 +22,19 @@ const SidebarToggle: FunctionalComponent = () => {
 
 	useEffect(
 		function closeSidebarOnClickOutside() {
-			if (!showSidebar) {
-				return;
-			}
+			if (!showSidebar) return;
 			const sidebar = document.querySelector('#sidebar');
-			if (sidebar === null) {
-				return;
-			}
+			if (sidebar === null) return;
 			const handleClick = (ev: Event) => {
-				if (!(ev.target instanceof Element)) {
-					return;
-				}
-				if (sidebar.contains(ev.target)) {
-					return;
-				}
+				if (!(ev.target instanceof Element)) return;
+				if (sidebar.contains(ev.target)) return;
 				setShowSidebar(false);
+				ev.preventDefault();
+				ev.stopPropagation();
 			};
-			window.addEventListener('click', handleClick);
+			window.addEventListener('click', handleClick, {capture: true});
 			return () => {
-				window.removeEventListener('click', handleClick);
+				window.removeEventListener('click', handleClick, {capture: true});
 			};
 		},
 		[showSidebar],
@@ -48,13 +42,9 @@ const SidebarToggle: FunctionalComponent = () => {
 
 	useEffect(
 		function closeSidebarOnEscape() {
-			if (!showSidebar) {
-				return;
-			}
+			if (!showSidebar) return;
 			const sidebar = document.querySelector('#sidebar');
-			if (sidebar === null) {
-				return;
-			}
+			if (sidebar === null) return;
 			const handleKeyDown = (ev: KeyboardEvent) => {
 				if (ev.key === 'Escape') {
 					setShowSidebar(false);
@@ -68,81 +58,52 @@ const SidebarToggle: FunctionalComponent = () => {
 		[showSidebar],
 	);
 
+	useEffect(function closeSidebarOnScreenWide() {
+		const query = window.matchMedia('screen and (min-width: 50rem)');
+		const handleMediaChange = (ev: MediaQueryListEvent) => {
+			if (ev.matches) {
+				setShowSidebar(false);
+			}
+		};
+		query.addEventListener('change', handleMediaChange);
+		return () => {
+			query.removeEventListener('change', handleMediaChange);
+		};
+	});
+
 	useEffect(
 		function focusSidebarOnOpen() {
-			if (!showSidebar) {
-				return;
-			}
+			if (!showSidebar) return;
 			const sidebar = document.querySelector('#sidebar');
 			const target = sidebar?.querySelector(FOCUSABLE_SELECTOR);
-			if (target === null) {
-				return;
-			}
-			if (!(target instanceof HTMLElement)) {
-				return;
-			}
+			if (target === null) return;
+			if (!(target instanceof HTMLElement)) return;
 			target.focus();
 		},
 		[showSidebar],
 	);
 
-	const toggleRef = useRef<HTMLButtonElement>(null);
+	const toggleRef = useRef<HTMLInputElement>(null);
 	useEffect(
 		function focusToggleOnClose() {
-			if (showSidebar) {
-				return;
-			}
+			if (showSidebar) return;
 			toggleRef.current?.focus();
 		},
 		[showSidebar],
 	);
 
 	return (
-		<button
-			ref={toggleRef}
-			type="button"
-			aria-pressed={showSidebar ? 'true' : 'false'}
-			id="sidebar-toggle"
-			onClick={() => setShowSidebar(!showSidebar)}
-			className="wh-8"
-		>
-			{showSidebar ? (
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="icon icon-tabler icon-tabler-x"
-					width="100%"
-					height="100%"
-					viewBox="0 0 24 24"
-					stroke-width="1.5"
-					stroke="currentColor"
-					fill="none"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-					<line x1="18" y1="6" x2="6" y2="18" />
-					<line x1="6" y1="6" x2="18" y2="18" />
-				</svg>
-			) : (
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					class="icon icon-tabler icon-tabler-menu"
-					width="100%"
-					height="100%"
-					viewBox="0 0 24 24"
-					stroke-width="1.5"
-					stroke="currentColor"
-					fill="none"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-					<line x1="4" y1="8" x2="20" y2="8" />
-					<line x1="4" y1="16" x2="20" y2="16" />
-				</svg>
-			)}
-			<span className="sr-only">Toggle sidebar</span>
-		</button>
+		<div class="flex-center flex">
+			<input
+				id="sidebar-toggle"
+				type="checkbox"
+				ref={toggleRef}
+				checked={showSidebar}
+				onClick={() => setShowSidebar(!showSidebar)}
+				aria-label="Show sidebar"
+				class="wh-6 before:bg-word after:bg-word relative m-0 cursor-pointer appearance-none bg-transparent before:absolute before:top-1.5 before:h-0.5 before:w-full before:rounded-sm before:transition-transform after:absolute after:bottom-1.5 after:h-0.5 after:w-full after:rounded-sm after:transition-transform checked:before:translate-y-[0.32rem] checked:before:rotate-45 checked:after:translate-y-[-0.32rem] checked:after:-rotate-45"
+			/>
+		</div>
 	);
 };
 
