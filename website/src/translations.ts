@@ -87,7 +87,7 @@ export const WIDGETS: Record<
 		installation: 'Installation',
 		installation_sub: 'Utilisez votre gestionnaire de paquets préféré.',
 		anatomy: 'Anatomie',
-		anatomy_sub: 'Construire le widget à partir de composants.',
+		anatomy_sub: 'Construisez le widget à partir de composants.',
 		version_latest: 'dernière',
 		view_source: 'Voyez la source',
 		view_on_npm: 'Voyez sur npm',
