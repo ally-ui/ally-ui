@@ -16,27 +16,31 @@ export default function App() {
 						<Dialog.Description className="mb-8 text-sm text-gray-400">
 							We would love to hear your thoughts
 						</Dialog.Description>
-						<fieldset className="mb-2 flex items-center justify-end gap-6">
-							<label htmlFor="name" className="text-sm text-blue-700">
+						<form className="mb-8 grid grid-cols-[1fr_3fr] justify-end gap-4">
+							<label
+								htmlFor="name"
+								className="p-2 text-right text-sm text-blue-700"
+							>
 								Name
 							</label>
 							<input
 								type="text"
 								id="name"
 								placeholder="Bryan Lee"
-								className="w-3/4 rounded-lg border border-blue-400 p-2 text-sm text-black placeholder:text-gray-400"
+								className="rounded-lg border border-blue-400 p-2 text-sm text-black placeholder:text-gray-400"
 							/>
-						</fieldset>
-						<fieldset className="mb-8 flex items-start justify-end gap-6">
-							<label htmlFor="feedback" className="mt-2 text-sm text-blue-700">
+							<label
+								htmlFor="feedback"
+								className="p-2 text-right text-sm text-blue-700"
+							>
 								Feedback
 							</label>
 							<textarea
 								id="feedback"
 								placeholder="Enter your feedback..."
-								className="w-3/4 rounded-lg border border-blue-400 p-2 text-sm text-black placeholder:text-gray-400"
+								className="rounded-lg border border-blue-400 p-2 text-sm text-black placeholder:text-gray-400"
 							/>
-						</fieldset>
+						</form>
 						<Dialog.Close className="self-end rounded-xl bg-blue-400/25 px-4 py-2 font-medium text-blue-700 hover:opacity-80">
 							Send feedback
 						</Dialog.Close>

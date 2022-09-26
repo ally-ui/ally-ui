@@ -21,25 +21,25 @@
 				<Dialog.Description class="mb-8 text-sm text-gray-400">
 					We would love to hear your thoughts
 				</Dialog.Description>
-				<fieldset class="mb-2 flex items-center justify-end gap-6">
-					<label for="name" class="text-sm text-blue-700"> Name </label>
+				<form class="mb-8 grid grid-cols-[1fr_3fr] justify-end gap-4">
+					<label for="name" class="p-2 text-right text-sm text-blue-700">
+						Name
+					</label>
 					<input
 						type="text"
 						id="name"
 						placeholder="Bryan Lee"
-						class="w-3/4 rounded-lg border border-blue-400 p-2 text-sm text-black placeholder:text-gray-400"
+						class="rounded-lg border border-blue-400 p-2 text-sm text-black placeholder:text-gray-400"
 					/>
-				</fieldset>
-				<fieldset class="mb-8 flex items-start justify-end gap-6">
-					<label for="feedback" class="mt-2 text-sm text-blue-700">
+					<label for="feedback" class="p-2 text-right text-sm text-blue-700">
 						Feedback
 					</label>
 					<textarea
 						id="feedback"
 						placeholder="Enter your feedback..."
-						class="w-3/4 rounded-lg border border-blue-400 p-2 text-sm text-black placeholder:text-gray-400"
+						class="rounded-lg border border-blue-400 p-2 text-sm text-black placeholder:text-gray-400"
 					/>
-				</fieldset>
+				</form>
 				<Dialog.Close
 					class="self-end rounded-xl bg-blue-400/25 px-4 py-2 font-medium text-blue-700 hover:opacity-80"
 				>
