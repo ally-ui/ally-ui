@@ -4,14 +4,13 @@ import {parseLanguage} from '../../utils/location';
 
 // Fetch all commits for just this page's path.
 interface Props {
-	path: string;
+	currentFile: string;
 }
 
-// TODO Fix content page path
-const {path} = Astro.props as Props;
-const resolvedPath = `website/${path}`;
+const {currentFile} = Astro.props as Props;
+const resolvedPath = `website/${currentFile}`;
 const url = `https://api.github.com/repos/ally-ui/ally-ui/commits?path=${resolvedPath}`;
-const commitsURL = `https://github.com/ally-ui/ally-ui/commits/main/${resolvedPath}`;
+const contributionsUrl = `https://github.com/ally-ui/ally-ui/commits/main/${resolvedPath}`;
 
 interface Commit {
 	author: {
@@ -20,7 +19,7 @@ interface Commit {
 	};
 }
 
-async function getCommits(url: string) {
+async function fetchCommits(url: string) {
 	try {
 		const token = import.meta.env.SNOWPACK_PUBLIC_GITHUB_TOKEN ?? 'hello';
 		if (!token) {
@@ -68,8 +67,7 @@ function removeDups(arr: Commit[]) {
 	return [...map.values()];
 }
 
-const data = await getCommits(url);
-const unique = removeDups(data);
+const unique = removeDups(await fetchCommits(url));
 const recentContributors = unique.slice(0, 3); // Only show avatars for the 3 most recent contributors.
 const additionalContributors = unique.length - recentContributors.length; // List the rest of them as # of extra contributors.
 
@@ -106,14 +104,18 @@ const translations = AVATAR_LIST[language];
 		additionalContributors > 0 && (
 			<span>
 				<a
-					href={commitsURL}
+					href={contributionsUrl}
 				>{`and ${additionalContributors} additional contributor${
 					additionalContributors > 1 ? 's' : ''
 				}.`}</a>
 			</span>
 		)
 	}
-	{unique.length === 0 && <a href={commitsURL}>{translations.contributors}</a>}
+	{
+		unique.length === 0 && (
+			<a href={contributionsUrl}>{translations.contributors}</a>
+		)
+	}
 </div>
 
 <style lang="postcss">

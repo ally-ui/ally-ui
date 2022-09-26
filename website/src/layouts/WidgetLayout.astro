@@ -11,7 +11,6 @@ import FrontmatterAstroLoader from '../components/FrontmatterAstroLoader.astro';
 import {WIDGETS} from '../translations';
 import {parseLanguage, parseWidgetPath} from '../utils/location';
 import {compareVersionStr} from '../utils/version';
-import * as CONFIG from '../config';
 
 interface Props {
 	frontmatter: Frontmatter;
@@ -50,13 +49,12 @@ const latestVersion = versions.sort(compareVersionStr).at(-1)!;
 const currentFile = `src/content/widgets/${path.widget}/${
 	path.version ?? latestVersion
 }/${path.language}.mdx`;
-const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 ---
 
 <MainLayout
 	{...Astro.props}
 	headings={widgetHeadings}
-	githubEditUrl={githubEditUrl}
+	currentFile={currentFile}
 >
 	<FrameworkSelect client:idle framework={framework} slot="heading-after" />
 

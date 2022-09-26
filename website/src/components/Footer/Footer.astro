@@ -2,12 +2,12 @@
 import AvatarList from './AvatarList.astro';
 
 interface Props {
-	path: string;
+	currentFile: string;
 }
 
-const {path} = Astro.props as Props;
+const {currentFile} = Astro.props as Props;
 ---
 
 <footer class="p-8 mt-auto border-t border-line">
-	<AvatarList path={path} />
+	<AvatarList currentFile={currentFile} />
 </footer>
