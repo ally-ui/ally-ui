@@ -16,7 +16,7 @@ const sources = import.meta.glob('./*', {as: 'raw'});
 
 <Example sources={sources} framework={framework}>
 	<ReactApp slot="react" client:idle />
-	<SolidApp slot="solid" client:only="solid-js" />
+	<SolidApp slot="solid" client:idle />
 	<SvelteApp slot="svelte" client:idle />
 	<VueApp slot="vue" client:idle />
 </Example>

@@ -3,8 +3,7 @@
 	"version": "0.0.18",
 	"scripts": {
 		"example": "vite",
-		"build": "tsc && vite build",
-		"build:watch": "vite build --watch",
+		"build": "rollup --config rollup.config.js",
 		"clean": "rimraf dist",
 		"test": "vitest run",
 		"test:watch": "vitest",
@@ -25,13 +24,14 @@
 	"files": [
 		"dist"
 	],
-	"main": "./dist/main.umd.cjs",
-	"module": "./dist/main.js",
-	"types": "./dist/main.d.ts",
+	"main": "./dist/cjs/main.js",
+	"module": "./dist/esm/main.js",
+	"types": "./dist/types/main.d.ts",
 	"exports": {
 		".": {
-			"import": "./dist/main.js",
-			"require": "./dist/main.umd.cjs"
+			"solid": "./dist/source/main.js",
+			"import": "./dist/esm/main.js",
+			"require": "./dist/cjs/main.js"
 		},
 		"./package.json": "./package.json"
 	},
