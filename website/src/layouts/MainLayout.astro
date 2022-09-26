@@ -8,6 +8,7 @@ import RightSidebar from '../components/RightSidebar/RightSidebar.astro';
 import * as CONFIG from '../config';
 import type {MarkdownHeading} from 'astro';
 import Footer from '../components/Footer/Footer.astro';
+import {parsePath} from '../utils/location';
 
 interface Props {
 	frontmatter: CONFIG.Frontmatter;
@@ -17,7 +18,8 @@ interface Props {
 const {frontmatter, headings} = Astro.props as Props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const location = Astro.url.pathname;
-const currentFile = `src/pages${location.replace(/\/$/, '')}.md`;
+const path = parsePath(Astro.url.pathname)!;
+const currentFile = `src/content/${path.rest}/${path.language}.md`;
 const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 ---
 

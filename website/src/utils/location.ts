@@ -1,15 +1,31 @@
 import type {KNOWN_LANGUAGES} from '../config';
 
-export const LANG_REGEX = /\/(?<language>[a-z]{2}-?[A-Z]{0,2})\//;
+interface Path {
+	language: keyof typeof KNOWN_LANGUAGES;
+	rest: string;
+}
+
+export function parsePath(location: string): Path | undefined {
+	const tokens = location.match(
+		/(?<language>[a-z]{2}-?[A-Z]{0,2})\/(?<rest>[\w-\/]+)/,
+	);
+	if (tokens === null) return undefined;
+	return {
+		language: tokens.groups?.language! as keyof typeof KNOWN_LANGUAGES,
+		rest: tokens.groups?.rest!,
+	};
+}
 
 export function parseLanguage(location: string) {
-	const tokens = location.match(LANG_REGEX);
-	return (tokens?.groups?.language ?? 'en') as keyof typeof KNOWN_LANGUAGES;
+	const path = parsePath(location);
+	if (path === undefined) return 'en';
+	return path.language;
 }
 
 export function withLanguage(location: string, newLanguage: string): string {
-	let actualDest = location.replace(LANG_REGEX, '/');
-	return '/' + newLanguage + actualDest;
+	const path = parsePath(location);
+	if (path === undefined) return location;
+	return `/${newLanguage}/${path.rest}`;
 }
 
 export function withFramework(
