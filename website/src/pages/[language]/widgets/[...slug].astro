@@ -59,9 +59,11 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 					versionPages.map(([version, page]) => ({
 						params: {
 							language,
-							slug: [widget, framework, version]
-								.filter(isNotUndefined)
-								.join('/'),
+							slug: framework === undefined 
+								? widget
+								: [widget, framework, version]
+									.filter(isNotUndefined)
+									.join('/'),
 						},
 						props: {
 							page,

@@ -25,7 +25,7 @@ interface WidgetPath {
 
 export function parseWidgetPath(location: string): WidgetPath | undefined {
 	const tokens = location.match(
-		/(?<language>[a-z]{2}-?[A-Z]{0,2})\/widgets\/(?<widget>[\w-]+)\/(?<framework>[\w-]+)\/?(?<version>\d+\.\d+\.\d+)?$/,
+		/(?<language>[a-z]{2}-?[A-Z]{0,2})\/widgets\/(?<widget>[\w-]+)\/(?<framework>[\w-]+)\/?(?<version>\d+\.\d+\.\d+)?\/?$/,
 	);
 	if (tokens === null) return undefined;
 	return {
