@@ -16,6 +16,26 @@ export function parsePath(location: string): Path | undefined {
 	};
 }
 
+interface WidgetPath {
+	language: keyof typeof KNOWN_LANGUAGES;
+	widget: string;
+	framework: string;
+	version?: string;
+}
+
+export function parseWidgetPath(location: string): WidgetPath | undefined {
+	const tokens = location.match(
+		/(?<language>[a-z]{2}-?[A-Z]{0,2})\/widgets\/(?<widget>[\w-]+)\/(?<framework>[\w-]+)\/?(?<version>\d+\.\d+\.\d+)?$/,
+	);
+	if (tokens === null) return undefined;
+	return {
+		language: tokens.groups?.language! as keyof typeof KNOWN_LANGUAGES,
+		widget: tokens.groups?.widget!,
+		framework: tokens.groups?.framework!,
+		version: tokens.groups?.version!,
+	};
+}
+
 export function parseLanguage(location: string) {
 	const path = parsePath(location);
 	if (path === undefined) return 'en';

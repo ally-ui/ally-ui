@@ -9,7 +9,9 @@ import type {MarkdownHeading} from 'astro';
 import AdditionalLinks from '../components/PageContent/AdditionalLinks.astro';
 import FrontmatterAstroLoader from '../components/FrontmatterAstroLoader.astro';
 import {WIDGETS} from '../translations';
-import {parseLanguage} from '../utils/location';
+import {parseLanguage, parseWidgetPath} from '../utils/location';
+import {compareVersionStr} from '../utils/version';
+import * as CONFIG from '../config';
 
 interface Props {
 	frontmatter: Frontmatter;
@@ -42,9 +44,20 @@ const widgetHeadings = [
 	{depth: 2, slug: 'anatomy', text: translations.anatomy},
 	...headings,
 ];
+
+const path = parseWidgetPath(Astro.url.pathname)!;
+const latestVersion = versions.sort(compareVersionStr).at(-1)!;
+const currentFile = `src/content/widgets/${path.widget}/${
+	path.version ?? latestVersion
+}/${path.language}.mdx`;
+const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 ---
 
-<MainLayout {...Astro.props} headings={widgetHeadings}>
+<MainLayout
+	{...Astro.props}
+	headings={widgetHeadings}
+	githubEditUrl={githubEditUrl}
+>
 	<FrameworkSelect client:idle framework={framework} slot="heading-after" />
 
 	<FrontmatterAstroLoader
