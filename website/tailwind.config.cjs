@@ -26,9 +26,9 @@ module.exports = {
 				line: {
 					DEFAULT: 'rgb(var(--tw-line) / <alpha-value>)',
 				},
-				content: {
-					DEFAULT: 'rgb(var(--tw-content) / <alpha-value>)',
-					sub: 'rgb(var(--tw-content-sub) / <alpha-value>)',
+				word: {
+					DEFAULT: 'rgb(var(--tw-word) / <alpha-value>)',
+					sub: 'rgb(var(--tw-word-sub) / <alpha-value>)',
 				},
 			},
 			fontFamily: {

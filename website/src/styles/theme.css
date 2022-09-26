@@ -6,8 +6,8 @@
 	--tw-shade-200: 215 236 255;
 	--tw-shade-text: 36 77 115;
 	--tw-line: 234 238 242;
-	--tw-content: 0 0 0;
-	--tw-content-sub: 107 114 128;
+	--tw-word: 0 0 0;
+	--tw-word-sub: 107 114 128;
 
 	--code-keyword: hsl(180, 90%, 30%);
 	--code-string: hsl(80, 90%, 35%);
@@ -22,8 +22,8 @@
 	--tw-shade-200: 60 84 105;
 	--tw-shade-text: 203 227 250;
 	--tw-line: 35 52 68;
-	--tw-content: 255 255 255;
-	--tw-content-sub: 156 163 175;
+	--tw-word: 255 255 255;
+	--tw-word-sub: 156 163 175;
 
 	--code-keyword: hsl(180, 55%, 50%);
 	--code-string: hsl(80, 70%, 60%);
