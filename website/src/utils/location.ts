@@ -7,7 +7,7 @@ interface Path {
 
 export function parsePath(location: string): Path | undefined {
 	const tokens = location.match(
-		/(?<language>[a-z]{2}-?[A-Z]{0,2})\/(?<rest>[\w-\/]+)/,
+		/(?<language>[a-z]{2}-?[A-Z]{0,2})\/(?<rest>[\w-\/\.]+)/,
 	);
 	if (tokens === null) return undefined;
 	return {
