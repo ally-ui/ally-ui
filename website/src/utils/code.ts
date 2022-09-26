@@ -1,10 +1,10 @@
 import Prism from 'prismjs';
 import 'prism-svelte';
-import 'prismjs/components/prism-tsx';
+import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-markup';
 import type {KNOWN_FRAMEWORKS} from '../config';
 
-type Language = 'tsx' | 'svelte' | 'markup';
+type Language = 'jsx' | 'svelte' | 'markup';
 
 export function getLanguage(
 	framework: keyof typeof KNOWN_FRAMEWORKS,
@@ -12,7 +12,7 @@ export function getLanguage(
 	switch (framework) {
 		case 'react':
 		case 'solid':
-			return 'tsx';
+			return 'jsx';
 		case 'svelte':
 			return 'svelte';
 		case 'vue':
@@ -27,7 +27,7 @@ export function getHighlighted(
 	switch (framework) {
 		case 'react':
 		case 'solid':
-			return ['tsx', Prism.highlight(code, Prism.languages.tsx!, 'tsx')];
+			return ['jsx', Prism.highlight(code, Prism.languages.jsx!, 'jsx')];
 		case 'svelte':
 			return [
 				'svelte',
