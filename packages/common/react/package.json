@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/react",
-	"version": "0.0.18",
+	"version": "0.0.19",
 	"scripts": {
 		"example": "vite",
 		"build": "tsc && vite build",
