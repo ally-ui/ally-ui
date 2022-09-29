@@ -36,4 +36,8 @@ export abstract class ComponentModel<
 	): TAttributes {
 		return {} as TAttributes;
 	}
+
+	watchDeregister?(): void;
+	watchUnmount?(): void;
+	watchUnbind?(): void;
 }

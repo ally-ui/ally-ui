@@ -40,6 +40,7 @@ export abstract class RootModel<
 			return;
 		}
 		this.#components.delete(componentId);
+		component.watchDeregister?.();
 		this.watchDeregister?.(component);
 	}
 
@@ -73,6 +74,7 @@ export abstract class RootModel<
 			return;
 		}
 		component.mounted = false;
+		component.watchUnmount?.();
 		this.watchUnmount?.(component);
 	}
 
@@ -108,6 +110,7 @@ export abstract class RootModel<
 			return;
 		}
 		delete component.node;
+		component.watchUnbind?.();
 		this.watchUnbind?.(component);
 	}
 

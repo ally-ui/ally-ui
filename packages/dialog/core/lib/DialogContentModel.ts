@@ -181,6 +181,10 @@ export class DialogContentModel extends ComponentModel<
 		return scrollLock;
 	}
 
+	watchDeregister(): void {
+		this.close();
+	}
+
 	close() {
 		this.#contentTrap?.deactivate();
 		this.#scrollLock?.deactivate();
