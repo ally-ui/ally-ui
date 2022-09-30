@@ -66,15 +66,6 @@ export interface SlotProps<
 	 * The regular template.
 	 */
 	children: (props: RegularRenderProp<TAttributes>) => JSX.Element;
-	/**
-	 * How attributes should be merged with user props.
-	 *
-	 * Defaults to merging user props **over** attributes.
-	 */
-	mergeProps?: (
-		attributes: TAttributes,
-		userProps: TRegularProps,
-	) => TRegularProps;
 }
 
 /**
@@ -84,7 +75,6 @@ export function Slot<
 	TAttributes extends object,
 	TRegularProps extends ParentProps,
 >(slotProps: SlotProps<TAttributes, TRegularProps>) {
-	const mergeProps = slotProps.mergeProps ?? ((a, b) => ({...a, ...b}));
 	// `asChild` is never updated dynamically, so an early return here is okay.
 	if (slotProps.props.asChild) {
 		return (
@@ -109,4 +99,37 @@ export function Slot<
 			})}
 		</>
 	);
+}
+
+type AnyProps = Record<string, any>;
+
+function mergeProps(slotProps: AnyProps, childProps: AnyProps) {
+	// All child props should override.
+	const overrideProps = {...childProps};
+
+	for (const propName in childProps) {
+		const slotPropValue = slotProps[propName];
+		const childPropValue = childProps[propName];
+
+		const isHandler = /^on[A-Z]/.test(propName);
+		// If it's a handler, modify the override by composing the base handler.
+		if (isHandler) {
+			overrideProps[propName] = (...args: unknown[]) => {
+				childPropValue?.(...args);
+				slotPropValue?.(...args);
+			};
+		}
+		// If it's `style`, we merge them.
+		else if (propName === 'style') {
+			overrideProps[propName] = {...slotPropValue, ...childPropValue};
+		} else if (propName === 'class') {
+			overrideProps[propName] = [slotPropValue, childPropValue]
+				.filter(Boolean)
+				.join(' ');
+		} else if (propName === 'classList') {
+			overrideProps[propName] = {...slotPropValue, ...childPropValue};
+		}
+	}
+
+	return {...slotProps, ...overrideProps};
 }

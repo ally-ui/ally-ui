@@ -48,32 +48,14 @@ export default function DialogClose(props: DialogCloseProps) {
 	});
 	const ref = combinedRef(bindRef, props.ref);
 
-	const handleClick: DialogCloseHandlers['onClick'] = (ev) => {
-		if (!props.asChild) {
-			forwardEvent(
-				ev as MouseEvent & {
-					currentTarget: HTMLButtonElement;
-					target: Element;
-				},
-				props.onClick,
-			);
-		}
-		component.onClick();
-	};
-
 	return (
 		<Slot
 			ref={ref}
 			props={props}
-			attributes={{...component.getAttributes(), onClick: handleClick}}
-			mergeProps={(attributes, userProps) => ({
-				...attributes,
-				...userProps,
-				onClick: (ev) => {
-					forwardEvent(ev, userProps.onClick);
-					attributes.onClick(ev);
-				},
-			})}
+			attributes={{
+				...component.getAttributes(),
+				onClick: () => component.onClick(),
+			}}
 		>
 			{(renderProps) => (
 				<button ref={renderProps.ref} {...renderProps.attributes()}>

@@ -2,13 +2,7 @@ import {
 	DialogTriggerModel,
 	type DialogTriggerModelAttributes,
 } from '@ally-ui/core-dialog';
-import {
-	combinedRef,
-	createBindRef,
-	forwardEvent,
-	Slot,
-	SlottableProps,
-} from '@ally-ui/solid';
+import {combinedRef, createBindRef, Slot, SlottableProps} from '@ally-ui/solid';
 import {JSX, onCleanup, onMount} from 'solid-js';
 import {useDialogRootModel, useDialogRootState} from './context';
 
@@ -50,32 +44,14 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 	});
 	const ref = combinedRef(bindRef, props.ref);
 
-	const handleClick: DialogTriggerHandlers['onClick'] = (ev) => {
-		if (!props.asChild) {
-			forwardEvent(
-				ev as MouseEvent & {
-					currentTarget: HTMLButtonElement;
-					target: Element;
-				},
-				props.onClick,
-			);
-		}
-		component.onClick();
-	};
-
 	return (
 		<Slot
 			ref={ref}
 			props={props}
-			attributes={{...component.getAttributes(rootState), onClick: handleClick}}
-			mergeProps={(attributes, userProps) => ({
-				...attributes,
-				...userProps,
-				onClick: (ev) => {
-					forwardEvent(ev, userProps.onClick);
-					attributes.onClick(ev);
-				},
-			})}
+			attributes={{
+				...component.getAttributes(rootState),
+				onClick: () => component.onClick(),
+			}}
 		>
 			{(renderProps) => (
 				<button ref={renderProps.ref} {...renderProps.attributes()}>
