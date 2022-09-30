@@ -26,7 +26,7 @@
 	"types": "./dist/types/main.d.ts",
 	"exports": {
 		".": {
-			"solid": "./dist/source/main.js",
+			"solid": "./dist/source/main.jsx",
 			"import": "./dist/esm/main.js",
 			"require": "./dist/cjs/main.js"
 		},
