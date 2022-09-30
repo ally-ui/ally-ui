@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/scroll-lock",
-	"version": "0.0.19",
+	"version": "0.0.20",
 	"scripts": {
 		"example": "vite",
 		"build": "tsc && vite build",
@@ -34,6 +34,6 @@
 	},
 	"sideEffects": false,
 	"dependencies": {
-		"@ally-ui/core": "^0.0.19"
+		"@ally-ui/core": "^0.0.20"
 	}
 }
