@@ -1,6 +1,6 @@
 {
 	"extends": "@ally-ui/dev/tsconfig.react.json",
-	"include": ["lib"],
+	"include": ["lib", "example", "tests", "../../common/dev/vitest.setup.ts"],
 	"compilerOptions": {
 		"outDir": "dist"
 	}
