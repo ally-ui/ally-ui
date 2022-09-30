@@ -2,12 +2,7 @@ import {
 	DialogTriggerModel,
 	type DialogTriggerModelAttributes,
 } from '@ally-ui/core-dialog';
-import {
-	Slot,
-	useMultipleRefs,
-	useRunOnce,
-	type SlottableProps,
-} from '@ally-ui/react';
+import {Slot, useMultipleRefs, useRunOnce} from '@ally-ui/react';
 import React from 'react';
 import {useDialogRootModel, useDialogRootState} from './context';
 
@@ -15,13 +10,12 @@ export interface DialogTriggerHandlers {
 	onClick: React.MouseEventHandler;
 }
 
-export type DialogTriggerProps = SlottableProps<
-	DialogTriggerModelAttributes & DialogTriggerHandlers,
-	React.DetailedHTMLProps<
-		React.ButtonHTMLAttributes<HTMLButtonElement>,
-		HTMLButtonElement
-	>
->;
+export type DialogTriggerProps = React.DetailedHTMLProps<
+	React.ButtonHTMLAttributes<HTMLButtonElement>,
+	HTMLButtonElement
+> & {
+	asChild?: true;
+};
 
 const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 	(props, forwardedRef) => {
@@ -71,29 +65,16 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 			[rootModel],
 		);
 
+		const Comp = props.asChild ? Slot : 'button';
+
 		return (
-			<Slot
-				slotRef={ref}
-				props={props}
-				attributes={{
-					...component.getAttributes(rootState),
-					onClick: handleClick,
-				}}
-				mergeProps={(attributes, userProps) => ({
-					...attributes,
-					...userProps,
-					onClick: (ev) => {
-						userProps.onClick?.(ev);
-						attributes.onClick(ev);
-					},
-				})}
+			<Comp
+				ref={ref}
+				{...component.getAttributes(rootState)}
+				onClick={handleClick}
 			>
-				{({ref, children, attributes}) => (
-					<button ref={ref} {...attributes}>
-						{children}
-					</button>
-				)}
-			</Slot>
+				{props.children}
+			</Comp>
 		);
 	},
 );

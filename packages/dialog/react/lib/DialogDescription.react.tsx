@@ -2,22 +2,16 @@ import {
 	DialogDescriptionModel,
 	type DialogDescriptionModelAttributes,
 } from '@ally-ui/core-dialog';
-import {
-	Slot,
-	SlottableProps,
-	useMultipleRefs,
-	useRunOnce,
-} from '@ally-ui/react';
+import {Slot, useMultipleRefs, useRunOnce} from '@ally-ui/react';
 import React from 'react';
 import {useDialogRootModel} from './context';
 
-export type DialogDescriptionProps = SlottableProps<
-	DialogDescriptionModelAttributes,
-	React.DetailedHTMLProps<
-		React.HTMLAttributes<HTMLParagraphElement>,
-		HTMLParagraphElement
-	>
->;
+export type DialogDescriptionProps = React.DetailedHTMLProps<
+	React.HTMLAttributes<HTMLParagraphElement>,
+	HTMLParagraphElement
+> & {
+	asChild?: true;
+};
 
 const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 	(props, forwardedRef) => {
@@ -55,14 +49,12 @@ const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
+		const Comp = props.asChild ? Slot : 'p';
+
 		return (
-			<Slot slotRef={ref} props={props} attributes={component.getAttributes()}>
-				{({ref, attributes, children}) => (
-					<p ref={ref} {...attributes}>
-						{children}
-					</p>
-				)}
-			</Slot>
+			<Comp ref={ref} {...component.getAttributes()}>
+				{props.children}
+			</Comp>
 		);
 	},
 );
