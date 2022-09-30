@@ -1,111 +1,111 @@
-import type React from 'react';
+import React from 'react';
+import {combinedRef} from './main';
 
-type SlotRenderPropGetter<
-	TAttributes extends object,
-	TRegularProps extends object,
-> = (userProps?: TRegularProps) => {
-	ref: React.RefCallback<HTMLElement>;
-} & TAttributes;
+// CREDIT https://github.com/radix-ui/primitives/blob/main/packages/react/slot/src/Slot.tsx
+interface SlotProps extends React.HTMLAttributes<HTMLElement> {
+	children?: React.ReactNode;
+}
 
-type SlottablePropsAsChild<
-	TAttributes extends object,
-	TRegularProps extends object,
-> = {
-	asChild: true;
-} & {
-	children: (
-		props: SlotRenderPropGetter<TAttributes, TRegularProps>,
-	) => React.ReactNode;
-};
+export const Slot = React.forwardRef<HTMLElement, SlotProps>(
+	(props, forwardedRef) => {
+		const {children, ...slotProps} = props;
+		const childrenArray = React.Children.toArray(children);
+		const slottable = childrenArray.find(isSlottable);
 
-type SlottablePropsAsRegular<TRegularProps extends React.PropsWithChildren> = {
-	asChild?: undefined;
-} & TRegularProps;
+		if (slottable) {
+			// The new element to render is the one passed as a child of `Slottable`
+			const newElement = slottable.props.children as React.ReactNode;
+			const newChildren = childrenArray.map((child) => {
+				if (child === slottable) {
+					// because the new element will be the one rendered, we are only interested
+					// in grabbing its children (`newElement.props.children`)
+					if (React.Children.count(newElement) > 1)
+						return React.Children.only(null);
+					return React.isValidElement(newElement)
+						? (newElement.props.children as React.ReactNode)
+						: null;
+				} else {
+					return child;
+				}
+			});
 
-/**
- * Prop definitions for a component that either renders a regular template or
- * an as-child render template when `asChild` is true.
- *
- * `TAttributes` is the common attributes that should be applied to both the
- * regular and as-child render template.
- *
- * `TRegularProps` is the prop definition for the regular template.
- */
-export type SlottableProps<
-	TAttributes extends object,
-	TRegularProps extends React.PropsWithChildren,
-> =
-	| SlottablePropsAsChild<TAttributes, Exclude<TRegularProps, 'children'>>
-	| SlottablePropsAsRegular<TRegularProps>;
+			return (
+				<SlotClone {...slotProps} ref={forwardedRef}>
+					{React.isValidElement(newElement)
+						? React.cloneElement(newElement, undefined, newChildren)
+						: null}
+				</SlotClone>
+			);
+		}
 
-interface RegularRenderProp<TAttributes extends object> {
-	ref: React.RefCallback<HTMLElement>;
-	attributes: TAttributes;
+		return (
+			<SlotClone {...slotProps} ref={forwardedRef}>
+				{children}
+			</SlotClone>
+		);
+	},
+);
+
+Slot.displayName = 'Slot';
+
+interface SlotCloneProps {
 	children: React.ReactNode;
 }
 
-export interface SlotProps<
-	TAttributes extends object,
-	TRegularProps extends React.PropsWithChildren,
-> {
-	slotRef: React.RefCallback<HTMLElement>;
-	/**
-	 * The props object of the current component.
-	 */
-	props: SlottableProps<TAttributes, TRegularProps>;
-	/**
-	 * The common attributes that should be applied to both the regular and
-	 * as-child render template.
-	 */
-	attributes: TAttributes;
-	/**
-	 * The regular template.
-	 */
-	children: (props: RegularRenderProp<TAttributes>) => React.ReactNode;
-	/**
-	 * How attributes should be merged with user props.
-	 *
-	 * Defaults to merging user props **over** attributes.
-	 */
-	mergeProps?: (
-		attributes: TAttributes,
-		userProps: TRegularProps,
-	) => TRegularProps;
+export const SlotClone = React.forwardRef<any, SlotCloneProps>(
+	(props, forwardedRef) => {
+		const {children, ...slotProps} = props;
+
+		if (React.isValidElement(children)) {
+			return React.cloneElement(children, {
+				...mergeProps(slotProps, children.props),
+				ref: combinedRef([forwardedRef, (children as any).ref]),
+			} as any);
+		}
+
+		return React.Children.count(children) > 1
+			? React.Children.only(null)
+			: null;
+	},
+);
+
+SlotClone.displayName = 'SlotClone';
+
+const Slottable = ({children}: {children: React.ReactNode}) => {
+	return <>{children}</>;
+};
+
+function isSlottable(child: React.ReactNode): child is React.ReactElement {
+	return React.isValidElement(child) && child.type === Slottable;
 }
 
-/**
- * A helper component to render `SlottableProps`.
- */
-export function Slot<
-	TAttributes extends object,
-	TRegularProps extends React.PropsWithChildren,
->({
-	slotRef,
-	props,
-	attributes,
-	children,
-	mergeProps = (a, b) => ({...a, ...b}),
-}: SlotProps<TAttributes, TRegularProps>) {
-	if (props.asChild) {
-		return (
-			<>
-				{props.children((userProps) => ({
-					ref: slotRef,
-					...(userProps === undefined
-						? attributes
-						: (mergeProps(attributes, userProps) as any)),
-				}))}
-			</>
-		);
+type AnyProps = Record<string, any>;
+
+function mergeProps(slotProps: AnyProps, childProps: AnyProps) {
+	// All child props should override.
+	const overrideProps = {...childProps};
+
+	for (const propName in childProps) {
+		const slotPropValue = slotProps[propName];
+		const childPropValue = childProps[propName];
+
+		const isHandler = /^on[A-Z]/.test(propName);
+		// If it's a handler, modify the override by composing the base handler.
+		if (isHandler) {
+			overrideProps[propName] = (...args: unknown[]) => {
+				childPropValue?.(...args);
+				slotPropValue?.(...args);
+			};
+		}
+		// If it's `style`, we merge them.
+		else if (propName === 'style') {
+			overrideProps[propName] = {...slotPropValue, ...childPropValue};
+		} else if (propName === 'className') {
+			overrideProps[propName] = [slotPropValue, childPropValue]
+				.filter(Boolean)
+				.join(' ');
+		}
 	}
-	const {asChild, children: child, ...restProps} = props;
-	return (
-		<>
-			{children({
-				ref: slotRef,
-				attributes: {...attributes, ...restProps},
-				children: child,
-			})}
-		</>
-	);
+
+	return {...slotProps, ...overrideProps};
 }

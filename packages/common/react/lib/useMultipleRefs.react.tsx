@@ -13,7 +13,7 @@ function setRef<TInstance>(ref: React.Ref<TInstance>, instance: TInstance) {
 	}
 }
 
-function combinedRef<TInstance>(refs: React.Ref<TInstance>[]) {
+export function combinedRef<TInstance>(refs: React.Ref<TInstance>[]) {
 	return (instance: TInstance | null) =>
 		refs.forEach((ref) => setRef(ref, instance));
 }

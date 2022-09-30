@@ -46,36 +46,26 @@ export default function App() {
 						}
 					}}
 				>
-					{(props) => (
-						<section {...props()}>
-							<Dialog.Title ref={titleRef} asChild>
-								{(props) => <h2 {...props}>Edit profile</h2>}
-							</Dialog.Title>
-							<Dialog.Description>
-								Make changes to your profile here. Click save when you're done
-							</Dialog.Description>
-							<fieldset>
-								<label htmlFor="name">Name</label>
-								<input id="name" placeholder="Bryan Lee" />
-							</fieldset>
-							<fieldset>
-								<label htmlFor="username">Username</label>
-								<input id="username" placeholder="@bryanmylee" />
-							</fieldset>
-							<Dialog.Close>Save changes</Dialog.Close>
-							<Dialog.Close asChild>
-								{(props) => (
-									<a
-										{...props({
-											onClick: () => console.log('clicked close'),
-										})}
-									>
-										x
-									</a>
-								)}
-							</Dialog.Close>
-						</section>
-					)}
+					<section>
+						<Dialog.Title ref={titleRef} asChild>
+							<h2>Edit profile</h2>
+						</Dialog.Title>
+						<Dialog.Description>
+							Make changes to your profile here. Click save when you're done
+						</Dialog.Description>
+						<fieldset>
+							<label htmlFor="name">Name</label>
+							<input id="name" placeholder="Bryan Lee" />
+						</fieldset>
+						<fieldset>
+							<label htmlFor="username">Username</label>
+							<input id="username" placeholder="@bryanmylee" />
+						</fieldset>
+						<Dialog.Close>Save changes</Dialog.Close>
+						<Dialog.Close asChild>
+							<a onClick={() => console.log('clicked close')}>x</a>
+						</Dialog.Close>
+					</section>
 				</Dialog.Content>
 			</Dialog.Root>
 			<section>

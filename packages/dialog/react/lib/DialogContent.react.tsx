@@ -1,11 +1,9 @@
 import {
 	DialogContentModel,
-	type DialogContentModelAttributes,
 	type DialogContentModelOptions,
 } from '@ally-ui/core-dialog';
 import {
 	Slot,
-	SlottableProps,
 	useMultipleRefs,
 	useRunOnce,
 	useSyncedOption,
@@ -17,11 +15,13 @@ import {
 	useDialogRootState,
 } from './context';
 
-export type DialogContentProps = SlottableProps<
-	DialogContentModelAttributes,
-	React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+export type DialogContentProps = React.DetailedHTMLProps<
+	React.HTMLAttributes<HTMLDivElement>,
+	HTMLDivElement
 > &
-	DialogContentModelOptions;
+	DialogContentModelOptions & {
+		asChild?: true;
+	};
 
 const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 	(
@@ -111,20 +111,14 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
+		const Comp = props.asChild ? Slot : 'div';
+
 		return (
 			<>
 				{derivedState.show && (
-					<Slot
-						slotRef={ref}
-						props={props}
-						attributes={component.getAttributes(rootState)}
-					>
-						{({ref, children, attributes}) => (
-							<div ref={ref} {...attributes}>
-								{children}
-							</div>
-						)}
-					</Slot>
+					<Comp ref={ref} {...component.getAttributes(rootState)}>
+						{props.children}
+					</Comp>
 				)}
 			</>
 		);
