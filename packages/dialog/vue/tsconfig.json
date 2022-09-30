@@ -1,5 +1,6 @@
 {
 	"extends": "@ally-ui/dev/tsconfig.vue.json",
+	"include": ["lib", "example", "tests", "../../common/dev/vitest.setup.ts"],
 	"compilerOptions": {
 		"outDir": "dist"
 	}
