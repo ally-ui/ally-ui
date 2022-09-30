@@ -107,6 +107,40 @@ export class DialogContentModel extends ComponentModel<
 		}
 	}
 
+	watchRootStateChange(
+		{open}: DialogRootModelState,
+		prev: DialogRootModelState,
+	): void {
+		if (open !== prev.open) {
+			if (open) {
+				this.open();
+			} else {
+				this.close();
+			}
+		}
+	}
+
+	watchBind(): void {
+		this.#checkTitle();
+		if (this.rootModel.state.open) {
+			this.open();
+		}
+	}
+
+	static MISSING_TITLE_WARNING = `<Dialog.Content/> should contain a visible <Dialog.Title/> component.
+This provides the user with a recognizable name for the dialog by enforcing an element with \`aria-labelledby\` exists in the dialog.`;
+
+	#checkTitle() {
+		const title = this.rootModel.findComponent((c) => c.type === 'title');
+		if (title === undefined) {
+			console.warn(DialogContentModel.MISSING_TITLE_WARNING);
+		}
+	}
+
+	watchDeregister(): void {
+		this.close();
+	}
+
 	#contentTrap?: FocusTrapModel;
 	#scrollLock?: ScrollLockModel;
 	/**
@@ -119,6 +153,9 @@ export class DialogContentModel extends ComponentModel<
 				console.error(`open, no content component with node`);
 			}
 			return false;
+		}
+		if (this.#contentTrap !== undefined && this.#scrollLock !== undefined) {
+			return true;
 		}
 		this.#contentTrap = this.#createFocusTrap(this.node);
 		this.#scrollLock = this.#createScrollLock(this.node);
@@ -179,10 +216,6 @@ export class DialogContentModel extends ComponentModel<
 			});
 		};
 		return scrollLock;
-	}
-
-	watchDeregister(): void {
-		this.close();
 	}
 
 	close() {

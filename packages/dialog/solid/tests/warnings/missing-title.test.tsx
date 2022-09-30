@@ -1,4 +1,4 @@
-import {DialogRootModel} from '@ally-ui/core-dialog';
+import {DialogContentModel} from '@ally-ui/core-dialog';
 import {cleanup, render} from 'solid-testing-library';
 import * as Dialog from '../../lib/main';
 
@@ -24,5 +24,7 @@ it('warns the user if the title component is missing', async () => {
 	const warnSpy = vi.spyOn(console, 'warn');
 	render(() => <MissingTitle />);
 	await new Promise((res) => setTimeout(res));
-	expect(warnSpy).toHaveBeenCalledWith(DialogRootModel.MISSING_TITLE_WARNING);
+	expect(warnSpy).toHaveBeenCalledWith(
+		DialogContentModel.MISSING_TITLE_WARNING,
+	);
 });

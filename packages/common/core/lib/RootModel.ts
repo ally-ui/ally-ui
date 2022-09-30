@@ -15,6 +15,12 @@ export abstract class RootModel<
 
 	#components = new Map<string, ComponentModel>();
 
+	watchStateChange(newState: TState, prev: TState) {
+		this.#components.forEach((c) => {
+			c.watchRootStateChange?.(newState, prev);
+		});
+	}
+
 	/**
 	 * Initialize a component of the model. This should run before the component
 	 * is mounted and before a reference to the DOM is obtained.
@@ -26,6 +32,7 @@ export abstract class RootModel<
 	): TComponentModel {
 		this.#components.set(component.getId(), component);
 		this.watchRegister?.(component);
+		component.watchRegister?.();
 		return component;
 	}
 
@@ -61,6 +68,7 @@ export abstract class RootModel<
 		}
 		component.mounted = true;
 		this.watchMount?.(component);
+		component.watchMount?.();
 	}
 
 	watchMount?(component: ComponentModel): void;
@@ -97,6 +105,7 @@ export abstract class RootModel<
 		}
 		component.node = node;
 		this.watchBind?.(component);
+		component.watchBind?.();
 	}
 
 	watchBind?(component: ComponentModel): void;

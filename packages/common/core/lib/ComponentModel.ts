@@ -37,7 +37,14 @@ export abstract class ComponentModel<
 		return {} as TAttributes;
 	}
 
+	watchRootStateChange?(
+		newState: $StateOf<RootModel>,
+		prev: $StateOf<RootModel>,
+	): void;
+	watchRegister?(): void;
 	watchDeregister?(): void;
+	watchMount?(): void;
 	watchUnmount?(): void;
+	watchBind?(): void;
 	watchUnbind?(): void;
 }
