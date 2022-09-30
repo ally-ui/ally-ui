@@ -35,6 +35,8 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 		},
 		forwardedRef,
 	) => {
+		const {ref: _, children, asChild, ...restProps} = props;
+
 		const rootModel = useDialogRootModel();
 		if (rootModel === undefined) {
 			throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
@@ -111,13 +113,17 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
-		const Comp = props.asChild ? Slot : 'div';
+		const Comp = asChild ? Slot : 'div';
 
 		return (
 			<>
 				{derivedState.show && (
-					<Comp ref={ref} {...component.getAttributes(rootState)}>
-						{props.children}
+					<Comp
+						ref={ref}
+						{...component.getAttributes(rootState)}
+						{...restProps}
+					>
+						{children}
 					</Comp>
 				)}
 			</>

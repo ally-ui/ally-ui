@@ -15,6 +15,8 @@ export type DialogTitleProps = React.DetailedHTMLProps<
 
 const DialogTitle = React.forwardRef<HTMLElement, DialogTitleProps>(
 	(props, forwardedRef) => {
+		const {ref: _, children, asChild, ...restProps} = props;
+
 		const rootModel = useDialogRootModel();
 		if (rootModel === undefined) {
 			throw new Error('<Dialog.Title/> must be a child of `<Dialog.Root/>`');
@@ -47,11 +49,11 @@ const DialogTitle = React.forwardRef<HTMLElement, DialogTitleProps>(
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
-		const Comp = props.asChild ? Slot : 'h1';
+		const Comp = asChild ? Slot : 'h1';
 
 		return (
-			<Comp ref={ref} {...component.getAttributes()}>
-				{props.children}
+			<Comp ref={ref} {...component.getAttributes()} {...restProps}>
+				{children}
 			</Comp>
 		);
 	},

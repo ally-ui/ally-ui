@@ -19,6 +19,8 @@ export type DialogTriggerProps = React.DetailedHTMLProps<
 
 const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 	(props, forwardedRef) => {
+		const {ref: _, children, asChild, onClick, ...restProps} = props;
+
 		const rootModel = useDialogRootModel();
 		if (rootModel === undefined) {
 			throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
@@ -57,23 +59,24 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 			React.MouseEventHandler<HTMLButtonElement>
 		>(
 			(ev) => {
-				if (!props.asChild) {
-					props.onClick?.(ev);
+				if (!asChild) {
+					onClick?.(ev);
 				}
 				component.onClick();
 			},
 			[rootModel],
 		);
 
-		const Comp = props.asChild ? Slot : 'button';
+		const Comp = asChild ? Slot : 'button';
 
 		return (
 			<Comp
 				ref={ref}
 				{...component.getAttributes(rootState)}
+				{...restProps}
 				onClick={handleClick}
 			>
-				{props.children}
+				{children}
 			</Comp>
 		);
 	},

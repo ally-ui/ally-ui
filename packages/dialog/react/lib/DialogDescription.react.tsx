@@ -15,6 +15,8 @@ export type DialogDescriptionProps = React.DetailedHTMLProps<
 
 const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 	(props, forwardedRef) => {
+		const {ref: _, children, asChild, ...restProps} = props;
+
 		const rootModel = useDialogRootModel();
 		if (rootModel === undefined) {
 			throw new Error(
@@ -49,11 +51,11 @@ const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
-		const Comp = props.asChild ? Slot : 'p';
+		const Comp = asChild ? Slot : 'p';
 
 		return (
-			<Comp ref={ref} {...component.getAttributes()}>
-				{props.children}
+			<Comp ref={ref} {...component.getAttributes()} {...restProps}>
+				{children}
 			</Comp>
 		);
 	},

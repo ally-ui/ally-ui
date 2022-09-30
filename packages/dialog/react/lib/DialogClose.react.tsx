@@ -16,6 +16,8 @@ export type DialogCloseProps = React.DetailedHTMLProps<
 
 const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 	(props, forwardedRef) => {
+		const {ref: _, children, asChild, onClick, ...restProps} = props;
+
 		const rootModel = useDialogRootModel();
 		if (rootModel === undefined) {
 			throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
@@ -52,17 +54,22 @@ const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 			React.MouseEventHandler<HTMLButtonElement>
 		>(
 			(ev) => {
-				props.onClick?.(ev);
+				onClick?.(ev);
 				component.onClick();
 			},
 			[rootModel],
 		);
 
-		const Comp = props.asChild ? Slot : 'button';
+		const Comp = asChild ? Slot : 'button';
 
 		return (
-			<Comp ref={ref} {...component.getAttributes()} onClick={handleClick}>
-				{props.children}
+			<Comp
+				ref={ref}
+				{...component.getAttributes()}
+				{...restProps}
+				onClick={handleClick}
+			>
+				{children}
 			</Comp>
 		);
 	},
