@@ -5,7 +5,12 @@
 			asChild?: TAsChild;
 		};
 	type DialogDescriptionSlots<TAsChild extends true | undefined> = {
-		default: DefaultSlot<TAsChild, DialogDescriptionModelAttributes, RefAction>;
+		default: DefaultSlot<
+			TAsChild,
+			DialogDescriptionModelAttributes,
+			svelteHTML.IntrinsicElements['p'],
+			RefAction
+		>;
 	};
 </script>
 
@@ -63,7 +68,8 @@
 	export let asChild: TAsChild = undefined as TAsChild;
 
 	$: slotProps = {
-		props: component.getAttributes(),
+		props: (userProps: svelteHTML.IntrinsicElements['p']) =>
+			mergeSlotProps(svelteProps(component.getAttributes()), userProps),
 		ref,
 	} as any; // Workaround to allow conditional slot type.
 

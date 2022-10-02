@@ -8,6 +8,7 @@
 		default: DefaultSlot<
 			TAsChild,
 			DialogTriggerModelAttributes,
+			svelteHTML.IntrinsicElements['button'],
 			RefAction<{
 				click: [(ev: Event) => void, undefined];
 			}>
@@ -76,7 +77,11 @@
 	export let asChild: TAsChild = undefined as TAsChild;
 
 	$: slotProps = {
-		props: component.getAttributes($rootState),
+		props: (userProps: svelteHTML.IntrinsicElements['button']) =>
+			mergeSlotProps(
+				svelteProps(component.getAttributes($rootState)),
+				userProps,
+			),
 		ref,
 	} as any; // Workaround to allow conditional slot type.
 

@@ -6,7 +6,12 @@
 				asChild?: TAsChild;
 			};
 	type DialogContentSlots<TAsChild extends true | undefined> = {
-		default: DefaultSlot<TAsChild, DialogContentModelAttributes, RefAction>;
+		default: DefaultSlot<
+			TAsChild,
+			DialogContentModelAttributes,
+			svelteHTML.IntrinsicElements['div'],
+			RefAction
+		>;
 	};
 	type DialogContentEvents = {
 		openAutoFocus: Event;
@@ -88,7 +93,11 @@
 	export let asChild: TAsChild = undefined as TAsChild;
 
 	$: slotProps = {
-		props: component.getAttributes($rootState),
+		props: (userProps: svelteHTML.IntrinsicElements['div']) =>
+			mergeSlotProps(
+				svelteProps(component.getAttributes($rootState)),
+				userProps,
+			),
 		ref,
 	} as any; // Workaround to allow conditional slot type.
 
