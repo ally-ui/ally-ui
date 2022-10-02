@@ -1,8 +1,14 @@
 import {kebabToCamelCaseObject} from '@ally-ui/core';
 
-export function reactProps(props: any) {
-	if (typeof props.style === 'object') {
-		props.style = kebabToCamelCaseObject(props.style);
+/**
+ * Translates the core model attributes to Svelte attributes.
+ *
+ * e.g. style is an `object` of kebab-case properties but React expects an
+ * `object` of camelCase properties.
+ */
+export function reactProps<TProps extends object>(props: TProps): TProps {
+	if (typeof (props as any).style === 'object') {
+		(props as any).style = kebabToCamelCaseObject((props as any).style);
 	}
 	return props;
 }
