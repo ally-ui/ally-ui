@@ -9,3 +9,4 @@ export * from './store';
 export * from './styleObject';
 export * from './mergeSlotProps';
 export * from './types';
+export * from './props';

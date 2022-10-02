@@ -26,6 +26,8 @@
 		createEventForwarder,
 		createNativeEventDispatcher,
 		createRefAction,
+		mergeSlotProps,
+		svelteProps,
 		type DefaultSlot,
 		type RefAction,
 	} from '@ally-ui/svelte';
@@ -104,8 +106,7 @@
 	{:else}
 		<div
 			bind:this={node}
-			{...component.getAttributes($rootState)}
-			{...$$restProps}
+			{...mergeSlotProps(svelteProps(component.getAttributes($rootState)), $$restProps)}
 			use:eventForwarder
 		>
 			<slot />

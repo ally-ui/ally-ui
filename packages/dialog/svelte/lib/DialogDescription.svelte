@@ -17,6 +17,8 @@
 	import {
 		createEventForwarder,
 		createRefAction,
+		mergeSlotProps,
+		svelteProps,
 		type DefaultSlot,
 		type RefAction,
 	} from '@ally-ui/svelte';
@@ -73,8 +75,7 @@
 {:else}
 	<p
 		bind:this={node}
-		{...component.getAttributes()}
-		{...$$restProps}
+		{...mergeSlotProps(svelteProps(component.getAttributes()), $$restProps)}
 		use:eventForwarder
 	>
 		<slot />
