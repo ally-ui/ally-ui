@@ -6,4 +6,6 @@ export * from './createRefAction';
 export * from './createSyncedOption';
 export * from './createSyncedOptionStore';
 export * from './store';
+export * from './styleObject';
+export * from './mergeSlotProps';
 export * from './types';

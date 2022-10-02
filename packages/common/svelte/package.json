@@ -5,7 +5,10 @@
 		"example": "vite",
 		"build": "svelte-package",
 		"build:watch": "svelte-package --watch",
-		"clean": "rimraf dist"
+		"clean": "rimraf dist",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"coverage": "vitest run --coverage"
 	},
 	"author": "Bryan Lee",
 	"description": "Svelte utilities for Ally UI",
