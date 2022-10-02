@@ -21,8 +21,9 @@ export type KebabToCamelCaseObject<TObject extends object> = {
 };
 
 export function kebabToCamelCaseObject<TObject extends object>(
-	obj: TObject,
-): KebabToCamelCaseObject<TObject> {
+	obj?: TObject | null,
+): KebabToCamelCaseObject<TObject> | null | undefined {
+	if (obj == null) return obj;
 	const result: Record<string, unknown> = {};
 	Object.entries(obj).forEach(([key, value]) => {
 		result[kebabToCamelCase(key)] = value;

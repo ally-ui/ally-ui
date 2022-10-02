@@ -36,6 +36,9 @@
 		"./package.json": "./package.json"
 	},
 	"sideEffects": false,
+	"dependencies": {
+		"@ally-ui/core": "*"
+	},
 	"peerDependencies": {
 		"react": ">=16",
 		"react-dom": ">=16"
