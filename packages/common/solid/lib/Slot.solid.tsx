@@ -1,5 +1,5 @@
 import {Accessor, JSX, ParentProps, splitProps} from 'solid-js';
-import {mergeProps, type CallbackRef} from './main';
+import {mergeSlotProps, type CallbackRef} from './main';
 
 type SlotRenderPropGetter<
 	TAttributes extends object,
@@ -83,13 +83,14 @@ export function Slot<
 					ref: slotProps.ref,
 					...(userProps === undefined
 						? slotProps.attributes
-						: (mergeProps(slotProps.attributes, userProps) as any)),
+						: (mergeSlotProps(slotProps.attributes, userProps) as any)),
 				}))}
 			</>
 		);
 	}
 	const [, restProps] = splitProps(slotProps.props, ['asChild', 'children']);
-	const attributes = () => ({...slotProps.attributes, ...restProps});
+	const attributes = () =>
+		mergeSlotProps(slotProps.attributes, restProps) as TAttributes;
 	return (
 		<>
 			{slotProps.children({
