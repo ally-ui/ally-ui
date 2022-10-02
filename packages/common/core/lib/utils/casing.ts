@@ -12,7 +12,20 @@ export function kebabToCamelCase<TString extends string>(
 	) as KebabToCamelCase<TString>;
 }
 
-export type KebabToCamelCase<TString extends string> =
-	TString extends `${infer T}-${infer U}`
-		? `${T}${Capitalize<KebabToCamelCase<U>>}`
-		: TString;
+export type KebabToCamelCase<TString> = TString extends `${infer T}-${infer U}`
+	? `${T}${Capitalize<KebabToCamelCase<U>>}`
+	: TString;
+
+export type KebabToCamelCaseObject<TObject extends object> = {
+	[TKey in keyof TObject as KebabToCamelCase<TKey>]: TObject[TKey];
+};
+
+export function kebabToCamelCaseObject<TObject extends object>(
+	obj: TObject,
+): KebabToCamelCaseObject<TObject> {
+	const result: Record<string, unknown> = {};
+	Object.entries(obj).forEach(([key, value]) => {
+		result[kebabToCamelCase(key)] = value;
+	});
+	return result as KebabToCamelCaseObject<TObject>;
+}
