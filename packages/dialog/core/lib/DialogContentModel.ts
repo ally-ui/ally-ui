@@ -43,7 +43,7 @@ export interface DialogContentModelDerived {
 export interface DialogContentModelAttributes {
 	id: string;
 	role: 'dialog';
-	'aria-modal': 'true' | undefined;
+	'aria-modal'?: 'true';
 	'aria-labelledby': string;
 	'aria-describedby': string;
 	'data-state': 'open' | 'closed';
