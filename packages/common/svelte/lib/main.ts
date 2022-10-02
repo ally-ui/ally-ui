@@ -8,5 +8,5 @@ export * from './createSyncedOptionStore';
 export * from './store';
 export * from './styleObject';
 export * from './mergeSlotProps';
-export * from './types';
+export * from './slot';
 export * from './props';

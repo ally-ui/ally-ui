@@ -7,7 +7,7 @@ import {styleString} from './styleObject';
  * e.g. style is an `object` of kebab-case properties but Svelte expects a
  * `string`.
  */
-type SvelteProps<TProps extends object> = {
+export type SvelteProps<TProps extends object> = {
 	[TKey in keyof TProps]: TKey extends 'style' ? string : TProps[TKey];
 };
 
