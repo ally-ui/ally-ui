@@ -1,5 +1,5 @@
 import {Accessor, JSX, ParentProps, splitProps} from 'solid-js';
-import type {CallbackRef} from './types';
+import {mergeProps, type CallbackRef} from './main';
 
 type SlotRenderPropGetter<
 	TAttributes extends object,
@@ -99,37 +99,4 @@ export function Slot<
 			})}
 		</>
 	);
-}
-
-type AnyProps = Record<string, any>;
-
-function mergeProps(slotProps: AnyProps, childProps: AnyProps) {
-	// All child props should override.
-	const overrideProps = {...childProps};
-
-	for (const propName in childProps) {
-		const slotPropValue = slotProps[propName];
-		const childPropValue = childProps[propName];
-
-		const isHandler = /^on[A-Z]/.test(propName);
-		// If it's a handler, modify the override by composing the base handler.
-		if (isHandler) {
-			overrideProps[propName] = (...args: unknown[]) => {
-				childPropValue?.(...args);
-				slotPropValue?.(...args);
-			};
-		}
-		// If it's `style`, we merge them.
-		else if (propName === 'style') {
-			overrideProps[propName] = {...slotPropValue, ...childPropValue};
-		} else if (propName === 'class') {
-			overrideProps[propName] = [slotPropValue, childPropValue]
-				.filter(Boolean)
-				.join(' ');
-		} else if (propName === 'classList') {
-			overrideProps[propName] = {...slotPropValue, ...childPropValue};
-		}
-	}
-
-	return {...slotProps, ...overrideProps};
 }
