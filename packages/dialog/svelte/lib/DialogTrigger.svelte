@@ -95,6 +95,6 @@
 		use:eventForwarder
 		on:click={handleClick}
 	>
-		<slot />
+		<slot {...slotProps} />
 	</button>
 {/if}

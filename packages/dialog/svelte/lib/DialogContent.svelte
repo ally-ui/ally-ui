@@ -106,10 +106,13 @@
 	{:else}
 		<div
 			bind:this={node}
-			{...mergeSlotProps(svelteProps(component.getAttributes($rootState)), $$restProps)}
+			{...mergeSlotProps(
+				svelteProps(component.getAttributes($rootState)),
+				$$restProps,
+			)}
 			use:eventForwarder
 		>
-			<slot />
+			<slot {...slotProps} />
 		</div>
 	{/if}
 {/if}

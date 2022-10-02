@@ -76,6 +76,6 @@
 		{...mergeSlotProps(svelteProps(component.getAttributes()), $$restProps)}
 		use:eventForwarder
 	>
-		<slot />
+		<slot {...slotProps} />
 	</h1>
 {/if}

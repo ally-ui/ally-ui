@@ -89,6 +89,6 @@
 		use:eventForwarder
 		on:click={() => component.onClick()}
 	>
-		<slot />
+		<slot {...slotProps} />
 	</button>
 {/if}
