@@ -1,4 +1,5 @@
 export * from './Slot.react';
+export * from './mergeSlotProps';
 export * from './types';
 export * from './useLayoutPromise.react';
 export * from './useMultipleRefs.react';
