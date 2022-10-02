@@ -3,6 +3,7 @@
 	"version": "0.0.1",
 	"scripts": {
 		"build": "nx run-many --target=build",
+		"build:packages": "nx run-many --target=build --exclude=@ally-ui/website",
 		"clean": "nx run-many --target=clean",
 		"build:clean": "npm run clean && npm run build -- --skip-nx-cache",
 		"test": "nx run-many --target=test",
