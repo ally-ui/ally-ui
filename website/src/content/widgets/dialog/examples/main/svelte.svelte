@@ -14,8 +14,8 @@
 		>
 			<Dialog.Content
 				asChild
-				let:props
 				let:ref
+				let:props
 				class="relative mx-8 flex w-[65ch] max-w-lg flex-col rounded-xl bg-white p-8"
 			>
 				<section use:ref {...props()}>
