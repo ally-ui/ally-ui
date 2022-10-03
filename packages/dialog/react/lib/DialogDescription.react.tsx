@@ -1,9 +1,6 @@
+import {DialogDescriptionModel} from '@ally-ui/core-dialog';
 import {
-	DialogDescriptionModel,
-	type DialogDescriptionModelAttributes,
-} from '@ally-ui/core-dialog';
-import {
-	mergeSlotProps,
+	mergeReactProps,
 	reactProps,
 	Slot,
 	useMultipleRefs,
@@ -62,7 +59,7 @@ const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 		return (
 			<Comp
 				ref={ref}
-				{...mergeSlotProps(reactProps(component.getAttributes()), restProps)}
+				{...mergeReactProps(reactProps(component.getAttributes()), restProps)}
 			>
 				{children}
 			</Comp>

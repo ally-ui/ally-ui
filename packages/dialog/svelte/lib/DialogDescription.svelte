@@ -22,7 +22,7 @@
 	import {
 		createEventForwarder,
 		createRefAction,
-		mergeSlotProps,
+		mergeSvelteProps,
 		svelteProps,
 		type DefaultSlot,
 		type RefAction,
@@ -69,7 +69,7 @@
 
 	$: slotProps = {
 		props: (userProps: svelteHTML.IntrinsicElements['p']) =>
-			mergeSlotProps(svelteProps(component.getAttributes()), userProps),
+			mergeSvelteProps(svelteProps(component.getAttributes()), userProps),
 		ref,
 	} as any; // Workaround to allow conditional slot type.
 
@@ -81,7 +81,7 @@
 {:else}
 	<p
 		bind:this={node}
-		{...mergeSlotProps(svelteProps(component.getAttributes()), $$restProps)}
+		{...mergeSvelteProps(svelteProps(component.getAttributes()), $$restProps)}
 		use:eventForwarder
 	>
 		<slot {...slotProps} />

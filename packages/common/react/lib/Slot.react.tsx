@@ -1,5 +1,5 @@
 import React from 'react';
-import {combinedRef, mergeSlotProps} from './main';
+import {combinedRef, mergeReactProps} from './main';
 
 // CREDIT https://github.com/radix-ui/primitives/blob/main/packages/react/slot/src/Slot.tsx
 interface SlotProps extends React.HTMLAttributes<HTMLElement> {
@@ -58,7 +58,7 @@ export const SlotClone = React.forwardRef<any, SlotCloneProps>(
 
 		if (React.isValidElement(children)) {
 			return React.cloneElement(children, {
-				...mergeSlotProps(slotProps, children.props),
+				...mergeReactProps(slotProps, children.props),
 				ref: combinedRef([forwardedRef, (children as any).ref]),
 			} as any);
 		}

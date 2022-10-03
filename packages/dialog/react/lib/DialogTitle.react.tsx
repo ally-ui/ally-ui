@@ -1,9 +1,6 @@
+import {DialogTitleModel} from '@ally-ui/core-dialog';
 import {
-	DialogTitleModel,
-	type DialogTitleModelAttributes,
-} from '@ally-ui/core-dialog';
-import {
-	mergeSlotProps,
+	mergeReactProps,
 	reactProps,
 	Slot,
 	useMultipleRefs,
@@ -60,7 +57,7 @@ const DialogTitle = React.forwardRef<HTMLElement, DialogTitleProps>(
 		return (
 			<Comp
 				ref={ref}
-				{...mergeSlotProps(reactProps(component.getAttributes()), restProps)}
+				{...mergeReactProps(reactProps(component.getAttributes()), restProps)}
 			>
 				{children}
 			</Comp>

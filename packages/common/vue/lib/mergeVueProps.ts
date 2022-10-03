@@ -1,6 +1,6 @@
 type AnyProps = Record<string, any>;
 
-export function mergeSlotProps(slotProps: AnyProps, childProps: AnyProps) {
+export function mergeVueProps(slotProps: AnyProps, childProps: AnyProps) {
 	// All child props should override.
 	const overrideProps = {...childProps};
 

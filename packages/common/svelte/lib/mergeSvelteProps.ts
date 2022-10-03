@@ -2,12 +2,12 @@ import {styleObject, styleString} from './main';
 
 type AnyProps = Record<string, any>;
 
-export function mergeSlotProps(slotProps: AnyProps, childProps: AnyProps) {
+export function mergeSvelteProps(parentProps: AnyProps, childProps: AnyProps) {
 	// All child props should override.
 	const overrideProps = {...childProps};
 
 	for (const propName in childProps) {
-		const slotPropValue = slotProps[propName];
+		const slotPropValue = parentProps[propName];
 		const childPropValue = childProps[propName];
 
 		if (propName === 'style') {
@@ -22,5 +22,5 @@ export function mergeSlotProps(slotProps: AnyProps, childProps: AnyProps) {
 		}
 	}
 
-	return {...slotProps, ...overrideProps};
+	return {...parentProps, ...overrideProps};
 }

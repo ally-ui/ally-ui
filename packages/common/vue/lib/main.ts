@@ -1,2 +1,2 @@
 export * from './useSyncedOption';
-export * from './mergeSlotProps';
+export * from './mergeVueProps';

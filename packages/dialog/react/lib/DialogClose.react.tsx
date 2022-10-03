@@ -4,7 +4,7 @@ import {
 	useMultipleRefs,
 	useRunOnce,
 	reactProps,
-	mergeSlotProps,
+	mergeReactProps,
 } from '@ally-ui/react';
 import React from 'react';
 import {useDialogRootModel} from './context';
@@ -71,7 +71,7 @@ const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 		return (
 			<Comp
 				ref={ref}
-				{...mergeSlotProps(reactProps(component.getAttributes()), restProps)}
+				{...mergeReactProps(reactProps(component.getAttributes()), restProps)}
 				onClick={handleClick}
 			>
 				{children}

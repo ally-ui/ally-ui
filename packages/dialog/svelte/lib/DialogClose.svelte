@@ -24,7 +24,7 @@
 	import {
 		createEventForwarder,
 		createRefAction,
-		mergeSlotProps,
+		mergeSvelteProps,
 		svelteProps,
 		type DefaultSlot,
 		type RefAction,
@@ -75,7 +75,7 @@
 
 	$: slotProps = {
 		props: (userProps: svelteHTML.IntrinsicElements['button']) =>
-			mergeSlotProps(svelteProps(component.getAttributes()), userProps),
+			mergeSvelteProps(svelteProps(component.getAttributes()), userProps),
 		ref,
 	} as any; // Workaround to allow conditional slot type.
 
@@ -87,7 +87,7 @@
 {:else}
 	<button
 		bind:this={node}
-		{...mergeSlotProps(svelteProps(component.getAttributes()), $$restProps)}
+		{...mergeSvelteProps(svelteProps(component.getAttributes()), $$restProps)}
 		use:eventForwarder
 		on:click={() => component.onClick()}
 	>

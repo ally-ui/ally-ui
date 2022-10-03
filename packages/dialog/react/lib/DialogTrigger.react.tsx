@@ -1,9 +1,6 @@
+import {DialogTriggerModel} from '@ally-ui/core-dialog';
 import {
-	DialogTriggerModel,
-	type DialogTriggerModelAttributes,
-} from '@ally-ui/core-dialog';
-import {
-	mergeSlotProps,
+	mergeReactProps,
 	reactProps,
 	Slot,
 	useMultipleRefs,
@@ -78,7 +75,7 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 		return (
 			<Comp
 				ref={ref}
-				{...mergeSlotProps(
+				{...mergeReactProps(
 					reactProps(component.getAttributes(rootState)),
 					restProps,
 				)}

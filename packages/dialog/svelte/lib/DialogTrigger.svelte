@@ -24,7 +24,7 @@
 	import {
 		createEventForwarder,
 		createRefAction,
-		mergeSlotProps,
+		mergeSvelteProps,
 		svelteProps,
 		type DefaultSlot,
 		type RefAction,
@@ -78,7 +78,7 @@
 
 	$: slotProps = {
 		props: (userProps: svelteHTML.IntrinsicElements['button']) =>
-			mergeSlotProps(
+			mergeSvelteProps(
 				svelteProps(component.getAttributes($rootState)),
 				userProps,
 			),
@@ -93,7 +93,7 @@
 {:else}
 	<button
 		bind:this={node}
-		{...mergeSlotProps(
+		{...mergeSvelteProps(
 			svelteProps(component.getAttributes($rootState)),
 			$$restProps,
 		)}
