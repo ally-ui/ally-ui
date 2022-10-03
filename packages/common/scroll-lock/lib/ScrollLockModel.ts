@@ -52,6 +52,10 @@ export class ScrollLockModel
 	}
 
 	attributes(): ScrollLockAttributes {
+		return ScrollLockModel.attributes(this.state);
+	}
+
+	static attributes(_state: ScrollLockState): ScrollLockAttributes {
 		return {
 			style: {'overscroll-behavior': 'contain'},
 		};

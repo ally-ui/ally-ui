@@ -77,7 +77,11 @@ export class FocusTrapModel
 	}
 
 	attributes(): FocusTrapAttributes {
-		if (this.state.modal) {
+		return FocusTrapModel.attributes(this.state);
+	}
+
+	static attributes(state: FocusTrapState): FocusTrapAttributes {
+		if (state.modal) {
 			return {
 				'aria-modal': 'true',
 				style: {'pointer-events': 'auto'},
