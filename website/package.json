@@ -1,7 +1,7 @@
 {
 	"name": "@ally-ui/website",
 	"type": "module",
-	"version": "0.0.20",
+	"version": "0.0.21",
 	"private": true,
 	"scripts": {
 		"dev": "astro dev",
@@ -13,10 +13,10 @@
 	},
 	"dependencies": {
 		"@algolia/client-search": "^4.13.1",
-		"@ally-ui/react-dialog": "^0.0.20",
-		"@ally-ui/solid-dialog": "^0.0.20",
-		"@ally-ui/svelte-dialog": "^0.0.20",
-		"@ally-ui/vue-dialog": "^0.0.20",
+		"@ally-ui/react-dialog": "^0.0.21",
+		"@ally-ui/solid-dialog": "^0.0.21",
+		"@ally-ui/svelte-dialog": "^0.0.21",
+		"@ally-ui/vue-dialog": "^0.0.21",
 		"@astrojs/mdx": "^0.11.1",
 		"@astrojs/preact": "^1.1.0",
 		"@astrojs/prism": "^1.0.1",

@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/solid",
-	"version": "0.0.20",
+	"version": "0.0.21",
 	"scripts": {
 		"example": "vite",
 		"build": "rollup --config rollup.config.js",

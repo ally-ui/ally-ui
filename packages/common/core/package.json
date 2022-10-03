@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/core",
-	"version": "0.0.20",
+	"version": "0.0.21",
 	"scripts": {
 		"example": "vite",
 		"build": "tsc && vite build",
