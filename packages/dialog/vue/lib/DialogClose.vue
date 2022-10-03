@@ -16,15 +16,12 @@ const rootModel = inject(DIALOG_ROOT_MODEL);
 if (rootModel === undefined) {
 	throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
 }
-const component = rootModel.registerComponent(
-	new DialogCloseModel(rootModel, {}),
-);
-const id = component.getId();
+const component = new DialogCloseModel({}, rootModel);
 
-onMounted(() => rootModel.mountComponent(id));
+onMounted(() => component.onMount());
 onUnmounted(() => {
-	rootModel.unmountComponent(id);
-	rootModel.deregisterComponent(id);
+	component.onUnmount();
+	rootModel.onDeregister();
 });
 
 const node = ref<HTMLButtonElement | null>(null);
@@ -33,10 +30,10 @@ const setRef = (nodeValue: HTMLButtonElement | null) => {
 };
 watchEffect(() => {
 	props.setRef?.(node.value);
-	if (node.value === null) {
-		rootModel.unbindComponent(id);
+	if (node.value == null) {
+		component.onUnbind();
 	} else {
-		rootModel.bindComponent(id, node.value);
+		component.onBind(node.value);
 	}
 });
 
@@ -49,7 +46,7 @@ function handleClick() {
 	<slot
 		v-if="props.asChild"
 		v-bind="{
-			...mergeVueProps(component.getAttributes(), $attrs),
+			...mergeVueProps(component.attributes(), $attrs),
 			onClick: handleClick,
 			ref: setRef,
 		}"
@@ -57,7 +54,7 @@ function handleClick() {
 	<button
 		v-else
 		ref="node"
-		v-bind="mergeVueProps(component.getAttributes(), $attrs)"
+		v-bind="mergeVueProps(component.attributes(), $attrs)"
 		@click="handleClick"
 	>
 		<slot />

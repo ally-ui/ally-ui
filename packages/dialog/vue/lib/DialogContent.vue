@@ -32,24 +32,24 @@ if (rootModel === undefined) {
 	throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 }
 const portalForceMount = inject(DIALOG_PORTAL_FORCE_MOUNT);
-const component = rootModel.registerComponent(
-	new DialogContentModel(rootModel, {
+const component = new DialogContentModel(
+	{
 		forceMount: props.forceMount ?? portalForceMount,
 		onOpenAutoFocus: (ev) => emit('openAutoFocus', ev),
 		onCloseAutoFocus: (ev) => emit('closeAutoFocus', ev),
 		onEscapeKeyDown: (ev) => emit('escapeKeyDown', ev),
 		onInteractOutside: (ev) => emit('interactOutside', ev),
-	}),
+	},
+	rootModel,
 );
-const id = component.getId();
 
 const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.state);
-const derivedState = computed(() => component.deriveState(rootState.value));
+const derivedState = computed(() => component.derived(rootState.value));
 
-onMounted(() => rootModel.mountComponent(id));
+onMounted(() => component.onMount());
 onUnmounted(() => {
-	rootModel.unmountComponent(id);
-	rootModel.deregisterComponent(id);
+	component.onUnmount();
+	component.onDeregister();
 });
 
 const node = ref<HTMLDivElement | null>(null);
@@ -58,10 +58,10 @@ const setRef = (nodeValue: HTMLDivElement | null) => {
 };
 watchEffect(() => {
 	props.setRef?.(node.value);
-	if (node.value === null) {
-		rootModel.unbindComponent(id);
+	if (node.value == null) {
+		component.onUnbind();
 	} else {
-		rootModel.bindComponent(id, node.value);
+		component.onBind(node.value);
 	}
 });
 </script>
@@ -71,14 +71,14 @@ watchEffect(() => {
 		<slot
 			v-if="props.asChild"
 			v-bind="{
-				...mergeVueProps(component.getAttributes(rootState), $attrs),
+				...mergeVueProps(component.attributes(rootState), $attrs),
 				ref: setRef,
 			}"
 		/>
 		<div
 			v-else
 			ref="node"
-			v-bind="mergeVueProps(component.getAttributes(rootState), $attrs)"
+			v-bind="mergeVueProps(component.attributes(rootState), $attrs)"
 		>
 			<slot />
 		</div>
