@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/react",
-	"version": "0.0.21",
+	"version": "0.0.22",
 	"scripts": {
 		"example": "vite",
 		"build": "tsc && vite build",
@@ -37,7 +37,7 @@
 	},
 	"sideEffects": false,
 	"dependencies": {
-		"@ally-ui/core": "^0.0.21"
+		"@ally-ui/core": "^0.0.22"
 	},
 	"peerDependencies": {
 		"react": ">=16",

@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/svelte",
-	"version": "0.0.21",
+	"version": "0.0.22",
 	"scripts": {
 		"example": "vite",
 		"build": "svelte-package",

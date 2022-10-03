@@ -1,6 +1,6 @@
 {
 	"name": "@ally-ui/svelte-dialog",
-	"version": "0.0.21",
+	"version": "0.0.22",
 	"scripts": {
 		"example": "vite",
 		"build": "svelte-package",
@@ -36,8 +36,8 @@
 	},
 	"sideEffects": false,
 	"dependencies": {
-		"@ally-ui/core-dialog": "^0.0.21",
-		"@ally-ui/svelte": "^0.0.21",
+		"@ally-ui/core-dialog": "^0.0.22",
+		"@ally-ui/svelte": "^0.0.22",
 		"svelte-portal": "^2.2.0"
 	},
 	"peerDependencies": {
