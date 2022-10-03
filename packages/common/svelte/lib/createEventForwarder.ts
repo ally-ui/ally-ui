@@ -32,7 +32,7 @@ export function createEventForwarder(except: ForwardException[] = []) {
 		for (const exception of except) {
 			if (typeof exception === 'string' && eventType === exception) {
 				// Bail out of forwarding the event and defer to the original Svelte $on() behavior.
-				if (component.$$.callbacks[eventType] === undefined) {
+				if (component.$$.callbacks[eventType] == null) {
 					component.$$.callbacks[eventType] = [];
 				}
 				const callbacks = component.$$.callbacks[eventType];
@@ -52,7 +52,7 @@ export function createEventForwarder(except: ForwardException[] = []) {
 				};
 			}
 		}
-		if ($on !== undefined) {
+		if ($on != null) {
 			// The event was bound programmatically.
 			cleanup = $on(eventType, handler);
 		} else {
@@ -92,7 +92,7 @@ export function createEventForwarder(except: ForwardException[] = []) {
 			cleanups.push(cleanup);
 
 			// Forward the event from Svelte.
-			if (forwardCleanups[eventType] === undefined) {
+			if (forwardCleanups[eventType] == null) {
 				forwardCleanups[eventType] = listen(node, eventType, forward);
 			}
 
@@ -139,7 +139,7 @@ function getListenerOptions(
 	const modifierMatch = eventTypeWithModifiers.match(MODIFIER_REGEX);
 	let eventType = eventTypeWithModifiers;
 	// Parse event modifiers.
-	if (modifierMatch !== null) {
+	if (modifierMatch != null) {
 		const [extractedEventType, ...modifiers] =
 			eventTypeWithModifiers.split(MODIFIER_DIVIDER);
 		eventType = extractedEventType;

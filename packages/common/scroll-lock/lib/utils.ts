@@ -33,20 +33,12 @@ function isTextArea(node: Element) {
 function canBeScrolled(node: Element, axis: Axis) {
 	const overflow = axis === 'v' ? 'overflowY' : 'overflowX';
 	const styles = getComputedStyle(node);
-	if (styles[overflow] === 'hidden') {
-		return false;
-	}
-	if (styles[overflow] === 'visible') {
-		return true;
-	}
+	if (styles[overflow] === 'hidden') return false;
+	if (styles[overflow] === 'visible') return true;
 	// Contains scroll within itself.
-	if (styles.overflowY === styles.overflowX) {
-		return true;
-	}
+	if (styles.overflowY === styles.overflowX) return true;
 	// `textarea` will always _contain_ scroll inside itself. It can only be hidden.
-	if (!isTextArea(node)) {
-		return true;
-	}
+	if (!isTextArea(node)) return true;
 	return false;
 }
 
@@ -69,12 +61,10 @@ export function canLocationBeScrolled(node: Element, axis: Axis) {
 		}
 		if (canBeScrolled(current, axis)) {
 			const [, scroll, capacity] = getScrollData(current, axis);
-			if (scroll > capacity) {
-				return true;
-			}
+			if (scroll > capacity) return true;
 		}
 		current = current.parentNode as Element | null;
-	} while (current !== null && current !== document.body);
+	} while (current != null && current !== document.body);
 
 	return false;
 }
@@ -113,12 +103,8 @@ export function shouldPreventScroll(
 	let {target} = ev;
 	const isPortalledTarget = !endTarget.contains(target as Node);
 	do {
-		if (target === null) {
-			return false;
-		}
-		if (!(target instanceof Element)) {
-			return false;
-		}
+		if (target == null) return false;
+		if (!(target instanceof Element)) return false;
 		const [position, scroll, capacity] = getScrollData(target, axis);
 		const elementScroll = scroll - capacity - directionFactor * position;
 		if (
@@ -138,16 +124,12 @@ export function shouldPreventScroll(
 	);
 
 	if (delta > 0) {
-		if (overscroll) {
-			return delta > availableEnd;
-		}
+		if (overscroll) return delta > availableEnd;
 		return availableEnd === 0;
 	}
 
 	if (delta <= 0) {
-		if (overscroll) {
-			return -delta > availableStart;
-		}
+		if (overscroll) return -delta > availableStart;
 		return availableStart === 0;
 	}
 

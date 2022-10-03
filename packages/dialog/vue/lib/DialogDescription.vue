@@ -13,18 +13,15 @@ const props = withDefaults(defineProps<DialogDescriptionProps>(), {
 });
 
 const rootModel = inject(DIALOG_ROOT_MODEL);
-if (rootModel === undefined) {
+if (rootModel == null) {
 	throw new Error('<Dialog.Description/> must be a child of `<Dialog.Root/>`');
 }
-const component = rootModel.registerComponent(
-	new DialogDescriptionModel(rootModel, {}),
-);
-const id = component.getId();
+const component = new DialogDescriptionModel({}, rootModel);
 
-onMounted(() => rootModel.mountComponent(id));
+onMounted(() => component.onMount());
 onUnmounted(() => {
-	rootModel.unmountComponent(id);
-	rootModel.deregisterComponent(id);
+	component.onUnmount();
+	component.onDeregister();
 });
 
 const node = ref<HTMLParagraphElement | null>(null);
@@ -33,10 +30,10 @@ const setRef = (nodeValue: HTMLParagraphElement | null) => {
 };
 watchEffect(() => {
 	props.setRef?.(node.value);
-	if (node.value === null) {
-		rootModel.unbindComponent(id);
+	if (node.value == null) {
+		component.onUnbind();
 	} else {
-		rootModel.bindComponent(id, node.value);
+		component.onBind(node.value);
 	}
 });
 </script>
@@ -44,13 +41,9 @@ watchEffect(() => {
 <template>
 	<slot
 		v-if="props.asChild"
-		v-bind="{...mergeVueProps(component.getAttributes(), $attrs), ref: setRef}"
+		v-bind="{...mergeVueProps(component.attributes(), $attrs), ref: setRef}"
 	/>
-	<p
-		v-else
-		ref="node"
-		v-bind="mergeVueProps(component.getAttributes(), $attrs)"
-	>
+	<p v-else ref="node" v-bind="mergeVueProps(component.attributes(), $attrs)">
 		<slot />
 	</p>
 </template>

@@ -40,22 +40,23 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 		const {ref: _, children, asChild, ...restProps} = props;
 
 		const rootModel = useDialogRootModel();
-		if (rootModel === undefined) {
+		if (rootModel == null) {
 			throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 		}
 		const portalForceMount = useDialogPortalForceMount();
-		const component = useRunOnce(() =>
-			rootModel.registerComponent(
-				new DialogContentModel(rootModel, {
-					forceMount: forceMount ?? portalForceMount,
-					onOpenAutoFocus,
-					onCloseAutoFocus,
-					onEscapeKeyDown,
-					onInteractOutside,
-				}),
-			),
+		const component = useRunOnce(
+			() =>
+				new DialogContentModel(
+					{
+						forceMount: forceMount ?? portalForceMount,
+						onOpenAutoFocus,
+						onCloseAutoFocus,
+						onEscapeKeyDown,
+						onInteractOutside,
+					},
+					rootModel,
+				),
 		);
-		const id = component.getId();
 
 		const [state, setState] = React.useState(() => component.initialState);
 		useRunOnce(() => {
@@ -90,28 +91,29 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 		);
 
 		const rootState = useDialogRootState() ?? rootModel.state;
-		const derivedState = component.deriveState(rootState);
+		const derivedState = component.derived(rootState);
 
 		React.useEffect(
 			function mount() {
-				rootModel.mountComponent(id);
+				// component.onRegister();
+				component.onMount();
 				return () => {
-					rootModel.unmountComponent(id);
-					// rootModel.deregisterComponent(id);
+					component.onUnmount();
+					// component.onDeregister();
 				};
 			},
-			[rootModel],
+			[component],
 		);
 
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
-				if (node === null) {
-					rootModel.unbindComponent(id);
+				if (node == null) {
+					component.onUnbind();
 				} else {
-					rootModel.bindComponent(id, node);
+					component.onBind(node);
 				}
 			},
-			[rootModel],
+			[component],
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
@@ -123,7 +125,7 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 					<Comp
 						ref={ref}
 						{...mergeReactProps(
-							reactProps(component.getAttributes(rootState)),
+							reactProps(component.attributes(rootState)),
 							restProps,
 						)}
 					>

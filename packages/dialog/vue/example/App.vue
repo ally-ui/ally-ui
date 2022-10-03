@@ -5,7 +5,7 @@ import * as Dialog from '../lib/main';
 const open = ref(true);
 const titleRef = ref<HTMLElement | null>(null);
 watchEffect(() => {
-	if (titleRef.value !== null) {
+	if (titleRef.value != null) {
 		titleRef.value.style.color = 'gray';
 	}
 });

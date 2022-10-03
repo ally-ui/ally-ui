@@ -9,7 +9,7 @@ export function parsePath(location: string): Path | undefined {
 	const tokens = location.match(
 		/(?<language>[a-z]{2}-?[A-Z]{0,2})\/(?<rest>[\w-\/\.]+)/,
 	);
-	if (tokens === null) return undefined;
+	if (tokens == null) return undefined;
 	return {
 		language: tokens.groups?.language! as keyof typeof KNOWN_LANGUAGES,
 		rest: tokens.groups?.rest!,
@@ -27,7 +27,7 @@ export function parseWidgetPath(location: string): WidgetPath | undefined {
 	const tokens = location.match(
 		/(?<language>[a-z]{2}-?[A-Z]{0,2})\/widgets\/(?<widget>[\w-]+)\/(?<framework>[\w-]+)\/?(?<version>\d+\.\d+\.\d+)?\/?$/,
 	);
-	if (tokens === null) return undefined;
+	if (tokens == null) return undefined;
 	return {
 		language: tokens.groups?.language! as keyof typeof KNOWN_LANGUAGES,
 		widget: tokens.groups?.widget!,
@@ -38,13 +38,13 @@ export function parseWidgetPath(location: string): WidgetPath | undefined {
 
 export function parseLanguage(location: string) {
 	const path = parsePath(location);
-	if (path === undefined) return 'en';
+	if (path == null) return 'en';
 	return path.language;
 }
 
 export function withLanguage(location: string, newLanguage: string): string {
 	const path = parsePath(location);
-	if (path === undefined) return location;
+	if (path == null) return location;
 	return `/${newLanguage}/${path.rest}`;
 }
 

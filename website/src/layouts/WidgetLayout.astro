@@ -68,7 +68,7 @@ const currentFile = `src/content/widgets/${path.widget}/${
 	<div class="grid grid-cols-[3fr_1fr] gap-4">
 		<section>
 			<h3>{translations.features}</h3>
-			{features !== undefined && <Features features={features} />}
+			{features != null && <Features features={features} />}
 		</section>
 		<section class="pt-7 text-sm not-prose flex flex-col gap-1">
 			<VersionSelect

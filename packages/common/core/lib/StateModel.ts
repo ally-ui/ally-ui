@@ -1,4 +1,6 @@
-export type Updater<TState> = ((prevState: TState) => TState) | TState;
+export type Subscriber<TState> = (state: TState, prev?: TState) => void;
+export type Unsubscriber = () => void;
+export type Updater<TState> = ((prev: TState) => TState) | TState;
 
 /**
  * A base construct for a stateful model that is decoupled from its state
@@ -25,6 +27,7 @@ export abstract class StateModel<TState> {
 		this.initialState = initialState;
 		this.#prev = initialState;
 		this.#state = initialState;
+		this.#notifySubscribers(this.#state);
 	}
 
 	get state(): TState {
@@ -43,17 +46,33 @@ export abstract class StateModel<TState> {
 	setState(newState: TState) {
 		this.#prev = this.#state;
 		this.#state = newState;
-		this.watchStateChange?.(newState, this.#prev);
+		this.#notifySubscribers(newState, this.#prev);
+	}
+
+	#subscribers: Subscriber<TState>[] = [];
+
+	#notifySubscribers(state: TState, prev?: TState) {
+		this.#subscribers.forEach((subscriber) => {
+			subscriber(state, prev);
+		});
 	}
 
 	/**
-	 * Watch for changes to state and trigger any effects in the core model.
+	 * Subscribe to state changes in the state model. Subscriber instances are
+	 * de-duplicated so this method is idempotent.
 	 *
-	 * Note we cannot call this during `constructor` because the prototype of the
-	 * implementing object would not have been set yet.
-	 *
-	 * @param newState The new state.
-	 * @param prev The previous state.
+	 * @param subscriber The subscriber function.
+	 * @returns An unsubscriber function.
 	 */
-	watchStateChange?(newState: TState, prev: TState): void;
+	subscribeState(subscriber: Subscriber<TState>): Unsubscriber {
+		if (this.#subscribers.find((s) => s === subscriber) == null) {
+			this.#subscribers.push(subscriber);
+			subscriber(this.#state);
+		}
+		const unsubscriber = () => {
+			const idx = this.#subscribers.findIndex((s) => s === subscriber);
+			this.#subscribers.splice(idx, 1);
+		};
+		return unsubscriber;
+	}
 }

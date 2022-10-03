@@ -24,7 +24,8 @@ it('does not disable on click inside', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
-	trap = observableFocusTrap({container: trapElement});
+	trap = observableFocusTrap();
+	trap.onBind(trapElement);
 	trap.activate();
 
 	await user.click(screen.getByTestId('inside-1'));
@@ -35,7 +36,8 @@ it('disables on click outside by default', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
-	trap = observableFocusTrap({container: trapElement});
+	trap = observableFocusTrap();
+	trap.onBind(trapElement);
 	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
@@ -47,9 +49,9 @@ it('does not disable on click outside when interact outside is prevented', async
 
 	const trapElement = screen.getByTestId('trap');
 	trap = observableFocusTrap({
-		container: trapElement,
 		onInteractOutside: (ev) => ev.preventDefault(),
 	});
+	trap.onBind(trapElement);
 	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
@@ -61,13 +63,13 @@ it('only disables on right click outside with custom on interact outside handler
 
 	const trapElement = screen.getByTestId('trap');
 	trap = observableFocusTrap({
-		container: trapElement,
 		onInteractOutside: (ev) => {
 			if (ev instanceof MouseEvent && ev.button !== 2) {
 				ev.preventDefault();
 			}
 		},
 	});
+	trap.onBind(trapElement);
 	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));

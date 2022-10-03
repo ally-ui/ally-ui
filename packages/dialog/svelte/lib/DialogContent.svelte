@@ -52,29 +52,29 @@
 	const dispatch = createNativeEventDispatcher<DialogContentEvents>();
 
 	const rootModel = getDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 	}
 	export let forceMount: boolean | undefined = undefined;
-	const component = rootModel.registerComponent(
-		new DialogContentModel(rootModel, {
+	const component = new DialogContentModel(
+		{
 			forceMount: forceMount ?? getDialogPortalForceMount(),
 			onOpenAutoFocus: (ev) => dispatch('openAutoFocus', ev),
 			onCloseAutoFocus: (ev) => dispatch('closeAutoFocus', ev),
 			onEscapeKeyDown: (ev) => dispatch('escapeKeyDown', ev),
 			onInteractOutside: (ev) => dispatch('interactOutside', ev),
-		}),
+		},
+		rootModel,
 	);
-	const id = component.getId();
 
 	const rootState = getDialogRootState() ?? readable(rootModel.state);
-	$: derivedState = component.deriveState($rootState);
+	$: derivedState = component.derived($rootState);
 
 	onMount(() => {
-		rootModel.mountComponent(id);
+		component.onMount();
 		return () => {
-			rootModel.unmountComponent(id);
-			rootModel.deregisterComponent(id);
+			component.onUnmount();
+			component.onDeregister();
 		};
 	});
 
@@ -82,9 +82,9 @@
 	$: bindNode(node);
 	function bindNode(node?: HTMLElement | null) {
 		if (node == null) {
-			rootModel?.unbindComponent(id);
+			component.onUnbind();
 		} else {
-			rootModel?.bindComponent(id, node);
+			component.onBind(node);
 		}
 	}
 
@@ -95,7 +95,7 @@
 	$: slotProps = {
 		props: (userProps: svelteHTML.IntrinsicElements['div']) =>
 			mergeSvelteProps(
-				svelteProps(component.getAttributes($rootState)),
+				svelteProps(component.attributes($rootState)),
 				$$restProps,
 				userProps,
 			),
@@ -117,7 +117,7 @@
 		<div
 			bind:this={node}
 			{...mergeSvelteProps(
-				svelteProps(component.getAttributes($rootState)),
+				svelteProps(component.attributes($rootState)),
 				$$restProps,
 			)}
 			use:eventForwarder

@@ -27,7 +27,7 @@ export function bindStore<TValue>(
 		}),
 	);
 	return (value?: TValue) => {
-		if (value !== undefined) {
+		if (value != null) {
 			valueStore.set(value);
 		}
 	};

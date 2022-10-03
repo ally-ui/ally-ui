@@ -26,7 +26,7 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 
 	for (const page of content) {
 		const contentFile = parseContentFile(page.file);
-		if (contentFile === undefined) continue;
+		if (contentFile == null) continue;
 		const pages = languageToSlugPages[contentFile.language] ?? [];
 		pages.push([contentFile.slug, page]);
 		languageToSlugPages[contentFile.language] = pages;

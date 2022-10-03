@@ -12,7 +12,7 @@ import {
  * @returns A controlled focus trap instance.
  */
 export function observableFocusTrap(
-	options: FocusTrapOptions,
+	options: FocusTrapOptions = {},
 	manualState?: Writable<FocusTrapState>,
 ): FocusTrapModel {
 	const trap = new FocusTrapModel(options);

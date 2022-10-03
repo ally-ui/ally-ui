@@ -1,15 +1,12 @@
-import {forwardEvent, styleObject} from './main';
-
 type AnyProps = Record<string, any>;
 
-export function mergeSolidProps(
+export function mergeAttributes(
 	parentProps: AnyProps,
 	...manyChildProps: (AnyProps | undefined)[]
 ) {
 	let mergedProps = {...parentProps};
 	for (const childProps of manyChildProps) {
 		if (childProps == null) continue;
-
 		// All child props should override.
 		const overrideProps = {...childProps};
 
@@ -17,28 +14,19 @@ export function mergeSolidProps(
 			const mergedPropValue = mergedProps[propName];
 			const childPropValue = childProps[propName];
 
-			const isHandler = /^on[A-Z]/.test(propName);
-			// If it's a handler, modify the override by composing the base handler.
-			if (isHandler) {
-				overrideProps[propName] = (ev: any) => {
-					forwardEvent(ev, childPropValue);
-					forwardEvent(ev, mergedPropValue);
-				};
-			} else if (propName === 'style') {
+			if (propName === 'style') {
 				overrideProps[propName] = {
-					...styleObject(mergedPropValue),
-					...styleObject(childPropValue),
+					...mergedPropValue,
+					...childPropValue,
 				};
-			} else if (propName === 'class' || propName === 'className') {
+			} else if (propName === 'class') {
 				overrideProps[propName] = [mergedPropValue, childPropValue]
 					.filter(Boolean)
 					.join(' ');
-			} else if (propName === 'classList') {
-				overrideProps[propName] = {...mergedPropValue, ...childPropValue};
 			}
 		}
+
 		Object.assign(mergedProps, overrideProps);
 	}
-
 	return mergedProps;
 }

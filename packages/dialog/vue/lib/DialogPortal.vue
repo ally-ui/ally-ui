@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<DialogPortalProps>(), {
 });
 
 const rootModel = inject(DIALOG_ROOT_MODEL);
-if (rootModel === undefined) {
+if (rootModel == null) {
 	throw new Error('<Dialog.Portal/> must be a child of `<Dialog.Root/>`');
 }
 

@@ -24,7 +24,7 @@ const SidebarToggle: FunctionalComponent = () => {
 		function closeSidebarOnClickOutside() {
 			if (!showSidebar) return;
 			const sidebar = document.querySelector('#sidebar');
-			if (sidebar === null) return;
+			if (sidebar == null) return;
 			const handleClick = (ev: Event) => {
 				if (!(ev.target instanceof Element)) return;
 				if (sidebar.contains(ev.target)) return;
@@ -44,7 +44,7 @@ const SidebarToggle: FunctionalComponent = () => {
 		function closeSidebarOnEscape() {
 			if (!showSidebar) return;
 			const sidebar = document.querySelector('#sidebar');
-			if (sidebar === null) return;
+			if (sidebar == null) return;
 			const handleKeyDown = (ev: KeyboardEvent) => {
 				if (ev.key === 'Escape') {
 					setShowSidebar(false);
@@ -76,7 +76,7 @@ const SidebarToggle: FunctionalComponent = () => {
 			if (!showSidebar) return;
 			const sidebar = document.querySelector('#sidebar');
 			const target = sidebar?.querySelector(FOCUSABLE_SELECTOR);
-			if (target === null) return;
+			if (target == null) return;
 			if (!(target instanceof HTMLElement)) return;
 			target.focus();
 		},

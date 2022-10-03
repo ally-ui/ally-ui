@@ -35,19 +35,16 @@
 	type $$Slots = DialogTitleSlots<TAsChild>;
 
 	const rootModel = getDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error('<Dialog.Title/> must be a child of `<Dialog.Root/>`');
 	}
-	const component = rootModel.registerComponent(
-		new DialogTitleModel(rootModel, {}),
-	);
-	const id = component.getId();
+	const component = new DialogTitleModel({}, rootModel);
 
 	onMount(() => {
-		rootModel.mountComponent(id);
+		component.onMount();
 		return () => {
-			rootModel.unmountComponent(id);
-			rootModel.deregisterComponent(id);
+			component.onUnmount();
+			component.onDeregister();
 		};
 	});
 
@@ -55,9 +52,9 @@
 	$: bindNode(node);
 	function bindNode(node?: HTMLElement | null) {
 		if (node == null) {
-			rootModel?.unbindComponent(id);
+			component.onUnbind();
 		} else {
-			rootModel?.bindComponent(id, node);
+			component.onBind(node);
 		}
 	}
 
@@ -68,7 +65,7 @@
 	$: slotProps = {
 		props: (userProps: svelteHTML.IntrinsicElements['h1']) =>
 			mergeSvelteProps(
-				svelteProps(component.getAttributes()),
+				svelteProps(component.attributes()),
 				$$restProps,
 				userProps,
 			),
@@ -83,7 +80,7 @@
 {:else}
 	<h1
 		bind:this={node}
-		{...mergeSvelteProps(svelteProps(component.getAttributes()), $$restProps)}
+		{...mergeSvelteProps(svelteProps(component.attributes()), $$restProps)}
 		use:eventForwarder
 	>
 		<slot {...slotProps} />

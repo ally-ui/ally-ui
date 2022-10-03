@@ -8,7 +8,7 @@ import React from 'react';
 function setRef<TInstance>(ref: React.Ref<TInstance>, instance: TInstance) {
 	if (ref instanceof Function) {
 		ref(instance);
-	} else if (ref !== null) {
+	} else if (ref != null) {
 		(ref as React.MutableRefObject<TInstance>).current = instance;
 	}
 }

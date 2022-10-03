@@ -4,7 +4,7 @@ import * as Dialog from '../lib/main';
 export default function App() {
 	const [open, setOpen] = React.useState(true);
 	const titleRef = React.useCallback((node: HTMLElement | null) => {
-		if (node !== null) {
+		if (node != null) {
 			node.style.color = 'gray';
 		}
 	}, []);

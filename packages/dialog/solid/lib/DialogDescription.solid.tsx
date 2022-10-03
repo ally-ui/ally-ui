@@ -13,35 +13,32 @@ export type DialogDescriptionProps = SlottableProps<
 
 export default function DialogDescription(props: DialogDescriptionProps) {
 	const rootModel = useDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error(
 			'<Dialog.Description/> must be a child of `<Dialog.Root/>`',
 		);
 	}
-	const component = rootModel.registerComponent(
-		new DialogDescriptionModel(rootModel, {}),
-	);
-	const id = component.getId();
+	const component = new DialogDescriptionModel({}, rootModel);
 
 	onMount(() => {
-		rootModel.mountComponent(id);
+		component.onMount();
 	});
 	onCleanup(() => {
-		rootModel.unmountComponent(id);
-		rootModel.deregisterComponent(id);
+		component.onUnmount();
+		component.onDeregister();
 	});
 
 	const bindRef = createBindRef((node) => {
-		if (node === null) {
-			rootModel.unbindComponent(id);
+		if (node == null) {
+			component.onUnbind();
 		} else {
-			rootModel.bindComponent(id, node);
+			component.onBind(node);
 		}
 	});
 	const ref = combinedRef(bindRef, props.ref);
 
 	return (
-		<Slot ref={ref} props={props} attributes={component.getAttributes()}>
+		<Slot ref={ref} props={props} attributes={component.attributes()}>
 			{(renderProps) => (
 				<p ref={renderProps.ref} {...renderProps.attributes()}>
 					{renderProps.children}

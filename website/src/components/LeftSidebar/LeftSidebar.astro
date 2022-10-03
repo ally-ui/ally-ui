@@ -24,7 +24,7 @@ const languageToSlugToPage: Record<
 > = {};
 for (const page of content) {
 	const contentFile = parseContentFile(page.file) ?? parseWidgetFile(page.file);
-	if (contentFile === undefined) continue;
+	if (contentFile == null) continue;
 	const slugToPage = languageToSlugToPage[contentFile.language] ?? {};
 	slugToPage[contentFile.slug] = page;
 	languageToSlugToPage[contentFile.language] = slugToPage;

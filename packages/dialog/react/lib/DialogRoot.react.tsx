@@ -34,7 +34,7 @@ export default function DialogRoot({
 		() => rootModel.initialState,
 	);
 	useRunOnce(() => {
-		rootModel.requestStateUpdate = setRootState;
+		rootModel.requestStateUpdate = (updater) => setRootState(updater);
 	});
 	// TODO #44 Reduce syncing boilerplate.
 	useSyncedOption({
@@ -46,8 +46,9 @@ export default function DialogRoot({
 	});
 	useSyncedOption({
 		option: modal,
-		onOptionChange: (modal) =>
-			setRootState((prevState) => ({...prevState, modal})),
+		onOptionChange: (modal) => {
+			setRootState((prevState) => ({...prevState, modal}));
+		},
 	});
 	React.useEffect(
 		function onStateUpdate() {

@@ -1,4 +1,4 @@
-import {StateModel} from '@ally-ui/core';
+import {type NodeModelLike, StateModel} from '@ally-ui/core';
 import {
 	getActualTarget,
 	isEscapeEvent,
@@ -23,10 +23,6 @@ const FOCUSABLE_SELECTORS = [
 ];
 
 export interface FocusTrapOptions {
-	/**
-	 * The container to trap focus within.
-	 */
-	container: HTMLElement;
 	/**
 	 * Whether the focus trap should initially be active.
 	 *
@@ -53,6 +49,10 @@ export interface FocusTrapOptions {
 	 * It can be prevented by calling `ev.preventDefault`.
 	 */
 	onInteractOutside?: (ev: MouseEvent | TouchEvent) => void;
+	/**
+	 * Whether interaction outside the container should be inert.
+	 */
+	modal?: boolean;
 }
 
 export interface FocusTrapReactive {
@@ -61,37 +61,112 @@ export interface FocusTrapReactive {
 
 export type FocusTrapState = FocusTrapOptions & FocusTrapReactive;
 
-export class FocusTrapModel extends StateModel<FocusTrapState> {
+export interface FocusTrapAttributes {
+	'aria-modal'?: 'true';
+	style?: {
+		'pointer-events': 'auto';
+	};
+}
+
+export class FocusTrapModel
+	extends StateModel<FocusTrapState>
+	implements NodeModelLike<FocusTrapAttributes>
+{
 	constructor(initialOptions: FocusTrapOptions) {
 		super({...initialOptions, active: initialOptions.initialActive ?? false});
+	}
+
+	attributes(): FocusTrapAttributes {
+		return FocusTrapModel.attributes(this.state);
+	}
+
+	static attributes(state: FocusTrapState): FocusTrapAttributes {
+		if (state.modal) {
+			return {
+				'aria-modal': 'true',
+				style: {'pointer-events': 'auto'},
+			};
+		}
+		return {};
+	}
+
+	/**
+	 * The node to trap focus within.
+	 */
+	node?: HTMLElement;
+	#unsubscribeState?: () => void;
+	onBind(node: HTMLElement): void {
+		this.node = node;
+		this.#unsubscribeState = this.subscribeState(this.#onStateChange);
+	}
+
+	onUnbind(): void {
+		this.node = undefined;
+		this.#unsubscribeState?.();
+	}
+
+	#onStateChange = ({active}: FocusTrapState, prev?: FocusTrapState) => {
+		if (active !== prev?.active) {
+			if (active) {
+				this.activate();
+			} else {
+				this.deactivate();
+			}
+		}
+	};
+
+	activate() {
+		const {node} = this;
+		if (node == null) return;
+		this.#registerTrap();
+		this.#subscribeChildren();
+		this.#subscribeEvents();
+		this.#trapFocus();
+		if (!this.state.active) {
+			this.requestStateUpdate?.((prev) => ({
+				...prev,
+				active: true,
+			}));
+		}
+	}
+
+	deactivate() {
+		this.#deregisterTrap?.();
+		this.#unsubscribeChildren?.();
+		this.#unsubscribeEvents?.();
+		this.#returnFocus?.();
 		if (this.state.active) {
-			this.activate();
+			this.requestStateUpdate?.((prev) => ({
+				...prev,
+				active: false,
+			}));
 		}
 	}
 
-	watchStateChange({active}: FocusTrapState, prev: FocusTrapState) {
-		if (active !== prev.active) {
-			this.#onActiveChangeEffect(active);
-		}
-	}
-
-	#onActiveChangeEffect(active: boolean) {
-		if (active) {
-			this.activate();
-		} else {
-			this.deactivate();
-		}
+	/**
+	 * Keep track of all active traps and only handle the latest trap.
+	 */
+	static activeTraps: FocusTrapModel[] = [];
+	#deregisterTrap?: () => void;
+	#registerTrap() {
+		if (this.#deregisterTrap != null) return;
+		FocusTrapModel.activeTraps.push(this);
+		this.#deregisterTrap = () => {
+			const idx = FocusTrapModel.activeTraps.findIndex((trap) => trap === this);
+			FocusTrapModel.activeTraps.splice(idx, 1);
+			this.#deregisterTrap = undefined;
+		};
 	}
 
 	#focusableChildren: HTMLElement[] = [];
 	#unsubscribeChildren?: () => void;
 	#subscribeChildren() {
-		if (this.#unsubscribeChildren !== undefined) {
-			return;
-		}
+		const {node} = this;
+		if (node == null) return;
+		if (this.#unsubscribeChildren != null) return;
 		const update = () => {
 			this.#focusableChildren = Array.from(
-				this.state.container.querySelectorAll(FOCUSABLE_SELECTORS.join(',')),
+				node.querySelectorAll(FOCUSABLE_SELECTORS.join(',')),
 			).filter(isHTMLElement);
 		};
 		update();
@@ -102,7 +177,7 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 			}
 		});
 
-		observer.observe(this.state.container, {
+		observer.observe(node, {
 			attributes: true,
 			childList: true,
 			subtree: true,
@@ -116,9 +191,7 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 
 	#unsubscribeEvents?: () => void;
 	#subscribeEvents() {
-		if (this.#unsubscribeEvents !== undefined) {
-			return;
-		}
+		if (this.#unsubscribeEvents != null) return;
 		window.addEventListener('keydown', this.#onKeyDown, LISTENER_OPTIONS);
 		window.addEventListener('mousedown', this.#onInteract, LISTENER_OPTIONS);
 		window.addEventListener('touchstart', this.#onInteract, LISTENER_OPTIONS);
@@ -138,45 +211,12 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		};
 	}
 
-	#returnFocus?: () => void;
-	#previouslyFocused?: Element;
-	#trapFocus() {
-		if (this.#returnFocus !== undefined) {
-			return;
-		}
-		this.#returnFocus = () => {
-			this.#returnFocus = undefined;
-			const focusEvent = new Event('focus-trap.on-deactivate-auto-focus', {
-				cancelable: true,
-			});
-			this.state.onDeactivateAutoFocus?.(focusEvent);
-			if (focusEvent.defaultPrevented) {
-				return;
-			}
-			if (this.#previouslyFocused instanceof HTMLElement) {
-				this.#previouslyFocused.focus();
-			}
-		};
-
-		this.#previouslyFocused = document.activeElement ?? undefined;
-		const focusEvent = new Event('focus-trap.on-activate-auto-focus', {
-			cancelable: true,
-		});
-		this.state.onActivateAutoFocus?.(focusEvent);
-		if (focusEvent.defaultPrevented) {
-			return;
-		}
-		this.#focusableChildren.at(0)?.focus();
-	}
-
 	#onKeyDown = (ev: KeyboardEvent) => {
+		if (FocusTrapModel.activeTraps.at(-1) !== this) return;
 		if (isEscapeEvent(ev)) {
 			this.#onKeyDown__escape(ev);
-			return;
-		}
-		if (isTabEvent(ev)) {
+		} else if (isTabEvent(ev)) {
 			this.#onKeyDown__tab(ev);
-			return;
 		}
 	};
 
@@ -205,24 +245,20 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 		}
 	};
 
-	#waitingToDeactivate = false;
+	#interactEndDeactivates = false;
 	/**
 	 * Check mouse or touch interactions via `mousedown` or `touchstart`.
 	 */
 	#onInteract = (ev: MouseEvent | TouchEvent) => {
-		if (isTargetContainedBy(getActualTarget(ev), this.state.container)) {
-			return;
-		}
+		if (FocusTrapModel.activeTraps.at(-1) !== this) return;
+		if (this.node == null) return;
+		if (isTargetContainedBy(getActualTarget(ev), this.node)) return;
 		this.state.onInteractOutside?.(ev);
-		if (ev.defaultPrevented) {
-			this.#waitingToDeactivate = false;
-			return;
-		}
-		this.#waitingToDeactivate = true;
+		this.#interactEndDeactivates = !ev.defaultPrevented;
 	};
 
 	#onInteractEnd = () => {
-		if (this.#waitingToDeactivate) {
+		if (this.#interactEndDeactivates) {
 			/**
 			 * The `click` event is fired after the full click action occurs. If we
 			 * deactivate the focus trap synchronously, the click handler will be
@@ -234,42 +270,45 @@ export class FocusTrapModel extends StateModel<FocusTrapState> {
 			 */
 			setTimeout(() => {
 				this.deactivate();
-				this.#waitingToDeactivate = false;
+				this.#interactEndDeactivates = false;
 			});
 		}
 	};
 
 	#onClick = (ev: MouseEvent) => {
-		if (isTargetContainedBy(getActualTarget(ev), this.state.container)) {
-			return;
-		}
+		if (FocusTrapModel.activeTraps.at(-1) !== this) return;
+		if (this.node == null) return;
+		if (isTargetContainedBy(getActualTarget(ev), this.node)) return;
 		if (this.state.active) {
 			ev.preventDefault();
 			ev.stopPropagation();
 		}
 	};
 
-	activate() {
-		this.#subscribeChildren();
-		this.#subscribeEvents();
-		this.#trapFocus();
-		if (!this.state.active) {
-			this.requestStateUpdate?.((prevState) => ({
-				...prevState,
-				active: true,
-			}));
-		}
-	}
+	#returnFocus?: () => void;
+	#previouslyFocused?: Element;
+	#trapFocus() {
+		if (this.#returnFocus != null) return;
+		this.#returnFocus = () => {
+			this.#returnFocus = undefined;
+			const focusEvent = new Event('focus-trap.on-deactivate-auto-focus', {
+				cancelable: true,
+			});
+			this.state.onDeactivateAutoFocus?.(focusEvent);
+			if (focusEvent.defaultPrevented) {
+				return;
+			}
+			if (this.#previouslyFocused instanceof HTMLElement) {
+				this.#previouslyFocused.focus();
+			}
+		};
 
-	deactivate() {
-		this.#unsubscribeChildren?.();
-		this.#unsubscribeEvents?.();
-		this.#returnFocus?.();
-		if (this.state.active) {
-			this.requestStateUpdate?.((prevState) => ({
-				...prevState,
-				active: false,
-			}));
-		}
+		this.#previouslyFocused = document.activeElement ?? undefined;
+		const focusEvent = new Event('focus-trap.on-activate-auto-focus', {
+			cancelable: true,
+		});
+		this.state.onActivateAutoFocus?.(focusEvent);
+		if (focusEvent.defaultPrevented) return;
+		this.#focusableChildren.at(0)?.focus();
 	}
 }

@@ -1,9 +1,6 @@
-import {ComponentModel} from '@ally-ui/core';
-import type {
-	DialogComponentType,
-	DialogRootModel,
-	DialogRootModelState,
-} from './DialogRootModel';
+import {NodeModel} from '@ally-ui/core';
+import type {DialogRootModel, DialogRootModelState} from './DialogRootModel';
+import type {DialogTitleModelAttributes} from './DialogTitleModel';
 
 export interface DialogTriggerModelOptions {}
 
@@ -21,29 +18,25 @@ export interface DialogTriggerModelAttributes {
 	'data-state': 'open' | 'closed';
 }
 
-export class DialogTriggerModel extends ComponentModel<
-	DialogRootModel,
+export class DialogTriggerModel extends NodeModel<
 	DialogTriggerModelState,
 	DialogTriggerModelDerived,
-	DialogTriggerModelAttributes
+	DialogTitleModelAttributes
 > {
-	getType(): DialogComponentType {
-		return 'trigger';
-	}
+	id = 'trigger';
 
-	getAttributes(rootState: DialogRootModelState): DialogTriggerModelAttributes {
+	attributes(rootState: DialogRootModelState): DialogTriggerModelAttributes {
+		const root = this.root as DialogRootModel;
 		return {
-			id: this.domId(),
+			id: `${root.id}-${this.id}`,
 			'aria-haspopup': 'dialog',
-			'aria-controls': this.rootModel.componentDomId('content'),
+			'aria-controls': `${root.id}-content`,
 			'data-state': rootState.open ? 'open' : 'closed',
 		};
 	}
 
 	onClick() {
-		this.rootModel.requestStateUpdate?.((prevState) => ({
-			...prevState,
-			open: true,
-		}));
+		const root = this.root as DialogRootModel;
+		root.requestStateUpdate?.((prev) => ({...prev, open: true}));
 	}
 }

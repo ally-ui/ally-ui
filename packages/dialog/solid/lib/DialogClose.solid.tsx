@@ -5,7 +5,6 @@ import {
 import {
 	combinedRef,
 	createBindRef,
-	forwardEvent,
 	Slot,
 	type SlottableProps,
 } from '@ally-ui/solid';
@@ -23,27 +22,24 @@ export type DialogCloseProps = SlottableProps<
 
 export default function DialogClose(props: DialogCloseProps) {
 	const rootModel = useDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
 	}
-	const component = rootModel.registerComponent(
-		new DialogCloseModel(rootModel, {}),
-	);
-	const id = component.getId();
+	const component = new DialogCloseModel({}, rootModel);
 
 	onMount(() => {
-		rootModel.mountComponent(id);
+		component.onMount();
 	});
 	onCleanup(() => {
-		rootModel.unmountComponent(id);
-		rootModel.deregisterComponent(id);
+		component.onUnmount();
+		component.onDeregister();
 	});
 
 	const bindRef = createBindRef((node) => {
-		if (node === null) {
-			rootModel.unbindComponent(id);
+		if (node == null) {
+			component.onUnbind();
 		} else {
-			rootModel.bindComponent(id, node);
+			component.onBind(node);
 		}
 	});
 	const ref = combinedRef(bindRef, props.ref);
@@ -53,7 +49,7 @@ export default function DialogClose(props: DialogCloseProps) {
 			ref={ref}
 			props={props}
 			attributes={{
-				...component.getAttributes(),
+				...component.attributes(),
 				onClick: () => component.onClick(),
 			}}
 		>

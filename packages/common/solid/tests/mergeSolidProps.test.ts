@@ -1,62 +1,61 @@
-import {vi} from 'vitest';
 import {mergeSolidProps} from '../lib/main';
 
-it('overwrites slot props with child props', () => {
-	const slotProps = {a: 1, b: 2};
+it('overwrites parent props with child props', () => {
+	const parentProps = {a: 1, b: 2};
 	const childProps = {b: 3, c: 4};
-	const merged = mergeSolidProps(slotProps, childProps);
+	const merged = mergeSolidProps(parentProps, childProps);
 	expect(merged).toStrictEqual({a: 1, b: 3, c: 4});
 });
 
-it('calls slot and child event handlers', () => {
-	const slotFn = vi.fn();
+it('calls parent and child event handlers', () => {
+	const parentFn = vi.fn();
 	const childFn = vi.fn();
-	const slotProps = {onClick: slotFn};
+	const parentProps = {onClick: parentFn};
 	const childProps = {onClick: childFn};
-	const merged = mergeSolidProps(slotProps, childProps);
+	const merged = mergeSolidProps(parentProps, childProps);
 	const ev = new Event('click');
 	merged.onClick(ev);
 	expect(childFn).toBeCalledWith(ev);
-	expect(slotFn).toBeCalledWith(ev);
+	expect(parentFn).toBeCalledWith(ev);
 });
 
-it('calls slot and child bound event handlers', () => {
-	const slotFn = vi.fn();
+it('calls parent and child bound event handlers', () => {
+	const parentFn = vi.fn();
 	const childFn = vi.fn();
-	const slotProps = {onClick: [slotFn, 123]};
+	const parentProps = {onClick: [parentFn, 123]};
 	const childProps = {onClick: [childFn, 456]};
-	const merged = mergeSolidProps(slotProps, childProps);
+	const merged = mergeSolidProps(parentProps, childProps);
 	const ev = new Event('click');
 	merged.onClick(ev);
 	expect(childFn).toBeCalledWith(456, ev);
-	expect(slotFn).toBeCalledWith(123, ev);
+	expect(parentFn).toBeCalledWith(123, ev);
 });
 
 it('merges className classes', () => {
-	const slotProps = {className: 'a b'};
+	const parentProps = {className: 'a b'};
 	const childProps = {className: 'c d'};
-	const merged = mergeSolidProps(slotProps, childProps);
+	const merged = mergeSolidProps(parentProps, childProps);
 	expect(merged.className).toEqual('a b c d');
 });
 
 it('merges class classes', () => {
-	const slotProps = {class: 'a b'};
+	const parentProps = {class: 'a b'};
 	const childProps = {class: 'c d'};
-	const merged = mergeSolidProps(slotProps, childProps);
+	const merged = mergeSolidProps(parentProps, childProps);
 	expect(merged.class).toEqual('a b c d');
 });
 
 it('merges classList objects', () => {
-	const slotProps = {classList: {a: true, b: false}};
+	const parentProps = {classList: {a: true, b: false}};
 	const childProps = {classList: {a: false, c: true}};
-	const merged = mergeSolidProps(slotProps, childProps);
+	const merged = mergeSolidProps(parentProps, childProps);
 	expect(merged.classList).toEqual({a: false, b: false, c: true});
 });
 
 it('merges style objects', () => {
-	const slotProps = {style: {margin: '2px', 'background-color': 'red'}};
+	const parentProps = {style: {margin: '2px', 'background-color': 'red'}};
 	const childProps = {style: {color: 'white', margin: '4px'}};
-	const merged = mergeSolidProps(slotProps, childProps);
+	const merged = mergeSolidProps(parentProps, childProps);
 	expect(merged.style).toStrictEqual({
 		margin: '4px',
 		color: 'white',
@@ -65,9 +64,9 @@ it('merges style objects', () => {
 });
 
 it('merges style strings', () => {
-	const slotProps = {style: 'margin: 2px; background-color: red'};
+	const parentProps = {style: 'margin: 2px; background-color: red'};
 	const childProps = {style: 'color: white; margin: 4px'};
-	const merged = mergeSolidProps(slotProps, childProps);
+	const merged = mergeSolidProps(parentProps, childProps);
 	expect(merged.style).toStrictEqual({
 		margin: '4px',
 		color: 'white',
@@ -76,9 +75,9 @@ it('merges style strings', () => {
 });
 
 it('merges style object and string', () => {
-	const slotProps = {style: 'margin: 2px; background-color: red'};
+	const parentProps = {style: 'margin: 2px; background-color: red'};
 	const childProps = {style: {color: 'white', margin: '4px'}};
-	const merged = mergeSolidProps(slotProps, childProps);
+	const merged = mergeSolidProps(parentProps, childProps);
 	expect(merged.style).toStrictEqual({
 		margin: '4px',
 		color: 'white',
@@ -86,11 +85,11 @@ it('merges style object and string', () => {
 	});
 });
 
-it('merges multiple chlid props', () => {
-	const slotProps = {a: 1, b: 2, style: 'margin: 2px; background-color: red'};
+it('merges multiple child props', () => {
+	const parentProps = {a: 1, b: 2, style: 'margin: 2px; background-color: red'};
 	const childProps = {b: 3, c: 4, style: 'color: white; margin: 4px'};
 	const nextChildProps = {b: 4, d: 5, style: 'color: blue; padding: 2px;'};
-	const merged = mergeSolidProps(slotProps, childProps, nextChildProps);
+	const merged = mergeSolidProps(parentProps, childProps, nextChildProps);
 	expect(merged).toStrictEqual({
 		a: 1,
 		b: 4,

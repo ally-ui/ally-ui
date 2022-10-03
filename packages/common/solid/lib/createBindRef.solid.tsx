@@ -15,7 +15,7 @@ export function createBindRef(
 	onCleanup(() => {
 		ref(null);
 	});
-	if (condition !== undefined) {
+	if (condition != null) {
 		createEffect(() => {
 			if (!condition()) {
 				ref(null);
