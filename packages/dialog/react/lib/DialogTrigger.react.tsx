@@ -25,36 +25,34 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 		const {ref: _, children, asChild, onClick, ...restProps} = props;
 
 		const rootModel = useDialogRootModel();
-		if (rootModel === undefined) {
+		if (rootModel == null) {
 			throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
 		}
-		const component = useRunOnce(() =>
-			rootModel.registerComponent(new DialogTriggerModel(rootModel, {})),
-		);
-		const id = component.getId();
+		const component = useRunOnce(() => new DialogTriggerModel({}, rootModel));
 
 		const rootState = useDialogRootState() ?? rootModel.state;
 
 		React.useEffect(
 			function mount() {
-				rootModel.mountComponent(id);
+				// component.onRegister();
+				component.onMount();
 				return () => {
-					rootModel.unmountComponent(id);
-					// rootModel.deregisterComponent(id);
+					component.onUnmount();
+					// component.onDeregister();
 				};
 			},
-			[rootModel],
+			[component],
 		);
 
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
-				if (node === null) {
-					rootModel.unbindComponent(id);
+				if (node == null) {
+					component.onUnbind();
 				} else {
-					rootModel.bindComponent(id, node);
+					component.onBind(node);
 				}
 			},
-			[rootModel],
+			[component],
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
@@ -76,7 +74,7 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 			<Comp
 				ref={ref}
 				{...mergeReactProps(
-					reactProps(component.getAttributes(rootState)),
+					reactProps(component.attributes(rootState)),
 					restProps,
 				)}
 				onClick={handleClick}

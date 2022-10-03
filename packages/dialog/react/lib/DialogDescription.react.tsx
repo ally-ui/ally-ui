@@ -21,36 +21,36 @@ const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 		const {ref: _, children, asChild, ...restProps} = props;
 
 		const rootModel = useDialogRootModel();
-		if (rootModel === undefined) {
+		if (rootModel == null) {
 			throw new Error(
 				'<Dialog.Description/> must be a child of `<Dialog.Root/>`',
 			);
 		}
-		const component = useRunOnce(() =>
-			rootModel.registerComponent(new DialogDescriptionModel(rootModel, {})),
+		const component = useRunOnce(
+			() => new DialogDescriptionModel({}, rootModel),
 		);
-		const id = component.getId();
 
 		React.useEffect(
 			function mount() {
-				rootModel.mountComponent(id);
+				// component.onRegister();
+				component.onMount();
 				return () => {
-					rootModel.unmountComponent(id);
-					// rootModel.deregisterComponent(id);
+					component.onUnmount();
+					// component.onDeregister();
 				};
 			},
-			[rootModel],
+			[component],
 		);
 
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
-				if (node === null) {
-					rootModel.unbindComponent(id);
+				if (node == null) {
+					component.onUnbind();
 				} else {
-					rootModel.bindComponent(id, node);
+					component.onBind(node);
 				}
 			},
-			[rootModel],
+			[component],
 		);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
@@ -59,7 +59,7 @@ const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 		return (
 			<Comp
 				ref={ref}
-				{...mergeReactProps(reactProps(component.getAttributes()), restProps)}
+				{...mergeReactProps(reactProps(component.attributes()), restProps)}
 			>
 				{children}
 			</Comp>
