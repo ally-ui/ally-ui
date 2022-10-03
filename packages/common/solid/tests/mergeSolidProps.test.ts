@@ -85,3 +85,22 @@ it('merges style object and string', () => {
 		'background-color': 'red',
 	});
 });
+
+it('merges multiple chlid props', () => {
+	const slotProps = {a: 1, b: 2, style: 'margin: 2px; background-color: red'};
+	const childProps = {b: 3, c: 4, style: 'color: white; margin: 4px'};
+	const nextChildProps = {b: 4, d: 5, style: 'color: blue; padding: 2px;'};
+	const merged = mergeSolidProps(slotProps, childProps, nextChildProps);
+	expect(merged).toStrictEqual({
+		a: 1,
+		b: 4,
+		c: 4,
+		d: 5,
+		style: {
+			margin: '4px',
+			'background-color': 'red',
+			color: 'blue',
+			padding: '2px',
+		},
+	});
+});
