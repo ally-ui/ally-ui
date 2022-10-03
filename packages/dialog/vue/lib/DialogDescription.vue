@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {DialogDescriptionModel} from '@ally-ui/core-dialog';
+import {mergeVueProps} from '@ally-ui/vue';
 import {inject, onMounted, onUnmounted, ref, watchEffect} from 'vue';
 import {DIALOG_ROOT_MODEL} from './context';
 
@@ -43,9 +44,13 @@ watchEffect(() => {
 <template>
 	<slot
 		v-if="props.asChild"
-		v-bind="{...component.getAttributes(), ...$attrs, ref: setRef}"
+		v-bind="{...mergeVueProps(component.getAttributes(), $attrs), ref: setRef}"
 	/>
-	<p v-else ref="node" v-bind="{...component.getAttributes(), ...$attrs}">
+	<p
+		v-else
+		ref="node"
+		v-bind="mergeVueProps(component.getAttributes(), $attrs)"
+	>
 		<slot />
 	</p>
 </template>

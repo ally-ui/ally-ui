@@ -1,5 +1,5 @@
 import React from 'react';
-import {combinedRef} from './main';
+import {combinedRef, mergeReactProps} from './main';
 
 // CREDIT https://github.com/radix-ui/primitives/blob/main/packages/react/slot/src/Slot.tsx
 interface SlotProps extends React.HTMLAttributes<HTMLElement> {
@@ -58,7 +58,7 @@ export const SlotClone = React.forwardRef<any, SlotCloneProps>(
 
 		if (React.isValidElement(children)) {
 			return React.cloneElement(children, {
-				...mergeProps(slotProps, children.props),
+				...mergeReactProps(slotProps, children.props),
 				ref: combinedRef([forwardedRef, (children as any).ref]),
 			} as any);
 		}
@@ -77,35 +77,4 @@ const Slottable = ({children}: {children: React.ReactNode}) => {
 
 function isSlottable(child: React.ReactNode): child is React.ReactElement {
 	return React.isValidElement(child) && child.type === Slottable;
-}
-
-type AnyProps = Record<string, any>;
-
-function mergeProps(slotProps: AnyProps, childProps: AnyProps) {
-	// All child props should override.
-	const overrideProps = {...childProps};
-
-	for (const propName in childProps) {
-		const slotPropValue = slotProps[propName];
-		const childPropValue = childProps[propName];
-
-		const isHandler = /^on[A-Z]/.test(propName);
-		// If it's a handler, modify the override by composing the base handler.
-		if (isHandler) {
-			overrideProps[propName] = (...args: unknown[]) => {
-				childPropValue?.(...args);
-				slotPropValue?.(...args);
-			};
-		}
-		// If it's `style`, we merge them.
-		else if (propName === 'style') {
-			overrideProps[propName] = {...slotPropValue, ...childPropValue};
-		} else if (propName === 'className') {
-			overrideProps[propName] = [slotPropValue, childPropValue]
-				.filter(Boolean)
-				.join(' ');
-		}
-	}
-
-	return {...slotProps, ...overrideProps};
 }

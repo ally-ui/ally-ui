@@ -1,5 +1,5 @@
 import {Accessor, JSX, ParentProps, splitProps} from 'solid-js';
-import type {CallbackRef} from './types';
+import {mergeSolidProps, type CallbackRef} from './main';
 
 type SlotRenderPropGetter<
 	TAttributes extends object,
@@ -11,20 +11,19 @@ type SlotRenderPropGetter<
 type SlottablePropsAsChild<
 	TAttributes extends object,
 	TRegularProps extends object,
-> = {
+> = Omit<TRegularProps, 'children'> & {
 	asChild: true;
-} & {
 	ref?: CallbackRef<HTMLElement>;
 	children: (
-		props: SlotRenderPropGetter<TAttributes, TRegularProps>,
+		props: SlotRenderPropGetter<TAttributes, Omit<TRegularProps, 'children'>>,
 	) => JSX.Element;
 };
 
-type SlottablePropsAsRegular<TRegularProps extends ParentProps> = {
-	asChild?: undefined;
-} & {
-	ref?: CallbackRef<HTMLElement>;
-} & TRegularProps;
+type SlottablePropsAsRegular<TRegularProps extends ParentProps> =
+	TRegularProps & {
+		asChild?: undefined;
+		ref?: CallbackRef<HTMLElement>;
+	};
 
 /**
  * Prop definitions for a component that either renders a regular template or
@@ -39,7 +38,7 @@ export type SlottableProps<
 	TAttributes extends object,
 	TRegularProps extends ParentProps,
 > =
-	| SlottablePropsAsChild<TAttributes, Exclude<TRegularProps, 'children'>>
+	| SlottablePropsAsChild<TAttributes, TRegularProps>
 	| SlottablePropsAsRegular<TRegularProps>;
 
 interface RegularRenderProp<TAttributes extends object> {
@@ -76,20 +75,27 @@ export function Slot<
 	TRegularProps extends ParentProps,
 >(slotProps: SlotProps<TAttributes, TRegularProps>) {
 	// `asChild` is never updated dynamically, so an early return here is okay.
+	const [, restProps] = splitProps(slotProps.props, [
+		'asChild',
+		'children',
+		'ref',
+	]);
 	if (slotProps.props.asChild) {
 		return (
 			<>
 				{slotProps.props.children((userProps) => ({
 					ref: slotProps.ref,
-					...(userProps === undefined
-						? slotProps.attributes
-						: (mergeProps(slotProps.attributes, userProps) as any)),
+					...(mergeSolidProps(
+						slotProps.attributes,
+						restProps,
+						userProps,
+					) as any),
 				}))}
 			</>
 		);
 	}
-	const [, restProps] = splitProps(slotProps.props, ['asChild', 'children']);
-	const attributes = () => ({...slotProps.attributes, ...restProps});
+	const attributes = () =>
+		mergeSolidProps(slotProps.attributes, restProps) as TAttributes;
 	return (
 		<>
 			{slotProps.children({
@@ -99,37 +105,4 @@ export function Slot<
 			})}
 		</>
 	);
-}
-
-type AnyProps = Record<string, any>;
-
-function mergeProps(slotProps: AnyProps, childProps: AnyProps) {
-	// All child props should override.
-	const overrideProps = {...childProps};
-
-	for (const propName in childProps) {
-		const slotPropValue = slotProps[propName];
-		const childPropValue = childProps[propName];
-
-		const isHandler = /^on[A-Z]/.test(propName);
-		// If it's a handler, modify the override by composing the base handler.
-		if (isHandler) {
-			overrideProps[propName] = (...args: unknown[]) => {
-				childPropValue?.(...args);
-				slotPropValue?.(...args);
-			};
-		}
-		// If it's `style`, we merge them.
-		else if (propName === 'style') {
-			overrideProps[propName] = {...slotPropValue, ...childPropValue};
-		} else if (propName === 'class') {
-			overrideProps[propName] = [slotPropValue, childPropValue]
-				.filter(Boolean)
-				.join(' ');
-		} else if (propName === 'classList') {
-			overrideProps[propName] = {...slotPropValue, ...childPropValue};
-		}
-	}
-
-	return {...slotProps, ...overrideProps};
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {DialogCloseModel} from '@ally-ui/core-dialog';
+import {mergeVueProps} from '@ally-ui/vue';
 import {inject, onMounted, onUnmounted, ref, watchEffect} from 'vue';
 import {DIALOG_ROOT_MODEL} from './context';
 
@@ -48,16 +49,15 @@ function handleClick() {
 	<slot
 		v-if="props.asChild"
 		v-bind="{
-			...component.getAttributes(),
+			...mergeVueProps(component.getAttributes(), $attrs),
 			onClick: handleClick,
-			...$attrs,
 			ref: setRef,
 		}"
 	/>
 	<button
 		v-else
 		ref="node"
-		v-bind="{...component.getAttributes(), ...$attrs}"
+		v-bind="mergeVueProps(component.getAttributes(), $attrs)"
 		@click="handleClick"
 	>
 		<slot />

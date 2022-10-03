@@ -1,8 +1,11 @@
+import {DialogTriggerModel} from '@ally-ui/core-dialog';
 import {
-	DialogTriggerModel,
-	type DialogTriggerModelAttributes,
-} from '@ally-ui/core-dialog';
-import {Slot, useMultipleRefs, useRunOnce} from '@ally-ui/react';
+	mergeReactProps,
+	reactProps,
+	Slot,
+	useMultipleRefs,
+	useRunOnce,
+} from '@ally-ui/react';
 import React from 'react';
 import {useDialogRootModel, useDialogRootState} from './context';
 
@@ -72,8 +75,10 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 		return (
 			<Comp
 				ref={ref}
-				{...component.getAttributes(rootState)}
-				{...restProps}
+				{...mergeReactProps(
+					reactProps(component.getAttributes(rootState)),
+					restProps,
+				)}
 				onClick={handleClick}
 			>
 				{children}

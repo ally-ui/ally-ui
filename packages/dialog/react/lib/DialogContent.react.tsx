@@ -3,6 +3,8 @@ import {
 	type DialogContentModelOptions,
 } from '@ally-ui/core-dialog';
 import {
+	mergeReactProps,
+	reactProps,
 	Slot,
 	useMultipleRefs,
 	useRunOnce,
@@ -120,8 +122,10 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 				{derivedState.show && (
 					<Comp
 						ref={ref}
-						{...component.getAttributes(rootState)}
-						{...restProps}
+						{...mergeReactProps(
+							reactProps(component.getAttributes(rootState)),
+							restProps,
+						)}
 					>
 						{children}
 					</Comp>

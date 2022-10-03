@@ -8,6 +8,7 @@
 		default: DefaultSlot<
 			TAsChild,
 			DialogTriggerModelAttributes,
+			svelteHTML.IntrinsicElements['button'],
 			RefAction<{
 				click: [(ev: Event) => void, undefined];
 			}>
@@ -23,6 +24,8 @@
 	import {
 		createEventForwarder,
 		createRefAction,
+		mergeSvelteProps,
+		svelteProps,
 		type DefaultSlot,
 		type RefAction,
 	} from '@ally-ui/svelte';
@@ -74,7 +77,12 @@
 	export let asChild: TAsChild = undefined as TAsChild;
 
 	$: slotProps = {
-		props: component.getAttributes($rootState),
+		props: (userProps: svelteHTML.IntrinsicElements['button']) =>
+			mergeSvelteProps(
+				svelteProps(component.getAttributes($rootState)),
+				$$restProps,
+				userProps,
+			),
 		ref,
 	} as any; // Workaround to allow conditional slot type.
 
@@ -86,11 +94,13 @@
 {:else}
 	<button
 		bind:this={node}
-		{...component.getAttributes($rootState)}
-		{...$$restProps}
+		{...mergeSvelteProps(
+			svelteProps(component.getAttributes($rootState)),
+			$$restProps,
+		)}
 		use:eventForwarder
 		on:click={handleClick}
 	>
-		<slot />
+		<slot {...slotProps} />
 	</button>
 {/if}

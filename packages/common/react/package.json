@@ -5,7 +5,10 @@
 		"example": "vite",
 		"build": "tsc && vite build",
 		"build:watch": "vite build --watch",
-		"clean": "rimraf dist"
+		"clean": "rimraf dist",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"coverage": "vitest run --coverage"
 	},
 	"author": "Bryan Lee",
 	"description": "React utilities for Ally UI",
@@ -33,6 +36,9 @@
 		"./package.json": "./package.json"
 	},
 	"sideEffects": false,
+	"dependencies": {
+		"@ally-ui/core": "*"
+	},
 	"peerDependencies": {
 		"react": ">=16",
 		"react-dom": ">=16"

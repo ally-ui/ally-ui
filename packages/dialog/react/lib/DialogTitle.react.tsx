@@ -1,8 +1,11 @@
+import {DialogTitleModel} from '@ally-ui/core-dialog';
 import {
-	DialogTitleModel,
-	type DialogTitleModelAttributes,
-} from '@ally-ui/core-dialog';
-import {Slot, useMultipleRefs, useRunOnce} from '@ally-ui/react';
+	mergeReactProps,
+	reactProps,
+	Slot,
+	useMultipleRefs,
+	useRunOnce,
+} from '@ally-ui/react';
 import React from 'react';
 import {useDialogRootModel} from './context';
 
@@ -52,7 +55,10 @@ const DialogTitle = React.forwardRef<HTMLElement, DialogTitleProps>(
 		const Comp = asChild ? Slot : 'h1';
 
 		return (
-			<Comp ref={ref} {...component.getAttributes()} {...restProps}>
+			<Comp
+				ref={ref}
+				{...mergeReactProps(reactProps(component.getAttributes()), restProps)}
+			>
 				{children}
 			</Comp>
 		);

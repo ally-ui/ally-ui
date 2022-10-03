@@ -6,7 +6,12 @@
 				asChild?: TAsChild;
 			};
 	type DialogContentSlots<TAsChild extends true | undefined> = {
-		default: DefaultSlot<TAsChild, DialogContentModelAttributes, RefAction>;
+		default: DefaultSlot<
+			TAsChild,
+			DialogContentModelAttributes,
+			svelteHTML.IntrinsicElements['div'],
+			RefAction
+		>;
 	};
 	type DialogContentEvents = {
 		openAutoFocus: Event;
@@ -26,6 +31,8 @@
 		createEventForwarder,
 		createNativeEventDispatcher,
 		createRefAction,
+		mergeSvelteProps,
+		svelteProps,
 		type DefaultSlot,
 		type RefAction,
 	} from '@ally-ui/svelte';
@@ -86,7 +93,12 @@
 	export let asChild: TAsChild = undefined as TAsChild;
 
 	$: slotProps = {
-		props: component.getAttributes($rootState),
+		props: (userProps: svelteHTML.IntrinsicElements['div']) =>
+			mergeSvelteProps(
+				svelteProps(component.getAttributes($rootState)),
+				$$restProps,
+				userProps,
+			),
 		ref,
 	} as any; // Workaround to allow conditional slot type.
 
@@ -104,11 +116,13 @@
 	{:else}
 		<div
 			bind:this={node}
-			{...component.getAttributes($rootState)}
-			{...$$restProps}
+			{...mergeSvelteProps(
+				svelteProps(component.getAttributes($rootState)),
+				$$restProps,
+			)}
 			use:eventForwarder
 		>
-			<slot />
+			<slot {...slotProps} />
 		</div>
 	{/if}
 {/if}

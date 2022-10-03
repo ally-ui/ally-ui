@@ -6,6 +6,7 @@ import {
 	DIALOG_ROOT_MODEL,
 	DIALOG_ROOT_STATE,
 } from './context';
+import {mergeVueProps} from '@ally-ui/vue';
 
 /**
  * @type {import('@ally-ui/core-dialog').DialogContentModelOptions}
@@ -69,12 +70,15 @@ watchEffect(() => {
 	<template v-if="derivedState.show">
 		<slot
 			v-if="props.asChild"
-			v-bind="{...component.getAttributes(rootState), ...$attrs, ref: setRef}"
+			v-bind="{
+				...mergeVueProps(component.getAttributes(rootState), $attrs),
+				ref: setRef,
+			}"
 		/>
 		<div
 			v-else
 			ref="node"
-			v-bind="{...component.getAttributes(rootState), ...$attrs}"
+			v-bind="mergeVueProps(component.getAttributes(rootState), $attrs)"
 		>
 			<slot />
 		</div>

@@ -5,7 +5,12 @@
 			asChild?: TAsChild;
 		};
 	type DialogDescriptionSlots<TAsChild extends true | undefined> = {
-		default: DefaultSlot<TAsChild, DialogDescriptionModelAttributes, RefAction>;
+		default: DefaultSlot<
+			TAsChild,
+			DialogDescriptionModelAttributes,
+			svelteHTML.IntrinsicElements['p'],
+			RefAction
+		>;
 	};
 </script>
 
@@ -17,6 +22,8 @@
 	import {
 		createEventForwarder,
 		createRefAction,
+		mergeSvelteProps,
+		svelteProps,
 		type DefaultSlot,
 		type RefAction,
 	} from '@ally-ui/svelte';
@@ -61,7 +68,12 @@
 	export let asChild: TAsChild = undefined as TAsChild;
 
 	$: slotProps = {
-		props: component.getAttributes(),
+		props: (userProps: svelteHTML.IntrinsicElements['p']) =>
+			mergeSvelteProps(
+				svelteProps(component.getAttributes()),
+				$$restProps,
+				userProps,
+			),
 		ref,
 	} as any; // Workaround to allow conditional slot type.
 
@@ -73,10 +85,9 @@
 {:else}
 	<p
 		bind:this={node}
-		{...component.getAttributes()}
-		{...$$restProps}
+		{...mergeSvelteProps(svelteProps(component.getAttributes()), $$restProps)}
 		use:eventForwarder
 	>
-		<slot />
+		<slot {...slotProps} />
 	</p>
 {/if}

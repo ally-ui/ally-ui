@@ -6,4 +6,7 @@ export * from './createRefAction';
 export * from './createSyncedOption';
 export * from './createSyncedOptionStore';
 export * from './store';
-export * from './types';
+export * from './styleObject';
+export * from './mergeSvelteProps';
+export * from './slot';
+export * from './svelteProps';

@@ -43,10 +43,11 @@ export interface DialogContentModelDerived {
 export interface DialogContentModelAttributes {
 	id: string;
 	role: 'dialog';
-	'aria-modal': 'true' | undefined;
+	'aria-modal'?: 'true';
 	'aria-labelledby': string;
 	'aria-describedby': string;
 	'data-state': 'open' | 'closed';
+	style?: Record<string, string>;
 }
 
 export class DialogContentModel extends ComponentModel<
@@ -73,6 +74,7 @@ export class DialogContentModel extends ComponentModel<
 			'aria-labelledby': this.rootModel.componentDomId('title'),
 			'aria-describedby': this.rootModel.componentDomId('description'),
 			'data-state': rootState.open ? 'open' : 'closed',
+			...(rootState.modal ? {style: {'pointer-events': 'auto'}} : {}),
 		};
 	}
 
