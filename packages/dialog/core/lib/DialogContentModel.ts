@@ -55,6 +55,14 @@ export class DialogContentModel extends NodeModel<
 > {
 	id = 'content';
 
+	#focusTrap: FocusTrapModel;
+	#scrollLock: ScrollLockModel;
+	constructor(initialState: DialogContentModelState, parent: DialogRootModel) {
+		super(initialState, parent);
+		this.#focusTrap = this.#createFocusTrap();
+		this.#scrollLock = this.#createScrollLock();
+	}
+
 	derived(rootState: DialogRootModelState): DialogContentModelDerived {
 		return {
 			show: this.state.forceMount || rootState.open,
@@ -73,37 +81,12 @@ export class DialogContentModel extends NodeModel<
 		return mergeAttributes(
 			baseAttributes,
 			FocusTrapModel.attributes(
-				this.deriveFocusTrapState(this.state, rootState),
+				this.#deriveFocusTrapState(this.state, rootState),
 			),
 			ScrollLockModel.attributes(
-				this.deriveScrollLockState(this.state, rootState),
+				this.#deriveScrollLockState(this.state, rootState),
 			),
 		) as DialogContentModelAttributes;
-	}
-
-	deriveFocusTrapState(
-		state: DialogContentModelState,
-		rootState: DialogRootModelState,
-	): FocusTrapState {
-		return {
-			active: rootState.open,
-			initialActive: rootState.initialOpen,
-			modal: rootState.modal,
-			onActivateAutoFocus: state.onOpenAutoFocus,
-			onDeactivateAutoFocus: this.#onDeactivateFocusToTrigger,
-			onEscapeKeyDown: state.onEscapeKeyDown,
-			onInteractOutside: state.onInteractOutside,
-		};
-	}
-
-	deriveScrollLockState(
-		_state: DialogCloseModelState,
-		rootState: DialogRootModelState,
-	): ScrollLockState {
-		return {
-			active: rootState.open,
-			initialActive: rootState.initialOpen,
-		};
 	}
 
 	#unsubscribeState?: () => void;
@@ -123,20 +106,24 @@ export class DialogContentModel extends NodeModel<
 	}
 
 	#onStateChange = (state: DialogContentModelState) => {
-		this.#focusTrap?.setState(
-			this.deriveFocusTrapState(state, this.root.state),
+		this.#focusTrap.setState(
+			this.#deriveFocusTrapState(state, this.root.state),
 		);
-		this.#scrollLock?.setState(
-			this.deriveScrollLockState(state, this.root.state),
+		this.#scrollLock.setState(
+			this.#deriveScrollLockState(state, this.root.state),
 		);
 	};
 
 	#onRootStateChange = (
-		{open}: DialogRootModelState,
+		rootState: DialogRootModelState,
 		prev?: DialogRootModelState,
 	) => {
-		if (open !== prev?.open) {
-			if (open) {
+		this.#focusTrap.setState(this.#deriveFocusTrapState(this.state, rootState));
+		this.#scrollLock.setState(
+			this.#deriveScrollLockState(this.state, rootState),
+		);
+		if (rootState.open !== prev?.open) {
+			if (rootState.open) {
 				this.open();
 			} else {
 				this.close();
@@ -146,6 +133,8 @@ export class DialogContentModel extends NodeModel<
 
 	onBind(node: HTMLElement): void {
 		super.onBind(node);
+		this.#focusTrap.onBind(node);
+		this.#scrollLock.onBind(node);
 		this.#checkTitle();
 		const root = this.root as DialogRootModel;
 		if (root.state.open) {
@@ -170,23 +159,17 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 		this.close();
 	}
 
-	#focusTrap?: FocusTrapModel;
-	#scrollLock?: ScrollLockModel;
 	open() {
-		if (this.node == null) {
-			if (this.debug) {
-				console.error(`open, no content component with node`);
-			}
-			return;
-		}
-		if (this.#focusTrap != null && this.#scrollLock != null) {
-			return;
-		}
-		this.#focusTrap = this.#createFocusTrap(this.node);
-		this.#scrollLock = this.#createScrollLock(this.node);
+		this.#focusTrap.activate();
+		this.#scrollLock.activate();
 	}
 
-	#createFocusTrap(contentElement: HTMLElement) {
+	close() {
+		this.#focusTrap.deactivate();
+		this.#scrollLock.deactivate();
+	}
+
+	#createFocusTrap() {
 		const contentTrap = new FocusTrapModel({
 			initialActive: true,
 			onActivateAutoFocus: this.state.onOpenAutoFocus,
@@ -194,8 +177,6 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 			onEscapeKeyDown: this.state.onEscapeKeyDown,
 			onInteractOutside: this.state.onInteractOutside,
 		});
-		// TODO Use better semantics for onBind
-		contentTrap.onBind(contentElement);
 		const root = this.root as DialogRootModel;
 		contentTrap.requestStateUpdate = (trapUpdater) => {
 			root.requestStateUpdate?.((prev) => {
@@ -212,6 +193,21 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 		return contentTrap;
 	}
 
+	#deriveFocusTrapState(
+		state: DialogContentModelState,
+		rootState: DialogRootModelState,
+	): FocusTrapState {
+		return {
+			active: rootState.open,
+			initialActive: rootState.initialOpen,
+			modal: rootState.modal,
+			onActivateAutoFocus: state.onOpenAutoFocus,
+			onDeactivateAutoFocus: this.#onDeactivateFocusToTrigger,
+			onEscapeKeyDown: state.onEscapeKeyDown,
+			onInteractOutside: state.onInteractOutside,
+		};
+	}
+
 	#onDeactivateFocusToTrigger = (ev: Event) => {
 		this.state.onCloseAutoFocus?.(ev);
 		if (ev.defaultPrevented) {
@@ -225,12 +221,10 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 	#isTriggerWithNode = (c: ComponentModel): c is DialogTriggerModel =>
 		c.id === 'trigger' && (c as DialogTriggerModel).node != null;
 
-	#createScrollLock(contentElement: HTMLElement) {
+	#createScrollLock() {
 		const scrollLock = new ScrollLockModel({
 			initialActive: true,
 		});
-		// TODO Use better semantics for onBind
-		scrollLock.onBind(contentElement);
 		const root = this.root as DialogRootModel;
 		scrollLock.requestStateUpdate = (lockUpdater) => {
 			root.requestStateUpdate?.((prev) => {
@@ -247,10 +241,13 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 		return scrollLock;
 	}
 
-	close() {
-		this.#focusTrap?.deactivate();
-		this.#scrollLock?.deactivate();
-		this.#focusTrap = undefined;
-		this.#scrollLock = undefined;
+	#deriveScrollLockState(
+		_state: DialogCloseModelState,
+		rootState: DialogRootModelState,
+	): ScrollLockState {
+		return {
+			active: rootState.open,
+			initialActive: rootState.initialOpen,
+		};
 	}
 }
