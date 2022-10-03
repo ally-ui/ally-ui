@@ -12,7 +12,7 @@ import {
  * @returns A controlled scroll lock instance.
  */
 export function observableScrollLock(
-	options: ScrollLockOptions,
+	options: ScrollLockOptions = {},
 	manualState?: Writable<ScrollLockState>,
 ): ScrollLockModel {
 	const lock = new ScrollLockModel(options);
