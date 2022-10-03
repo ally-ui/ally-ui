@@ -217,7 +217,6 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 		}
 		ev.preventDefault();
 		const trigger = this.root.findChild(this.#isTriggerWithNode);
-		console.log('trigger node exists', trigger?.node != null);
 		trigger?.node?.focus();
 	};
 
