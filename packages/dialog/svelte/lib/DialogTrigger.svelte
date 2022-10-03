@@ -80,6 +80,7 @@
 		props: (userProps: svelteHTML.IntrinsicElements['button']) =>
 			mergeSvelteProps(
 				svelteProps(component.getAttributes($rootState)),
+				$$restProps,
 				userProps,
 			),
 		ref,

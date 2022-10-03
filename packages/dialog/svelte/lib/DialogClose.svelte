@@ -75,7 +75,11 @@
 
 	$: slotProps = {
 		props: (userProps: svelteHTML.IntrinsicElements['button']) =>
-			mergeSvelteProps(svelteProps(component.getAttributes()), userProps),
+			mergeSvelteProps(
+				svelteProps(component.getAttributes()),
+				$$restProps,
+				userProps,
+			),
 		ref,
 	} as any; // Workaround to allow conditional slot type.
 

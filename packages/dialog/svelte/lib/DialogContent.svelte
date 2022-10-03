@@ -96,6 +96,7 @@
 		props: (userProps: svelteHTML.IntrinsicElements['div']) =>
 			mergeSvelteProps(
 				svelteProps(component.getAttributes($rootState)),
+				$$restProps,
 				userProps,
 			),
 		ref,
