@@ -16,29 +16,27 @@ export default function DialogTitle(props: DialogTitleProps) {
 	if (rootModel === undefined) {
 		throw new Error('<Dialog.Title/> must be a child of `<Dialog.Root/>`');
 	}
-	const component = rootModel.registerComponent(
-		new DialogTitleModel(rootModel, {}),
-	);
-	const id = component.getId();
+	const component = new DialogTitleModel({}, rootModel);
 
 	onMount(() => {
-		rootModel.mountComponent(id);
+		component.onMount();
 	});
 	onCleanup(() => {
-		rootModel.unmountComponent(id);
+		component.onUnmount();
+		component.onDeregister();
 	});
 
 	const bindRef = createBindRef((node) => {
 		if (node === null) {
-			rootModel.unbindComponent(id);
+			component.onUnbind();
 		} else {
-			rootModel.bindComponent(id, node);
+			component.onBind(node);
 		}
 	});
 	const ref = combinedRef(bindRef, props.ref);
 
 	return (
-		<Slot ref={ref} props={props} attributes={component.getAttributes()}>
+		<Slot ref={ref} props={props} attributes={component.attributes()}>
 			{(renderProps) => (
 				<h1 ref={renderProps.ref} {...renderProps.attributes()}>
 					{renderProps.children}

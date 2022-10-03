@@ -20,26 +20,23 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 	if (rootModel === undefined) {
 		throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
 	}
-	const component = rootModel.registerComponent(
-		new DialogTriggerModel(rootModel, {}),
-	);
-	const id = component.getId();
+	const component = new DialogTriggerModel({}, rootModel);
 
 	const rootState = useDialogRootState() ?? rootModel.state;
 
 	onMount(() => {
-		rootModel.mountComponent(id);
+		component.onMount();
 	});
 	onCleanup(() => {
-		rootModel.unmountComponent(id);
-		rootModel.deregisterComponent(id);
+		component.onUnmount();
+		component.onDeregister();
 	});
 
 	const bindRef = createBindRef((node) => {
 		if (node === null) {
-			rootModel.unbindComponent(id);
+			component.onUnbind();
 		} else {
-			rootModel.bindComponent(id, node);
+			component.onBind(node);
 		}
 	});
 	const ref = combinedRef(bindRef, props.ref);
@@ -49,7 +46,7 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 			ref={ref}
 			props={props}
 			attributes={{
-				...component.getAttributes(rootState),
+				...component.attributes(rootState),
 				onClick: () => component.onClick(),
 			}}
 		>

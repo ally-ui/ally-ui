@@ -25,16 +25,16 @@ export default function DialogContent(props: DialogContentProps) {
 	if (rootModel === undefined) {
 		throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 	}
-	const component = rootModel.registerComponent(
-		new DialogContentModel(rootModel, {
+	const component = new DialogContentModel(
+		{
 			forceMount: props.forceMount,
 			onOpenAutoFocus: props.onOpenAutoFocus,
 			onCloseAutoFocus: props.onCloseAutoFocus,
 			onEscapeKeyDown: props.onEscapeKeyDown,
 			onInteractOutside: props.onInteractOutside,
-		}),
+		},
+		rootModel,
 	);
-	const id = component.getId();
 	const [state, setState] = createStore(component.initialState);
 	component.requestStateUpdate = setState;
 	// TODO #44 Reduce syncing boilerplate.
@@ -63,26 +63,23 @@ export default function DialogContent(props: DialogContentProps) {
 	});
 
 	const rootState = useDialogRootState() ?? rootModel.state;
-	const derivedState = () => component.deriveState(rootState);
+	const derivedState = () => component.derived(rootState);
 
 	onMount(() => {
-		rootModel.mountComponent(id);
+		component.onMount();
 	});
 	onCleanup(() => {
-		rootModel.unmountComponent(id);
-		rootModel.deregisterComponent(id);
+		component.onUnmount();
+		component.onDeregister();
 	});
 
-	const bindRef = createDelayedBindRef(
-		(node) => {
-			if (node === null) {
-				rootModel.unbindComponent(id);
-			} else {
-				rootModel.bindComponent(id, node);
-			}
-		},
-		() => derivedState().show,
-	);
+	const bindRef = createDelayedBindRef((node) => {
+		if (node === null) {
+			component.onUnbind();
+		} else {
+			component.onBind(node);
+		}
+	});
 	const ref = combinedRef(bindRef, props.ref);
 
 	return (
@@ -90,7 +87,7 @@ export default function DialogContent(props: DialogContentProps) {
 			<Slot
 				ref={ref}
 				props={props}
-				attributes={component.getAttributes(rootState)}
+				attributes={component.attributes(rootState)}
 			>
 				{(renderProps) => (
 					<div ref={renderProps.ref} {...renderProps.attributes()}>
