@@ -5,16 +5,16 @@ export function mergeVueProps(parentProps: AnyProps, childProps: AnyProps) {
 	const overrideProps = {...childProps};
 
 	for (const propName in childProps) {
-		const slotPropValue = parentProps[propName];
+		const parentPropValue = parentProps[propName];
 		const childPropValue = childProps[propName];
 
 		if (propName === 'style') {
 			overrideProps[propName] = {
-				...slotPropValue,
+				...parentPropValue,
 				...childPropValue,
 			};
 		} else if (propName === 'class') {
-			overrideProps[propName] = mergeVueClass(slotPropValue, childPropValue);
+			overrideProps[propName] = mergeVueClass(parentPropValue, childPropValue);
 		}
 	}
 

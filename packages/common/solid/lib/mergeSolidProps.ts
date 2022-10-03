@@ -7,7 +7,7 @@ export function mergeSolidProps(parentProps: AnyProps, childProps: AnyProps) {
 	const overrideProps = {...childProps};
 
 	for (const propName in childProps) {
-		const slotPropValue = parentProps[propName];
+		const parentPropValue = parentProps[propName];
 		const childPropValue = childProps[propName];
 
 		const isHandler = /^on[A-Z]/.test(propName);
@@ -15,19 +15,19 @@ export function mergeSolidProps(parentProps: AnyProps, childProps: AnyProps) {
 		if (isHandler) {
 			overrideProps[propName] = (ev: any) => {
 				forwardEvent(ev, childPropValue);
-				forwardEvent(ev, slotPropValue);
+				forwardEvent(ev, parentPropValue);
 			};
 		} else if (propName === 'style') {
 			overrideProps[propName] = {
-				...styleObject(slotPropValue),
+				...styleObject(parentPropValue),
 				...styleObject(childPropValue),
 			};
 		} else if (propName === 'class' || propName === 'className') {
-			overrideProps[propName] = [slotPropValue, childPropValue]
+			overrideProps[propName] = [parentPropValue, childPropValue]
 				.filter(Boolean)
 				.join(' ');
 		} else if (propName === 'classList') {
-			overrideProps[propName] = {...slotPropValue, ...childPropValue};
+			overrideProps[propName] = {...parentPropValue, ...childPropValue};
 		}
 	}
 

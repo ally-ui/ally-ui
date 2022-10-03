@@ -5,7 +5,7 @@ export function mergeReactProps(parentProps: AnyProps, childProps: AnyProps) {
 	const overrideProps = {...childProps};
 
 	for (const propName in childProps) {
-		const slotPropValue = parentProps[propName];
+		const parentPropValue = parentProps[propName];
 		const childPropValue = childProps[propName];
 
 		const isHandler = /^on[A-Z]/.test(propName);
@@ -13,12 +13,12 @@ export function mergeReactProps(parentProps: AnyProps, childProps: AnyProps) {
 		if (isHandler) {
 			overrideProps[propName] = (...args: unknown[]) => {
 				childPropValue?.(...args);
-				slotPropValue?.(...args);
+				parentPropValue?.(...args);
 			};
 		} else if (propName === 'style') {
-			overrideProps[propName] = {...slotPropValue, ...childPropValue};
+			overrideProps[propName] = {...parentPropValue, ...childPropValue};
 		} else if (propName === 'className') {
-			overrideProps[propName] = [slotPropValue, childPropValue]
+			overrideProps[propName] = [parentPropValue, childPropValue]
 				.filter(Boolean)
 				.join(' ');
 		}
