@@ -25,18 +25,16 @@ afterEach(() => {
 	trap?.deactivate();
 });
 
-it.only('returns focus from the nested to outer focus trap', async () => {
+it('returns focus from the nested to outer focus trap', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap-1');
 	const innerTrapElement = screen.getByTestId('trap-2');
-	trap = observableFocusTrap({
-		container: trapElement,
-	});
+	trap = observableFocusTrap();
+	trap.onBind(trapElement);
 	trap.activate();
-	const innerTrap = observableFocusTrap({
-		container: innerTrapElement,
-	});
+	const innerTrap = observableFocusTrap();
+	innerTrap.onBind(innerTrapElement);
 	innerTrap.activate();
 
 	expect(screen.getByTestId('inner-1')).toHaveFocus();
