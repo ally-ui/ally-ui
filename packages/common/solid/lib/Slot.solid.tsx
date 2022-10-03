@@ -11,20 +11,19 @@ type SlotRenderPropGetter<
 type SlottablePropsAsChild<
 	TAttributes extends object,
 	TRegularProps extends object,
-> = {
+> = Omit<TRegularProps, 'children'> & {
 	asChild: true;
-} & {
 	ref?: CallbackRef<HTMLElement>;
 	children: (
-		props: SlotRenderPropGetter<TAttributes, TRegularProps>,
+		props: SlotRenderPropGetter<TAttributes, Omit<TRegularProps, 'children'>>,
 	) => JSX.Element;
 };
 
-type SlottablePropsAsRegular<TRegularProps extends ParentProps> = {
-	asChild?: undefined;
-} & {
-	ref?: CallbackRef<HTMLElement>;
-} & TRegularProps;
+type SlottablePropsAsRegular<TRegularProps extends ParentProps> =
+	TRegularProps & {
+		asChild?: undefined;
+		ref?: CallbackRef<HTMLElement>;
+	};
 
 /**
  * Prop definitions for a component that either renders a regular template or
@@ -39,7 +38,7 @@ export type SlottableProps<
 	TAttributes extends object,
 	TRegularProps extends ParentProps,
 > =
-	| SlottablePropsAsChild<TAttributes, Exclude<TRegularProps, 'children'>>
+	| SlottablePropsAsChild<TAttributes, TRegularProps>
 	| SlottablePropsAsRegular<TRegularProps>;
 
 interface RegularRenderProp<TAttributes extends object> {
@@ -76,19 +75,25 @@ export function Slot<
 	TRegularProps extends ParentProps,
 >(slotProps: SlotProps<TAttributes, TRegularProps>) {
 	// `asChild` is never updated dynamically, so an early return here is okay.
+	const [, restProps] = splitProps(slotProps.props, [
+		'asChild',
+		'children',
+		'ref',
+	]);
 	if (slotProps.props.asChild) {
 		return (
 			<>
 				{slotProps.props.children((userProps) => ({
 					ref: slotProps.ref,
-					...(userProps === undefined
-						? slotProps.attributes
-						: (mergeSolidProps(slotProps.attributes, userProps) as any)),
+					...(mergeSolidProps(
+						slotProps.attributes,
+						restProps,
+						userProps,
+					) as any),
 				}))}
 			</>
 		);
 	}
-	const [, restProps] = splitProps(slotProps.props, ['asChild', 'children']);
 	const attributes = () =>
 		mergeSolidProps(slotProps.attributes, restProps) as TAttributes;
 	return (

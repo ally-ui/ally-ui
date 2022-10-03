@@ -9,14 +9,12 @@ export default function App() {
 			</Dialog.Trigger>
 			<Dialog.Portal>
 				<div class="reset flex-center fixed inset-0 z-10 flex cursor-default bg-gray-800/50 backdrop-blur-sm">
-					<Dialog.Content asChild>
+					<Dialog.Content
+						asChild
+						class="relative mx-8 flex w-[65ch] max-w-lg flex-col rounded-xl bg-white p-8"
+					>
 						{(props) => (
-							<section
-								{...props({
-									class:
-										'relative mx-8 flex w-[65ch] max-w-lg flex-col rounded-xl bg-white p-8',
-								})}
-							>
+							<section {...props()}>
 								<Dialog.Title class="mb-2 text-lg font-semibold text-black">
 									Feedback form
 								</Dialog.Title>
