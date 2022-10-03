@@ -1,4 +1,4 @@
-import {StateModel} from '@ally-ui/core';
+import {type NodeModelLike, StateModel} from '@ally-ui/core';
 import type {Coord} from './types';
 import {
 	canLocationBeScrolled,
@@ -15,10 +15,6 @@ const LISTENER_OPTIONS: AddEventListenerOptions = {
 };
 
 export interface ScrollLockOptions {
-	/**
-	 * The only element allowed to scroll.
-	 */
-	container: HTMLElement;
 	/**
 	 * Whether the scroll lock should initially be active.
 	 */
@@ -37,71 +33,91 @@ export interface ScrollLockReactive {
 
 export type ScrollLockState = ScrollLockOptions & ScrollLockReactive;
 
-export class ScrollLockModel extends StateModel<ScrollLockState> {
+export interface ScrollLockAttributes {
+	style?: {
+		'overscroll-behavior': 'contain';
+	};
+}
+
+export class ScrollLockModel
+	extends StateModel<ScrollLockState>
+	implements NodeModelLike<ScrollLockAttributes>
+{
 	static SUPPORTS_OVERSCROLL_BEHAVIOR =
 		typeof document !== 'undefined' &&
 		CSS.supports('overscroll-behavior', 'contain');
+
+	constructor(initialOptions: ScrollLockOptions) {
+		super({...initialOptions, active: initialOptions.initialActive ?? false});
+	}
+
+	attributes(): ScrollLockAttributes {
+		return {
+			style: {'overscroll-behavior': 'contain'},
+		};
+	}
+
+	/**
+	 * The only element allowed to scroll.
+	 */
+	node?: HTMLElement;
+	#unsubscribeState?: () => void;
+	onBind(node: HTMLElement): void {
+		this.node = node;
+		this.#unsubscribeState = this.subscribeState(this.#onStateChange);
+	}
+
+	onUnbind(): void {
+		this.node = undefined;
+		this.#unsubscribeState?.();
+	}
+
+	#onStateChange = ({active}: ScrollLockState, prev?: ScrollLockState) => {
+		if (active !== prev?.active) {
+			if (active) {
+				this.activate();
+			} else {
+				this.deactivate();
+			}
+		}
+	};
+
+	activate() {
+		this.#registerLock();
+		this.#subscribeEvents();
+		if (!this.state.active) {
+			this.requestStateUpdate?.((prev) => ({...prev, active: true}));
+		}
+	}
+
+	deactivate() {
+		this.#deregisterLock?.();
+		this.#unsubscribeEvents?.();
+		if (this.state.active) {
+			this.requestStateUpdate?.((prev) => ({...prev, active: false}));
+		}
+	}
 
 	/**
 	 * Keep track of all active locks and only handle the latest lock.
 	 */
 	static activeLocks: ScrollLockModel[] = [];
-
-	constructor(initialOptions: ScrollLockOptions) {
-		super({...initialOptions, active: initialOptions.initialActive ?? false});
-		if (this.state.active) {
-			this.activate();
-		}
-	}
-
-	watchStateChange({active}: ScrollLockState, prev: ScrollLockState) {
-		if (active !== prev.active) {
-			this.#onActiveChangeEffect(active);
-		}
-	}
-
-	#onActiveChangeEffect(active: boolean) {
-		if (active) {
-			this.activate();
-		} else {
-			this.deactivate();
-		}
-	}
-
-	#unregisterLock?: () => void;
+	#deregisterLock?: () => void;
 	#registerLock() {
-		if (this.#unregisterLock !== undefined) {
-			return;
-		}
+		if (this.#deregisterLock != null) return;
 		ScrollLockModel.activeLocks.push(this);
-		this.#unregisterLock = () => {
+		this.#deregisterLock = () => {
 			const idx = ScrollLockModel.activeLocks.findIndex(
 				(lock) => lock === this,
 			);
 			ScrollLockModel.activeLocks.splice(idx, 1);
-			this.#unregisterLock = undefined;
-		};
-	}
-
-	#unblockOverscroll?: () => void;
-	#blockOverscroll() {
-		if (this.#unblockOverscroll !== undefined) {
-			return;
-		}
-		const {container} = this.state;
-		const previous = container.style.overscrollBehavior;
-		container.style.overscrollBehavior = 'contain';
-		this.#unblockOverscroll = () => {
-			container.style.overscrollBehavior = previous;
-			this.#unblockOverscroll = undefined;
+			this.#deregisterLock = undefined;
 		};
 	}
 
 	#unsubscribeEvents?: () => void;
 	#subscribeEvents() {
-		if (this.#unsubscribeEvents !== undefined) {
-			return;
-		}
+		if (this.#unsubscribeEvents != null) return;
 		window.addEventListener('touchstart', this.#onTouchStart, LISTENER_OPTIONS);
 		window.addEventListener('touchend', this.#onTouchEnd, LISTENER_OPTIONS);
 		window.addEventListener('wheel', this.#onScroll, LISTENER_OPTIONS);
@@ -127,14 +143,12 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 	};
 
 	#onScroll = (ev: WheelEvent | TouchEvent) => {
-		if (!ev.cancelable) {
-			return;
-		}
-		if (ScrollLockModel.activeLocks.at(-1) !== this) {
-			return;
-		}
+		if (!ev.cancelable) return;
+		if (ScrollLockModel.activeLocks.at(-1) !== this) return;
+		const {node} = this;
+		if (node == null) return;
 		const {target} = ev;
-		if (target instanceof Element && !this.state.container.contains(target)) {
+		if (target instanceof Element && !node.contains(target)) {
 			ev.preventDefault();
 		}
 		if (this.#shouldPrevent(ev)) {
@@ -143,20 +157,19 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 	};
 
 	#shouldPrevent(ev: WheelEvent | TouchEvent) {
+		const {node} = this;
+		if (node == null) return false;
+
 		if (isTouchEvent(ev) && ev.touches.length === 2) {
 			return !(this.state.allowPinchZoom ?? false);
 		}
 
-		if (isTouchEvent(ev) && this.#overscrolled) {
-			return true;
-		}
+		if (isTouchEvent(ev) && this.#overscrolled) return true;
 
 		const delta = this.#getDelta(ev);
 		const moveAxis = getDeltaAxis(delta);
 		const target = ev.target;
-		if (!(target instanceof Element)) {
-			return false;
-		}
+		if (!(target instanceof Element)) return false;
 
 		// Horizontal `touchmove` on range inputs does not cause scroll.
 		if (
@@ -170,13 +183,11 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 
 		let canBeScrolledInMainDirection = canLocationBeScrolled(target, moveAxis);
 
-		if (!canBeScrolledInMainDirection) {
-			return true;
-		}
+		if (!canBeScrolledInMainDirection) return true;
 
 		const prevent = shouldPreventScroll(ev, {
 			axis: moveAxis,
-			endTarget: this.state.container,
+			endTarget: node,
 			delta: moveAxis === 'h' ? delta[0] : delta[1],
 			overscroll: false,
 		});
@@ -188,7 +199,7 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 		return prevent;
 	}
 
-	#getDelta = (ev: WheelEvent | TouchEvent): Coord => {
+	#getDelta(ev: WheelEvent | TouchEvent): Coord {
 		if (!isTouchEvent(ev)) {
 			return getWheelDelta(ev);
 		}
@@ -196,23 +207,5 @@ export class ScrollLockModel extends StateModel<ScrollLockState> {
 		const [prevX, prevY] = this.#prevCoord;
 		this.#prevCoord = [x, y];
 		return [prevX - x, prevY - y];
-	};
-
-	activate() {
-		this.#registerLock();
-		this.#blockOverscroll();
-		this.#subscribeEvents();
-		if (!this.state.active) {
-			this.requestStateUpdate?.((prevState) => ({...prevState, active: true}));
-		}
-	}
-
-	deactivate() {
-		this.#unregisterLock?.();
-		this.#unblockOverscroll?.();
-		this.#unsubscribeEvents?.();
-		if (this.state.active) {
-			this.requestStateUpdate?.((prevState) => ({...prevState, active: false}));
-		}
 	}
 }
