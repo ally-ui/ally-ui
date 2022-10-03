@@ -1,7 +1,7 @@
 import {kebabToCamelCaseObject} from '@ally-ui/core';
 
 /**
- * Translates the core model attributes to Svelte attributes.
+ * Translates the core model attributes to React attributes.
  *
  * e.g. style is an `object` of kebab-case properties but React expects an
  * `object` of camelCase properties.

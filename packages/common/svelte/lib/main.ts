@@ -9,4 +9,4 @@ export * from './store';
 export * from './styleObject';
 export * from './mergeSvelteProps';
 export * from './slot';
-export * from './props';
+export * from './svelteProps';

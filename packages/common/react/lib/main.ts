@@ -5,4 +5,4 @@ export * from './useLayoutPromise.react';
 export * from './useMultipleRefs.react';
 export * from './useRunOnce.react';
 export * from './useSyncedOption.react';
-export * from './props';
+export * from './reactProps';
