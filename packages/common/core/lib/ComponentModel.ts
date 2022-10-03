@@ -10,30 +10,36 @@ export abstract class ComponentModel<
 	constructor(initialState: TState = {} as TState, parent?: ComponentModel) {
 		super(initialState);
 		this.parent = parent;
-		this.parent?.addChild(this);
 		this.root = this.parent?.root ?? this;
+		this.parent?.addChild(this);
 	}
 
 	abstract readonly id: string;
 
 	#children: ComponentModel[] = [];
-	addChild(child: ComponentModel) {
+	addChild<TChildModel extends ComponentModel>(
+		child: TChildModel,
+	): TChildModel {
 		if (this.#children.find((c) => c === child) == null) {
 			this.#children.push(child);
 		}
+		return child;
 	}
 
-	findChild<TChildModel extends ComponentModel = ComponentModel>(
+	findChild<TChildModel extends ComponentModel>(
 		predicate: (c: ComponentModel) => c is TChildModel,
 	): TChildModel | undefined {
 		return this.#children.find(predicate);
 	}
 
-	removeChild(child: ComponentModel) {
+	removeChild<TChildModel extends ComponentModel>(
+		child: TChildModel,
+	): TChildModel {
 		const idx = this.#children.findIndex((c) => c === child);
 		if (idx !== -1) {
 			this.#children.splice(idx, 1);
 		}
+		return child;
 	}
 
 	derived?(..._dependencies: unknown[]): TDerived;
