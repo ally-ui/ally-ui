@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {DialogTriggerModel} from '@ally-ui/core-dialog';
+import {mergeVueProps} from '@ally-ui/vue';
 import {inject, onMounted, onUnmounted, ref, watchEffect} from 'vue';
 import {DIALOG_ROOT_MODEL, DIALOG_ROOT_STATE} from './context';
 
@@ -50,16 +51,15 @@ function handleClick() {
 	<slot
 		v-if="props.asChild"
 		v-bind="{
-			...component.getAttributes(rootState),
+			...mergeVueProps(component.getAttributes(rootState), $attrs),
 			onClick: handleClick,
-			...$attrs,
 			ref: setRef,
 		}"
 	/>
 	<button
 		v-else
 		ref="node"
-		v-bind="{...component.getAttributes(rootState), ...$attrs}"
+		v-bind="mergeVueProps(component.getAttributes(rootState), $attrs)"
 		@click="handleClick"
 	>
 		<slot />

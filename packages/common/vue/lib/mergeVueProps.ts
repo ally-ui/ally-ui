@@ -1,11 +1,11 @@
 type AnyProps = Record<string, any>;
 
-export function mergeVueProps(slotProps: AnyProps, childProps: AnyProps) {
+export function mergeVueProps(parentProps: AnyProps, childProps: AnyProps) {
 	// All child props should override.
 	const overrideProps = {...childProps};
 
 	for (const propName in childProps) {
-		const slotPropValue = slotProps[propName];
+		const slotPropValue = parentProps[propName];
 		const childPropValue = childProps[propName];
 
 		if (propName === 'style') {
@@ -14,25 +14,25 @@ export function mergeVueProps(slotProps: AnyProps, childProps: AnyProps) {
 				...childPropValue,
 			};
 		} else if (propName === 'class') {
-			overrideProps[propName] = mergeClass(slotPropValue, childPropValue);
+			overrideProps[propName] = mergeVueClass(slotPropValue, childPropValue);
 		}
 	}
 
-	return {...slotProps, ...overrideProps};
+	return {...parentProps, ...overrideProps};
 }
 
 type VueClassItem = string | Record<string, boolean>;
 type VueClass = VueClassItem | VueClassItem[];
 
-export function mergeClass(
-	slotClass: VueClass,
+export function mergeVueClass(
+	parentClass: VueClass,
 	childClass: VueClass,
 ): VueClass {
-	if (!Array.isArray(slotClass)) slotClass = [slotClass];
+	if (!Array.isArray(parentClass)) parentClass = [parentClass];
 	if (!Array.isArray(childClass)) childClass = [childClass];
 	let stringClasses: string[] = [];
 	const objectClasses: Record<string, boolean> = {};
-	slotClass.forEach((c) => {
+	parentClass.forEach((c) => {
 		if (typeof c === 'object') {
 			Object.assign(objectClasses, c);
 		} else {
