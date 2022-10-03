@@ -33,11 +33,11 @@ export function useSyncedOption<TOption>({
 	onInternalChange,
 }: UseSyncedOptionOptions<TOption>) {
 	let previousOption = option?.value;
-	if (previousOption !== undefined) {
+	if (previousOption != null) {
 		onOptionChange(previousOption);
 	}
 	watchEffect(function updateInternal() {
-		if (option?.value === undefined) {
+		if (option?.value == null) {
 			return;
 		}
 		if (option.value === previousOption) {
@@ -47,10 +47,10 @@ export function useSyncedOption<TOption>({
 		previousOption = option.value;
 	});
 	watchEffect(function updateOption() {
-		if (option === undefined) {
+		if (option == null) {
 			return;
 		}
-		if (internal === undefined) {
+		if (internal == null) {
 			return;
 		}
 		if (internal.value === previousOption) {

@@ -22,7 +22,7 @@ export type DialogCloseProps = SlottableProps<
 
 export default function DialogClose(props: DialogCloseProps) {
 	const rootModel = useDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
 	}
 	const component = new DialogCloseModel({}, rootModel);
@@ -36,7 +36,7 @@ export default function DialogClose(props: DialogCloseProps) {
 	});
 
 	const bindRef = createBindRef((node) => {
-		if (node === null) {
+		if (node == null) {
 			component.onUnbind();
 		} else {
 			component.onBind(node);

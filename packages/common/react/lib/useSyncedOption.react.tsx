@@ -34,7 +34,7 @@ export function useSyncedOption<TOption>({
 	onInternalChange,
 }: UseSyncedOptionOptions<TOption>) {
 	useRunOnce(() => {
-		if (option === undefined) {
+		if (option == null) {
 			return;
 		}
 		if (option === internal) {
@@ -45,7 +45,7 @@ export function useSyncedOption<TOption>({
 	const previousOption = React.useRef(option);
 	React.useEffect(
 		function updateInternal() {
-			if (option === undefined) {
+			if (option == null) {
 				return;
 			}
 			// Prevent an infinite update cycle.
@@ -59,7 +59,7 @@ export function useSyncedOption<TOption>({
 	);
 	React.useEffect(
 		function updateOption() {
-			if (internal !== undefined) {
+			if (internal != null) {
 				onInternalChange?.(internal);
 			}
 		},

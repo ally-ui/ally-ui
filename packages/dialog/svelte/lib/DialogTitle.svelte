@@ -35,7 +35,7 @@
 	type $$Slots = DialogTitleSlots<TAsChild>;
 
 	const rootModel = getDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error('<Dialog.Title/> must be a child of `<Dialog.Root/>`');
 	}
 	const component = new DialogTitleModel({}, rootModel);

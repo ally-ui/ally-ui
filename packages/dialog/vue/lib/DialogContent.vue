@@ -28,7 +28,7 @@ const emit = defineEmits<{
 }>();
 
 const rootModel = inject(DIALOG_ROOT_MODEL);
-if (rootModel === undefined) {
+if (rootModel == null) {
 	throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 }
 const portalForceMount = inject(DIALOG_PORTAL_FORCE_MOUNT);

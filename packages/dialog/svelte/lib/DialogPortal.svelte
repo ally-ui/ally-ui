@@ -17,7 +17,7 @@
 	type $$Props = DialogPortalProps;
 
 	const rootModel = getDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error('<Dialog.Portal/> must be a child of `<Dialog.Root/>`');
 	}
 

@@ -88,14 +88,14 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 			function updateOffsets() {
 				headingOffsets.current = {};
 				const overviewElement = document.getElementById(DEFAULT_ID);
-				if (overviewElement === null) {
+				if (overviewElement == null) {
 					console.error('#overview heading missing on page');
 					return;
 				}
 				const baseOffsetTop = overviewElement.offsetTop;
 				filteredHeadings.forEach((heading) => {
 					const headingElement = document.getElementById(heading.slug);
-					if (headingElement === null) return;
+					if (headingElement == null) return;
 					headingOffsets.current[heading.slug] =
 						headingElement.offsetTop - baseOffsetTop;
 				});
@@ -123,10 +123,10 @@ const TableOfContents: FunctionalComponent<TableOfContentsProps> = ({
 			});
 
 			const overviewElement = document.getElementById(DEFAULT_ID);
-			if (overviewElement !== null) observer.observe(overviewElement);
+			if (overviewElement != null) observer.observe(overviewElement);
 			filteredHeadings.forEach(({slug}) => {
 				const headingElement = document.getElementById(slug);
-				if (headingElement !== null) observer.observe(headingElement);
+				if (headingElement != null) observer.observe(headingElement);
 				const previousElement = headingElement?.previousElementSibling;
 				if (previousElement != null) observer.observe(previousElement);
 			});

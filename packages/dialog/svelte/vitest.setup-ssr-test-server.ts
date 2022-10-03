@@ -17,7 +17,7 @@ export default async function setup() {
 
 let cachedApp: Express;
 async function setupTestServer() {
-	if (cachedApp !== undefined) {
+	if (cachedApp != null) {
 		return cachedApp;
 	}
 	const app = express();

@@ -34,11 +34,11 @@ export function createSyncedOption<TOption>({
 	onInternalChange,
 }: CreateSyncedOptionOptions<TOption>) {
 	let previousOption = initialOption;
-	if (previousOption !== undefined) {
+	if (previousOption != null) {
 		onOptionChange(previousOption);
 	}
 	function watchOption(option?: TOption) {
-		if (option === undefined) {
+		if (option == null) {
 			return;
 		}
 		if (option === previousOption) {

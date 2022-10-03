@@ -13,7 +13,7 @@ const props = withDefaults(defineProps<DialogTriggerProps>(), {
 });
 
 const rootModel = inject(DIALOG_ROOT_MODEL);
-if (rootModel === undefined) {
+if (rootModel == null) {
 	throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
 }
 const component = new DialogTriggerModel({}, rootModel);

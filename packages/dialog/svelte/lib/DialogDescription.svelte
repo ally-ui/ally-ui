@@ -35,7 +35,7 @@
 	type $$Slots = DialogDescriptionSlots<TAsChild>;
 
 	const rootModel = getDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error(
 			'<Dialog.Description/> must be a child of `<Dialog.Root/>`',
 		);

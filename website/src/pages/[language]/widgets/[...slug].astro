@@ -3,7 +3,7 @@ import type {MDXInstance} from 'astro';
 import {Frontmatter, KNOWN_FRAMEWORK_CODES} from '../../../config';
 import {parseWidgetFile} from '../../../utils/file';
 import WidgetLayout from '../../../layouts/WidgetLayout.astro';
-import { isNotUndefined } from '../../../utils/filter';
+import { isNotNull } from '../../../utils/filter';
 import { isFramework } from '../../../utils/isFramework';
 import {compareVersionStr} from '../../../utils/version';
 
@@ -33,7 +33,7 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 
 	for (const page of content) {
 		const widgetFile = parseWidgetFile(page.file);
-		if (widgetFile === undefined) continue;
+		if (widgetFile == null) continue;
 		const {language, widget, version} = widgetFile;
 		const widgetToVersionPages = languageToWidgetToVersionPages[language] ?? {};
 		const pages = widgetToVersionPages[widget] ?? [];
@@ -59,17 +59,17 @@ export async function getStaticPaths(): Promise<StaticPaths[]> {
 					versionPages.map(([version, page]) => ({
 						params: {
 							language,
-							slug: framework === undefined 
+							slug: framework == null 
 								? widget
 								: [widget, framework, version]
-									.filter(isNotUndefined)
+									.filter(isNotNull)
 									.join('/'),
 						},
 						props: {
 							page,
 							versions: versionPages
 								.map(([version]) => version)
-								.filter(isNotUndefined),
+								.filter(isNotNull),
 						},
 					})),
 				),
@@ -84,7 +84,7 @@ const {file, frontmatter, getHeadings, Content} = page;
 ---
 
 {
-	widget !== undefined && isFramework(framework) ? (
+	widget != null && isFramework(framework) ? (
 		<WidgetLayout
 			file={file}
 			frontmatter={frontmatter}
@@ -99,7 +99,7 @@ const {file, frontmatter, getHeadings, Content} = page;
 	) : (
 		<script is:inline>
 			let framework = window.localStorage.getItem('framework');
-			if (framework === null) {
+			if (framework == null) {
 				framework = 'react';
 				window.localStorage.setItem('framework', framework);
 			}

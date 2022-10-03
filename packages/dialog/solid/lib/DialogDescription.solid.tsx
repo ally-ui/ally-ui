@@ -13,7 +13,7 @@ export type DialogDescriptionProps = SlottableProps<
 
 export default function DialogDescription(props: DialogDescriptionProps) {
 	const rootModel = useDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error(
 			'<Dialog.Description/> must be a child of `<Dialog.Root/>`',
 		);
@@ -29,7 +29,7 @@ export default function DialogDescription(props: DialogDescriptionProps) {
 	});
 
 	const bindRef = createBindRef((node) => {
-		if (node === null) {
+		if (node == null) {
 			component.onUnbind();
 		} else {
 			component.onBind(node);

@@ -34,8 +34,8 @@ export function createSyncedOption<TOption>({
 }: CreateSyncedOptionOptions<TOption>) {
 	const untrackedOption = untrack(option);
 	if (
-		untrackedOption !== undefined &&
-		internal !== undefined &&
+		untrackedOption != null &&
+		internal != null &&
 		untrackedOption !== untrack(internal)
 	) {
 		onOptionChange(untrackedOption);
@@ -44,7 +44,7 @@ export function createSyncedOption<TOption>({
 	createEffect(
 		function updateInternal() {
 			const optionValue = option();
-			if (optionValue === undefined) {
+			if (optionValue == null) {
 				return;
 			}
 			// Prevent an infinite update cycle.
@@ -58,7 +58,7 @@ export function createSyncedOption<TOption>({
 	);
 	createEffect(
 		function updateOption() {
-			if (internal !== undefined) {
+			if (internal != null) {
 				onInternalChange?.(internal());
 			}
 		},

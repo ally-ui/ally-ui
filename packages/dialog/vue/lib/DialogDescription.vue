@@ -13,7 +13,7 @@ const props = withDefaults(defineProps<DialogDescriptionProps>(), {
 });
 
 const rootModel = inject(DIALOG_ROOT_MODEL);
-if (rootModel === undefined) {
+if (rootModel == null) {
 	throw new Error('<Dialog.Description/> must be a child of `<Dialog.Root/>`');
 }
 const component = new DialogDescriptionModel({}, rootModel);

@@ -63,7 +63,7 @@ export async function getCode(
 ) {
 	const filename = getFilename(framework);
 	let code = await sources[filename]?.();
-	if (code === undefined) {
+	if (code == null) {
 		code = '';
 	}
 	code = code.replace(/^\/\*\* @jsxImportSource [\w-]+ \*\/\n/, '');

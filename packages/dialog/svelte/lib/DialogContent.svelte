@@ -52,7 +52,7 @@
 	const dispatch = createNativeEventDispatcher<DialogContentEvents>();
 
 	const rootModel = getDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 	}
 	export let forceMount: boolean | undefined = undefined;

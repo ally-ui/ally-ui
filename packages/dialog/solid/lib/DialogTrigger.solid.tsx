@@ -17,7 +17,7 @@ export type DialogTriggerProps = SlottableProps<
 
 export default function DialogTrigger(props: DialogTriggerProps) {
 	const rootModel = useDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
 	}
 	const component = new DialogTriggerModel({}, rootModel);
@@ -33,7 +33,7 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 	});
 
 	const bindRef = createBindRef((node) => {
-		if (node === null) {
+		if (node == null) {
 			component.onUnbind();
 		} else {
 			component.onBind(node);

@@ -9,7 +9,7 @@ export function forwardEvent<TTarget, TEvent extends Event>(
 ) {
 	if (handler instanceof Function) {
 		handler(ev);
-	} else if (handler !== undefined) {
+	} else if (handler != null) {
 		handler[0](handler[1], ev);
 	}
 }

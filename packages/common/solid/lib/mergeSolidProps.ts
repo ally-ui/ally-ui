@@ -8,7 +8,7 @@ export function mergeSolidProps(
 ) {
 	let mergedProps = {...parentProps};
 	for (const childProps of manyChildProps) {
-		if (childProps === undefined) continue;
+		if (childProps == null) continue;
 
 		// All child props should override.
 		const overrideProps = {...childProps};

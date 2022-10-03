@@ -13,7 +13,7 @@ export type DialogPortalProps = ParentProps & {
 
 export default function DialogPortal(props: DialogPortalProps) {
 	const rootModel = useDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error('<Dialog.Portal/> must be a child of `<Dialog.Root/>`');
 	}
 	const rootState = useDialogRootState() ?? rootModel.state;

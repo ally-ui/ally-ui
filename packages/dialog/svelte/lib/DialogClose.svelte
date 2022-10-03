@@ -37,7 +37,7 @@
 	type $$Slots = DialogCloseSlots<TAsChild>;
 
 	const rootModel = getDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
 	}
 	const component = new DialogCloseModel({}, rootModel);

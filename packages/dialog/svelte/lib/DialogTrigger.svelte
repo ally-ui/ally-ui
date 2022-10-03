@@ -38,7 +38,7 @@
 	type $$Slots = DialogTriggerSlots<TAsChild>;
 
 	const rootModel = getDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
 	}
 	const component = new DialogTriggerModel({}, rootModel);

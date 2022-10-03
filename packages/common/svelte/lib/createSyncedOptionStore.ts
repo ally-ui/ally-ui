@@ -27,8 +27,8 @@ export function createSyncedOptionStore<TOption>({
 	internal,
 	onOptionChange,
 }: CreateSyncedOptionStoreOptions<TOption>) {
-	let previousOption = option === undefined ? undefined : get(option);
-	if (previousOption !== undefined) {
+	let previousOption = option == null ? undefined : get(option);
+	if (previousOption != null) {
 		onOptionChange(previousOption);
 	}
 	const unsubcribeOption = option?.subscribe(($option) => {

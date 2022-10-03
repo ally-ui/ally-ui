@@ -22,7 +22,7 @@ export type DialogContentProps = SlottableProps<
 
 export default function DialogContent(props: DialogContentProps) {
 	const rootModel = useDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 	}
 	const component = new DialogContentModel(
@@ -74,7 +74,7 @@ export default function DialogContent(props: DialogContentProps) {
 	});
 
 	const bindRef = createDelayedBindRef((node) => {
-		if (node === null) {
+		if (node == null) {
 			component.onUnbind();
 		} else {
 			component.onBind(node);

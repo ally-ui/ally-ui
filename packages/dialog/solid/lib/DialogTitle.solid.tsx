@@ -13,7 +13,7 @@ export type DialogTitleProps = SlottableProps<
 
 export default function DialogTitle(props: DialogTitleProps) {
 	const rootModel = useDialogRootModel();
-	if (rootModel === undefined) {
+	if (rootModel == null) {
 		throw new Error('<Dialog.Title/> must be a child of `<Dialog.Root/>`');
 	}
 	const component = new DialogTitleModel({}, rootModel);
@@ -27,7 +27,7 @@ export default function DialogTitle(props: DialogTitleProps) {
 	});
 
 	const bindRef = createBindRef((node) => {
-		if (node === null) {
+		if (node == null) {
 			component.onUnbind();
 		} else {
 			component.onBind(node);

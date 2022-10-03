@@ -5,7 +5,7 @@ export function parseVersion(versionStr: string): Version {
 }
 
 export function compareVersion(versionA?: Version, versionB?: Version): number {
-	if (versionA === undefined || versionB === undefined) {
+	if (versionA == null || versionB == null) {
 		return 0;
 	}
 	const [majorA, minorA, patchA] = versionA;
@@ -17,7 +17,7 @@ export function compareVersion(versionA?: Version, versionB?: Version): number {
 }
 
 export function compareVersionStr(a?: string, b?: string): number {
-	if (a === undefined || b === undefined) {
+	if (a == null || b == null) {
 		return 0;
 	}
 	const versionA = parseVersion(a);
