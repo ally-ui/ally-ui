@@ -7,7 +7,7 @@ export default defineConfig({
 		environment: 'jsdom',
 		setupFiles: '@ally-ui/dev/vitest.setup.ts',
 		globals: true,
-		transformMode: {web: [/.tsx?/]},
-		deps: {registerNodeLoader: true, inline: [/solid-testing-library/]},
+		transformMode: {web: [/[jt]sx?$/]},
+		deps: {registerNodeLoader: true},
 	},
 });
