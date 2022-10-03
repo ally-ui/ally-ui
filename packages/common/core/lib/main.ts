@@ -1,5 +1,5 @@
 export * from './ComponentModel';
-export * from './RootModel';
 export * from './StateModel';
+export * from './NodeModel';
 export * from './utils/map';
 export * from './utils/casing';

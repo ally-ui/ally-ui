@@ -1,50 +1,55 @@
-import type {$ComponentTypeOf, $StateOf, RootModel} from './RootModel';
 import {StateModel} from './StateModel';
 
 export abstract class ComponentModel<
-	TRootModel extends RootModel = any,
 	TState extends object = any,
-	TDerived extends object = any,
-	TAttributes extends object = any,
+	TDerived extends object = TState,
 > extends StateModel<TState> {
-	rootModel: TRootModel;
-	type: $ComponentTypeOf<TRootModel>;
-	mounted = false;
-	node?: HTMLElement;
+	parent?: ComponentModel;
+	root: ComponentModel;
 
-	constructor(rootModel: TRootModel, initialState: TState = {} as TState) {
+	constructor(initialState: TState = {} as TState, parent?: ComponentModel) {
 		super(initialState);
-		this.rootModel = rootModel;
-		this.type = this.getType();
+		this.parent = parent;
+		this.parent?.addChild(this);
+		this.root = this.parent?.root ?? this;
 	}
 
-	abstract getType(): $ComponentTypeOf<TRootModel>;
+	abstract readonly id: string;
 
-	deriveState?(_rootState?: $StateOf<TRootModel>, _state?: TState): TDerived;
-
-	getId() {
-		return this.getType();
+	#children: ComponentModel[] = [];
+	addChild(child: ComponentModel) {
+		if (this.#children.find((c) => c === child) == null) {
+			this.#children.push(child);
+		}
 	}
 
-	domId(): string {
-		return `${this.rootModel.domId()}-${this.getType()}`;
+	findChild<TChildModel extends ComponentModel = ComponentModel>(
+		predicate: (c: ComponentModel) => c is TChildModel,
+	): TChildModel | undefined {
+		return this.#children.find(predicate);
 	}
 
-	getAttributes(
-		_rootState?: $StateOf<TRootModel>,
-		_state?: TState,
-	): TAttributes {
-		return {} as TAttributes;
+	removeChild(child: ComponentModel) {
+		const idx = this.#children.findIndex((c) => c === child);
+		if (idx !== -1) {
+			this.#children.splice(idx, 1);
+		}
 	}
 
-	watchRootStateChange?(
-		newState: $StateOf<RootModel>,
-		prev: $StateOf<RootModel>,
-	): void;
-	watchRegister?(): void;
-	watchDeregister?(): void;
-	watchMount?(): void;
-	watchUnmount?(): void;
-	watchBind?(): void;
-	watchUnbind?(): void;
+	derived?(..._dependencies: unknown[]): TDerived;
+
+	onRegister(): void {
+		this.parent?.addChild(this);
+	}
+	onDeregister(): void {
+		this.parent?.removeChild(this);
+	}
+
+	mounted = false;
+	onMount(): void {
+		this.mounted = true;
+	}
+	onUnmount(): void {
+		this.mounted = false;
+	}
 }
