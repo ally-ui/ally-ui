@@ -1,5 +1,5 @@
-import {ComponentModel} from '@ally-ui/core';
-import type {DialogComponentType, DialogRootModel} from './DialogRootModel';
+import {NodeModel} from '@ally-ui/core';
+import type {DialogRootModel} from './DialogRootModel';
 
 export interface DialogCloseModelOptions {}
 
@@ -12,20 +12,19 @@ export interface DialogCloseModelDerived {}
 
 export interface DialogCloseModelAttributes {}
 
-export class DialogCloseModel extends ComponentModel<
-	DialogRootModel,
+export class DialogCloseModel extends NodeModel<
 	DialogCloseModelState,
 	DialogCloseModelDerived,
 	DialogCloseModelAttributes
 > {
-	getType(): DialogComponentType {
-		return 'close';
+	id = 'close';
+
+	attributes(): DialogCloseModelAttributes {
+		return {};
 	}
 
 	onClick() {
-		this.rootModel.requestStateUpdate?.((prevState) => ({
-			...prevState,
-			open: false,
-		}));
+		const root = this.root as DialogRootModel;
+		root.requestStateUpdate?.((prev) => ({...prev, open: false}));
 	}
 }

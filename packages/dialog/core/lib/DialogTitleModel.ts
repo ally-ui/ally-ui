@@ -1,5 +1,5 @@
-import {ComponentModel} from '@ally-ui/core';
-import type {DialogComponentType, DialogRootModel} from './DialogRootModel';
+import {NodeModel} from '@ally-ui/core';
+import type {DialogRootModel} from './DialogRootModel';
 
 export interface DialogTitleModelOptions {}
 
@@ -14,19 +14,17 @@ export interface DialogTitleModelAttributes {
 	id: string;
 }
 
-export class DialogTitleModel extends ComponentModel<
-	DialogRootModel,
+export class DialogTitleModel extends NodeModel<
 	DialogTitleModelState,
 	DialogTitleModelDerived,
 	DialogTitleModelAttributes
 > {
-	getType(): DialogComponentType {
-		return 'title';
-	}
+	id = 'title';
 
-	getAttributes(): DialogTitleModelAttributes {
+	attributes(): DialogTitleModelAttributes {
+		const root = this.root as DialogRootModel;
 		return {
-			id: this.domId(),
+			id: `${root.id}-${this.id}`,
 		};
 	}
 }

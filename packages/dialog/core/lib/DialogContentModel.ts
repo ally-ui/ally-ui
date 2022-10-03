@@ -1,11 +1,8 @@
-import {ComponentModel} from '@ally-ui/core';
+import {ComponentModel, NodeModel} from '@ally-ui/core';
 import {FocusTrapModel} from '@ally-ui/focus-trap';
 import {ScrollLockModel} from '@ally-ui/scroll-lock';
-import type {
-	DialogComponentType,
-	DialogRootModel,
-	DialogRootModelState,
-} from './DialogRootModel';
+import type {DialogRootModel, DialogRootModelState} from './DialogRootModel';
+import type {DialogTitleModel as DialogTriggerModel} from './DialogTitleModel';
 
 export interface DialogContentModelOptions {
 	forceMount?: boolean;
@@ -50,44 +47,62 @@ export interface DialogContentModelAttributes {
 	style?: Record<string, string>;
 }
 
-export class DialogContentModel extends ComponentModel<
-	DialogRootModel,
+export class DialogContentModel extends NodeModel<
 	DialogContentModelState,
 	DialogContentModelDerived,
 	DialogContentModelAttributes
 > {
-	getType(): DialogComponentType {
-		return 'content';
-	}
+	id = 'content';
 
-	deriveState(rootState: DialogRootModelState): DialogContentModelDerived {
+	derived(rootState: DialogRootModelState): DialogContentModelDerived {
 		return {
 			show: this.state.forceMount || rootState.open,
 		};
 	}
 
-	getAttributes(rootState: DialogRootModelState): DialogContentModelAttributes {
+	attributes(rootState: DialogRootModelState): DialogContentModelAttributes {
+		const root = this.root as DialogRootModel;
+		const style: Record<string, string> = {};
+		if (rootState.modal) {
+			style['pointer-events'] = 'auto';
+		}
 		return {
-			id: this.domId(),
+			id: `${root.id}-${this.id}`,
 			role: 'dialog',
 			'aria-modal': rootState.modal ? 'true' : undefined,
-			'aria-labelledby': this.rootModel.componentDomId('title'),
-			'aria-describedby': this.rootModel.componentDomId('description'),
+			'aria-labelledby': `${root.id}-title`,
+			'aria-describedby': `${root.id}-description`,
 			'data-state': rootState.open ? 'open' : 'closed',
-			...(rootState.modal ? {style: {'pointer-events': 'auto'}} : {}),
+			style,
 		};
 	}
 
-	watchStateChange(
+	#unsubscribeState?: () => void;
+	#unsubscribeRootState?: () => void;
+	onMount(): void {
+		super.onMount();
+		this.#unsubscribeState = this.subscribeState(this.#onStateChange);
+		this.#unsubscribeRootState = this.root.subscribeState(
+			this.#onRootStateChange,
+		);
+	}
+
+	onUnmount(): void {
+		super.onUnmount();
+		this.#unsubscribeState?.();
+		this.#unsubscribeRootState?.();
+	}
+
+	#onStateChange = (
 		{
 			onOpenAutoFocus,
 			onEscapeKeyDown,
 			onInteractOutside,
 		}: DialogContentModelState,
-		prev: DialogContentModelState,
-	) {
+		prev?: DialogContentModelState,
+	) => {
 		// TODO #44 Reduce syncing boilerplate.
-		if (onOpenAutoFocus !== prev.onOpenAutoFocus) {
+		if (onOpenAutoFocus !== prev?.onOpenAutoFocus) {
 			this.#contentTrap?.setState({
 				...this.#contentTrap.state,
 				onActivateAutoFocus: onOpenAutoFocus,
@@ -95,51 +110,56 @@ export class DialogContentModel extends ComponentModel<
 		}
 		// Note that we do not directly sync `onDeactivateAutoFocus` because we
 		// handle it manually.
-		if (onEscapeKeyDown !== prev.onEscapeKeyDown) {
+		if (onEscapeKeyDown !== prev?.onEscapeKeyDown) {
 			this.#contentTrap?.setState({
 				...this.#contentTrap.state,
 				onEscapeKeyDown,
 			});
 		}
-		if (onInteractOutside !== prev.onInteractOutside) {
+		if (onInteractOutside !== prev?.onInteractOutside) {
 			this.#contentTrap?.setState({
 				...this.#contentTrap.state,
 				onInteractOutside,
 			});
 		}
-	}
+	};
 
-	watchRootStateChange(
+	#onRootStateChange = (
 		{open}: DialogRootModelState,
-		prev: DialogRootModelState,
-	): void {
-		if (open !== prev.open) {
+		prev?: DialogRootModelState,
+	) => {
+		if (open !== prev?.open) {
 			if (open) {
 				this.open();
 			} else {
 				this.close();
 			}
 		}
-	}
+	};
 
-	watchBind(): void {
+	onBind(node: HTMLElement): void {
+		super.onBind(node);
 		this.#checkTitle();
-		if (this.rootModel.state.open) {
+		const root = this.root as DialogRootModel;
+		if (root.state.open) {
 			this.open();
 		}
 	}
 
-	static MISSING_TITLE_WARNING = `<Dialog.Content/> should contain a visible <Dialog.Title/> component.
-This provides the user with a recognizable name for the dialog by enforcing an element with \`aria-labelledby\` exists in the dialog.`;
-
 	#checkTitle() {
-		const title = this.rootModel.findComponent((c) => c.type === 'title');
-		if (title === undefined) {
+		const title = this.root.findChild(this.#isTitle);
+		if (title == null) {
 			console.warn(DialogContentModel.MISSING_TITLE_WARNING);
 		}
 	}
 
-	watchDeregister(): void {
+	#isTitle = (c: ComponentModel): c is DialogTriggerModel => c.id === 'title';
+
+	static MISSING_TITLE_WARNING = `<Dialog.Content/> should contain a visible <Dialog.Title/> component.
+This provides the user with a recognizable name for the dialog by enforcing an element with \`aria-labelledby\` exists in the dialog.`;
+
+	onDeregister(): void {
+		super.onDeregister();
 		this.close();
 	}
 
@@ -150,13 +170,13 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 	 * @returns Whether the content successfully opened.
 	 */
 	open(): boolean {
-		if (this.node === undefined) {
+		if (this.node == null) {
 			if (this.debug) {
 				console.error(`open, no content component with node`);
 			}
 			return false;
 		}
-		if (this.#contentTrap !== undefined && this.#scrollLock !== undefined) {
+		if (this.#contentTrap != null && this.#scrollLock != null) {
 			return true;
 		}
 		this.#contentTrap = this.#createFocusTrap(this.node);
@@ -166,21 +186,23 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 
 	#createFocusTrap(contentElement: HTMLElement) {
 		const contentTrap = new FocusTrapModel({
-			container: contentElement,
 			initialActive: true,
 			onActivateAutoFocus: this.state.onOpenAutoFocus,
 			onDeactivateAutoFocus: this.#onDeactivateFocusToTrigger,
 			onEscapeKeyDown: this.state.onEscapeKeyDown,
 			onInteractOutside: this.state.onInteractOutside,
 		});
+		// TODO Use better semantics for onBind
+		contentTrap.onBind(contentElement);
+		const root = this.root as DialogRootModel;
 		contentTrap.requestStateUpdate = (trapUpdater) => {
-			this.rootModel.requestStateUpdate?.((prevState) => {
+			root.requestStateUpdate?.((prev) => {
 				const trapState =
 					trapUpdater instanceof Function
 						? trapUpdater(contentTrap.state)
 						: trapUpdater;
 				return {
-					...prevState,
+					...prev,
 					open: trapState.active,
 				};
 			});
@@ -194,25 +216,29 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 			return;
 		}
 		ev.preventDefault();
-		const triggerComponent = this.rootModel.findComponent(
-			(c) => c.type === 'trigger',
-		);
-		triggerComponent?.node?.focus();
+		const trigger = this.root.findChild(this.#isTriggerWithNode);
+		console.log('trigger node exists', trigger?.node != null);
+		trigger?.node?.focus();
 	};
+
+	#isTriggerWithNode = (c: ComponentModel): c is DialogTriggerModel =>
+		c.id === 'trigger' && (c as DialogTriggerModel).node != null;
 
 	#createScrollLock(contentElement: HTMLElement) {
 		const scrollLock = new ScrollLockModel({
-			container: contentElement,
 			initialActive: true,
 		});
+		// TODO Use better semantics for onBind
+		scrollLock.onBind(contentElement);
+		const root = this.root as DialogRootModel;
 		scrollLock.requestStateUpdate = (lockUpdater) => {
-			this.rootModel.requestStateUpdate?.((prevState) => {
+			root.requestStateUpdate?.((prev) => {
 				const lockState =
 					lockUpdater instanceof Function
 						? lockUpdater(scrollLock.state)
 						: lockUpdater;
 				return {
-					...prevState,
+					...prev,
 					open: lockState.active,
 				};
 			});
