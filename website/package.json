@@ -27,22 +27,17 @@
 		"@astrojs/vue": "^1.0.2",
 		"@docsearch/css": "^3.1.0",
 		"@docsearch/react": "^3.1.0",
-		"@tailwindcss/typography": "^0.5.7",
 		"astro": "^1.2.4",
-		"autoprefixer": "^10.4.12",
 		"classnames": "^2.3.2",
-		"cssnano": "^5.1.13",
-		"preact": "^10.7.3",
 		"prism-svelte": "^0.5.0",
-		"prismjs": "^1.29.0",
-		"react": "^18.1.0",
-		"react-dom": "^18.1.0",
-		"tailwindcss": "^3.1.8"
+		"prismjs": "^1.29.0"
 	},
 	"devDependencies": {
+		"@tailwindcss/typography": "^0.5.7",
 		"@types/node": "^18.7.18",
-		"@types/react": "^18.0.21",
-		"@types/react-dom": "^18.0.6",
-		"prettier-plugin-astro": "^0.5.4"
+		"autoprefixer": "^10.4.12",
+		"cssnano": "^5.1.13",
+		"prettier-plugin-astro": "^0.5.4",
+		"tailwindcss": "^3.1.8"
 	}
 }

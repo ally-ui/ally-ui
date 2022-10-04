@@ -48,6 +48,7 @@
 		"lerna": "^5.4.0",
 		"node-fetch": "^3.2.10",
 		"nx": "14.5.7",
+		"preact": "^10.11.1",
 		"prettier": "^2.7.1",
 		"prettier-plugin-organize-imports": "^3.1.0",
 		"prettier-plugin-tailwindcss": "^0.1.13",
