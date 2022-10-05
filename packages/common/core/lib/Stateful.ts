@@ -22,7 +22,7 @@ export class Stateful<TValue> {
 		this.initialValue = initialValue;
 		this.#prevValue = initialValue;
 		this.#currValue = initialValue;
-		this.#observable = new Observable({notifyOnSubscribe: true});
+		this.#observable = new Observable();
 		this.#observable.notify(initialValue);
 	}
 

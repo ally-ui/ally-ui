@@ -1,23 +1,8 @@
 export type Subscriber<TState> = (curr: TState, prev?: TState) => void;
+export type Listener = () => void;
 export type Unsubscriber = () => void;
 
-export interface ObservableOptions {
-	/**
-	 * Whether new subscribers should be immediately notified with the latest
-	 * value upon subscribing.
-	 *
-	 * Defaults to `false`.
-	 */
-	notifyOnSubscribe?: boolean;
-}
-
 export class Observable<TValue> {
-	#options: ObservableOptions;
-	constructor(options: ObservableOptions = {}) {
-		if (options.notifyOnSubscribe == null) options.notifyOnSubscribe = false;
-		this.#options = options;
-	}
-
 	#subscribers: Subscriber<TValue>[] = [];
 
 	#latestValue?: TValue;
@@ -38,7 +23,7 @@ export class Observable<TValue> {
 	subscribe(subscriber: Subscriber<TValue>): Unsubscriber {
 		if (this.#subscribers.find((s) => s === subscriber) == null) {
 			this.#subscribers.push(subscriber);
-			if (this.#options.notifyOnSubscribe && this.#latestValue != null) {
+			if (this.#latestValue != null) {
 				subscriber(this.#latestValue);
 			}
 		}
@@ -47,5 +32,27 @@ export class Observable<TValue> {
 			this.#subscribers.splice(idx, 1);
 		};
 		return unsubscriber;
+	}
+
+	listen(listener: Listener): Unsubscriber {
+		if (this.#subscribers.find((s) => s === listener) == null) {
+			this.#subscribers.push(listener);
+		}
+		const unsubscriber = () => {
+			const idx = this.#subscribers.findIndex((s) => s === listener);
+			this.#subscribers.splice(idx, 1);
+		};
+		return unsubscriber;
+	}
+
+	listenOnce(listener: Listener) {
+		const onceListener = () => {
+			listener();
+			const idx = this.#subscribers.findIndex((s) => s === onceListener);
+			this.#subscribers.splice(idx, 1);
+		};
+		if (this.#subscribers.find((s) => s === listener) == null) {
+			this.#subscribers.push(onceListener);
+		}
 	}
 }
