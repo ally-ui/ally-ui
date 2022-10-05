@@ -86,14 +86,14 @@ watchEffect(() => {
 		<slot
 			v-if="props.asChild"
 			v-bind="{
-				...mergeVueProps(component.attributes(state, rootState), $attrs),
+				...mergeVueProps(component.attributes(rootState), $attrs),
 				ref: setRef,
 			}"
 		/>
 		<div
 			v-else
 			ref="node"
-			v-bind="mergeVueProps(component.attributes(state, rootState), $attrs)"
+			v-bind="mergeVueProps(component.attributes(rootState), $attrs)"
 		>
 			<slot />
 		</div>

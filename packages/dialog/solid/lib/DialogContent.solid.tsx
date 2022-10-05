@@ -92,7 +92,7 @@ export default function DialogContent(props: DialogContentProps) {
 			<Slot
 				ref={ref}
 				props={props}
-				attributes={component.attributes(state, rootState)}
+				attributes={component.attributes(rootState)}
 			>
 				{(renderProps) => (
 					<div ref={renderProps.ref} {...renderProps.attributes()}>

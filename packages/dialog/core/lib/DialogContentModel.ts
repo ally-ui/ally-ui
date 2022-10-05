@@ -92,10 +92,7 @@ export class DialogContentModel extends NodeComponentModel<
 		};
 	}
 
-	attributes(
-		state: DialogContentModelState,
-		rootState: DialogRootModelState,
-	): DialogContentModelAttributes {
+	attributes(rootState: DialogRootModelState): DialogContentModelAttributes {
 		const root = this.root as DialogRootModel;
 		const baseAttributes = {
 			id: `${root.id}-${this.id}`,

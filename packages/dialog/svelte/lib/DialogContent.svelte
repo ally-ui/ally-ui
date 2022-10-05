@@ -99,7 +99,7 @@
 	$: slotProps = {
 		props: (userProps: svelteHTML.IntrinsicElements['div']) =>
 			mergeSvelteProps(
-				svelteProps(component.attributes(state, $rootState)),
+				svelteProps(component.attributes($rootState)),
 				$$restProps,
 				userProps,
 			),
@@ -121,7 +121,7 @@
 		<div
 			bind:this={node}
 			{...mergeSvelteProps(
-				svelteProps(component.attributes(state, $rootState)),
+				svelteProps(component.attributes($rootState)),
 				$$restProps,
 			)}
 			use:eventForwarder
