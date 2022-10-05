@@ -1,19 +1,19 @@
 import {
 	DialogRootModel,
-	type DialogRootModelOptions,
-	type DialogRootModelReactive,
+	type DialogRootModelProps,
+	type DialogRootModelEvents,
 } from '@ally-ui/core-dialog';
 import {
 	useRunOnce,
 	useSyncedOption,
-	type ReactReactiveProps,
+	type ReactEventHandlers,
 } from '@ally-ui/react';
 import React from 'react';
 import {DialogRootModelContext, DialogRootStateContext} from './context';
 
 export type DialogRootProps = React.PropsWithChildren &
-	DialogRootModelOptions &
-	ReactReactiveProps<DialogRootModelReactive>;
+	DialogRootModelProps &
+	ReactEventHandlers<DialogRootModelEvents>;
 
 export default function DialogRoot({
 	children,
@@ -25,16 +25,22 @@ export default function DialogRoot({
 	const id = React.useId();
 	const rootModel = useRunOnce(
 		() =>
-			new DialogRootModel(id, {
-				initialOpen,
-				modal,
-			}),
+			new DialogRootModel(
+				id,
+				{
+					initialOpen,
+					modal,
+				},
+				{
+					openChange: onOpenChange,
+				},
+			),
 	);
 	const [rootState, setRootState] = React.useState(
-		() => rootModel.initialState,
+		() => rootModel.state.initialValue,
 	);
 	useRunOnce(() => {
-		rootModel.requestStateUpdate = (updater) => setRootState(updater);
+		rootModel.state.requestUpdate = setRootState;
 	});
 	// TODO #44 Reduce syncing boilerplate.
 	useSyncedOption({
@@ -52,7 +58,7 @@ export default function DialogRoot({
 	});
 	React.useEffect(
 		function onStateUpdate() {
-			rootModel.setState(rootState);
+			rootModel.state.setValue(rootState);
 		},
 		[rootState],
 	);

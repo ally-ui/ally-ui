@@ -1,6 +1,7 @@
 import {
 	DialogContentModel,
-	type DialogContentModelOptions,
+	type DialogContentModelProps,
+	type DialogContentModelEvents,
 } from '@ally-ui/core-dialog';
 import {
 	mergeReactProps,
@@ -9,6 +10,7 @@ import {
 	useMultipleRefs,
 	useRunOnce,
 	useSyncedOption,
+	type ReactEventHandlers,
 } from '@ally-ui/react';
 import React from 'react';
 import {
@@ -21,7 +23,8 @@ export type DialogContentProps = React.DetailedHTMLProps<
 	React.HTMLAttributes<HTMLDivElement>,
 	HTMLDivElement
 > &
-	DialogContentModelOptions & {
+	DialogContentModelProps &
+	ReactEventHandlers<DialogContentModelEvents> & {
 		asChild?: true;
 	};
 
@@ -33,12 +36,12 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 			onCloseAutoFocus,
 			onEscapeKeyDown,
 			onInteractOutside,
-			...props
+			children,
+			asChild,
+			...restProps
 		},
 		forwardedRef,
 	) => {
-		const {ref: _, children, asChild, ...restProps} = props;
-
 		const rootModel = useDialogRootModel();
 		if (rootModel == null) {
 			throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
@@ -49,18 +52,22 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 				new DialogContentModel(
 					{
 						forceMount: forceMount ?? portalForceMount,
-						onOpenAutoFocus,
-						onCloseAutoFocus,
-						onEscapeKeyDown,
-						onInteractOutside,
+					},
+					{
+						openAutoFocus: onOpenAutoFocus,
+						closeAutoFocus: onCloseAutoFocus,
+						escapeKeyDown: onEscapeKeyDown,
+						interactOutside: onInteractOutside,
 					},
 					rootModel,
 				),
 		);
 
-		const [state, setState] = React.useState(() => component.initialState);
+		const [state, setState] = React.useState(
+			() => component.state.initialValue,
+		);
 		useRunOnce(() => {
-			component.requestStateUpdate = setState;
+			component.state.requestUpdate = setState;
 		});
 		// TODO #44 Reduce syncing boilerplate.
 		useSyncedOption({
@@ -85,21 +92,21 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 		});
 		React.useEffect(
 			function onStateUpdate() {
-				component.setState(state);
+				component.state.setValue(state);
 			},
 			[state],
 		);
 
-		const rootState = useDialogRootState() ?? rootModel.state;
-		const derivedState = component.derived(rootState);
+		const rootState = useDialogRootState() ?? rootModel.state.value;
+		const derivedState = component.derived(state, rootState);
 
 		React.useEffect(
 			function mount() {
-				// component.onRegister();
-				component.onMount();
+				// component.register();
+				component.mount();
 				return () => {
-					component.onUnmount();
-					// component.onDeregister();
+					component.unmount();
+					// component.unregister();
 				};
 			},
 			[component],
@@ -108,9 +115,9 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node == null) {
-					component.onUnbind();
+					component.unbind();
 				} else {
-					component.onBind(node);
+					component.bind(node);
 				}
 			},
 			[component],
@@ -123,11 +130,11 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 			<>
 				{derivedState.show && (
 					<Comp
-						ref={ref}
 						{...mergeReactProps(
 							reactProps(component.attributes(state, rootState)),
 							restProps,
 						)}
+						ref={ref}
 					>
 						{children}
 					</Comp>

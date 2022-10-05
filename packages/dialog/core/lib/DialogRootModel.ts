@@ -12,7 +12,7 @@ export interface DialogRootModelState {
 }
 
 export interface DialogRootModelEvents {
-	openChange: (open: boolean) => void;
+	openChange?: (open: boolean) => void;
 }
 
 export class DialogRootModel extends ComponentModel<

@@ -9,10 +9,6 @@ import {
 import React from 'react';
 import {useDialogRootModel} from './context';
 
-export interface DialogCloseHandlers {
-	onClick: React.MouseEventHandler;
-}
-
 export type DialogCloseProps = React.DetailedHTMLProps<
 	React.ButtonHTMLAttributes<HTMLButtonElement>,
 	HTMLButtonElement
@@ -21,22 +17,22 @@ export type DialogCloseProps = React.DetailedHTMLProps<
 };
 
 const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
-	(props, forwardedRef) => {
-		const {ref: _, children, asChild, onClick, ...restProps} = props;
-
+	({children, asChild, onClick, ...restProps}, forwardedRef) => {
 		const rootModel = useDialogRootModel();
 		if (rootModel == null) {
 			throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
 		}
-		const component = useRunOnce(() => new DialogCloseModel({}, rootModel));
+		const component = useRunOnce(
+			() => new DialogCloseModel({}, undefined, rootModel),
+		);
 
 		React.useEffect(
 			function mount() {
-				// component.onRegister();
-				component.onMount();
+				// component.register();
+				component.mount();
 				return () => {
-					component.onUnmount();
-					// component.onDeregister();
+					component.unmount();
+					// component.unregister();
 				};
 			},
 			[component],
@@ -45,9 +41,9 @@ const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node == null) {
-					component.onUnbind();
+					component.unbind();
 				} else {
-					component.onBind(node);
+					component.bind(node);
 				}
 			},
 			[component],
@@ -68,8 +64,8 @@ const DialogClose = React.forwardRef<HTMLButtonElement, DialogCloseProps>(
 
 		return (
 			<Comp
-				ref={ref}
 				{...mergeReactProps(reactProps(component.attributes()), restProps)}
+				ref={ref}
 				onClick={handleClick}
 			>
 				{children}
