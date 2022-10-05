@@ -1,4 +1,5 @@
 import {ComponentModel} from './ComponentModel';
+import {Observable} from './Observable';
 
 export interface NodeBindable<TAttributes extends object = any> {
 	/**
@@ -9,16 +10,16 @@ export interface NodeBindable<TAttributes extends object = any> {
 	attributes(..._dependencies: unknown[]): TAttributes;
 
 	node?: HTMLElement;
-	onBind?(node: HTMLElement): void;
-	onUnbind?(): void;
+	bind(node: HTMLElement): void;
+	unbind(): void;
 }
 
 export abstract class NodeComponentModel<
-		TState extends object = any,
-		TDerived extends object = TState,
+		TProps extends object = any,
+		TEvents extends object = any,
 		TAttributes extends object = any,
 	>
-	extends ComponentModel<TState, TDerived>
+	extends ComponentModel<TProps, TEvents>
 	implements NodeBindable<TAttributes>
 {
 	attributes(..._dependencies: unknown[]): TAttributes {
@@ -26,10 +27,16 @@ export abstract class NodeComponentModel<
 	}
 
 	node?: HTMLElement;
-	onBind(node: HTMLElement): void {
+	onBind = new Observable<HTMLElement>();
+	bind(node: HTMLElement): void {
+		const prevNode = this.node;
 		this.node = node;
+		this.onBind.notify(node, prevNode);
 	}
-	onUnbind(): void {
+	onUnbind = new Observable<HTMLElement | undefined>();
+	unbind(): void {
+		const prevNode = this.node;
 		this.node = undefined;
+		this.onUnbind.notify(undefined, prevNode);
 	}
 }
