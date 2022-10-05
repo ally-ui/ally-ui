@@ -1,4 +1,4 @@
-import {type NodeModelLike, StateModel} from '@ally-ui/core';
+import {type NodeBindable, StateModel} from '@ally-ui/core';
 import {
 	getActualTarget,
 	isEscapeEvent,
@@ -70,7 +70,7 @@ export interface FocusTrapAttributes {
 
 export class FocusTrapModel
 	extends StateModel<FocusTrapState>
-	implements NodeModelLike<FocusTrapAttributes>
+	implements NodeBindable<FocusTrapAttributes>
 {
 	constructor(initialOptions: FocusTrapOptions) {
 		super({...initialOptions, active: initialOptions.initialActive ?? false});

@@ -1,4 +1,4 @@
-import {NodeModel} from '@ally-ui/core';
+import {NodeComponentModel} from '@ally-ui/core';
 import type {DialogRootModel} from './DialogRootModel';
 
 export interface DialogCloseModelOptions {}
@@ -12,7 +12,7 @@ export interface DialogCloseModelDerived {}
 
 export interface DialogCloseModelAttributes {}
 
-export class DialogCloseModel extends NodeModel<
+export class DialogCloseModel extends NodeComponentModel<
 	DialogCloseModelState,
 	DialogCloseModelDerived,
 	DialogCloseModelAttributes

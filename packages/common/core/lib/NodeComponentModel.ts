@@ -1,6 +1,6 @@
 import {ComponentModel} from './ComponentModel';
 
-export interface NodeModelLike<TAttributes extends object = any> {
+export interface NodeBindable<TAttributes extends object = any> {
 	/**
 	 * The attributes for this node.
 	 * @param _dependencies The dependencies for computing the attributes.
@@ -13,13 +13,13 @@ export interface NodeModelLike<TAttributes extends object = any> {
 	onUnbind?(): void;
 }
 
-export abstract class NodeModel<
+export abstract class NodeComponentModel<
 		TState extends object = any,
 		TDerived extends object = TState,
 		TAttributes extends object = any,
 	>
 	extends ComponentModel<TState, TDerived>
-	implements NodeModelLike<TAttributes>
+	implements NodeBindable<TAttributes>
 {
 	abstract attributes(..._dependencies: unknown[]): TAttributes;
 

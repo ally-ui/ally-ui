@@ -1,4 +1,4 @@
-import {NodeModel} from '@ally-ui/core';
+import {NodeComponentModel} from '@ally-ui/core';
 import type {DialogRootModel, DialogRootModelState} from './DialogRootModel';
 import type {DialogTitleModelAttributes} from './DialogTitleModel';
 
@@ -18,7 +18,7 @@ export interface DialogTriggerModelAttributes {
 	'data-state': 'open' | 'closed';
 }
 
-export class DialogTriggerModel extends NodeModel<
+export class DialogTriggerModel extends NodeComponentModel<
 	DialogTriggerModelState,
 	DialogTriggerModelDerived,
 	DialogTitleModelAttributes

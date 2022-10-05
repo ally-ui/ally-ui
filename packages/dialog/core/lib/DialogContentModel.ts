@@ -1,4 +1,8 @@
-import {type ComponentModel, NodeModel, mergeAttributes} from '@ally-ui/core';
+import {
+	type ComponentModel,
+	NodeComponentModel,
+	mergeAttributes,
+} from '@ally-ui/core';
 import {FocusTrapModel, type FocusTrapState} from '@ally-ui/focus-trap';
 import {ScrollLockModel, type ScrollLockState} from '@ally-ui/scroll-lock';
 import type {DialogCloseModelState} from './DialogCloseModel';
@@ -48,7 +52,7 @@ export interface DialogContentModelAttributes {
 	style?: Record<string, string>;
 }
 
-export class DialogContentModel extends NodeModel<
+export class DialogContentModel extends NodeComponentModel<
 	DialogContentModelState,
 	DialogContentModelDerived,
 	DialogContentModelAttributes

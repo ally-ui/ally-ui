@@ -1,4 +1,4 @@
-import {NodeModel} from '@ally-ui/core';
+import {NodeComponentModel} from '@ally-ui/core';
 import type {DialogRootModel} from './DialogRootModel';
 
 export interface DialogDescriptionModelOptions {}
@@ -14,7 +14,7 @@ export interface DialogDescriptionModelAttributes {
 	id: string;
 }
 
-export class DialogDescriptionModel extends NodeModel<
+export class DialogDescriptionModel extends NodeComponentModel<
 	DialogDescriptionModelState,
 	DialogDescriptionModelDerived,
 	DialogDescriptionModelAttributes

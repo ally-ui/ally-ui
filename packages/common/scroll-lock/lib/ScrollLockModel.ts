@@ -1,4 +1,4 @@
-import {type NodeModelLike, StateModel} from '@ally-ui/core';
+import {type NodeBindable, StateModel} from '@ally-ui/core';
 import type {Coord} from './types';
 import {
 	canLocationBeScrolled,
@@ -41,7 +41,7 @@ export interface ScrollLockAttributes {
 
 export class ScrollLockModel
 	extends StateModel<ScrollLockState>
-	implements NodeModelLike<ScrollLockAttributes>
+	implements NodeBindable<ScrollLockAttributes>
 {
 	static SUPPORTS_OVERSCROLL_BEHAVIOR =
 		typeof document !== 'undefined' &&
