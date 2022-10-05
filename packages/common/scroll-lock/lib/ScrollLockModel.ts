@@ -1,4 +1,4 @@
-import {type NodeBindable, StateModel} from '@ally-ui/core';
+import {NodeComponentModel} from '@ally-ui/core';
 import type {Coord} from './types';
 import {
 	canLocationBeScrolled,
@@ -14,11 +14,19 @@ const LISTENER_OPTIONS: AddEventListenerOptions = {
 	passive: false,
 };
 
-export interface ScrollLockModelOptions {
+export interface ScrollLockModelProps {
 	/**
 	 * Whether the scroll lock should initially be active.
+	 *
+	 * Defaults to `false`.
 	 */
 	initialActive?: boolean;
+	/**
+	 * The current active state of the scroll lock.
+	 *
+	 * Defaults to `initialActive`.
+	 */
+	active?: boolean;
 	/**
 	 * Whether pinch zoom should be allowed on touchscreen devices.
 	 *
@@ -27,12 +35,7 @@ export interface ScrollLockModelOptions {
 	allowPinchZoom?: boolean;
 }
 
-export interface ScrollLockModelReactive {
-	active: boolean;
-}
-
-export type ScrollLockModelState = ScrollLockModelOptions &
-	ScrollLockModelReactive;
+export interface ScrollLockModelEvents {}
 
 export interface ScrollLockModelAttributes {
 	style?: {
@@ -40,46 +43,36 @@ export interface ScrollLockModelAttributes {
 	};
 }
 
-export class ScrollLockModel
-	extends StateModel<ScrollLockModelState>
-	implements NodeBindable<ScrollLockModelAttributes>
-{
+export class ScrollLockModel extends NodeComponentModel<
+	ScrollLockModelProps,
+	ScrollLockModelEvents,
+	ScrollLockModelAttributes
+> {
 	static SUPPORTS_OVERSCROLL_BEHAVIOR =
 		typeof document !== 'undefined' &&
 		CSS.supports('overscroll-behavior', 'contain');
 
-	constructor(initialOptions: ScrollLockModelOptions) {
-		super({...initialOptions, active: initialOptions.initialActive ?? false});
+	constructor(initialProps: ScrollLockModelProps) {
+		if (initialProps.initialActive == null) initialProps.initialActive = false;
+		if (initialProps.active == null)
+			initialProps.active = initialProps.initialActive;
+		super(initialProps);
+		this.onUnregister.listenOnce(this.onBind.listen(this.#onBind));
+		this.onUnregister.listenOnce(this.onUnbind.listen(this.#onUnbind));
 	}
 
-	attributes(state?: ScrollLockModelState): ScrollLockModelAttributes {
-		return ScrollLockModel.attributes(state ?? this.state);
-	}
+	#unsubscribePropChange?: () => void;
+	#onBind = () => {
+		this.#unsubscribePropChange = this.props.subscribe(this.#onPropChange);
+	};
 
-	static attributes(_state: ScrollLockModelState): ScrollLockModelAttributes {
-		return {
-			style: {'overscroll-behavior': 'contain'},
-		};
-	}
+	#onUnbind = () => {
+		this.#unsubscribePropChange?.();
+	};
 
-	/**
-	 * The only element allowed to scroll.
-	 */
-	node?: HTMLElement;
-	#unsubscribeState?: () => void;
-	onBind(node: HTMLElement): void {
-		this.node = node;
-		this.#unsubscribeState = this.subscribeState(this.#onStateChange);
-	}
-
-	onUnbind(): void {
-		this.node = undefined;
-		this.#unsubscribeState?.();
-	}
-
-	#onStateChange = (
-		{active}: ScrollLockModelState,
-		prev?: ScrollLockModelState,
+	#onPropChange = (
+		{active}: ScrollLockModelProps,
+		prev?: ScrollLockModelProps,
 	) => {
 		if (active !== prev?.active) {
 			if (active) {
@@ -90,19 +83,25 @@ export class ScrollLockModel
 		}
 	};
 
+	attributes(): ScrollLockModelAttributes {
+		return {
+			style: {'overscroll-behavior': 'contain'},
+		};
+	}
+
 	activate() {
 		this.#registerLock();
 		this.#subscribeEvents();
-		if (!this.state.active) {
-			this.requestStateUpdate?.((prev) => ({...prev, active: true}));
+		if (!this.props.value.active) {
+			this.props.requestUpdate?.((prev) => ({...prev, active: true}));
 		}
 	}
 
 	deactivate() {
 		this.#deregisterLock?.();
 		this.#unsubscribeEvents?.();
-		if (this.state.active) {
-			this.requestStateUpdate?.((prev) => ({...prev, active: false}));
+		if (this.props.value.active) {
+			this.props.requestUpdate?.((prev) => ({...prev, active: false}));
 		}
 	}
 
@@ -169,7 +168,7 @@ export class ScrollLockModel
 		if (node == null) return false;
 
 		if (isTouchEvent(ev) && ev.touches.length === 2) {
-			return !(this.state.allowPinchZoom ?? false);
+			return !(this.props.value.allowPinchZoom ?? false);
 		}
 
 		if (isTouchEvent(ev) && this.#overscrolled) return true;

@@ -32,7 +32,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 
 const exceptElement = document.querySelector<HTMLDivElement>('#except')!;
 const lock = observableScrollLock();
-lock.onBind(exceptElement);
+lock.bind(exceptElement);
 const enableElement = document.querySelector<HTMLButtonElement>('#enable')!;
 enableElement.addEventListener('click', () => lock.activate());
 const disableElement = document.querySelector<HTMLButtonElement>('#disable')!;
