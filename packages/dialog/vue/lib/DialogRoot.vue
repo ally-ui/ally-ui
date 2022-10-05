@@ -5,31 +5,41 @@ import {computed, provide, ref, watchEffect} from 'vue';
 import {DIALOG_ROOT_MODEL, DIALOG_ROOT_STATE} from './context';
 
 /**
- * @type {import('@ally-ui/core-dialog').DialogRootModelOptions}
- * @type {import('@ally-ui/core-dialog').DialogRootModelReactive}
+ * @type {import('@ally-ui/core-dialog').DialogRootModelProps}
  */
 export type DialogRootProps = {
 	initialOpen?: boolean;
-	modal?: boolean;
 	open?: boolean;
+	modal?: boolean;
+};
+/**
+ * @type {import('@ally-ui/core-dialog').DialogRootModelEvents}
+ */
+export type DialogRootEvents = {
+	(type: 'update:open', open: boolean): void;
 };
 const props = withDefaults(defineProps<DialogRootProps>(), {
 	initialOpen: undefined,
 	modal: undefined,
 	open: undefined,
 });
-const emit = defineEmits<{
-	(type: 'update:open', open: boolean): void;
-}>();
+const emit = defineEmits<DialogRootEvents>();
 
 // TODO #19 Generate SSR-safe IDs.
 const id = '0';
-const rootModel = new DialogRootModel(id, {
-	initialOpen: props.initialOpen,
-	modal: props.modal,
-});
-const rootState = ref(rootModel.initialState);
-rootModel.requestStateUpdate = (updater) => {
+const rootModel = new DialogRootModel(
+	id,
+	{
+		initialOpen: props.initialOpen,
+		open: props.open,
+		modal: props.modal,
+	},
+	{
+		openChange: (open) => emit('update:open', open),
+	},
+);
+const rootState = ref(rootModel.state.initialValue);
+rootModel.state.requestUpdate = (updater) => {
 	if (updater instanceof Function) {
 		rootState.value = updater(rootState.value);
 	} else {
@@ -47,7 +57,7 @@ useSyncedOption({
 	onOptionChange: (modal) => (rootState.value = {...rootState.value, modal}),
 });
 watchEffect(function onStateUpdate() {
-	rootModel.setState(rootState.value);
+	rootModel.state.setValue(rootState.value);
 });
 
 provide(DIALOG_ROOT_MODEL, rootModel);

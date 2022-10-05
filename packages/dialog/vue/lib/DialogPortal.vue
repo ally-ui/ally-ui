@@ -20,7 +20,7 @@ if (rootModel == null) {
 	throw new Error('<Dialog.Portal/> must be a child of `<Dialog.Root/>`');
 }
 
-const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.state);
+const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.state.value);
 
 provide(DIALOG_PORTAL_FORCE_MOUNT, props.forceMount);
 </script>

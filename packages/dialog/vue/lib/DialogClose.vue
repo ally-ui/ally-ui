@@ -16,12 +16,12 @@ const rootModel = inject(DIALOG_ROOT_MODEL);
 if (rootModel == null) {
 	throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
 }
-const component = new DialogCloseModel({}, rootModel);
+const component = new DialogCloseModel({}, undefined, rootModel);
 
-onMounted(() => component.onMount());
+onMounted(() => component.mount());
 onUnmounted(() => {
-	component.onUnmount();
-	rootModel.onDeregister();
+	component.unmount();
+	rootModel.unregister();
 });
 
 const node = ref<HTMLButtonElement | null>(null);
@@ -31,9 +31,9 @@ const setRef = (nodeValue: HTMLButtonElement | null) => {
 watchEffect(() => {
 	props.setRef?.(node.value);
 	if (node.value == null) {
-		component.onUnbind();
+		component.unbind();
 	} else {
-		component.onBind(node.value);
+		component.bind(node.value);
 	}
 });
 
