@@ -1,8 +1,8 @@
 import {writable, type Writable} from 'svelte/store';
 import {
 	FocusTrapModel,
-	FocusTrapOptions,
-	FocusTrapState,
+	FocusTrapModelOptions,
+	FocusTrapModelState,
 } from '../lib/FocusTrapModel';
 
 /**
@@ -12,8 +12,8 @@ import {
  * @returns A controlled focus trap instance.
  */
 export function observableFocusTrap(
-	options: FocusTrapOptions = {},
-	manualState?: Writable<FocusTrapState>,
+	options: FocusTrapModelOptions = {},
+	manualState?: Writable<FocusTrapModelState>,
 ): FocusTrapModel {
 	const trap = new FocusTrapModel(options);
 

@@ -14,7 +14,7 @@ const LISTENER_OPTIONS: AddEventListenerOptions = {
 	passive: false,
 };
 
-export interface ScrollLockOptions {
+export interface ScrollLockModelOptions {
 	/**
 	 * Whether the scroll lock should initially be active.
 	 */
@@ -27,35 +27,36 @@ export interface ScrollLockOptions {
 	allowPinchZoom?: boolean;
 }
 
-export interface ScrollLockReactive {
+export interface ScrollLockModelReactive {
 	active: boolean;
 }
 
-export type ScrollLockState = ScrollLockOptions & ScrollLockReactive;
+export type ScrollLockModelState = ScrollLockModelOptions &
+	ScrollLockModelReactive;
 
-export interface ScrollLockAttributes {
+export interface ScrollLockModelAttributes {
 	style?: {
 		'overscroll-behavior': 'contain';
 	};
 }
 
 export class ScrollLockModel
-	extends StateModel<ScrollLockState>
-	implements NodeBindable<ScrollLockAttributes>
+	extends StateModel<ScrollLockModelState>
+	implements NodeBindable<ScrollLockModelAttributes>
 {
 	static SUPPORTS_OVERSCROLL_BEHAVIOR =
 		typeof document !== 'undefined' &&
 		CSS.supports('overscroll-behavior', 'contain');
 
-	constructor(initialOptions: ScrollLockOptions) {
+	constructor(initialOptions: ScrollLockModelOptions) {
 		super({...initialOptions, active: initialOptions.initialActive ?? false});
 	}
 
-	attributes(): ScrollLockAttributes {
+	attributes(): ScrollLockModelAttributes {
 		return ScrollLockModel.attributes(this.state);
 	}
 
-	static attributes(_state: ScrollLockState): ScrollLockAttributes {
+	static attributes(_state: ScrollLockModelState): ScrollLockModelAttributes {
 		return {
 			style: {'overscroll-behavior': 'contain'},
 		};
@@ -76,7 +77,10 @@ export class ScrollLockModel
 		this.#unsubscribeState?.();
 	}
 
-	#onStateChange = ({active}: ScrollLockState, prev?: ScrollLockState) => {
+	#onStateChange = (
+		{active}: ScrollLockModelState,
+		prev?: ScrollLockModelState,
+	) => {
 		if (active !== prev?.active) {
 			if (active) {
 				this.activate();

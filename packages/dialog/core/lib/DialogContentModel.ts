@@ -3,8 +3,8 @@ import {
 	NodeComponentModel,
 	mergeAttributes,
 } from '@ally-ui/core';
-import {FocusTrapModel, type FocusTrapState} from '@ally-ui/focus-trap';
-import {ScrollLockModel, type ScrollLockState} from '@ally-ui/scroll-lock';
+import {FocusTrapModel, type FocusTrapModelState} from '@ally-ui/focus-trap';
+import {ScrollLockModel, type ScrollLockModelState} from '@ally-ui/scroll-lock';
 import type {DialogCloseModelState} from './DialogCloseModel';
 import type {DialogRootModel, DialogRootModelState} from './DialogRootModel';
 import type {DialogTitleModel as DialogTriggerModel} from './DialogTitleModel';
@@ -86,10 +86,10 @@ export class DialogContentModel extends NodeComponentModel<
 		return mergeAttributes(
 			baseAttributes,
 			FocusTrapModel.attributes(
-				this.#deriveFocusTrapState(this.state, rootState),
+				this.#deriveFocusTrapModelState(this.state, rootState),
 			),
 			ScrollLockModel.attributes(
-				this.#deriveScrollLockState(this.state, rootState),
+				this.#deriveScrollLockModelState(this.state, rootState),
 			),
 		) as DialogContentModelAttributes;
 	}
@@ -112,10 +112,10 @@ export class DialogContentModel extends NodeComponentModel<
 
 	#onStateChange = (state: DialogContentModelState) => {
 		this.#focusTrap.setState(
-			this.#deriveFocusTrapState(state, this.root.state),
+			this.#deriveFocusTrapModelState(state, this.root.state),
 		);
 		this.#scrollLock.setState(
-			this.#deriveScrollLockState(state, this.root.state),
+			this.#deriveScrollLockModelState(state, this.root.state),
 		);
 	};
 
@@ -123,9 +123,11 @@ export class DialogContentModel extends NodeComponentModel<
 		rootState: DialogRootModelState,
 		prev?: DialogRootModelState,
 	) => {
-		this.#focusTrap.setState(this.#deriveFocusTrapState(this.state, rootState));
+		this.#focusTrap.setState(
+			this.#deriveFocusTrapModelState(this.state, rootState),
+		);
 		this.#scrollLock.setState(
-			this.#deriveScrollLockState(this.state, rootState),
+			this.#deriveScrollLockModelState(this.state, rootState),
 		);
 		if (rootState.open !== prev?.open) {
 			if (rootState.open) {
@@ -198,10 +200,10 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 		return contentTrap;
 	}
 
-	#deriveFocusTrapState(
+	#deriveFocusTrapModelState(
 		state: DialogContentModelState,
 		rootState: DialogRootModelState,
-	): FocusTrapState {
+	): FocusTrapModelState {
 		return {
 			active: rootState.open,
 			initialActive: rootState.initialOpen,
@@ -246,10 +248,10 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 		return scrollLock;
 	}
 
-	#deriveScrollLockState(
+	#deriveScrollLockModelState(
 		_state: DialogCloseModelState,
 		rootState: DialogRootModelState,
-	): ScrollLockState {
+	): ScrollLockModelState {
 		return {
 			active: rootState.open,
 			initialActive: rootState.initialOpen,

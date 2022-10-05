@@ -1,8 +1,8 @@
 import {writable, type Writable} from 'svelte/store';
 import {
 	ScrollLockModel,
-	type ScrollLockOptions,
-	type ScrollLockState,
+	type ScrollLockModelOptions,
+	type ScrollLockModelState,
 } from '../lib/ScrollLockModel';
 
 /**
@@ -12,8 +12,8 @@ import {
  * @returns A controlled scroll lock instance.
  */
 export function observableScrollLock(
-	options: ScrollLockOptions = {},
-	manualState?: Writable<ScrollLockState>,
+	options: ScrollLockModelOptions = {},
+	manualState?: Writable<ScrollLockModelState>,
 ): ScrollLockModel {
 	const lock = new ScrollLockModel(options);
 

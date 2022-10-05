@@ -22,7 +22,7 @@ const FOCUSABLE_SELECTORS = [
 	'[tabindex]:not([tabindex="-1"])',
 ];
 
-export interface FocusTrapOptions {
+export interface FocusTrapModelOptions {
 	/**
 	 * Whether the focus trap should initially be active.
 	 *
@@ -55,13 +55,14 @@ export interface FocusTrapOptions {
 	modal?: boolean;
 }
 
-export interface FocusTrapReactive {
+export interface FocusTrapModelReactive {
 	active: boolean;
 }
 
-export type FocusTrapState = FocusTrapOptions & FocusTrapReactive;
+export type FocusTrapModelState = FocusTrapModelOptions &
+	FocusTrapModelReactive;
 
-export interface FocusTrapAttributes {
+export interface FocusTrapModelAttributes {
 	'aria-modal'?: 'true';
 	style?: {
 		'pointer-events': 'auto';
@@ -69,18 +70,18 @@ export interface FocusTrapAttributes {
 }
 
 export class FocusTrapModel
-	extends StateModel<FocusTrapState>
-	implements NodeBindable<FocusTrapAttributes>
+	extends StateModel<FocusTrapModelState>
+	implements NodeBindable<FocusTrapModelAttributes>
 {
-	constructor(initialOptions: FocusTrapOptions) {
+	constructor(initialOptions: FocusTrapModelOptions) {
 		super({...initialOptions, active: initialOptions.initialActive ?? false});
 	}
 
-	attributes(): FocusTrapAttributes {
+	attributes(): FocusTrapModelAttributes {
 		return FocusTrapModel.attributes(this.state);
 	}
 
-	static attributes(state: FocusTrapState): FocusTrapAttributes {
+	static attributes(state: FocusTrapModelState): FocusTrapModelAttributes {
 		if (state.modal) {
 			return {
 				'aria-modal': 'true',
@@ -105,7 +106,10 @@ export class FocusTrapModel
 		this.#unsubscribeState?.();
 	}
 
-	#onStateChange = ({active}: FocusTrapState, prev?: FocusTrapState) => {
+	#onStateChange = (
+		{active}: FocusTrapModelState,
+		prev?: FocusTrapModelState,
+	) => {
 		if (active !== prev?.active) {
 			if (active) {
 				this.activate();
