@@ -20,7 +20,7 @@ describe('tracks the correct DOM elements', () => {
 `;
 		const trapElement = screen.getByTestId('trap');
 		trap = observableFocusTrap();
-		trap.onBind(trapElement);
+		trap.bind(trapElement);
 		trap.activate();
 	});
 
@@ -65,7 +65,7 @@ describe('dynamic DOM', () => {
 `;
 		const trapElement = screen.getByTestId('trap');
 		trap = observableFocusTrap();
-		trap.onBind(trapElement);
+		trap.bind(trapElement);
 		trap.activate();
 	});
 

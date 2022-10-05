@@ -22,17 +22,20 @@ afterEach(() => {
 it('focuses on the first element in the trap on activation', () => {
 	const trapElement = screen.getByTestId('trap');
 	trap = observableFocusTrap();
-	trap.onBind(trapElement);
+	trap.bind(trapElement);
 	trap.activate();
 	expect(screen.getByTestId('inside-1')).toHaveFocus();
 });
 
 it('prevents focus going to the first element in the trap on activation', () => {
 	const trapElement = screen.getByTestId('trap');
-	trap = observableFocusTrap({
-		onActivateAutoFocus: (ev) => ev.preventDefault(),
-	});
-	trap.onBind(trapElement);
+	trap = observableFocusTrap(
+		{},
+		{
+			activateAutoFocus: (ev) => ev.preventDefault(),
+		},
+	);
+	trap.bind(trapElement);
 	trap.activate();
 	expect(screen.getByTestId('inside-1')).not.toHaveFocus();
 });
@@ -41,7 +44,7 @@ it('returns focus to the previously focused element on deactivation', () => {
 	const trapElement = screen.getByTestId('trap');
 	screen.getByTestId('outside-1').focus();
 	trap = observableFocusTrap();
-	trap.onBind(trapElement);
+	trap.bind(trapElement);
 	trap.activate();
 	trap.deactivate();
 	expect(screen.getByTestId('outside-1')).toHaveFocus();
@@ -50,7 +53,7 @@ it('returns focus to the previously focused element on deactivation', () => {
 it('does not return focus if there is no previously focused element on deactivation', () => {
 	const trapElement = screen.getByTestId('trap');
 	trap = observableFocusTrap();
-	trap.onBind(trapElement);
+	trap.bind(trapElement);
 	trap.activate();
 	trap.deactivate();
 	expect(screen.getByTestId('inside-1')).toHaveFocus();
@@ -59,13 +62,16 @@ it('does not return focus if there is no previously focused element on deactivat
 it('prevents focus returning to the previous element on deactivation', () => {
 	const trapElement = screen.getByTestId('trap');
 	const returnElement = screen.getByTestId('outside-2');
-	trap = observableFocusTrap({
-		onDeactivateAutoFocus: (ev) => {
-			ev.preventDefault();
-			returnElement.focus();
+	trap = observableFocusTrap(
+		{},
+		{
+			deactivateAutoFocus: (ev) => {
+				ev.preventDefault();
+				returnElement.focus();
+			},
 		},
-	});
-	trap.onBind(trapElement);
+	);
+	trap.bind(trapElement);
 	trap.activate();
 	trap.deactivate();
 	expect(returnElement).toHaveFocus();

@@ -25,11 +25,11 @@ it('does not disable on click inside', async () => {
 
 	const trapElement = screen.getByTestId('trap');
 	trap = observableFocusTrap();
-	trap.onBind(trapElement);
+	trap.bind(trapElement);
 	trap.activate();
 
 	await user.click(screen.getByTestId('inside-1'));
-	expect(trap.state.active).toBe(true);
+	expect(trap.props.value.active).toBe(true);
 });
 
 it('disables on click outside by default', async () => {
@@ -37,47 +37,53 @@ it('disables on click outside by default', async () => {
 
 	const trapElement = screen.getByTestId('trap');
 	trap = observableFocusTrap();
-	trap.onBind(trapElement);
+	trap.bind(trapElement);
 	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.state.active).toBe(false);
+	expect(trap.props.value.active).toBe(false);
 });
 
 it('does not disable on click outside when interact outside is prevented', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
-	trap = observableFocusTrap({
-		onInteractOutside: (ev) => ev.preventDefault(),
-	});
-	trap.onBind(trapElement);
+	trap = observableFocusTrap(
+		{},
+		{
+			interactOutside: (ev) => ev.preventDefault(),
+		},
+	);
+	trap.bind(trapElement);
 	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.state.active).toBe(true);
+	expect(trap.props.value.active).toBe(true);
 });
 
 it('only disables on right click outside with custom on interact outside handler', async () => {
 	const user = userEvent.setup();
 
 	const trapElement = screen.getByTestId('trap');
-	trap = observableFocusTrap({
-		onInteractOutside: (ev) => {
-			if (ev instanceof MouseEvent && ev.button !== 2) {
-				ev.preventDefault();
-			}
+	trap = observableFocusTrap(
+		{},
+		{
+			interactOutside: (ev) => {
+				if (ev instanceof MouseEvent && ev.button !== 2) {
+					ev.preventDefault();
+				}
+			},
 		},
-	});
-	trap.onBind(trapElement);
+	);
+	trap.bind(trapElement);
 	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.state.active).toBe(true);
+	expect(trap.props.value.active).toBe(true);
 
 	await user.pointer({
 		keys: '[MouseRight]',
 		target: screen.getByTestId('outside-1'),
 	});
-	expect(trap.state.active).toBe(false);
+	expect(trap.props.value.active).toBe(false);
 });

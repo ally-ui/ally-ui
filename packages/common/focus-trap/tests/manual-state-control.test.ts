@@ -1,6 +1,6 @@
 import {screen} from '@testing-library/dom';
 import {writable} from 'svelte/store';
-import type {FocusTrapModel, FocusTrapModelState} from '../lib/FocusTrapModel';
+import type {FocusTrapModel, FocusTrapModelProps} from '../lib/FocusTrapModel';
 import {observableFocusTrap} from './observableFocusTrap';
 
 let trap: FocusTrapModel | undefined;
@@ -23,42 +23,42 @@ afterEach(() => {
 
 it('activates if active state initializes as true', () => {
 	const trapElement = screen.getByTestId('trap');
-	const manualTrapState = writable<FocusTrapModelState>({
+	const manualTrapState = writable<FocusTrapModelProps>({
 		active: true,
 	});
-	trap = observableFocusTrap({}, manualTrapState);
-	trap.onBind(trapElement);
+	trap = observableFocusTrap({}, {}, manualTrapState);
+	trap.bind(trapElement);
 	expect(screen.getByTestId('inside-1')).toHaveFocus();
 });
 
 it('deactivates if active state initializes as false', () => {
 	const trapElement = screen.getByTestId('trap');
-	const manualTrapState = writable<FocusTrapModelState>({
+	const manualTrapState = writable<FocusTrapModelProps>({
 		active: false,
 	});
-	trap = observableFocusTrap({}, manualTrapState);
-	trap.onBind(trapElement);
+	trap = observableFocusTrap({}, {}, manualTrapState);
+	trap.bind(trapElement);
 	expect(screen.getByTestId('inside-1')).not.toHaveFocus();
 });
 
 it('activates if active is manually set to true', () => {
 	const trapElement = screen.getByTestId('trap');
-	const manualTrapState = writable<FocusTrapModelState>({
+	const manualTrapState = writable<FocusTrapModelProps>({
 		active: false,
 	});
-	trap = observableFocusTrap({}, manualTrapState);
-	trap.onBind(trapElement);
+	trap = observableFocusTrap({}, {}, manualTrapState);
+	trap.bind(trapElement);
 	manualTrapState.update((prev) => ({...prev, active: true}));
 	expect(screen.getByTestId('inside-1')).toHaveFocus();
 });
 
 it('deactivates if active is manually set to false', () => {
 	const trapElement = screen.getByTestId('trap');
-	const manualTrapState = writable<FocusTrapModelState>({
+	const manualTrapState = writable<FocusTrapModelProps>({
 		active: true,
 	});
-	trap = observableFocusTrap({}, manualTrapState);
-	trap.onBind(trapElement);
+	trap = observableFocusTrap({}, {}, manualTrapState);
+	trap.bind(trapElement);
 	manualTrapState.update((prev) => ({...prev, active: false}));
 	expect(screen.getByTestId('inside-1')).not.toHaveFocus();
 });
