@@ -61,6 +61,7 @@ export class DialogContentModel extends NodeComponentModel<
 
 	#focusTrap: FocusTrapModel;
 	#scrollLock: ScrollLockModel;
+
 	constructor(initialState: DialogContentModelState, parent: DialogRootModel) {
 		super(initialState, parent);
 		this.#focusTrap = this.#createFocusTrap();
