@@ -1,6 +1,6 @@
 import {screen} from '@testing-library/dom';
 import {writable} from 'svelte/store';
-import type {FocusTrapModel, FocusTrapModelProps} from '../lib/FocusTrapModel';
+import type {FocusTrapModel, FocusTrapModelState} from '../lib/FocusTrapModel';
 import {observableFocusTrap} from './observableFocusTrap';
 
 let trap: FocusTrapModel | undefined;
@@ -23,8 +23,9 @@ afterEach(() => {
 
 it('activates if active state initializes as true', () => {
 	const trapElement = screen.getByTestId('trap');
-	const manualTrapState = writable<FocusTrapModelProps>({
+	const manualTrapState = writable<FocusTrapModelState>({
 		active: true,
+		modal: true,
 	});
 	trap = observableFocusTrap({}, {}, manualTrapState);
 	trap.bind(trapElement);
@@ -33,8 +34,9 @@ it('activates if active state initializes as true', () => {
 
 it('deactivates if active state initializes as false', () => {
 	const trapElement = screen.getByTestId('trap');
-	const manualTrapState = writable<FocusTrapModelProps>({
+	const manualTrapState = writable<FocusTrapModelState>({
 		active: false,
+		modal: true,
 	});
 	trap = observableFocusTrap({}, {}, manualTrapState);
 	trap.bind(trapElement);
@@ -43,8 +45,9 @@ it('deactivates if active state initializes as false', () => {
 
 it('activates if active is manually set to true', () => {
 	const trapElement = screen.getByTestId('trap');
-	const manualTrapState = writable<FocusTrapModelProps>({
+	const manualTrapState = writable<FocusTrapModelState>({
 		active: false,
+		modal: true,
 	});
 	trap = observableFocusTrap({}, {}, manualTrapState);
 	trap.bind(trapElement);
@@ -54,8 +57,9 @@ it('activates if active is manually set to true', () => {
 
 it('deactivates if active is manually set to false', () => {
 	const trapElement = screen.getByTestId('trap');
-	const manualTrapState = writable<FocusTrapModelProps>({
+	const manualTrapState = writable<FocusTrapModelState>({
 		active: true,
+		modal: true,
 	});
 	trap = observableFocusTrap({}, {}, manualTrapState);
 	trap.bind(trapElement);

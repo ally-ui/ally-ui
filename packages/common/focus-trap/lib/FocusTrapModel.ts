@@ -37,8 +37,15 @@ export interface FocusTrapModelProps {
 	active?: boolean;
 	/**
 	 * Whether interaction outside the container should be inert.
+	 *
+	 * Defaults to `true`.
 	 */
 	modal?: boolean;
+}
+
+export interface FocusTrapModelState {
+	active: boolean;
+	modal: boolean;
 }
 
 export interface FocusTrapModelEvents {
@@ -74,6 +81,7 @@ export interface FocusTrapModelAttributes {
 
 export class FocusTrapModel extends NodeComponentModel<
 	FocusTrapModelProps,
+	FocusTrapModelState,
 	FocusTrapModelEvents,
 	FocusTrapModelAttributes
 > {
@@ -81,24 +89,28 @@ export class FocusTrapModel extends NodeComponentModel<
 		initialProps: FocusTrapModelProps,
 		initialEvents: FocusTrapModelEvents,
 	) {
-		if (initialProps.initialActive == null) initialProps.initialActive = false;
-		if (initialProps.active == null)
-			initialProps.active = initialProps.initialActive;
 		super(initialProps, initialEvents);
 		this.onUnregister.listenOnce(this.onBind.listen(this.#onBind));
 		this.onUnregister.listenOnce(this.onUnbind.listen(this.#onUnbind));
 	}
 
-	#unsubscribePropChange?: () => void;
+	initialState(initialProps: FocusTrapModelProps): FocusTrapModelState {
+		return {
+			active: initialProps.active ?? initialProps.initialActive ?? false,
+			modal: initialProps.modal ?? true,
+		};
+	}
+
+	#unsubscribeStateChange?: () => void;
 	#onBind = () => {
-		this.#unsubscribePropChange = this.props.subscribe(this.#onPropChange);
+		this.#unsubscribeStateChange = this.state.subscribe(this.#onStateChange);
 	};
 
 	#onUnbind = () => {
-		this.#unsubscribePropChange?.();
+		this.#unsubscribeStateChange?.();
 	};
 
-	#onPropChange = (
+	#onStateChange = (
 		{active}: FocusTrapModelProps,
 		prev?: FocusTrapModelProps,
 	) => {
@@ -111,12 +123,12 @@ export class FocusTrapModel extends NodeComponentModel<
 		}
 	};
 
-	attributes(props: FocusTrapModelProps): FocusTrapModelAttributes {
-		return FocusTrapModel.attributes(props ?? this.props);
+	attributes(state: FocusTrapModelState): FocusTrapModelAttributes {
+		return FocusTrapModel.attributes(state ?? this.state.value);
 	}
 
-	static attributes(props: FocusTrapModelProps): FocusTrapModelAttributes {
-		if (props.modal) {
+	static attributes(state: FocusTrapModelState): FocusTrapModelAttributes {
+		if (state.modal) {
 			return {
 				'aria-modal': 'true',
 				style: {'pointer-events': 'auto'},
@@ -132,8 +144,8 @@ export class FocusTrapModel extends NodeComponentModel<
 		this.#subscribeChildren();
 		this.#subscribeEvents();
 		this.#trapFocus();
-		if (!this.props.value.active) {
-			this.props.requestUpdate?.((prev) => ({...prev, active: true}));
+		if (!this.state.value.active) {
+			this.state.requestUpdate?.((prev) => ({...prev, active: true}));
 		}
 	}
 
@@ -142,8 +154,8 @@ export class FocusTrapModel extends NodeComponentModel<
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
 		this.#returnFocus?.();
-		if (this.props.value.active) {
-			this.props.requestUpdate?.((prev) => ({...prev, active: false}));
+		if (this.state.value.active) {
+			this.state.requestUpdate?.((prev) => ({...prev, active: false}));
 		}
 	}
 
@@ -283,7 +295,7 @@ export class FocusTrapModel extends NodeComponentModel<
 		if (FocusTrapModel.activeTraps.at(-1) !== this) return;
 		if (this.node == null) return;
 		if (isTargetContainedBy(getActualTarget(ev), this.node)) return;
-		if (this.props.value.active) {
+		if (this.state.value.active) {
 			ev.preventDefault();
 			ev.stopPropagation();
 		}

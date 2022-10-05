@@ -29,7 +29,7 @@ it('does not disable on click inside', async () => {
 	trap.activate();
 
 	await user.click(screen.getByTestId('inside-1'));
-	expect(trap.props.value.active).toBe(true);
+	expect(trap.state.value.active).toBe(true);
 });
 
 it('disables on click outside by default', async () => {
@@ -41,7 +41,7 @@ it('disables on click outside by default', async () => {
 	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.props.value.active).toBe(false);
+	expect(trap.state.value.active).toBe(false);
 });
 
 it('does not disable on click outside when interact outside is prevented', async () => {
@@ -58,7 +58,7 @@ it('does not disable on click outside when interact outside is prevented', async
 	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.props.value.active).toBe(true);
+	expect(trap.state.value.active).toBe(true);
 });
 
 it('only disables on right click outside with custom on interact outside handler', async () => {
@@ -79,11 +79,11 @@ it('only disables on right click outside with custom on interact outside handler
 	trap.activate();
 
 	await user.click(screen.getByTestId('outside-1'));
-	expect(trap.props.value.active).toBe(true);
+	expect(trap.state.value.active).toBe(true);
 
 	await user.pointer({
 		keys: '[MouseRight]',
 		target: screen.getByTestId('outside-1'),
 	});
-	expect(trap.props.value.active).toBe(false);
+	expect(trap.state.value.active).toBe(false);
 });

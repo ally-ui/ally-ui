@@ -29,7 +29,7 @@ it('disables on escape by default', async () => {
 	trap.activate();
 
 	await user.keyboard('{Esc}');
-	expect(trap.props.value.active).toBe(false);
+	expect(trap.state.value.active).toBe(false);
 });
 
 it('does not escape when escape is prevented', async () => {
@@ -46,7 +46,7 @@ it('does not escape when escape is prevented', async () => {
 	trap.activate();
 
 	await user.keyboard('{Esc}');
-	expect(trap.props.value.active).toBe(true);
+	expect(trap.state.value.active).toBe(true);
 });
 
 it('only disables on escape with shift', async () => {
@@ -67,8 +67,8 @@ it('only disables on escape with shift', async () => {
 	trap.activate();
 
 	await user.keyboard('{Esc}');
-	expect(trap.props.value.active).toBe(true);
+	expect(trap.state.value.active).toBe(true);
 
 	await user.keyboard('{Shift>}{Esc}{/Shift}');
-	expect(trap.props.value.active).toBe(false);
+	expect(trap.state.value.active).toBe(false);
 });
