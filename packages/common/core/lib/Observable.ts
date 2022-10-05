@@ -14,8 +14,10 @@ export class Observable<TValue> {
 	}
 
 	/**
-	 * Subscribe to value changes. Subscriber instances are de-duplicated so this
-	 * method is idempotent.
+	 * Subscribe to value changes. The latest value will be pushed on first
+	 * subscription so this is useful for tracking some state.
+	 *
+	 * Subscriber instances are de-duplicated so this method is idempotent.
 	 *
 	 * @param subscriber The subscriber function.
 	 * @returns An unsubscriber function.
@@ -34,6 +36,13 @@ export class Observable<TValue> {
 		return unsubscriber;
 	}
 
+	/**
+	 * Listen for events. The listener is not informed on subscription and will
+	 * only receive messages fired after subscription.
+	 *
+	 * @param listener The listener function.
+	 * @returns An unsubscriber function.
+	 */
 	listen(listener: Listener): Unsubscriber {
 		if (this.#subscribers.find((s) => s === listener) == null) {
 			this.#subscribers.push(listener);
@@ -45,6 +54,11 @@ export class Observable<TValue> {
 		return unsubscriber;
 	}
 
+	/**
+	 * Listen for events, but automatically unsubscribe once a message is received.
+	 *
+	 * @param listener The listener function.
+	 */
 	listenOnce(listener: Listener) {
 		const onceListener = () => {
 			listener();
