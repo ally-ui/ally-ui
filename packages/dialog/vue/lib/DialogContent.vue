@@ -9,23 +9,29 @@ import {
 import {mergeVueProps} from '@ally-ui/vue';
 
 /**
- * @type {import('@ally-ui/core-dialog').DialogContentModelOptions}
+ * @type {import('@ally-ui/core-dialog').DialogContentModelProps}
  */
 export type DialogContentProps = {
 	setRef?: (node: HTMLDivElement | null) => void;
 	asChild?: true | undefined;
 	forceMount?: boolean | undefined;
+	allowPinchZoom?: boolean | undefined;
 };
-const props = withDefaults(defineProps<DialogContentProps>(), {
-	asChild: undefined,
-	forceMount: undefined,
-});
-const emit = defineEmits<{
+/**
+ * @type {import('@ally-ui/core-dialog').DialogContentModelEvents}
+ */
+export type DialogContentEvents = {
 	(type: 'openAutoFocus', ev: Event): void;
 	(type: 'closeAutoFocus', ev: Event): void;
 	(type: 'escapeKeyDown', ev: KeyboardEvent): void;
 	(type: 'interactOutside', ev: MouseEvent | TouchEvent): void;
-}>();
+};
+const props = withDefaults(defineProps<DialogContentProps>(), {
+	asChild: undefined,
+	forceMount: undefined,
+	allowPinchZoom: undefined,
+});
+const emit = defineEmits<DialogContentEvents>();
 
 const rootModel = inject(DIALOG_ROOT_MODEL);
 if (rootModel == null) {
@@ -35,21 +41,30 @@ const portalForceMount = inject(DIALOG_PORTAL_FORCE_MOUNT);
 const component = new DialogContentModel(
 	{
 		forceMount: props.forceMount ?? portalForceMount,
-		onOpenAutoFocus: (ev) => emit('openAutoFocus', ev),
-		onCloseAutoFocus: (ev) => emit('closeAutoFocus', ev),
-		onEscapeKeyDown: (ev) => emit('escapeKeyDown', ev),
-		onInteractOutside: (ev) => emit('interactOutside', ev),
+		allowPinchZoom: props.allowPinchZoom,
+	},
+	{
+		openAutoFocus: (ev) => emit('openAutoFocus', ev),
+		closeAutoFocus: (ev) => emit('closeAutoFocus', ev),
+		escapeKeyDown: (ev) => emit('escapeKeyDown', ev),
+		interactOutside: (ev) => emit('interactOutside', ev),
 	},
 	rootModel,
 );
 
-const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.state);
-const derivedState = computed(() => component.derived(rootState.value));
+const state = ref(component.state.initialValue);
+// Note that we do not need to sync options for event handlers because Vue does
+// not use handlers but emits events instead.
 
-onMounted(() => component.onMount());
+const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.state.value);
+const derivedState = computed(() =>
+	component.derived(state.value, rootState.value),
+);
+
+onMounted(() => component.mount());
 onUnmounted(() => {
-	component.onUnmount();
-	component.onDeregister();
+	component.unmount();
+	component.unregister();
 });
 
 const node = ref<HTMLDivElement | null>(null);
@@ -59,9 +74,9 @@ const setRef = (nodeValue: HTMLDivElement | null) => {
 watchEffect(() => {
 	props.setRef?.(node.value);
 	if (node.value == null) {
-		component.onUnbind();
+		component.unbind();
 	} else {
-		component.onBind(node.value);
+		component.bind(node.value);
 	}
 });
 </script>
@@ -71,14 +86,14 @@ watchEffect(() => {
 		<slot
 			v-if="props.asChild"
 			v-bind="{
-				...mergeVueProps(component.attributes(rootState), $attrs),
+				...mergeVueProps(component.attributes(state, rootState), $attrs),
 				ref: setRef,
 			}"
 		/>
 		<div
 			v-else
 			ref="node"
-			v-bind="mergeVueProps(component.attributes(rootState), $attrs)"
+			v-bind="mergeVueProps(component.attributes(state, rootState), $attrs)"
 		>
 			<slot />
 		</div>

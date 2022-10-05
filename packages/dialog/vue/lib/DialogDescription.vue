@@ -16,12 +16,12 @@ const rootModel = inject(DIALOG_ROOT_MODEL);
 if (rootModel == null) {
 	throw new Error('<Dialog.Description/> must be a child of `<Dialog.Root/>`');
 }
-const component = new DialogDescriptionModel({}, rootModel);
+const component = new DialogDescriptionModel({}, undefined, rootModel);
 
-onMounted(() => component.onMount());
+onMounted(() => component.mount());
 onUnmounted(() => {
-	component.onUnmount();
-	component.onDeregister();
+	component.unmount();
+	component.unregister();
 });
 
 const node = ref<HTMLParagraphElement | null>(null);
@@ -31,9 +31,9 @@ const setRef = (nodeValue: HTMLParagraphElement | null) => {
 watchEffect(() => {
 	props.setRef?.(node.value);
 	if (node.value == null) {
-		component.onUnbind();
+		component.unbind();
 	} else {
-		component.onBind(node.value);
+		component.bind(node.value);
 	}
 });
 </script>

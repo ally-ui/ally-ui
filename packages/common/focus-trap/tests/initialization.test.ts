@@ -22,6 +22,6 @@ afterEach(() => {
 it('activates on initialization if initial active is true', () => {
 	const trapElement = screen.getByTestId('trap');
 	trap = observableFocusTrap({initialActive: true});
-	trap.onBind(trapElement);
+	trap.bind(trapElement);
 	expect(screen.getByTestId('inside-1')).toHaveFocus();
 });

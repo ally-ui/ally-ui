@@ -1,34 +1,37 @@
 import {writable, type Writable} from 'svelte/store';
 import {
 	FocusTrapModel,
-	FocusTrapModelOptions,
-	FocusTrapModelState,
+	type FocusTrapModelProps,
+	type FocusTrapModelEvents,
+	type FocusTrapModelState,
 } from '../lib/FocusTrapModel';
 
 /**
  * Use Svelte Stores as the state implementation when testing the focus trap.
- * @param options The options for the focus trap.
+ * @param props The props for the focus trap.
+ * @param events The events for the focus trap.
  * @param manualState An optional opt-in to manually control the focus trap.
  * @returns A controlled focus trap instance.
  */
 export function observableFocusTrap(
-	options: FocusTrapModelOptions = {},
+	props: FocusTrapModelProps = {},
+	events: FocusTrapModelEvents = {},
 	manualState?: Writable<FocusTrapModelState>,
 ): FocusTrapModel {
-	const trap = new FocusTrapModel(options);
+	const trap = new FocusTrapModel(props, events);
 
-	const stateStore = manualState ?? writable(trap.initialState);
+	const state = manualState ?? writable(trap.state.value);
 
-	trap.requestStateUpdate = (updater) => {
+	trap.state.requestUpdate = (updater) => {
 		if (updater instanceof Function) {
-			stateStore.update(updater);
+			state.update(updater);
 		} else {
-			stateStore.set(updater);
+			state.set(updater);
 		}
 	};
 
-	stateStore.subscribe(($state) => {
-		trap.setState($state);
+	state.subscribe(($props) => {
+		trap.state.setValue($props);
 	});
 
 	return trap;

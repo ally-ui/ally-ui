@@ -16,7 +16,7 @@ export default function DialogPortal(props: DialogPortalProps) {
 	if (rootModel == null) {
 		throw new Error('<Dialog.Portal/> must be a child of `<Dialog.Root/>`');
 	}
-	const rootState = useDialogRootState() ?? rootModel.state;
+	const rootState = useDialogRootState() ?? rootModel.state.value;
 	const [node, setNode] = createSignal<Element>();
 	createEffect(function findNode() {
 		if (typeof props.container === 'string') {

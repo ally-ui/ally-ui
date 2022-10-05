@@ -16,7 +16,7 @@ beforeEach(() => {
 `;
 	const trapElement = screen.getByTestId('trap');
 	trap = observableFocusTrap();
-	trap.onBind(trapElement);
+	trap.bind(trapElement);
 	trap.activate();
 });
 afterEach(() => {
@@ -61,7 +61,7 @@ describe('tab behavior', () => {
 		`;
 		const trapElement = screen.getByTestId('trap');
 		trap = observableFocusTrap();
-		trap.onBind(trapElement);
+		trap.bind(trapElement);
 		trap.activate();
 
 		await user.tab();

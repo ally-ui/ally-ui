@@ -55,7 +55,7 @@ function DialogPortalManager({
 	if (rootModel == null) {
 		throw new Error('<Dialog.Portal/> must be a child of `<Dialog.Root/>`');
 	}
-	const rootState = useDialogRootState() ?? rootModel.state;
+	const rootState = useDialogRootState() ?? rootModel.state.value;
 	React.useEffect(
 		function syncPortalOpen() {
 			if (rootState.open) {

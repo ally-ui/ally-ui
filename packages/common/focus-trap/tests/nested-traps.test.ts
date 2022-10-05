@@ -31,10 +31,10 @@ it('returns focus from the nested to outer focus trap', async () => {
 	const trapElement = screen.getByTestId('trap-1');
 	const innerTrapElement = screen.getByTestId('trap-2');
 	trap = observableFocusTrap();
-	trap.onBind(trapElement);
+	trap.bind(trapElement);
 	trap.activate();
 	const innerTrap = observableFocusTrap();
-	innerTrap.onBind(innerTrapElement);
+	innerTrap.bind(innerTrapElement);
 	innerTrap.activate();
 
 	expect(screen.getByTestId('inner-1')).toHaveFocus();

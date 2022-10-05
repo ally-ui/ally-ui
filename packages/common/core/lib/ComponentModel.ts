@@ -1,19 +1,34 @@
-import {StateModel} from './StateModel';
+import {Observable} from './Observable';
+import {Stateful} from './Stateful';
 
 export abstract class ComponentModel<
+	TProps extends object = any,
 	TState extends object = any,
-	TDerived extends object = TState,
-> extends StateModel<TState> {
+	TEvents extends object = any,
+> {
 	root: ComponentModel;
 	parent?: ComponentModel;
+	state: Stateful<TState>;
+	events?: Stateful<TEvents>;
 
-	constructor(initialState: TState = {} as TState, parent?: ComponentModel) {
-		super(initialState);
+	id = '';
+
+	constructor(
+		initialProps: TProps,
+		initialEvents?: TEvents,
+		parent?: ComponentModel,
+	) {
+		this.state = new Stateful(this.initialState(initialProps));
+		if (initialEvents != null) {
+			this.events = new Stateful(initialEvents);
+		}
 		this.root = this;
 		parent?.addChild(this);
 	}
 
-	abstract readonly id: string;
+	initialState(_initialProps: TProps): TState {
+		return {} as TState;
+	}
 
 	#children: ComponentModel[] = [];
 	addChild<TChildModel extends ComponentModel>(
@@ -45,20 +60,26 @@ export abstract class ComponentModel<
 		return child;
 	}
 
-	derived?(..._dependencies: unknown[]): TDerived;
-
-	onRegister(): void {
+	onRegister = new Observable<undefined>();
+	register(): void {
 		this.parent?.addChild(this);
+		this.onRegister.notify(undefined);
 	}
-	onDeregister(): void {
+	onUnregister = new Observable<undefined>();
+	unregister(): void {
 		this.parent?.removeChild(this);
+		this.onUnregister.notify(undefined);
 	}
 
 	mounted = false;
-	onMount(): void {
+	onMount = new Observable<undefined>();
+	mount(): void {
 		this.mounted = true;
+		this.onMount.notify(undefined);
 	}
-	onUnmount(): void {
+	onUnmount = new Observable<undefined>();
+	unmount(): void {
 		this.mounted = false;
+		this.onUnmount.notify(undefined);
 	}
 }

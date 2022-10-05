@@ -1,23 +1,37 @@
 import {ComponentModel} from '@ally-ui/core';
 
-export interface DialogRootModelOptions {
+export interface DialogRootModelProps {
 	initialOpen?: boolean;
+	open?: boolean;
 	modal?: boolean;
 }
 
-export interface DialogRootModelReactive {
+export interface DialogRootModelState {
 	open: boolean;
+	modal: boolean;
 }
 
-export type DialogRootModelState = DialogRootModelOptions &
-	DialogRootModelReactive;
+export interface DialogRootModelEvents {
+	openChange?: (open: boolean) => void;
+}
 
-export class DialogRootModel extends ComponentModel<DialogRootModelState> {
-	constructor(public id: string, initialOptions: DialogRootModelOptions) {
-		super({
-			...initialOptions,
-			modal: initialOptions.modal ?? true,
-			open: initialOptions.initialOpen ?? false,
-		});
+export class DialogRootModel extends ComponentModel<
+	DialogRootModelProps,
+	DialogRootModelState,
+	DialogRootModelEvents
+> {
+	constructor(
+		public id: string,
+		initialProps: DialogRootModelProps,
+		initialEvents: DialogRootModelEvents,
+	) {
+		super(initialProps, initialEvents);
+	}
+
+	initialState(initialProps: DialogRootModelProps): DialogRootModelState {
+		return {
+			open: initialProps.open ?? initialProps.initialOpen ?? false,
+			modal: initialProps.modal ?? true,
+		};
 	}
 }

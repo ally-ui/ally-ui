@@ -17,9 +17,7 @@ export type DialogDescriptionProps = React.DetailedHTMLProps<
 };
 
 const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
-	(props, forwardedRef) => {
-		const {ref: _, children, asChild, ...restProps} = props;
-
+	({ref: _, children, asChild, ...restProps}, forwardedRef) => {
 		const rootModel = useDialogRootModel();
 		if (rootModel == null) {
 			throw new Error(
@@ -27,16 +25,16 @@ const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 			);
 		}
 		const component = useRunOnce(
-			() => new DialogDescriptionModel({}, rootModel),
+			() => new DialogDescriptionModel({}, undefined, rootModel),
 		);
 
 		React.useEffect(
 			function mount() {
-				// component.onRegister();
-				component.onMount();
+				// component.register();
+				component.mount();
 				return () => {
-					component.onUnmount();
-					// component.onDeregister();
+					component.unmount();
+					// component.unregister();
 				};
 			},
 			[component],
@@ -45,9 +43,9 @@ const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 		const bindRef = React.useCallback(
 			(node: HTMLElement | null) => {
 				if (node == null) {
-					component.onUnbind();
+					component.unbind();
 				} else {
-					component.onBind(node);
+					component.bind(node);
 				}
 			},
 			[component],
@@ -58,8 +56,8 @@ const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 
 		return (
 			<Comp
-				ref={ref}
 				{...mergeReactProps(reactProps(component.attributes()), restProps)}
+				ref={ref}
 			>
 				{children}
 			</Comp>

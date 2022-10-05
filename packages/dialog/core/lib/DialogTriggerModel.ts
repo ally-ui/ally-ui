@@ -2,15 +2,9 @@ import {NodeComponentModel} from '@ally-ui/core';
 import type {DialogRootModel, DialogRootModelState} from './DialogRootModel';
 import type {DialogTitleModelAttributes} from './DialogTitleModel';
 
-export interface DialogTriggerModelOptions {}
-
-export interface DialogTriggerModelReactive {}
-
-export type DialogTriggerModelState = DialogTriggerModelOptions &
-	DialogTriggerModelReactive;
-
-export interface DialogTriggerModelDerived {}
-
+export interface DialogTriggerModelProps {}
+export interface DialogTriggerModelState {}
+export interface DialogTriggerModelEvents {}
 export interface DialogTriggerModelAttributes {
 	id: string;
 	'aria-haspopup': 'dialog';
@@ -19,8 +13,9 @@ export interface DialogTriggerModelAttributes {
 }
 
 export class DialogTriggerModel extends NodeComponentModel<
+	DialogTriggerModelProps,
 	DialogTriggerModelState,
-	DialogTriggerModelDerived,
+	DialogTriggerModelEvents,
 	DialogTitleModelAttributes
 > {
 	id = 'trigger';
@@ -37,6 +32,6 @@ export class DialogTriggerModel extends NodeComponentModel<
 
 	onClick() {
 		const root = this.root as DialogRootModel;
-		root.requestStateUpdate?.((prev) => ({...prev, open: true}));
+		root.state.requestUpdate?.((prev) => ({...prev, open: true}));
 	}
 }

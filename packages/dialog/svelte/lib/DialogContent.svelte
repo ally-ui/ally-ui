@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
 	type DialogContentProps<TAsChild extends true | undefined> =
-		DialogContentModelOptions &
+		DialogContentModelProps &
 			svelteHTML.IntrinsicElements['div'] & {
 				node?: HTMLDivElement | undefined | null;
 				asChild?: TAsChild;
@@ -13,19 +13,14 @@
 			RefAction
 		>;
 	};
-	type DialogContentEvents = {
-		openAutoFocus: Event;
-		closeAutoFocus: Event;
-		escapeKeyDown: KeyboardEvent;
-		interactOutside: MouseEvent | TouchEvent;
-	};
 </script>
 
 <script lang="ts">
 	import {
 		DialogContentModel,
 		type DialogContentModelAttributes,
-		type DialogContentModelOptions,
+		type DialogContentModelEvents,
+		type DialogContentModelProps,
 	} from '@ally-ui/core-dialog';
 	import {
 		createEventForwarder,
@@ -35,6 +30,7 @@
 		svelteProps,
 		type DefaultSlot,
 		type RefAction,
+		type SvelteEventHandlers,
 	} from '@ally-ui/svelte';
 	import {onMount} from 'svelte/internal';
 	import {readable} from 'svelte/store';
@@ -47,34 +43,42 @@
 	type TAsChild = $$Generic<true | undefined>;
 	type $$Props = DialogContentProps<TAsChild>;
 	type $$Slots = DialogContentSlots<TAsChild>;
-	type $$Events = DialogContentEvents;
+	type $$Events = SvelteEventHandlers<DialogContentModelEvents>;
 
-	const dispatch = createNativeEventDispatcher<DialogContentEvents>();
+	const dispatch = createNativeEventDispatcher<$$Events>();
 
 	const rootModel = getDialogRootModel();
 	if (rootModel == null) {
 		throw new Error('<Dialog.Content/> must be a child of `<Dialog.Root/>`');
 	}
 	export let forceMount: boolean | undefined = undefined;
+	export let allowPinchZoom: boolean | undefined = undefined;
 	const component = new DialogContentModel(
 		{
 			forceMount: forceMount ?? getDialogPortalForceMount(),
-			onOpenAutoFocus: (ev) => dispatch('openAutoFocus', ev),
-			onCloseAutoFocus: (ev) => dispatch('closeAutoFocus', ev),
-			onEscapeKeyDown: (ev) => dispatch('escapeKeyDown', ev),
-			onInteractOutside: (ev) => dispatch('interactOutside', ev),
+			allowPinchZoom,
+		},
+		{
+			openAutoFocus: (ev) => dispatch('openAutoFocus', ev),
+			closeAutoFocus: (ev) => dispatch('closeAutoFocus', ev),
+			escapeKeyDown: (ev) => dispatch('escapeKeyDown', ev),
+			interactOutside: (ev) => dispatch('interactOutside', ev),
 		},
 		rootModel,
 	);
 
-	const rootState = getDialogRootState() ?? readable(rootModel.state);
-	$: derivedState = component.derived($rootState);
+	const state = component.state.initialValue;
+	// Note that we do not need to sync options for event handlers because Svelte
+	// does not use handlers but emits events instead.
+
+	const rootState = getDialogRootState() ?? readable(rootModel.state.value);
+	$: derivedState = component.derived(state, $rootState);
 
 	onMount(() => {
-		component.onMount();
+		component.mount();
 		return () => {
-			component.onUnmount();
-			component.onDeregister();
+			component.unmount();
+			component.unregister();
 		};
 	});
 
@@ -82,9 +86,9 @@
 	$: bindNode(node);
 	function bindNode(node?: HTMLElement | null) {
 		if (node == null) {
-			component.onUnbind();
+			component.unbind();
 		} else {
-			component.onBind(node);
+			component.bind(node);
 		}
 	}
 
@@ -95,7 +99,7 @@
 	$: slotProps = {
 		props: (userProps: svelteHTML.IntrinsicElements['div']) =>
 			mergeSvelteProps(
-				svelteProps(component.attributes($rootState)),
+				svelteProps(component.attributes(state, $rootState)),
 				$$restProps,
 				userProps,
 			),
@@ -117,7 +121,7 @@
 		<div
 			bind:this={node}
 			{...mergeSvelteProps(
-				svelteProps(component.attributes($rootState)),
+				svelteProps(component.attributes(state, $rootState)),
 				$$restProps,
 			)}
 			use:eventForwarder

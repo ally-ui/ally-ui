@@ -1,4 +1,4 @@
-import {type NodeBindable, StateModel} from '@ally-ui/core';
+import {NodeComponentModel} from '@ally-ui/core';
 import type {Coord} from './types';
 import {
 	canLocationBeScrolled,
@@ -14,11 +14,19 @@ const LISTENER_OPTIONS: AddEventListenerOptions = {
 	passive: false,
 };
 
-export interface ScrollLockModelOptions {
+export interface ScrollLockModelProps {
 	/**
 	 * Whether the scroll lock should initially be active.
+	 *
+	 * Defaults to `false`.
 	 */
 	initialActive?: boolean;
+	/**
+	 * The current active state of the scroll lock.
+	 *
+	 * Defaults to `initialActive`.
+	 */
+	active?: boolean;
 	/**
 	 * Whether pinch zoom should be allowed on touchscreen devices.
 	 *
@@ -27,12 +35,12 @@ export interface ScrollLockModelOptions {
 	allowPinchZoom?: boolean;
 }
 
-export interface ScrollLockModelReactive {
+export interface ScrollLockModelState {
 	active: boolean;
+	allowPinchZoom: boolean;
 }
 
-export type ScrollLockModelState = ScrollLockModelOptions &
-	ScrollLockModelReactive;
+export interface ScrollLockModelEvents {}
 
 export interface ScrollLockModelAttributes {
 	style?: {
@@ -40,46 +48,37 @@ export interface ScrollLockModelAttributes {
 	};
 }
 
-export class ScrollLockModel
-	extends StateModel<ScrollLockModelState>
-	implements NodeBindable<ScrollLockModelAttributes>
-{
+export class ScrollLockModel extends NodeComponentModel<
+	ScrollLockModelProps,
+	ScrollLockModelState,
+	ScrollLockModelEvents,
+	ScrollLockModelAttributes
+> {
 	static SUPPORTS_OVERSCROLL_BEHAVIOR =
 		typeof document !== 'undefined' &&
 		CSS.supports('overscroll-behavior', 'contain');
 
-	constructor(initialOptions: ScrollLockModelOptions) {
-		super({...initialOptions, active: initialOptions.initialActive ?? false});
-	}
-
-	attributes(): ScrollLockModelAttributes {
-		return ScrollLockModel.attributes(this.state);
-	}
-
-	static attributes(_state: ScrollLockModelState): ScrollLockModelAttributes {
+	initialState(initialProps: ScrollLockModelProps): ScrollLockModelState {
 		return {
-			style: {'overscroll-behavior': 'contain'},
+			active: initialProps.active ?? initialProps.initialActive ?? false,
+			allowPinchZoom: initialProps.allowPinchZoom ?? false,
 		};
 	}
 
-	/**
-	 * The only element allowed to scroll.
-	 */
-	node?: HTMLElement;
-	#unsubscribeState?: () => void;
-	onBind(node: HTMLElement): void {
-		this.node = node;
-		this.#unsubscribeState = this.subscribeState(this.#onStateChange);
+	#unsubscribeStateChange?: () => void;
+	bind(node: HTMLElement) {
+		super.bind(node);
+		this.#unsubscribeStateChange = this.state.subscribe(this.#onStateChange);
 	}
 
-	onUnbind(): void {
-		this.node = undefined;
-		this.#unsubscribeState?.();
+	unbind() {
+		super.unbind();
+		this.#unsubscribeStateChange?.();
 	}
 
 	#onStateChange = (
-		{active}: ScrollLockModelState,
-		prev?: ScrollLockModelState,
+		{active}: ScrollLockModelProps,
+		prev?: ScrollLockModelProps,
 	) => {
 		if (active !== prev?.active) {
 			if (active) {
@@ -90,19 +89,25 @@ export class ScrollLockModel
 		}
 	};
 
+	attributes(): ScrollLockModelAttributes {
+		return {
+			style: {'overscroll-behavior': 'contain'},
+		};
+	}
+
 	activate() {
 		this.#registerLock();
 		this.#subscribeEvents();
-		if (!this.state.active) {
-			this.requestStateUpdate?.((prev) => ({...prev, active: true}));
+		if (!this.state.value.active) {
+			this.state.requestUpdate?.((prev) => ({...prev, active: true}));
 		}
 	}
 
 	deactivate() {
 		this.#deregisterLock?.();
 		this.#unsubscribeEvents?.();
-		if (this.state.active) {
-			this.requestStateUpdate?.((prev) => ({...prev, active: false}));
+		if (this.state.value.active) {
+			this.state.requestUpdate?.((prev) => ({...prev, active: false}));
 		}
 	}
 
@@ -169,7 +174,7 @@ export class ScrollLockModel
 		if (node == null) return false;
 
 		if (isTouchEvent(ev) && ev.touches.length === 2) {
-			return !(this.state.allowPinchZoom ?? false);
+			return !(this.state.value.allowPinchZoom ?? false);
 		}
 
 		if (isTouchEvent(ev) && this.#overscrolled) return true;

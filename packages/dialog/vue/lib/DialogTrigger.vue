@@ -16,14 +16,14 @@ const rootModel = inject(DIALOG_ROOT_MODEL);
 if (rootModel == null) {
 	throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
 }
-const component = new DialogTriggerModel({}, rootModel);
+const component = new DialogTriggerModel({}, undefined, rootModel);
 
-const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.state);
+const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.state.value);
 
-onMounted(() => component.onMount());
+onMounted(() => component.mount());
 onUnmounted(() => {
-	component.onUnmount();
-	component.onDeregister();
+	component.unmount();
+	component.unregister();
 });
 
 const node = ref<HTMLButtonElement | null>(null);
@@ -33,9 +33,9 @@ const setRef = (nodeValue: HTMLButtonElement | null) => {
 watchEffect(() => {
 	props.setRef?.(node.value);
 	if (node.value == null) {
-		component.onUnbind();
+		component.unbind();
 	} else {
-		component.onBind(node.value);
+		component.bind(node.value);
 	}
 });
 

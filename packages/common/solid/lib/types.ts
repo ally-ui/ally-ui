@@ -1,15 +1,7 @@
 export type CallbackRef<TInstance> = (instance: TInstance) => void;
 
-export type SolidReactiveProps<TReactive> = Partial<
-	TReactive & SolidChangeHandlers<TReactive>
->;
-
-type SolidChangeHandlers<TReactive> = {
-	[TKey in keyof TReactive as ChangeHandler<TKey>]: (
-		value: TReactive[TKey],
-	) => void;
+export type SolidEventHandlers<TEvents> = {
+	[TKey in keyof TEvents as `on${TKey extends string
+		? Capitalize<TKey>
+		: never}`]: TEvents[TKey];
 };
-
-type ChangeHandler<TKey> = `on${TKey extends string
-	? Capitalize<TKey>
-	: never}Change`;

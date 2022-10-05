@@ -1,13 +1,5 @@
-export type ReactReactiveProps<TReactive> = Partial<
-	TReactive & ReactChangeHandlers<TReactive>
->;
-
-type ReactChangeHandlers<TReactive> = {
-	[TKey in keyof TReactive as ChangeHandler<TKey>]: (
-		value: TReactive[TKey],
-	) => void;
+export type ReactEventHandlers<TEvents> = {
+	[TKey in keyof TEvents as `on${TKey extends string
+		? Capitalize<TKey>
+		: never}`]: TEvents[TKey];
 };
-
-type ChangeHandler<TKey> = `on${TKey extends string
-	? Capitalize<TKey>
-	: never}Change`;

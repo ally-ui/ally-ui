@@ -21,7 +21,7 @@
 		throw new Error('<Dialog.Portal/> must be a child of `<Dialog.Root/>`');
 	}
 
-	const rootState = getDialogRootState() ?? readable(rootModel.state);
+	const rootState = getDialogRootState() ?? readable(rootModel.state.value);
 
 	export let container: HTMLElement | string | undefined = undefined;
 	export let forceMount: boolean | undefined = undefined;

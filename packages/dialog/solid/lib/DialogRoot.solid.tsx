@@ -1,25 +1,33 @@
 import {
 	DialogRootModel,
-	type DialogRootModelOptions,
-	type DialogRootModelReactive,
+	type DialogRootModelProps,
+	type DialogRootModelEvents,
 } from '@ally-ui/core-dialog';
-import {createSyncedOption, type SolidReactiveProps} from '@ally-ui/solid';
+import {createSyncedOption, type SolidEventHandlers} from '@ally-ui/solid';
 import {createEffect, ParentProps} from 'solid-js';
 import {createStore} from 'solid-js/store';
 import {DialogRootModelContext, DialogRootStateContext} from './context';
 
 export type DialogRootProps = ParentProps &
-	DialogRootModelOptions &
-	SolidReactiveProps<DialogRootModelReactive>;
+	DialogRootModelProps &
+	SolidEventHandlers<DialogRootModelEvents>;
 
 export default function DialogRoot(props: DialogRootProps) {
 	const id = '0';
-	const rootModel = new DialogRootModel(id, {
-		initialOpen: props.initialOpen,
-		modal: props.modal,
+	const rootModel = new DialogRootModel(
+		id,
+		{
+			initialOpen: props.initialOpen,
+			modal: props.modal,
+		},
+		{
+			openChange: props.onOpenChange,
+		},
+	);
+	const [rootState, setRootState] = createStore({
+		...rootModel.state.initialValue,
 	});
-	const [rootState, setRootState] = createStore({...rootModel.initialState});
-	rootModel.requestStateUpdate = setRootState;
+	rootModel.state.requestUpdate = setRootState;
 	// TODO #44 Reduce syncing boilerplate.
 	createSyncedOption({
 		option: () => props.open,
@@ -34,7 +42,7 @@ export default function DialogRoot(props: DialogRootProps) {
 			setRootState((prevState) => ({...prevState, modal})),
 	});
 	createEffect(function onStateUpdate() {
-		rootModel.setState({...rootState});
+		rootModel.state.setValue({...rootState});
 	});
 
 	return (

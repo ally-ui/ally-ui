@@ -15,7 +15,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 
 const trapElement = document.querySelector<HTMLDivElement>('#trap')!;
 const trap = observableFocusTrap();
-trap.onBind(trapElement);
+trap.bind(trapElement);
 const enableElement = document.querySelector<HTMLDivElement>('#enable')!;
 enableElement.addEventListener('click', () => trap.activate());
 const disableElement = document.querySelector<HTMLDivElement>('#disable')!;

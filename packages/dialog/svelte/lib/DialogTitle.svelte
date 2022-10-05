@@ -38,13 +38,13 @@
 	if (rootModel == null) {
 		throw new Error('<Dialog.Title/> must be a child of `<Dialog.Root/>`');
 	}
-	const component = new DialogTitleModel({}, rootModel);
+	const component = new DialogTitleModel({}, undefined, rootModel);
 
 	onMount(() => {
-		component.onMount();
+		component.mount();
 		return () => {
-			component.onUnmount();
-			component.onDeregister();
+			component.unmount();
+			component.unregister();
 		};
 	});
 
@@ -52,9 +52,9 @@
 	$: bindNode(node);
 	function bindNode(node?: HTMLElement | null) {
 		if (node == null) {
-			component.onUnbind();
+			component.unbind();
 		} else {
-			component.onBind(node);
+			component.bind(node);
 		}
 	}
 
