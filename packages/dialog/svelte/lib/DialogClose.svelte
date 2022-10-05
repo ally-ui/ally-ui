@@ -40,13 +40,13 @@
 	if (rootModel == null) {
 		throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
 	}
-	const component = new DialogCloseModel({}, rootModel);
+	const component = new DialogCloseModel({}, undefined, rootModel);
 
 	onMount(() => {
-		component.onMount();
+		component.mount();
 		return () => {
-			component.onUnmount();
-			component.onDeregister();
+			component.unmount();
+			component.unregister();
 		};
 	});
 
@@ -54,9 +54,9 @@
 	$: bindNode(node);
 	function bindNode(node?: HTMLElement | null) {
 		if (node == null) {
-			component.onUnbind();
+			component.unbind();
 		} else {
-			component.onBind(node);
+			component.bind(node);
 		}
 	}
 
@@ -90,7 +90,7 @@
 		bind:this={node}
 		{...mergeSvelteProps(svelteProps(component.attributes()), $$restProps)}
 		use:eventForwarder
-		on:click={() => component.onClick()}
+		on:click={handleClick}
 	>
 		<slot {...slotProps} />
 	</button>

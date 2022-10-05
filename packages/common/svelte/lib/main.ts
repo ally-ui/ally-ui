@@ -10,3 +10,4 @@ export * from './styleObject';
 export * from './mergeSvelteProps';
 export * from './slot';
 export * from './svelteProps';
+export * from './types';

@@ -1,11 +1,11 @@
 <script lang="ts" context="module">
-	type DialogRootProps = DialogRootModelOptions & Partial<DialogRootModelState>;
+	type DialogRootProps = DialogRootModelProps & Partial<DialogRootModelState>;
 </script>
 
 <script lang="ts">
 	import {
 		DialogRootModel,
-		type DialogRootModelOptions,
+		type DialogRootModelProps,
 		type DialogRootModelState,
 	} from '@ally-ui/core-dialog';
 	import {createSyncedOption} from '@ally-ui/svelte';
@@ -20,9 +20,15 @@
 
 	// TODO #19 Generate SSR-safe IDs.
 	const id = '0';
-	const rootModel = new DialogRootModel(id, {initialOpen, modal});
-	const rootState = writable(rootModel.initialState);
-	rootModel.requestStateUpdate = (updater) => {
+	const rootModel = new DialogRootModel(
+		id,
+		{initialOpen, modal},
+		{
+			openChange: () => {},
+		},
+	);
+	const rootState = writable(rootModel.state.initialValue);
+	rootModel.state.requestUpdate = (updater) => {
 		if (updater instanceof Function) {
 			rootState.update(updater);
 		} else {
@@ -43,7 +49,7 @@
 			rootState.update((prevState) => ({...prevState, modal})),
 	});
 	$: watchModal(modal);
-	$: rootModel.setState($rootState);
+	$: rootModel.state.setValue($rootState);
 
 	setDialogRootModel(rootModel);
 	setDialogRootState(rootState);
