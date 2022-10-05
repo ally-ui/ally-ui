@@ -85,8 +85,31 @@ export class FocusTrapModel extends NodeComponentModel<
 		if (initialProps.active == null)
 			initialProps.active = initialProps.initialActive;
 		super(initialProps, initialEvents);
-		this.props.subscribe(this.#onPropChange);
+		this.onUnregister.listenOnce(this.onBind.listen(this.#onBind));
+		this.onUnregister.listenOnce(this.onUnbind.listen(this.#onUnbind));
 	}
+
+	#unsubscribePropChange?: () => void;
+	#onBind = () => {
+		this.#unsubscribePropChange = this.props.subscribe(this.#onPropChange);
+	};
+
+	#onUnbind = () => {
+		this.#unsubscribePropChange?.();
+	};
+
+	#onPropChange = (
+		{active}: FocusTrapModelProps,
+		prev?: FocusTrapModelProps,
+	) => {
+		if (active !== prev?.active) {
+			if (active) {
+				this.activate();
+			} else {
+				this.deactivate();
+			}
+		}
+	};
 
 	attributes(props: FocusTrapModelProps): FocusTrapModelAttributes {
 		return FocusTrapModel.attributes(props ?? this.props);
@@ -102,19 +125,6 @@ export class FocusTrapModel extends NodeComponentModel<
 		return {};
 	}
 
-	#onPropChange = (
-		{active}: FocusTrapModelProps,
-		prev?: FocusTrapModelProps,
-	) => {
-		if (active !== prev?.active) {
-			if (active) {
-				this.activate();
-			} else {
-				this.deactivate();
-			}
-		}
-	};
-
 	activate() {
 		const {node} = this;
 		if (node == null) return;
@@ -128,7 +138,7 @@ export class FocusTrapModel extends NodeComponentModel<
 	}
 
 	deactivate() {
-		this.#deregisterTrap?.();
+		this.#unregisterTrap?.();
 		this.#unsubscribeChildren?.();
 		this.#unsubscribeEvents?.();
 		this.#returnFocus?.();
@@ -141,14 +151,14 @@ export class FocusTrapModel extends NodeComponentModel<
 	 * Keep track of all active traps and only handle the latest trap.
 	 */
 	static activeTraps: FocusTrapModel[] = [];
-	#deregisterTrap?: () => void;
+	#unregisterTrap?: () => void;
 	#registerTrap() {
-		if (this.#deregisterTrap != null) return;
+		if (this.#unregisterTrap != null) return;
 		FocusTrapModel.activeTraps.push(this);
-		this.#deregisterTrap = () => {
+		this.#unregisterTrap = () => {
 			const idx = FocusTrapModel.activeTraps.findIndex((trap) => trap === this);
 			FocusTrapModel.activeTraps.splice(idx, 1);
-			this.#deregisterTrap = undefined;
+			this.#unregisterTrap = undefined;
 		};
 	}
 
