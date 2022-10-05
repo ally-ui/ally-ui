@@ -19,10 +19,6 @@ export class DialogCloseModel extends NodeComponentModel<
 > {
 	id = 'close';
 
-	attributes(): DialogCloseModelAttributes {
-		return {};
-	}
-
 	onClick() {
 		const root = this.root as DialogRootModel;
 		root.requestStateUpdate?.((prev) => ({...prev, open: false}));

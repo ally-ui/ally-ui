@@ -74,7 +74,10 @@ export class DialogContentModel extends NodeComponentModel<
 		};
 	}
 
-	attributes(rootState: DialogRootModelState): DialogContentModelAttributes {
+	attributes(
+		state: DialogContentModelState,
+		rootState: DialogRootModelState,
+	): DialogContentModelAttributes {
 		const root = this.root as DialogRootModel;
 		const baseAttributes = {
 			id: `${root.id}-${this.id}`,
@@ -85,11 +88,11 @@ export class DialogContentModel extends NodeComponentModel<
 		};
 		return mergeAttributes(
 			baseAttributes,
-			FocusTrapModel.attributes(
-				this.#deriveFocusTrapModelState(this.state, rootState),
+			this.#focusTrap.attributes(
+				this.#deriveFocusTrapModelState(state, rootState),
 			),
-			ScrollLockModel.attributes(
-				this.#deriveScrollLockModelState(this.state, rootState),
+			this.#scrollLock.attributes(
+				this.#deriveScrollLockModelState(state, rootState),
 			),
 		) as DialogContentModelAttributes;
 	}

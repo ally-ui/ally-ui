@@ -67,6 +67,10 @@
 		rootModel,
 	);
 
+	const state = component.initialState;
+	// Note that we do not need to sync options for event handlers because Svelte
+	// does not use handlers but emits events instead.
+
 	const rootState = getDialogRootState() ?? readable(rootModel.state);
 	$: derivedState = component.derived($rootState);
 
@@ -95,7 +99,7 @@
 	$: slotProps = {
 		props: (userProps: svelteHTML.IntrinsicElements['div']) =>
 			mergeSvelteProps(
-				svelteProps(component.attributes($rootState)),
+				svelteProps(component.attributes(state, $rootState)),
 				$$restProps,
 				userProps,
 			),
@@ -117,7 +121,7 @@
 		<div
 			bind:this={node}
 			{...mergeSvelteProps(
-				svelteProps(component.attributes($rootState)),
+				svelteProps(component.attributes(state, $rootState)),
 				$$restProps,
 			)}
 			use:eventForwarder

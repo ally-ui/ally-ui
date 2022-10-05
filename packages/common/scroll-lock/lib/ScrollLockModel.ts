@@ -52,8 +52,8 @@ export class ScrollLockModel
 		super({...initialOptions, active: initialOptions.initialActive ?? false});
 	}
 
-	attributes(): ScrollLockModelAttributes {
-		return ScrollLockModel.attributes(this.state);
+	attributes(state?: ScrollLockModelState): ScrollLockModelAttributes {
+		return ScrollLockModel.attributes(state ?? this.state);
 	}
 
 	static attributes(_state: ScrollLockModelState): ScrollLockModelAttributes {

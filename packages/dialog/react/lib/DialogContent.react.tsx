@@ -125,7 +125,7 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 					<Comp
 						ref={ref}
 						{...mergeReactProps(
-							reactProps(component.attributes(rootState)),
+							reactProps(component.attributes(state, rootState)),
 							restProps,
 						)}
 					>

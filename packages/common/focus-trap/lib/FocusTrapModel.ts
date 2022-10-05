@@ -77,8 +77,8 @@ export class FocusTrapModel
 		super({...initialOptions, active: initialOptions.initialActive ?? false});
 	}
 
-	attributes(): FocusTrapModelAttributes {
-		return FocusTrapModel.attributes(this.state);
+	attributes(state?: FocusTrapModelState): FocusTrapModelAttributes {
+		return FocusTrapModel.attributes(state ?? this.state);
 	}
 
 	static attributes(state: FocusTrapModelState): FocusTrapModelAttributes {

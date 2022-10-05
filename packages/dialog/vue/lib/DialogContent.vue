@@ -43,6 +43,10 @@ const component = new DialogContentModel(
 	rootModel,
 );
 
+const state = ref(component.initialState);
+// Note that we do not need to sync options for event handlers because Vue does
+// not use handlers but emits events instead.
+
 const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.state);
 const derivedState = computed(() => component.derived(rootState.value));
 
@@ -71,14 +75,14 @@ watchEffect(() => {
 		<slot
 			v-if="props.asChild"
 			v-bind="{
-				...mergeVueProps(component.attributes(rootState), $attrs),
+				...mergeVueProps(component.attributes(state, rootState), $attrs),
 				ref: setRef,
 			}"
 		/>
 		<div
 			v-else
 			ref="node"
-			v-bind="mergeVueProps(component.attributes(rootState), $attrs)"
+			v-bind="mergeVueProps(component.attributes(state, rootState), $attrs)"
 		>
 			<slot />
 		</div>

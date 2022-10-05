@@ -3,7 +3,7 @@ import {ComponentModel} from './ComponentModel';
 export interface NodeBindable<TAttributes extends object = any> {
 	/**
 	 * The attributes for this node.
-	 * @param _dependencies The dependencies for computing the attributes.
+	 * @param _dependencies The state dependencies for computing the attributes.
 	 * @returns The node attributes for the component.
 	 */
 	attributes(..._dependencies: unknown[]): TAttributes;
@@ -21,13 +21,15 @@ export abstract class NodeComponentModel<
 	extends ComponentModel<TState, TDerived>
 	implements NodeBindable<TAttributes>
 {
-	abstract attributes(..._dependencies: unknown[]): TAttributes;
+	attributes(..._dependencies: unknown[]): TAttributes {
+		return {} as TAttributes;
+	}
 
 	node?: HTMLElement;
 	onBind(node: HTMLElement): void {
 		this.node = node;
 	}
 	onUnbind(): void {
-		delete this.node;
+		this.node = undefined;
 	}
 }
