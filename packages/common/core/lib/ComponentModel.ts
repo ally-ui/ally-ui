@@ -4,14 +4,13 @@ export abstract class ComponentModel<
 	TState extends object = any,
 	TDerived extends object = TState,
 > extends StateModel<TState> {
-	parent?: ComponentModel;
 	root: ComponentModel;
+	parent?: ComponentModel;
 
 	constructor(initialState: TState = {} as TState, parent?: ComponentModel) {
 		super(initialState);
-		this.parent = parent;
-		this.root = this.parent?.root ?? this;
-		this.parent?.addChild(this);
+		this.root = this;
+		parent?.addChild(this);
 	}
 
 	abstract readonly id: string;
@@ -21,6 +20,8 @@ export abstract class ComponentModel<
 		child: TChildModel,
 	): TChildModel {
 		if (this.#children.find((c) => c === child) == null) {
+			child.root = this.root;
+			child.parent = this;
 			this.#children.push(child);
 		}
 		return child;
@@ -38,6 +39,8 @@ export abstract class ComponentModel<
 		const idx = this.#children.findIndex((c) => c === child);
 		if (idx !== -1) {
 			this.#children.splice(idx, 1);
+			child.root = child;
+			child.parent = undefined;
 		}
 		return child;
 	}
