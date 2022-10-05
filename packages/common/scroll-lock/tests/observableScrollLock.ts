@@ -1,24 +1,25 @@
 import {writable, type Writable} from 'svelte/store';
 import {
 	ScrollLockModel,
+	ScrollLockModelState,
 	type ScrollLockModelProps,
 } from '../lib/ScrollLockModel';
 
 /**
  * Use Svelte Stores as the state implementation when testing the scroll lock.
  * @param props The options for the scroll lock.
- * @param manualProps An optional opt-in to manually control the scroll lock.
+ * @param manualState An optional opt-in to manually control the scroll lock.
  * @returns A controlled scroll lock instance.
  */
 export function observableScrollLock(
 	props: ScrollLockModelProps = {},
-	manualProps?: Writable<ScrollLockModelProps>,
+	manualState?: Writable<ScrollLockModelState>,
 ): ScrollLockModel {
 	const lock = new ScrollLockModel(props);
 
-	const propsStore = manualProps ?? writable(lock.props.initialValue);
+	const propsStore = manualState ?? writable(lock.state.initialValue);
 
-	lock.props.requestUpdate = (updater) => {
+	lock.state.requestUpdate = (updater) => {
 		if (updater instanceof Function) {
 			propsStore.update(updater);
 		} else {
@@ -27,7 +28,7 @@ export function observableScrollLock(
 	};
 
 	propsStore.subscribe(($state) => {
-		lock.props.setValue($state);
+		lock.state.setValue($state);
 	});
 
 	return lock;

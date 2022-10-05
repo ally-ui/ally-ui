@@ -35,6 +35,11 @@ export interface ScrollLockModelProps {
 	allowPinchZoom?: boolean;
 }
 
+export interface ScrollLockModelState {
+	active: boolean;
+	allowPinchZoom: boolean;
+}
+
 export interface ScrollLockModelEvents {}
 
 export interface ScrollLockModelAttributes {
@@ -45,6 +50,7 @@ export interface ScrollLockModelAttributes {
 
 export class ScrollLockModel extends NodeComponentModel<
 	ScrollLockModelProps,
+	ScrollLockModelState,
 	ScrollLockModelEvents,
 	ScrollLockModelAttributes
 > {
@@ -61,16 +67,23 @@ export class ScrollLockModel extends NodeComponentModel<
 		this.onUnregister.listenOnce(this.onUnbind.listen(this.#onUnbind));
 	}
 
-	#unsubscribePropChange?: () => void;
+	initialState(initialProps: ScrollLockModelProps): ScrollLockModelState {
+		return {
+			active: initialProps.active ?? initialProps.initialActive ?? false,
+			allowPinchZoom: initialProps.allowPinchZoom ?? false,
+		};
+	}
+
+	#unsubscribeStateChange?: () => void;
 	#onBind = () => {
-		this.#unsubscribePropChange = this.props.subscribe(this.#onPropChange);
+		this.#unsubscribeStateChange = this.state.subscribe(this.#onStateChange);
 	};
 
 	#onUnbind = () => {
-		this.#unsubscribePropChange?.();
+		this.#unsubscribeStateChange?.();
 	};
 
-	#onPropChange = (
+	#onStateChange = (
 		{active}: ScrollLockModelProps,
 		prev?: ScrollLockModelProps,
 	) => {
@@ -92,16 +105,16 @@ export class ScrollLockModel extends NodeComponentModel<
 	activate() {
 		this.#registerLock();
 		this.#subscribeEvents();
-		if (!this.props.value.active) {
-			this.props.requestUpdate?.((prev) => ({...prev, active: true}));
+		if (!this.state.value.active) {
+			this.state.requestUpdate?.((prev) => ({...prev, active: true}));
 		}
 	}
 
 	deactivate() {
 		this.#deregisterLock?.();
 		this.#unsubscribeEvents?.();
-		if (this.props.value.active) {
-			this.props.requestUpdate?.((prev) => ({...prev, active: false}));
+		if (this.state.value.active) {
+			this.state.requestUpdate?.((prev) => ({...prev, active: false}));
 		}
 	}
 
@@ -168,7 +181,7 @@ export class ScrollLockModel extends NodeComponentModel<
 		if (node == null) return false;
 
 		if (isTouchEvent(ev) && ev.touches.length === 2) {
-			return !(this.props.value.allowPinchZoom ?? false);
+			return !(this.state.value.allowPinchZoom ?? false);
 		}
 
 		if (isTouchEvent(ev) && this.#overscrolled) return true;
