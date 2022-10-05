@@ -16,10 +16,11 @@ export interface NodeBindable<TAttributes extends object = any> {
 
 export abstract class NodeComponentModel<
 		TProps extends object = any,
+		TState extends object = any,
 		TEvents extends object = any,
 		TAttributes extends object = any,
 	>
-	extends ComponentModel<TProps, TEvents>
+	extends ComponentModel<TProps, TState, TEvents>
 	implements NodeBindable<TAttributes>
 {
 	attributes(..._dependencies: unknown[]): TAttributes {

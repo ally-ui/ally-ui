@@ -3,11 +3,12 @@ import {Stateful} from './Stateful';
 
 export abstract class ComponentModel<
 	TProps extends object = any,
+	TState extends object = any,
 	TEvents extends object = any,
 > {
 	root: ComponentModel;
 	parent?: ComponentModel;
-	props: Stateful<TProps>;
+	state: Stateful<TState>;
 	events?: Stateful<TEvents>;
 
 	constructor(
@@ -15,13 +16,15 @@ export abstract class ComponentModel<
 		initialEvents?: TEvents,
 		parent?: ComponentModel,
 	) {
-		this.props = new Stateful(initialProps);
+		this.state = new Stateful(this.initialState(initialProps));
 		if (initialEvents != null) {
 			this.events = new Stateful(initialEvents);
 		}
 		this.root = this;
 		parent?.addChild(this);
 	}
+
+	abstract initialState(initialProps: TProps): TState;
 
 	#children: ComponentModel[] = [];
 	addChild<TChildModel extends ComponentModel>(
