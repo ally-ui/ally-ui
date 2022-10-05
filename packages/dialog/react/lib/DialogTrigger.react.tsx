@@ -4,6 +4,7 @@ import {
 	reactProps,
 	Slot,
 	useMultipleRefs,
+	useNodeComponentModel,
 	useRunOnce,
 } from '@ally-ui/react';
 import React from 'react';
@@ -29,32 +30,10 @@ const DialogTrigger = React.forwardRef<HTMLButtonElement, DialogTriggerProps>(
 		const component = useRunOnce(
 			() => new DialogTriggerModel({}, undefined, rootModel),
 		);
+		const [bindRef] = useNodeComponentModel(component);
+		const ref = useMultipleRefs(bindRef, forwardedRef);
 
 		const rootState = useDialogRootState() ?? rootModel.state.value;
-
-		React.useEffect(
-			function mount() {
-				// component.register();
-				component.mount();
-				return () => {
-					component.unmount();
-					// component.unregister();
-				};
-			},
-			[component],
-		);
-
-		const bindRef = React.useCallback(
-			(node: HTMLElement | null) => {
-				if (node == null) {
-					component.unbind();
-				} else {
-					component.bind(node);
-				}
-			},
-			[component],
-		);
-		const ref = useMultipleRefs(bindRef, forwardedRef);
 
 		const handleClick = React.useCallback<
 			React.MouseEventHandler<HTMLButtonElement>

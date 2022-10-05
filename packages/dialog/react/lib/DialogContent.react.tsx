@@ -10,6 +10,7 @@ import {
 	useMultipleRefs,
 	useRunOnce,
 	useSyncedOption,
+	useNodeComponentModel,
 	type ReactEventHandlers,
 } from '@ally-ui/react';
 import React from 'react';
@@ -63,12 +64,9 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 				),
 		);
 
-		const [state, setState] = React.useState(
-			() => component.state.initialValue,
-		);
-		useRunOnce(() => {
-			component.state.requestUpdate = setState;
-		});
+		const [bindRef, state, setState] = useNodeComponentModel(component);
+		const ref = useMultipleRefs(bindRef, forwardedRef);
+
 		// TODO #44 Reduce syncing boilerplate.
 		useSyncedOption({
 			option: onOpenAutoFocus,
@@ -90,39 +88,9 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 			onOptionChange: (onInteractOutside) =>
 				setState((prevState) => ({...prevState, onInteractOutside})),
 		});
-		React.useEffect(
-			function onStateUpdate() {
-				component.state.setValue(state);
-			},
-			[state],
-		);
 
 		const rootState = useDialogRootState() ?? rootModel.state.value;
 		const derivedState = component.derived(state, rootState);
-
-		React.useEffect(
-			function mount() {
-				// component.register();
-				component.mount();
-				return () => {
-					component.unmount();
-					// component.unregister();
-				};
-			},
-			[component],
-		);
-
-		const bindRef = React.useCallback(
-			(node: HTMLElement | null) => {
-				if (node == null) {
-					component.unbind();
-				} else {
-					component.bind(node);
-				}
-			},
-			[component],
-		);
-		const ref = useMultipleRefs(bindRef, forwardedRef);
 
 		const Comp = asChild ? Slot : 'div';
 
