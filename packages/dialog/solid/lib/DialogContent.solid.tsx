@@ -1,7 +1,8 @@
 import {
 	DialogContentModel,
 	type DialogContentModelAttributes,
-	type DialogContentModelOptions,
+	type DialogContentModelProps,
+	type DialogContentModelEvents,
 } from '@ally-ui/core-dialog';
 import {
 	combinedRef,
@@ -9,6 +10,7 @@ import {
 	createSyncedOption,
 	Slot,
 	SlottableProps,
+	SolidEventHandlers,
 } from '@ally-ui/solid';
 import {createEffect, JSX, onCleanup, onMount, Show} from 'solid-js';
 import {createStore} from 'solid-js/store';
@@ -18,7 +20,8 @@ export type DialogContentProps = SlottableProps<
 	DialogContentModelAttributes,
 	JSX.HTMLAttributes<HTMLDivElement>
 > &
-	DialogContentModelOptions;
+	DialogContentModelProps &
+	SolidEventHandlers<DialogContentModelEvents>;
 
 export default function DialogContent(props: DialogContentProps) {
 	const rootModel = useDialogRootModel();
@@ -28,15 +31,17 @@ export default function DialogContent(props: DialogContentProps) {
 	const component = new DialogContentModel(
 		{
 			forceMount: props.forceMount,
-			onOpenAutoFocus: props.onOpenAutoFocus,
-			onCloseAutoFocus: props.onCloseAutoFocus,
-			onEscapeKeyDown: props.onEscapeKeyDown,
-			onInteractOutside: props.onInteractOutside,
+		},
+		{
+			openAutoFocus: props.onOpenAutoFocus,
+			closeAutoFocus: props.onCloseAutoFocus,
+			escapeKeyDown: props.onEscapeKeyDown,
+			interactOutside: props.onInteractOutside,
 		},
 		rootModel,
 	);
-	const [state, setState] = createStore(component.initialState);
-	component.requestStateUpdate = setState;
+	const [state, setState] = createStore(component.state.initialValue);
+	component.state.requestUpdate = setState;
 	// TODO #44 Reduce syncing boilerplate.
 	createSyncedOption({
 		option: () => props.onOpenAutoFocus,
@@ -59,25 +64,25 @@ export default function DialogContent(props: DialogContentProps) {
 			setState((prevState) => ({...prevState, onInteractOutside})),
 	});
 	createEffect(function onStateUpdate() {
-		component.setState({...state});
+		component.state.setValue({...state});
 	});
 
-	const rootState = useDialogRootState() ?? rootModel.state;
-	const derivedState = () => component.derived(rootState);
+	const rootState = useDialogRootState() ?? rootModel.state.value;
+	const derivedState = () => component.derived(state, rootState);
 
 	onMount(() => {
-		component.onMount();
+		component.mount();
 	});
 	onCleanup(() => {
-		component.onUnmount();
-		component.onDeregister();
+		component.unmount();
+		component.unregister();
 	});
 
 	const bindRef = createDelayedBindRef((node) => {
 		if (node == null) {
-			component.onUnbind();
+			component.unbind();
 		} else {
-			component.onBind(node);
+			component.bind(node);
 		}
 	});
 	const ref = combinedRef(bindRef, props.ref);

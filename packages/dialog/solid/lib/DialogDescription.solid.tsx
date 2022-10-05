@@ -18,21 +18,21 @@ export default function DialogDescription(props: DialogDescriptionProps) {
 			'<Dialog.Description/> must be a child of `<Dialog.Root/>`',
 		);
 	}
-	const component = new DialogDescriptionModel({}, rootModel);
+	const component = new DialogDescriptionModel({}, undefined, rootModel);
 
 	onMount(() => {
-		component.onMount();
+		component.mount();
 	});
 	onCleanup(() => {
-		component.onUnmount();
-		component.onDeregister();
+		component.unmount();
+		component.unregister();
 	});
 
 	const bindRef = createBindRef((node) => {
 		if (node == null) {
-			component.onUnbind();
+			component.unbind();
 		} else {
-			component.onBind(node);
+			component.bind(node);
 		}
 	});
 	const ref = combinedRef(bindRef, props.ref);

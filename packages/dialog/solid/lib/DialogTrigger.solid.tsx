@@ -20,23 +20,23 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 	if (rootModel == null) {
 		throw new Error('<Dialog.Trigger/> must be a child of `<Dialog.Root/>`');
 	}
-	const component = new DialogTriggerModel({}, rootModel);
+	const component = new DialogTriggerModel({}, undefined, rootModel);
 
-	const rootState = useDialogRootState() ?? rootModel.state;
+	const rootState = useDialogRootState() ?? rootModel.state.value;
 
 	onMount(() => {
-		component.onMount();
+		component.mount();
 	});
 	onCleanup(() => {
-		component.onUnmount();
-		component.onDeregister();
+		component.unmount();
+		component.unregister();
 	});
 
 	const bindRef = createBindRef((node) => {
 		if (node == null) {
-			component.onUnbind();
+			component.unbind();
 		} else {
-			component.onBind(node);
+			component.bind(node);
 		}
 	});
 	const ref = combinedRef(bindRef, props.ref);
