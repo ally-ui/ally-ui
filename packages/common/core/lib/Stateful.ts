@@ -1,4 +1,4 @@
-import {Observable} from './Observable';
+import {Observable, Subscriber} from './Observable';
 
 export type Updater<TState> = ((prev: TState) => TState) | TState;
 
@@ -52,7 +52,7 @@ export class Stateful<TValue> {
 		this.#observable.notify(newValue, this.#prevValue);
 	}
 
-	get subscribe() {
-		return this.#observable.subscribe;
+	subscribe(subscriber: Subscriber<TValue>) {
+		return this.#observable.subscribe(subscriber);
 	}
 }
