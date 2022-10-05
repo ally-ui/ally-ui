@@ -4,6 +4,7 @@ import {
 	reactProps,
 	Slot,
 	useMultipleRefs,
+	useNodeComponentModel,
 	useRunOnce,
 } from '@ally-ui/react';
 import React from 'react';
@@ -27,29 +28,7 @@ const DialogDescription = React.forwardRef<HTMLElement, DialogDescriptionProps>(
 		const component = useRunOnce(
 			() => new DialogDescriptionModel({}, undefined, rootModel),
 		);
-
-		React.useEffect(
-			function mount() {
-				// component.register();
-				component.mount();
-				return () => {
-					component.unmount();
-					// component.unregister();
-				};
-			},
-			[component],
-		);
-
-		const bindRef = React.useCallback(
-			(node: HTMLElement | null) => {
-				if (node == null) {
-					component.unbind();
-				} else {
-					component.bind(node);
-				}
-			},
-			[component],
-		);
+		const [bindRef] = useNodeComponentModel(component);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
 		const Comp = asChild ? Slot : 'p';

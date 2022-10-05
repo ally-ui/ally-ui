@@ -6,6 +6,7 @@ import {
 import {
 	useRunOnce,
 	useSyncedOption,
+	useComponentModel,
 	type ReactEventHandlers,
 } from '@ally-ui/react';
 import React from 'react';
@@ -36,12 +37,7 @@ export default function DialogRoot({
 				},
 			),
 	);
-	const [rootState, setRootState] = React.useState(
-		() => rootModel.state.initialValue,
-	);
-	useRunOnce(() => {
-		rootModel.state.requestUpdate = setRootState;
-	});
+	const [rootState, setRootState] = useComponentModel(rootModel);
 	// TODO #44 Reduce syncing boilerplate.
 	useSyncedOption({
 		option: open,
@@ -56,12 +52,6 @@ export default function DialogRoot({
 			setRootState((prevState) => ({...prevState, modal}));
 		},
 	});
-	React.useEffect(
-		function onStateUpdate() {
-			rootModel.state.setValue(rootState);
-		},
-		[rootState],
-	);
 
 	return (
 		<DialogRootModelContext.Provider value={rootModel}>
