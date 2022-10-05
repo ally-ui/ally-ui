@@ -58,15 +58,6 @@ export class ScrollLockModel extends NodeComponentModel<
 		typeof document !== 'undefined' &&
 		CSS.supports('overscroll-behavior', 'contain');
 
-	constructor(initialProps: ScrollLockModelProps) {
-		if (initialProps.initialActive == null) initialProps.initialActive = false;
-		if (initialProps.active == null)
-			initialProps.active = initialProps.initialActive;
-		super(initialProps);
-		this.onUnregister.listenOnce(this.onBind.listen(this.#onBind));
-		this.onUnregister.listenOnce(this.onUnbind.listen(this.#onUnbind));
-	}
-
 	initialState(initialProps: ScrollLockModelProps): ScrollLockModelState {
 		return {
 			active: initialProps.active ?? initialProps.initialActive ?? false,
@@ -75,13 +66,15 @@ export class ScrollLockModel extends NodeComponentModel<
 	}
 
 	#unsubscribeStateChange?: () => void;
-	#onBind = () => {
+	bind(node: HTMLElement) {
+		super.bind(node);
 		this.#unsubscribeStateChange = this.state.subscribe(this.#onStateChange);
-	};
+	}
 
-	#onUnbind = () => {
+	unbind() {
+		super.unbind();
 		this.#unsubscribeStateChange?.();
-	};
+	}
 
 	#onStateChange = (
 		{active}: ScrollLockModelProps,
