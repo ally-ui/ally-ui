@@ -1,7 +1,7 @@
 import {writable, type Writable} from 'svelte/store';
 import {
 	ScrollLockModel,
-	ScrollLockModelState,
+	type ScrollLockModelState,
 	type ScrollLockModelProps,
 } from '../lib/ScrollLockModel';
 

@@ -1,9 +1,9 @@
 import {writable, type Writable} from 'svelte/store';
 import {
 	FocusTrapModel,
-	FocusTrapModelProps,
-	FocusTrapModelEvents,
-	FocusTrapModelState,
+	type FocusTrapModelProps,
+	type FocusTrapModelEvents,
+	type FocusTrapModelState,
 } from '../lib/FocusTrapModel';
 
 /**
