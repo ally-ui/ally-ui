@@ -11,6 +11,8 @@ export abstract class ComponentModel<
 	state: Stateful<TState>;
 	events?: Stateful<TEvents>;
 
+	id = '';
+
 	constructor(
 		initialProps: TProps,
 		initialEvents?: TEvents,
@@ -24,7 +26,9 @@ export abstract class ComponentModel<
 		parent?.addChild(this);
 	}
 
-	abstract initialState(initialProps: TProps): TState;
+	initialState(_initialProps: TProps): TState {
+		return {} as TState;
+	}
 
 	#children: ComponentModel[] = [];
 	addChild<TChildModel extends ComponentModel>(

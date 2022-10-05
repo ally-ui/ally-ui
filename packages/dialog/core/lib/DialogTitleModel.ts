@@ -1,22 +1,17 @@
 import {NodeComponentModel} from '@ally-ui/core';
 import type {DialogRootModel} from './DialogRootModel';
 
-export interface DialogTitleModelOptions {}
-
-export interface DialogTitleModelReactive {}
-
-export type DialogTitleModelState = DialogTitleModelOptions &
-	DialogTitleModelReactive;
-
-export interface DialogTitleModelDerived {}
-
+export interface DialogTitleModelProps {}
+export interface DialogTitleModelState {}
+export interface DialogTitleModelEvents {}
 export interface DialogTitleModelAttributes {
 	id: string;
 }
 
 export class DialogTitleModel extends NodeComponentModel<
+	DialogTitleModelProps,
 	DialogTitleModelState,
-	DialogTitleModelDerived,
+	DialogTitleModelEvents,
 	DialogTitleModelAttributes
 > {
 	id = 'title';
