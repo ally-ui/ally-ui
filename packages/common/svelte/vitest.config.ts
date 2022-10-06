@@ -6,7 +6,6 @@ export default defineConfig({
 	test: {
 		environment: 'jsdom',
 		setupFiles: '@ally-ui/dev/vitest.setup.ts',
-		globalSetup: './vitest.setup-ssr-test-server.ts',
 		globals: true,
 		transformMode: {
 			web: [/\.svelte$/, /\.[jt]s$/],
