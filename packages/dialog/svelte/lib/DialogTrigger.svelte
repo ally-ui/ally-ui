@@ -26,10 +26,10 @@
 		createRefAction,
 		mergeSvelteProps,
 		svelteProps,
+		useNodeComponentModel,
 		type DefaultSlot,
 		type RefAction,
 	} from '@ally-ui/svelte';
-	import {onMount} from 'svelte/internal';
 	import {readable} from 'svelte/store';
 	import {getDialogRootModel, getDialogRootState} from './context';
 
@@ -43,25 +43,11 @@
 	}
 	const component = new DialogTriggerModel({}, undefined, rootModel);
 
-	const rootState = getDialogRootState() ?? readable(rootModel.state.value);
-
-	onMount(() => {
-		component.mount();
-		return () => {
-			component.unmount();
-			component.unregister();
-		};
-	});
-
+	const [bindNode] = useNodeComponentModel(component);
 	export let node: HTMLElement | null | undefined = null;
 	$: bindNode(node);
-	function bindNode(node?: HTMLElement | null) {
-		if (node == null) {
-			component.unbind();
-		} else {
-			component.bind(node);
-		}
-	}
+
+	const rootState = getDialogRootState() ?? readable(rootModel.state.value);
 
 	function handleClick() {
 		component.onClick();

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {DialogRootModel} from '@ally-ui/core-dialog';
-import {useSyncedOption} from '@ally-ui/vue';
-import {computed, provide, ref, watchEffect} from 'vue';
+import {useComponentModel, useSyncedOption} from '@ally-ui/vue';
+import {computed, provide} from 'vue';
 import {DIALOG_ROOT_MODEL, DIALOG_ROOT_STATE} from './context';
 
 /**
@@ -38,14 +38,7 @@ const rootModel = new DialogRootModel(
 		openChange: (open) => emit('update:open', open),
 	},
 );
-const rootState = ref(rootModel.state.initialValue);
-rootModel.state.requestUpdate = (updater) => {
-	if (updater instanceof Function) {
-		rootState.value = updater(rootState.value);
-	} else {
-		rootState.value = updater;
-	}
-};
+const rootState = useComponentModel(rootModel);
 useSyncedOption({
 	option: computed(() => props.open),
 	onOptionChange: (open) => (rootState.value = {...rootState.value, open}),
@@ -55,9 +48,6 @@ useSyncedOption({
 useSyncedOption({
 	option: computed(() => props.modal),
 	onOptionChange: (modal) => (rootState.value = {...rootState.value, modal}),
-});
-watchEffect(function onStateUpdate() {
-	rootModel.state.setValue(rootState.value);
 });
 
 provide(DIALOG_ROOT_MODEL, rootModel);

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import {DialogContentModel} from '@ally-ui/core-dialog';
-import {computed, inject, onMounted, onUnmounted, ref, watchEffect} from 'vue';
+import {computed, inject, ref, watchEffect} from 'vue';
 import {
 	DIALOG_PORTAL_FORCE_MOUNT,
 	DIALOG_ROOT_MODEL,
 	DIALOG_ROOT_STATE,
 } from './context';
-import {mergeVueProps} from '@ally-ui/vue';
+import {useNodeComponentModel, mergeVueProps} from '@ally-ui/vue';
 
 /**
  * @type {import('@ally-ui/core-dialog').DialogContentModelProps}
@@ -51,8 +51,11 @@ const component = new DialogContentModel(
 	},
 	rootModel,
 );
+const node = ref<HTMLDivElement | null>(null);
+watchEffect(() => props.setRef?.(node.value));
+const setRef = (nodeValue: HTMLDivElement | null) => (node.value = nodeValue);
+const state = useNodeComponentModel(component, node);
 
-const state = ref(component.state.initialValue);
 // Note that we do not need to sync options for event handlers because Vue does
 // not use handlers but emits events instead.
 
@@ -60,25 +63,6 @@ const rootState = inject(DIALOG_ROOT_STATE) ?? ref(rootModel.state.value);
 const derivedState = computed(() =>
 	component.derived(state.value, rootState.value),
 );
-
-onMounted(() => component.mount());
-onUnmounted(() => {
-	component.unmount();
-	component.unregister();
-});
-
-const node = ref<HTMLDivElement | null>(null);
-const setRef = (nodeValue: HTMLDivElement | null) => {
-	node.value = nodeValue;
-};
-watchEffect(() => {
-	props.setRef?.(node.value);
-	if (node.value == null) {
-		component.unbind();
-	} else {
-		component.bind(node.value);
-	}
-});
 </script>
 
 <template>
@@ -86,14 +70,14 @@ watchEffect(() => {
 		<slot
 			v-if="props.asChild"
 			v-bind="{
-				...mergeVueProps(component.attributes(state, rootState), $attrs),
+				...mergeVueProps(component.attributes(rootState), $attrs),
 				ref: setRef,
 			}"
 		/>
 		<div
 			v-else
 			ref="node"
-			v-bind="mergeVueProps(component.attributes(state, rootState), $attrs)"
+			v-bind="mergeVueProps(component.attributes(rootState), $attrs)"
 		>
 			<slot />
 		</div>

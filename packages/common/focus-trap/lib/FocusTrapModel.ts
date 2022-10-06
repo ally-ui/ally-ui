@@ -230,7 +230,7 @@ export class FocusTrapModel extends NodeComponentModel<
 	};
 
 	#onKeyDown__escape = (ev: KeyboardEvent) => {
-		this.events?.value.escapeKeyDown?.(ev);
+		this.events?.escapeKeyDown?.(ev);
 		if (ev.defaultPrevented) {
 			return;
 		}
@@ -262,7 +262,7 @@ export class FocusTrapModel extends NodeComponentModel<
 		if (FocusTrapModel.activeTraps.at(-1) !== this) return;
 		if (this.node == null) return;
 		if (isTargetContainedBy(getActualTarget(ev), this.node)) return;
-		this.events?.value.interactOutside?.(ev);
+		this.events?.interactOutside?.(ev);
 		this.#interactEndDeactivates = !ev.defaultPrevented;
 	};
 
@@ -303,7 +303,7 @@ export class FocusTrapModel extends NodeComponentModel<
 			const focusEvent = new Event('focus-trap.on-deactivate-auto-focus', {
 				cancelable: true,
 			});
-			this.events?.value.deactivateAutoFocus?.(focusEvent);
+			this.events?.deactivateAutoFocus?.(focusEvent);
 			if (focusEvent.defaultPrevented) {
 				return;
 			}
@@ -316,7 +316,7 @@ export class FocusTrapModel extends NodeComponentModel<
 		const focusEvent = new Event('focus-trap.on-activate-auto-focus', {
 			cancelable: true,
 		});
-		this.events?.value.activateAutoFocus?.(focusEvent);
+		this.events?.activateAutoFocus?.(focusEvent);
 		if (focusEvent.defaultPrevented) return;
 		this.#focusableChildren.at(0)?.focus();
 	}

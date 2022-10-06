@@ -8,8 +8,8 @@
 		type DialogRootModelProps,
 		type DialogRootModelState,
 	} from '@ally-ui/core-dialog';
-	import {createSyncedOption} from '@ally-ui/svelte';
-	import {derived, writable} from 'svelte/store';
+	import {createSyncedOption, useComponentModel} from '@ally-ui/svelte';
+	import {derived} from 'svelte/store';
 	import {setDialogRootModel, setDialogRootState} from './context';
 
 	type $$Props = DialogRootProps;
@@ -24,17 +24,10 @@
 		id,
 		{initialOpen, modal},
 		{
-			openChange: () => {},
+			openChange: (o) => (open = o),
 		},
 	);
-	const rootState = writable(rootModel.state.initialValue);
-	rootModel.state.requestUpdate = (updater) => {
-		if (updater instanceof Function) {
-			rootState.update(updater);
-		} else {
-			rootState.set(updater);
-		}
-	};
+	const rootState = useComponentModel(rootModel);
 	// TODO #44 Reduce syncing boilerplate.
 	const watchOpen = createSyncedOption<boolean>({
 		initialOption: open,
@@ -49,7 +42,6 @@
 			rootState.update((prevState) => ({...prevState, modal})),
 	});
 	$: watchModal(modal);
-	$: rootModel.state.setValue($rootState);
 
 	setDialogRootModel(rootModel);
 	setDialogRootState(rootState);

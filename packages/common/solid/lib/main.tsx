@@ -6,3 +6,4 @@ export * from './forwardEvent.solid';
 export * from './mergeSolidProps';
 export * from './styleObject';
 export * from './types';
+export * from './useModel.solid';

@@ -9,7 +9,7 @@ export abstract class ComponentModel<
 	root: ComponentModel;
 	parent?: ComponentModel;
 	state: Stateful<TState>;
-	events?: Stateful<TEvents>;
+	events?: TEvents;
 
 	id = '';
 
@@ -19,9 +19,7 @@ export abstract class ComponentModel<
 		parent?: ComponentModel,
 	) {
 		this.state = new Stateful(this.initialState(initialProps));
-		if (initialEvents != null) {
-			this.events = new Stateful(initialEvents);
-		}
+		this.events = initialEvents;
 		this.root = this;
 		parent?.addChild(this);
 	}

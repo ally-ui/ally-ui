@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {DialogCloseModel} from '@ally-ui/core-dialog';
-import {mergeVueProps} from '@ally-ui/vue';
-import {inject, onMounted, onUnmounted, ref, watchEffect} from 'vue';
+import {mergeVueProps, useNodeComponentModel} from '@ally-ui/vue';
+import {inject, ref, watchEffect} from 'vue';
 import {DIALOG_ROOT_MODEL} from './context';
 
 export type DialogCloseProps = {
@@ -17,25 +17,11 @@ if (rootModel == null) {
 	throw new Error('<Dialog.Close/> must be a child of `<Dialog.Root/>`');
 }
 const component = new DialogCloseModel({}, undefined, rootModel);
-
-onMounted(() => component.mount());
-onUnmounted(() => {
-	component.unmount();
-	rootModel.unregister();
-});
-
 const node = ref<HTMLButtonElement | null>(null);
-const setRef = (nodeValue: HTMLButtonElement | null) => {
-	node.value = nodeValue;
-};
-watchEffect(() => {
-	props.setRef?.(node.value);
-	if (node.value == null) {
-		component.unbind();
-	} else {
-		component.bind(node.value);
-	}
-});
+watchEffect(() => props.setRef?.(node.value));
+const setRef = (nodeValue: HTMLButtonElement | null) =>
+	(node.value = nodeValue);
+useNodeComponentModel(component, node);
 
 function handleClick() {
 	component.onClick();

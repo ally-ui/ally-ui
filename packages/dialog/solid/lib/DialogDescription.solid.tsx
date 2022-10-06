@@ -2,8 +2,13 @@ import {
 	DialogDescriptionModel,
 	type DialogCloseModelAttributes,
 } from '@ally-ui/core-dialog';
-import {combinedRef, createBindRef, Slot, SlottableProps} from '@ally-ui/solid';
-import {JSX, onCleanup, onMount} from 'solid-js';
+import {
+	combinedRef,
+	Slot,
+	SlottableProps,
+	useNodeComponentModel,
+} from '@ally-ui/solid';
+import type {JSX} from 'solid-js';
 import {useDialogRootModel} from './context';
 
 export type DialogDescriptionProps = SlottableProps<
@@ -20,21 +25,7 @@ export default function DialogDescription(props: DialogDescriptionProps) {
 	}
 	const component = new DialogDescriptionModel({}, undefined, rootModel);
 
-	onMount(() => {
-		component.mount();
-	});
-	onCleanup(() => {
-		component.unmount();
-		component.unregister();
-	});
-
-	const bindRef = createBindRef((node) => {
-		if (node == null) {
-			component.unbind();
-		} else {
-			component.bind(node);
-		}
-	});
+	const [bindRef] = useNodeComponentModel(component);
 	const ref = combinedRef(bindRef, props.ref);
 
 	return (

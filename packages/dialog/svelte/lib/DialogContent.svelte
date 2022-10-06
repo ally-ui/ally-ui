@@ -28,11 +28,11 @@
 		createRefAction,
 		mergeSvelteProps,
 		svelteProps,
+		useNodeComponentModel,
 		type DefaultSlot,
 		type RefAction,
 		type SvelteEventHandlers,
 	} from '@ally-ui/svelte';
-	import {onMount} from 'svelte/internal';
 	import {readable} from 'svelte/store';
 	import {
 		getDialogPortalForceMount,
@@ -67,30 +67,15 @@
 		rootModel,
 	);
 
-	const state = component.state.initialValue;
+	const [bindNode, state] = useNodeComponentModel(component);
+	export let node: HTMLElement | null | undefined = null;
+	$: bindNode(node);
+
 	// Note that we do not need to sync options for event handlers because Svelte
 	// does not use handlers but emits events instead.
 
 	const rootState = getDialogRootState() ?? readable(rootModel.state.value);
-	$: derivedState = component.derived(state, $rootState);
-
-	onMount(() => {
-		component.mount();
-		return () => {
-			component.unmount();
-			component.unregister();
-		};
-	});
-
-	export let node: HTMLElement | null | undefined = null;
-	$: bindNode(node);
-	function bindNode(node?: HTMLElement | null) {
-		if (node == null) {
-			component.unbind();
-		} else {
-			component.bind(node);
-		}
-	}
+	$: derivedState = component.derived($state, $rootState);
 
 	const ref = createRefAction((n) => (node = n));
 
@@ -99,7 +84,7 @@
 	$: slotProps = {
 		props: (userProps: svelteHTML.IntrinsicElements['div']) =>
 			mergeSvelteProps(
-				svelteProps(component.attributes(state, $rootState)),
+				svelteProps(component.attributes($rootState)),
 				$$restProps,
 				userProps,
 			),
@@ -121,7 +106,7 @@
 		<div
 			bind:this={node}
 			{...mergeSvelteProps(
-				svelteProps(component.attributes(state, $rootState)),
+				svelteProps(component.attributes($rootState)),
 				$$restProps,
 			)}
 			use:eventForwarder

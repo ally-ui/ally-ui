@@ -2,8 +2,13 @@ import {
 	DialogTriggerModel,
 	type DialogTriggerModelAttributes,
 } from '@ally-ui/core-dialog';
-import {combinedRef, createBindRef, Slot, SlottableProps} from '@ally-ui/solid';
-import {JSX, onCleanup, onMount} from 'solid-js';
+import {
+	combinedRef,
+	Slot,
+	SlottableProps,
+	useNodeComponentModel,
+} from '@ally-ui/solid';
+import type {JSX} from 'solid-js';
 import {useDialogRootModel, useDialogRootState} from './context';
 
 export interface DialogTriggerHandlers {
@@ -22,24 +27,10 @@ export default function DialogTrigger(props: DialogTriggerProps) {
 	}
 	const component = new DialogTriggerModel({}, undefined, rootModel);
 
-	const rootState = useDialogRootState() ?? rootModel.state.value;
-
-	onMount(() => {
-		component.mount();
-	});
-	onCleanup(() => {
-		component.unmount();
-		component.unregister();
-	});
-
-	const bindRef = createBindRef((node) => {
-		if (node == null) {
-			component.unbind();
-		} else {
-			component.bind(node);
-		}
-	});
+	const [bindRef] = useNodeComponentModel(component);
 	const ref = combinedRef(bindRef, props.ref);
+
+	const rootState = useDialogRootState() ?? rootModel.state.value;
 
 	return (
 		<Slot

@@ -7,6 +7,12 @@ export default defineConfig({
 		environment: 'jsdom',
 		setupFiles: '@ally-ui/dev/vitest.setup.ts',
 		globals: true,
-		deps: {inline: [/svelte/]},
+		transformMode: {
+			web: [/\.svelte$/, /\.[jt]s$/],
+		},
+		deps: {
+			inline: [/svelte/],
+			registerNodeLoader: true,
+		},
 	},
 });

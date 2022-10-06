@@ -26,10 +26,10 @@
 		createRefAction,
 		mergeSvelteProps,
 		svelteProps,
+		useNodeComponentModel,
 		type DefaultSlot,
 		type RefAction,
 	} from '@ally-ui/svelte';
-	import {onMount} from 'svelte/internal';
 	import {getDialogRootModel} from './context';
 
 	type TAsChild = $$Generic<true | undefined>;
@@ -42,23 +42,9 @@
 	}
 	const component = new DialogCloseModel({}, undefined, rootModel);
 
-	onMount(() => {
-		component.mount();
-		return () => {
-			component.unmount();
-			component.unregister();
-		};
-	});
-
+	const [bindNode] = useNodeComponentModel(component);
 	export let node: HTMLElement | null | undefined = null;
 	$: bindNode(node);
-	function bindNode(node?: HTMLElement | null) {
-		if (node == null) {
-			component.unbind();
-		} else {
-			component.bind(node);
-		}
-	}
 
 	function handleClick() {
 		component.onClick();
