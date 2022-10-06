@@ -9,7 +9,6 @@ import {
 	Slot,
 	useMultipleRefs,
 	useRunOnce,
-	useSyncedOption,
 	useNodeComponentModel,
 	type ReactEventHandlers,
 } from '@ally-ui/react';
@@ -64,30 +63,15 @@ const DialogContent = React.forwardRef<HTMLElement, DialogContentProps>(
 				),
 		);
 
-		const [bindRef, state, setState] = useNodeComponentModel(component);
+		const [bindRef, state] = useNodeComponentModel(component);
 		const ref = useMultipleRefs(bindRef, forwardedRef);
 
-		// TODO #44 Reduce syncing boilerplate.
-		useSyncedOption({
-			option: onOpenAutoFocus,
-			onOptionChange: (onOpenAutoFocus) =>
-				setState((prevState) => ({...prevState, onOpenAutoFocus})),
-		});
-		useSyncedOption({
-			option: onCloseAutoFocus,
-			onOptionChange: (onCloseAutoFocus) =>
-				setState((prevState) => ({...prevState, onCloseAutoFocus})),
-		});
-		useSyncedOption({
-			option: onEscapeKeyDown,
-			onOptionChange: (onEscapeKeyDown) =>
-				setState((prevState) => ({...prevState, onEscapeKeyDown})),
-		});
-		useSyncedOption({
-			option: onInteractOutside,
-			onOptionChange: (onInteractOutside) =>
-				setState((prevState) => ({...prevState, onInteractOutside})),
-		});
+		component.events = {
+			openAutoFocus: onOpenAutoFocus,
+			closeAutoFocus: onCloseAutoFocus,
+			escapeKeyDown: onEscapeKeyDown,
+			interactOutside: onInteractOutside,
+		};
 
 		const rootState = useDialogRootState() ?? rootModel.state.value;
 		const derivedState = component.derived(state, rootState);

@@ -194,10 +194,10 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 				initialActive: true,
 			},
 			{
-				activateAutoFocus: this.events?.value.openAutoFocus,
+				activateAutoFocus: this.events?.openAutoFocus,
 				deactivateAutoFocus: this.#onDeactivateFocusToTrigger,
-				escapeKeyDown: this.events?.value.escapeKeyDown,
-				interactOutside: this.events?.value.interactOutside,
+				escapeKeyDown: this.events?.escapeKeyDown,
+				interactOutside: this.events?.interactOutside,
 			},
 		);
 		const root = this.root as DialogRootModel;
@@ -226,7 +226,7 @@ This provides the user with a recognizable name for the dialog by enforcing an e
 	}
 
 	#onDeactivateFocusToTrigger = (ev: Event) => {
-		this.events?.value.closeAutoFocus?.(ev);
+		this.events?.closeAutoFocus?.(ev);
 		if (ev.defaultPrevented) {
 			return;
 		}
