@@ -4,11 +4,11 @@ import {
 } from '@ally-ui/core-dialog';
 import {
 	combinedRef,
-	createBindRef,
 	Slot,
+	useNodeComponentModel,
 	type SlottableProps,
 } from '@ally-ui/solid';
-import {JSX, onCleanup, onMount} from 'solid-js';
+import type {JSX} from 'solid-js';
 import {useDialogRootModel} from './context';
 
 export interface DialogCloseHandlers {
@@ -27,21 +27,7 @@ export default function DialogClose(props: DialogCloseProps) {
 	}
 	const component = new DialogCloseModel({}, undefined, rootModel);
 
-	onMount(() => {
-		component.mount();
-	});
-	onCleanup(() => {
-		component.unmount();
-		component.unregister();
-	});
-
-	const bindRef = createBindRef((node) => {
-		if (node == null) {
-			component.unbind();
-		} else {
-			component.bind(node);
-		}
-	});
+	const [bindRef] = useNodeComponentModel(component);
 	const ref = combinedRef(bindRef, props.ref);
 
 	return (

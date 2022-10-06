@@ -6,14 +6,12 @@ import {
 } from '@ally-ui/core-dialog';
 import {
 	combinedRef,
-	createDelayedBindRef,
-	createSyncedOption,
+	useNodeComponentModel,
 	Slot,
 	SlottableProps,
 	SolidEventHandlers,
 } from '@ally-ui/solid';
-import {createEffect, JSX, onCleanup, onMount, Show} from 'solid-js';
-import {createStore} from 'solid-js/store';
+import {createEffect, JSX, Show} from 'solid-js';
 import {useDialogRootModel, useDialogRootState} from './context';
 
 export type DialogContentProps = SlottableProps<
@@ -40,52 +38,21 @@ export default function DialogContent(props: DialogContentProps) {
 		},
 		rootModel,
 	);
-	const [state, setState] = createStore(component.state.initialValue);
-	component.state.requestUpdate = setState;
-	// TODO #44 Reduce syncing boilerplate.
-	createSyncedOption({
-		option: () => props.onOpenAutoFocus,
-		onOptionChange: (onOpenAutoFocus) =>
-			setState((prevState) => ({...prevState, onOpenAutoFocus})),
-	});
-	createSyncedOption({
-		option: () => props.onCloseAutoFocus,
-		onOptionChange: (onCloseAutoFocus) =>
-			setState((prevState) => ({...prevState, onCloseAutoFocus})),
-	});
-	createSyncedOption({
-		option: () => props.onEscapeKeyDown,
-		onOptionChange: (onEscapeKeyDown) =>
-			setState((prevState) => ({...prevState, onEscapeKeyDown})),
-	});
-	createSyncedOption({
-		option: () => props.onInteractOutside,
-		onOptionChange: (onInteractOutside) =>
-			setState((prevState) => ({...prevState, onInteractOutside})),
-	});
-	createEffect(function onStateUpdate() {
-		component.state.setValue({...state});
+
+	const [bindRef, state] = useNodeComponentModel(component, {delayBind: true});
+	const ref = combinedRef(bindRef, props.ref);
+
+	createEffect(() => {
+		component.events = {
+			openAutoFocus: props.onOpenAutoFocus,
+			closeAutoFocus: props.onCloseAutoFocus,
+			escapeKeyDown: props.onEscapeKeyDown,
+			interactOutside: props.onInteractOutside,
+		};
 	});
 
 	const rootState = useDialogRootState() ?? rootModel.state.value;
 	const derivedState = () => component.derived(state, rootState);
-
-	onMount(() => {
-		component.mount();
-	});
-	onCleanup(() => {
-		component.unmount();
-		component.unregister();
-	});
-
-	const bindRef = createDelayedBindRef((node) => {
-		if (node == null) {
-			component.unbind();
-		} else {
-			component.bind(node);
-		}
-	});
-	const ref = combinedRef(bindRef, props.ref);
 
 	return (
 		<Show when={derivedState().show}>

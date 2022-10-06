@@ -2,8 +2,13 @@ import {
 	DialogTitleModel,
 	type DialogTitleModelAttributes,
 } from '@ally-ui/core-dialog';
-import {combinedRef, createBindRef, Slot, SlottableProps} from '@ally-ui/solid';
-import {JSX, onCleanup, onMount} from 'solid-js';
+import {
+	combinedRef,
+	Slot,
+	SlottableProps,
+	useNodeComponentModel,
+} from '@ally-ui/solid';
+import type {JSX} from 'solid-js';
 import {useDialogRootModel} from './context';
 
 export type DialogTitleProps = SlottableProps<
@@ -18,21 +23,7 @@ export default function DialogTitle(props: DialogTitleProps) {
 	}
 	const component = new DialogTitleModel({}, undefined, rootModel);
 
-	onMount(() => {
-		component.mount();
-	});
-	onCleanup(() => {
-		component.unmount();
-		component.unregister();
-	});
-
-	const bindRef = createBindRef((node) => {
-		if (node == null) {
-			component.unbind();
-		} else {
-			component.bind(node);
-		}
-	});
+	const [bindRef] = useNodeComponentModel(component);
 	const ref = combinedRef(bindRef, props.ref);
 
 	return (
