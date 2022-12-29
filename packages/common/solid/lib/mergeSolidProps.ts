@@ -20,10 +20,16 @@ export function mergeSolidProps(
 			const isHandler = /^on[A-Z]/.test(propName);
 			// If it's a handler, modify the override by composing the base handler.
 			if (isHandler) {
-				overrideProps[propName] = (ev: any) => {
-					forwardEvent(ev, childPropValue);
-					forwardEvent(ev, mergedPropValue);
-				};
+				// Only compose the handlers if both exist.
+				if (childPropValue && mergedPropValue) {
+					overrideProps[propName] = (ev: any) => {
+						forwardEvent(ev, childPropValue);
+						forwardEvent(ev, mergedPropValue);
+					};
+					// Otherwise, avoid creating an unnecessary callback.
+				} else if (mergedPropValue) {
+					overrideProps[propName] = mergedPropValue;
+				}
 			} else if (propName === 'style') {
 				overrideProps[propName] = {
 					...styleObject(mergedPropValue),
